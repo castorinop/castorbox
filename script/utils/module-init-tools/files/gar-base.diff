@@ -1,0 +1,61 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/module-init-tools-3.4/Makefile.in work/build.d/module-init-tools-3.4/Makefile.in
+--- tmp/module-init-tools-3.4/Makefile.in	2007-10-07 19:03:25.000000000 -0300
++++ work/build.d/module-init-tools-3.4/Makefile.in	2008-09-01 23:03:09.000000000 -0300
+@@ -38,7 +38,7 @@
+ host_triplet = @host@
+ target_triplet = @target@
+ sbin_PROGRAMS = insmod$(EXEEXT) modprobe$(EXEEXT) rmmod$(EXEEXT) \
+-	depmod$(EXEEXT) modinfo$(EXEEXT) insmod.static$(EXEEXT)
++	depmod$(EXEEXT) modinfo$(EXEEXT)
+ bin_PROGRAMS = lsmod$(EXEEXT)
+ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in $(top_srcdir)/configure AUTHORS COPYING \
+@@ -229,8 +229,8 @@
+ EXTRA_insmod_static_SOURCES = backwards_compat.c
+ EXTRA_depmod_SOURCES = moduleops_core.c
+ EXTRA_modinfo_SOURCES = backwards_compat.c
+-MAN5 = modprobe.conf.5 modules.dep.5 depmod.conf.5
+-MAN8 = depmod.8 insmod.8 lsmod.8 rmmod.8 modprobe.8 modinfo.8
++MAN5 =
++MAN8 =
+ SGML = $(addprefix doc/,  $(MAN5:%.5=%.sgml) $(MAN8:%.8=%.sgml))
+ man_MANS = $(MAN5) $(MAN8)
+ TESTSUITE := $(shell find tests -type f ! -name '*~') tests/vg-suppressions
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/module-init-tools-3.4/Makefile.in.rej work/build.d/module-init-tools-3.4/Makefile.in.rej
+--- tmp/module-init-tools-3.4/Makefile.in.rej	1969-12-31 21:00:00.000000000 -0300
++++ work/build.d/module-init-tools-3.4/Makefile.in.rej	2008-09-01 23:02:07.000000000 -0300
+@@ -0,0 +1,34 @@
++***************
++*** 112,118 ****
++  
++  EXTRA_DIST = generate-modprobe.conf modprobe.devfs FAQ CODING stress_modules.sh install-with-care $(SGML) $(man_MANS) $(TESTSUITE)Makefile.in
++  
++- sbin_PROGRAMS = insmod modprobe rmmod depmod modinfo insmod.static
++  bin_PROGRAMS = lsmod
++  sbin_SCRIPTS = generate-modprobe.conf
++  
++--- 112,118 ----
++  
++  EXTRA_DIST = generate-modprobe.conf modprobe.devfs FAQ CODING stress_modules.sh install-with-care $(SGML) $(man_MANS) $(TESTSUITE)Makefile.in
++  
+++ sbin_PROGRAMS = insmod modprobe rmmod depmod modinfo
++  bin_PROGRAMS = lsmod
++  sbin_SCRIPTS = generate-modprobe.conf
++  
++***************
++*** 130,136 ****
++  CONFIG_CLEAN_FILES =
++  bin_PROGRAMS = lsmod$(EXEEXT)
++  sbin_PROGRAMS = insmod$(EXEEXT) modprobe$(EXEEXT) rmmod$(EXEEXT) \
++- 	depmod$(EXEEXT) modinfo$(EXEEXT) insmod.static$(EXEEXT)
++  PROGRAMS = $(bin_PROGRAMS) $(sbin_PROGRAMS)
++  
++  am_depmod_OBJECTS = depmod.$(OBJEXT) moduleops.$(OBJEXT) \
++--- 130,136 ----
++  CONFIG_CLEAN_FILES =
++  bin_PROGRAMS = lsmod$(EXEEXT)
++  sbin_PROGRAMS = insmod$(EXEEXT) modprobe$(EXEEXT) rmmod$(EXEEXT) \
+++ 	depmod$(EXEEXT) modinfo$(EXEEXT) 
++  PROGRAMS = $(bin_PROGRAMS) $(sbin_PROGRAMS)
++  
++  am_depmod_OBJECTS = depmod.$(OBJEXT) moduleops.$(OBJEXT) \

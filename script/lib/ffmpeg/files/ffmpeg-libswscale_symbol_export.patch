@@ -1,0 +1,9 @@
+diff -Naur ffmpeg-5d1b39f-old/libswscale/libswscale.v ffmpeg-5d1b39f-new/libswscale/libswscale.v
+--- ffmpeg-5d1b39f-old/libswscale/libswscale.v	2011-07-07 20:11:14.000000000 -0700
++++ ffmpeg-5d1b39f-new/libswscale/libswscale.v	2011-07-07 20:11:14.000000000 -0700
+@@ -1,4 +1,4 @@
+ LIBSWSCALE_$MAJOR {
+-        global: swscale_*; sws_*; ff_*;
++        global: swscale_*; sws_*; ff_*; palette8tobgr15; palette8tobgr16; palette8torgb15; palette8torgb16; palette8topacked24; palette8topacked32; rgb24tobgr24; rgb32tobgr32; yuv422ptoyuy2; yv12toyuy2;
+         local: *;
+ };

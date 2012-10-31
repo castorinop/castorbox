@@ -1,0 +1,11 @@
+--- old/ext/enchant/config.m4	2004-03-08 21:12:12.000000000 +0100
++++ new/ext/enchant/config.m4.oden	2009-03-27 12:50:12.000000000 +0100
+@@ -27,7 +27,7 @@
+ 		AC_MSG_ERROR(Cannot find enchant)
+ 	fi
+ 
+-	ENCHANT_LIBDIR=$ENCHANT_DIR/lib
++	ENCHANT_LIBDIR=$ENCHANT_DIR/$PHP_LIBNAME
+ 
+ 	AC_DEFINE(HAVE_ENCHANT,1,[ ])
+ 	PHP_SUBST(ENCHANT_SHARED_LIBADD)

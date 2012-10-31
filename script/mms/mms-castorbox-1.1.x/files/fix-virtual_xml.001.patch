@@ -1,0 +1,13 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1789/plugins/feature/movie/movie.hpp work/main.d/mms-1.1.0-1789/plugins/feature/movie/movie.hpp
+--- tmp/mms-1.1.0-1789/plugins/feature/movie/movie.hpp	2010-05-26 21:35:55.000000000 -0300
++++ new-mms-1.1.0-1789/plugins/feature/movie/movie.hpp	2010-06-05 10:23:14.000000000 -0300
+@@ -70,7 +70,7 @@
+   virtual void fs_change(NotifyUpdate::notify_update_type type, const std::string& path) = 0;
+ #endif
+ 
+-  virtual void imdb_filexml(const std::string& dir, const std::string& path) = 0;
++  virtual bool imdb_filexml(const std::string dir, const std::string& path) {};
+   virtual bool reload_dir(const std::string& path) = 0;
+   virtual void reload_current_dirs() = 0;
+ 
+

@@ -1,0 +1,24 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/libgcrypt-1.4.5/Makefile.am work/main.d/libgcrypt-1.4.5/Makefile.am
+--- tmp/libgcrypt-1.4.5/Makefile.am	2009-04-02 06:25:35.000000000 -0300
++++ new-libgcrypt-1.4.5/Makefile.am	2010-06-19 12:46:27.000000000 -0300
+@@ -23,7 +23,7 @@
+   --enable-ciphers=arcfour:blowfish:cast5:des:aes:twofish:serpent:rfc2268:seed:camellia
+ 
+ DIST_SUBDIRS = m4 mpi cipher random src doc tests
+-SUBDIRS = mpi cipher random src doc tests
++SUBDIRS = mpi cipher random src doc
+ EXTRA_DIST = autogen.sh README.SVN
+ DISTCLEANFILES = 
+ 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/libgcrypt-1.4.5/Makefile.in work/main.d/libgcrypt-1.4.5/Makefile.in
+--- tmp/libgcrypt-1.4.5/Makefile.in	2009-12-11 12:43:30.000000000 -0300
++++ new-libgcrypt-1.4.5/Makefile.in	2010-06-19 12:46:17.000000000 -0300
+@@ -240,7 +240,7 @@
+   --enable-ciphers=arcfour:blowfish:cast5:des:aes:twofish:serpent:rfc2268:seed:camellia
+ 
+ DIST_SUBDIRS = m4 mpi cipher random src doc tests
+-SUBDIRS = mpi cipher random src doc tests
++SUBDIRS = mpi cipher random src doc
+ EXTRA_DIST = autogen.sh README.SVN
+ DISTCLEANFILES = 
+ all: config.h

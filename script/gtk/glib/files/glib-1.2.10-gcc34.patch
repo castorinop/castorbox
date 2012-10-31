@@ -1,0 +1,38 @@
+--- glib-1.2.10/glib.h.gcc34	2004-08-13 19:22:51.752940211 +0200
++++ glib-1.2.10/glib.h	2004-08-13 19:23:58.919551989 +0200
+@@ -272,7 +272,7 @@
+ /* Wrap the gcc __PRETTY_FUNCTION__ and __FUNCTION__ variables with
+  * macros, so we can refer to them as strings unconditionally.
+  */
+-#ifdef	__GNUC__
++#if defined (__GNUC__) && (__GNUC__ < 3)
+ #define	G_GNUC_FUNCTION		__FUNCTION__
+ #define	G_GNUC_PRETTY_FUNCTION	__PRETTY_FUNCTION__
+ #else	/* !__GNUC__ */
+@@ -535,7 +535,7 @@
+ 	 if (__builtin_constant_p (val))		\
+ 	   __v = GUINT16_SWAP_LE_BE_CONSTANT (val);	\
+ 	 else						\
+-	   __asm__ __const__ ("rorw $8, %w0"		\
++	   __asm__ ("rorw $8, %w0"			\
+ 			      : "=r" (__v)		\
+ 			      : "0" ((guint16) (val)));	\
+ 	__v; }))
+@@ -548,7 +548,7 @@
+ 	    if (__builtin_constant_p (val))			\
+ 	      __v = GUINT32_SWAP_LE_BE_CONSTANT (val);		\
+ 	  else							\
+-	    __asm__ __const__ ("rorw $8, %w0\n\t"		\
++	    __asm__ ("rorw $8, %w0\n\t"				\
+ 			       "rorl $16, %0\n\t"		\
+ 			       "rorw $8, %w0"			\
+ 			       : "=r" (__v)			\
+@@ -561,7 +561,7 @@
+ 	    if (__builtin_constant_p (val))			\
+ 	      __v = GUINT32_SWAP_LE_BE_CONSTANT (val);		\
+ 	  else							\
+-	    __asm__ __const__ ("bswap %0"			\
++	    __asm__ ("bswap %0"					\
+ 			       : "=r" (__v)			\
+ 			       : "0" ((guint32) (val)));	\
+ 	__v; }))

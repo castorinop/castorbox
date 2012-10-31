@@ -1,0 +1,14 @@
+--- old/Makefile	2011-07-26 21:24:30.753701106 -0300
++++ new/Makefile	2012-06-09 15:39:23.920667000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = python-distribute
+-GARVERSION = 0.6.19
++GARVERSION = 0.6.27
+ CATEGORIES = python
+ MASTER_SITES = http://pypi.python.org/packages/source/d/distribute/
+ DISTFILES = $(patsubst python-%,%,$(GARNAME))-$(GARVERSION).tar.gz
+--- old/checksums	2011-07-26 21:24:30.753701106 -0300
++++ new/checksums	2012-06-09 15:39:23.920667000 -0300
+@@ -1 +1 @@
+-45a17940eefee849d4cb8cc06d28d96f  download/distribute-0.6.19.tar.gz
++ecd75ea629fee6d59d26f88c39b2d291  download/distribute-0.6.27.tar.gz

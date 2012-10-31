@@ -1,0 +1,141 @@
+=== modified file 'plugins/feature/movie/series.cpp'
+--- old/plugins/feature/movie/series_db.cpp	2010-02-23 17:18:14 +0000
++++ new/plugins/feature/movie/series_db.cpp	2010-04-17 14:27:38 +0000
+@@ -725,5 +725,41 @@
+     timestamp = tvdb.getLastUpdate();
+   }
+   setServerTime("tvdb", timestamp);
+-}
+-
++
++  //Search Missing Info
++  findMissingInfo();
++}
++
++void SerieDB::findMissingInfo()
++{
++  Serie updSerie;
++  Episode updEp;
++
++  std::string query = " SELECT Episode.id_serie, Series.name, Series.seriesid, season, episode, count(Files.id_episode) as missing "
++	"FROM Episode "
++	"JOIN Files ON Episode.id_episode = Files.id_episode "
++	"JOIN Series ON Episode.id_serie = Series.id_serie "
++	"WHERE Episode.seasonid is NULL GROUP BY Episode.id_serie";
++
++  db_mutex.enterMutex();
++  SQLQuery *q = db.query("Episode", query.c_str());
++  db_mutex.leaveMutex();
++
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       if (conv::atoi(row["seriesid"]) > 1) {
++         if (conv::atoi(row["missing"]) == 1) { // fetch episode only
++	   updEp = tvdb.getEpisode(conv::atoi(row["seriesid"]),conv::atoi(row["season"]),conv::atoi(row["episode"]));
++	   store(updEp);
++	 } else { // fetch serie 
++	   updSerie = tvdb.getSerie(conv::atoi(row["seriesid"]));
++	   store(updSerie);
++	   tvdb.getBanner(updSerie, serie_dir);
++	   tvdb.getFanart(updSerie, serie_dir);
++         }
++       } else std::cout << "SerieDB::findMissingInfo(): can't get seriesid, serie " << row["name"] << "can't indexed." << std::endl;
++    }
++    delete q;
++  }
++}
+
+=== modified file 'plugins/feature/movie/series_db.hpp'
+--- old/plugins/feature/movie/series_db.hpp	2010-02-23 17:18:14 +0000
++++ new/plugins/feature/movie/series_db.hpp	2010-04-17 13:47:15 +0000
+@@ -57,11 +57,13 @@
+   int getServerTime(const std::string name);
+   bool setServerTime(const std::string name, const int& timestamp);
+   void getUpdates();
++  void findMissingInfo();
+ 
+   void setViewed(const int& id_episode, bool flag = true);
+ 
+ 
+ 
++
+ public:
+ 
+   SQLDatabase* get_db() { return &db; }
+
+=== modified file 'plugins/feature/movie/series_helper.hpp'
+--- old/plugins/feature/movie/series_helper.hpp	2009-11-06 15:23:07 +0000
++++ new/plugins/feature/movie/series_helper.hpp	2010-04-17 14:22:16 +0000
+@@ -14,6 +14,7 @@
+ 	virtual Serie getSerie(const int& id) = 0;
+ 	virtual Serie getSerie(const std::string& name) = 0;
+ 	virtual Episode getEpisode(const int& id) = 0;
++	virtual Episode getEpisode(const int& idSerie, const int& season, const int& episode) = 0;
+ 	//virtual Episode getEpisode(const int& serie, const int& episode) = 0;
+ 	virtual void getBanner(const Serie& sr, const std::string path) = 0;
+ 	virtual void getFanart(const Serie& sr, const std::string path) = 0;
+@@ -74,6 +75,7 @@
+ 	Serie getSerie(const int& id);
+ 	Serie getSerie(const std::string& name);
+ 	Episode getEpisode(const int& id);
++	Episode getEpisode(const int& idSerie, const int& season, const int& episode);
+ 	//Episode getEpisode(const int& serie, const int& episode) {} 
+ 	void getBanner(const Serie& sr, const std::string path);
+ 	void getFanart(const Serie& sr, const std::string path);
+
+=== modified file 'plugins/feature/movie/series_helper_tvdbcom.cpp'
+--- old/plugins/feature/movie/series_helper_tvdbcom.cpp	2010-02-23 17:18:14 +0000
++++ new/plugins/feature/movie/series_helper_tvdbcom.cpp	2010-04-17 13:56:07 +0000
+@@ -296,6 +296,50 @@
+ 	std:: string mirrors_url = getMirror() + "/api/" + api_key + "/episodes/" + conv::itos(id) + "/" +  getLang() + ".xml";
+ }
+ 
++Episode tvdbcom::helper::getEpisode(const int& idSerie, const int& season, const int& episode)
++{
++
++	Episode tmp;
++
++	if (idSerie == 0)
++	  return tmp;
++
++	TiXmlDocument xmldoc;
++	TiXmlElement* item;
++	TiXmlText *text;
++
++	std::string buff;
++	int startpos = 0;
++
++	// example url: http://www.thetvdb.com/api/E13072066C2EF10D/series/80348/default/1/1/en.xml
++	std:: string url = getMirror() + "/api/" + api_key + "/series/" + conv::itos(idSerie) + "/default/" +  
++					conv::itos(season) + "/" +  conv::itos(episode) + "/" + getLang() + ".xml";
++	std::cout << "tvdbcom::helper::getEpisode(" << conv::itos(idSerie) << "," << conv::itos(season) << "," << conv::itos(episode) << ") " << url << std::endl;
++
++
++	if (!WgetWrapper::download(url, buff)) {
++		std::cout << "fetch failed!" << std::endl;
++    		return tmp;
++        }
++
++	if((startpos = buff.find("<?xml")) != string::npos)
++	    {
++		xmldoc.Parse(buff.substr(startpos).c_str(), 0, TIXML_ENCODING_UNKNOWN);
++		if (!xmldoc.Error())
++		{	
++		     std::cout << "startup parsing Episode.xml" << std::endl;
++		     TiXmlHandle myhandle(&xmldoc);
++	             item = myhandle.FirstChild("Data").FirstChild("Episode").Element();
++		     tmp = parseEpisode(item);
++		     std::cout << "ending parsing Episode.xml" << std::endl;
++		} else std::cout << "can't parse episode xml" << std::endl;
++ 	    } else  std::cout << "bad episode xml" << std::endl;
++
++	return tmp;
++
++}
++
++
+ void tvdbcom::helper::getBanner(const Serie& sr, const std::string path)
+ {
+ 	string filename =  string_format::lowercase_utf(path + "/" + sr.name + "_banner.jpg");
+

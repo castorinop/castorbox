@@ -1,0 +1,21 @@
+diff -p -up VirtualBox-1.6.0_OSE/src/VBox/Installer/linux/VBox.sh.initscript VirtualBox-1.6.0_OSE/src/VBox/Installer/linux/VBox.sh
+--- VirtualBox-1.6.0_OSE/src/VBox/Installer/linux/VBox.sh.initscript	2008-05-14 16:59:58.000000000 +0200
++++ VirtualBox-1.6.0_OSE/src/VBox/Installer/linux/VBox.sh	2008-05-14 17:00:58.000000000 +0200
+@@ -38,7 +38,7 @@ WARNING: The vboxdrv kernel module is no
+          available for the current kernel (`uname -r`) or it failed to
+          load. Please recompile the kernel module and install it by
+ 
+-           sudo /etc/init.d/vboxdrv setup
++           sudo /etc/rc.d/init.d/virtualbox start
+ 
+          You will not be able to start VMs until this problem is fixed.
+ EOF
+@@ -46,7 +46,7 @@ elif [ ! -c /dev/vboxdrv ]; then
+     cat << EOF
+ WARNING: The character device /dev/vboxdrv does not exist. Try
+ 
+-           sudo /etc/init.d/vboxdrv restart
++           sudo /etc/rc.d/init.d/virtualbox restart
+ 
+          and if that is not successful, try to re-install the package.
+ 

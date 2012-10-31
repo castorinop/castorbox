@@ -1,0 +1,2 @@
+<vboxadd>=/dev/vboxadd*
+<console> 0600 <vboxadd> 0600 root

@@ -1,0 +1,34 @@
+diff --speed-large-files --minimal -Nru tmp/PcsxSrc-1.6beta/Linux/Makefile work/main.d/PcsxSrc-1.6beta/Linux/Makefile
+--- tmp/PcsxSrc-1.6beta/Linux/Makefile	2003-05-03 23:11:32.000000000 -0300
++++ work/main.d/PcsxSrc-1.6beta/Linux/Makefile	2007-03-06 16:44:26.000000000 -0300
+@@ -9,7 +9,7 @@
+ VERSION = ${MAJ}.${MIN}
+ 
+ # Set to TRUE to compile with the old gtk1 gui
+-DISABLE_GTK2 = FALSE
++DISABLE_GTK2 = TRUE
+ 
+ all: pcsx
+ 
+@@ -21,10 +21,10 @@
+ 
+ # this includes the option -rdynamic and we don't want that
+ ifeq (${DISABLE_GTK2}, FALSE)
+-	LIBST = $(shell pkg-config gtk+-2.0 --libs)
++	LIBST = $(shell $(DESTDIR)$(bindir)/pkg-config gtk+-2.0 --libs)
+ 	LIBS = $(subst -rdynamic,,${LIBST}) -lz
+ else
+-	LIBST = $(shell gtk-config --libs)
++	LIBST = $(shell $(DESTDIR)$(bindir)/gtk-config --libs)
+ 	LIBS = $(subst -rdynamic,,${LIBST}) -lz
+ endif
+ 
+@@ -53,7 +53,7 @@
+ ifeq (${DISABLE_GTK2}, FALSE)
+ 	CFLAGS+= $(shell pkg-config gtk+-2.0 --cflags)
+ else
+-	CFLAGS+= $(shell gtk-config --cflags)
++	CFLAGS+= $(shell $(DESTDIR)$(bindir)/gtk-config --cflags)
+ endif
+ 
+ pcsx: ${OBJS}

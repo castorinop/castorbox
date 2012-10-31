@@ -1,0 +1,27 @@
+[===== NOW BUILDING:	VirtualBox-2.2.0	=====]
+	[fetch] complete for VirtualBox.
+	[checksum] complete for VirtualBox.
+	[extract] complete for VirtualBox.
+	[patch] complete for VirtualBox.
+	[configure] complete for VirtualBox.
+cd work/main.d/VirtualBox-2.2.0_OSE; . env.sh; KBUILD_VERBOSE="1" BUILD_TARGET_ARCH="x86" ARCH="" KERN_INCL="/home/pablo/gar-castorbox/images/main/lib/modules/2.6.28.9/source" KERN_DIR="/home/pablo/gar-castorbox/images/main/lib/modules/2.6.28.9/build" CFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32" KERNELRELEASE="2.6.28.9" DESTDIR="/home/pablo/gar-castorbox/images/main" prefix="/usr" exec_prefix="/usr" bindir="/usr/bin" sbindir="/usr/sbin" libexecdir="/usr/libexec" datadir="/usr/share" sysconfdir="/etc" sharedstatedir="/usr/share" localstatedir="/var" libdir="/usr/lib" infodir="/usr/info" lispdir="/usr/share/emacs/site-lisp" includedir="/usr/include" oldincludedir="/usr/include" mandir="/usr/share/man" docdir="/usr/share/doc" sourcedir="/usr/src" CPPFLAGS="" CFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32" LDFLAGS="-Wl,--as-needed" CXXFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32" CC="i586-castorbox-linux-gnu-gcc" CXX="i586-castorbox-linux-gnu-g++" LD="i586-castorbox-linux-gnu-ld" CPP="i586-castorbox-linux-gnu-cpp" AR="i586-castorbox-linux-gnu-ar" AS="i586-castorbox-linux-gnu-as" NM="i586-castorbox-linux-gnu-nm" RANLIB="i586-castorbox-linux-gnu-ranlib" STRIP="i586-castorbox-linux-gnu-strip" OBJCOPY="i586-castorbox-linux-gnu-objcopy" OBJDUMP="i586-castorbox-linux-gnu-objdump" kmk
+kBuild: Pass - Build Programs 
+kBuild: Pass - Libraries 
+kBuild: Pass - DLLs 
+kBuild: Pass - Programs 
+kBuild: Pass - Install 
+kBuild: Pass - Other Stuff 
+mkdir -p cookies/main.d/. && date >> cookies/main.d/build-custom
+ ==> Running make in work/main.d/VirtualBox-2.2.0_OSE/out/linux.x86/release/bin/additions/src/vboxadd
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/utils/virtualbox/work/main.d/VirtualBox-2.2.0_OSE/out/linux.x86/release/bin/additions/src/vboxadd'
+make KBUILD_VERBOSE=1 -C /home/pablo/gar-castorbox/images/main/lib/modules/2.6.28.9/build SUBDIRS=/home/pablo/gar-castorbox/script/utils/virtualbox/work/main.d/VirtualBox-2.2.0_OSE/out/linux.x86/release/bin/additions/src/vboxadd SRCROOT=/home/pablo/gar-castorbox/script/utils/virtualbox/work/main.d/VirtualBox-2.2.0_OSE/out/linux.x86/release/bin/additions/src/vboxadd modules
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/kernel-2.6.28/linux/work/main.d/linux-2.6.28.9'
+test -e include/linux/autoconf.h -a -e include/config/auto.conf || (		\
+	echo;								\
+	echo "  ERROR: Kernel configuration is invalid.";		\
+	echo "         include/linux/autoconf.h or include/config/auto.conf are missing.";	\
+	echo "         Run 'make oldconfig && make prepare' on kernel src to fix it.";	\
+	echo;								\
+	/bin/false)
+mkdir -p /home/pablo/gar-castorbox/script/utils/virtualbox/work/main.d/VirtualBox-2.2.0_OSE/out/linux.x86/release/bin/additions/src/vboxadd/.tmp_versions ; rm -f /home/pablo/gar-castorbox/script/utils/virtualbox/work/main.d/VirtualBox-2.2.0_OSE/out/linux.x86/release/bin/additions/src/vboxadd/.tmp_versions/*
+make -f scripts/Makefile.build obj=/home/pablo/gar-castorbox/script/utils/virtualbox/work/main.d/VirtualBox-2.2.0_OSE/out/linux.x86/release/bin/additions/src/vboxadd

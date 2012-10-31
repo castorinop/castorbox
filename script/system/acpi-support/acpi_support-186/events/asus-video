@@ -1,0 +1,5 @@
+# /etc/acpi/events/asus-video
+# This is called when the user presses the video button.
+event=hotkey (ATKD|HOTK) 0000006[123]
+action=/etc/acpi/videobtn.sh
+

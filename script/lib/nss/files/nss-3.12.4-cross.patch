@@ -1,0 +1,24 @@
+diff -Naur nss-3.12.4-old/mozilla/security/nss/cmd/shlibsign/sign.sh nss-3.12.4-new/mozilla/security/nss/cmd/shlibsign/sign.sh
+--- nss-3.12.4-old/mozilla/security/nss/cmd/shlibsign/sign.sh	2009-09-01 11:10:04.000000000 -0700
++++ nss-3.12.4-new/mozilla/security/nss/cmd/shlibsign/sign.sh	2009-09-01 11:10:54.000000000 -0700
+@@ -18,8 +18,8 @@
+         PATH=${ARG1}/lib:${ARG1}/bin:${ARG4}:${PATH}
+     fi
+     export PATH
+-    echo ${2}/shlibsign -v -i ${5}
+-    ${2}/shlibsign -v -i ${5}
++    echo nss-shlibsign -v -i ${5}
++    nss-shlibsign -v -i ${5}
+     ;;
+ *)
+     LIBPATH=`(cd ${1}/lib; pwd)`:`(cd ${4}; pwd)`:$LIBPATH
+@@ -34,7 +34,7 @@
+     export LIBRARY_PATH
+     ADDON_PATH=${1}/lib:${4}:$ADDON_PATH
+     export ADDON_PATH
+-    echo ${2}/shlibsign -v -i ${5}
+-    ${2}/shlibsign -v -i ${5}
++    echo nss-shlibsign -v -i ${5}
++    nss-shlibsign -v -i ${5}
+     ;;
+ esac

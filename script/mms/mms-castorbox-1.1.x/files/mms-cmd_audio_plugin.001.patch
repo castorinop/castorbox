@@ -1,0 +1,124 @@
+=== modified file 'mms.cpp'
+--- old/mms.cpp	2009-05-05 15:12:47 +0000
++++ new/mms.cpp	2010-06-18 02:10:09 +0000
+@@ -91,6 +91,22 @@
+   print.print();
+ }
+ 
++void print_audio_options()
++{
++  Plugins *plugins = S_Plugins::get_instance();
++  string output = gettext(" -a : audio device [");
++
++  foreach (AudioPlayerPlugin *plugin, plugins->audio_players) {
++    output += plugin->plugin_name();
++    if (plugin != plugins->audio_players.back())
++      output += ",";
++  }
++
++  output += "]";
++
++  Print print(output, Print::INFO);
++}
++
+ void print_output_options()
+ {
+   Plugins *plugins = S_Plugins::get_instance();
+@@ -136,6 +152,7 @@
+     str_printf("\n%s", gettext(" -v|V : show version and exit"));
+ 
+   Print print (output, Print::INFO);
++
+ }
+ 
+ void print_replay_options()
+@@ -393,7 +410,7 @@
+   // overwriting variables
+   string homedir = "", var_data = "";
+   bool benchmark = false, fullscreen = false;
+-  string replay_read = "", replay_write = "", outdev = "", user = "";
++  string replay_read = "", replay_write = "", audio= "", outdev = "", user = "";
+   bool resetenv = false, dumpenv = false;
+   std::list<string> indevs;
+ 
+@@ -414,7 +431,7 @@
+ 
+   int c;
+ 
+-  while ((c = getopt_long(argc, argv, "abc:dfhlno:p:u:U:w:r:i:t:O:vVe",
++  while ((c = getopt_long(argc, argv, "a:bc:dfhlno:p:u:U:w:r:i:t:O:vVe",
+ 			  longopts, NULL)) != -1)
+     switch (c) {
+ 
+@@ -454,10 +471,12 @@
+     case 'h':
+       conf->s_debug_level(0);
+       S_Plugins::get_instance()->scan_input_output();
++      S_Plugins::get_instance()->scan();
+       conf->s_debug_level(2);
+       print_options_header();
+       print_misc_options();
+       print_replay_options();
++      print_audio_options();
+       print_input_options();
+       print_output_options();
+       print_options_footer();
+@@ -469,6 +488,17 @@
+     case 'w':
+       replay_write = optarg;
+       break;
++    case 'a':
++      if (!strcmp(optarg,"h") || !strcmp(optarg,"help")) {
++	conf->s_debug_level(0);
++	S_Plugins::get_instance()->scan();
++	conf->s_debug_level(2);
++	print_options_header();
++	print_audio_options();
++	exit(0);
++      }
++      audio = optarg;
++      break;
+     case 'o':
+       if (!strcmp(optarg,"h") || !strcmp(optarg,"help")) {
+ 	conf->s_debug_level(0);
+@@ -611,6 +641,9 @@
+   if (!replay_write.empty())
+     conf->s_replay_write(replay_write);
+ 
++  if (!audio.empty())
++    conf->s_audio(audio);
++
+   if (!outdev.empty())
+     conf->s_outdev(outdev);
+ 
+@@ -764,7 +797,8 @@
+   }
+ 
+   foreach (AudioPlayerPlugin* plugin, plugins->audio_players) {
+-    plugin->plugin_post_init();
++    if (plugin->plugin_name() == conf->p_audio())
++      plugin->plugin_post_init();
+   }
+ 
+   foreach (MoviePlayerPlugin* plugin, plugins->movie_players) {
+
+=== modified file 'my_config_parameters'
+--- old/my_config_parameters	2009-11-04 23:56:25 +0000
++++ new/my_config_parameters	2010-06-18 01:15:38 +0000
+@@ -89,6 +89,7 @@
+ PARAMETER_STR("replay_write",	   replay_write,	"last_replay.rep")
+ PARAMETER_BOOL("sam",		   sam,			false)
+ PARAMETER_STR("outdev",		   outdev,		"dxr3")
++PARAMETER_STR("audio",		   audio,		"xine")
+ PARAMETER_STR("homedir",	   homedir,		"")
+ PARAMETER_STR("var_data_dir",	   var_data_dir,	"")
+ PARAMETER_NUM("last_key",	   last_key,		time(0))
+@@ -105,6 +106,7 @@
+ PUBLIC_PARM(void s_fullscreen(bool f) { fullscreen = f; })
+ PUBLIC_PARM(void s_replay_write(std::string s) { replay_write = s; })
+ PUBLIC_PARM(void s_outdev(std::string s) { outdev = s; })
++PUBLIC_PARM(void s_audio(std::string s) { audio = s; })
+ PUBLIC_PARM(void set_res(int v, int h) { h_res = h; v_res = v; })
+ PUBLIC_PARM(void s_input(const std::list<std::string>& i) { input = i; })
+ PUBLIC_PARM(void s_shutdown_script(std::string s) {shutdown_script = s;})
+

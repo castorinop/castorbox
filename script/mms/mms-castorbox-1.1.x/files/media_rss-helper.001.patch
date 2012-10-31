@@ -1,0 +1,461 @@
+=== modified file 'plugins/feature/media-rss/Makefile'
+--- old/plugins/feature/media-rss/Makefile	2009-11-13 14:25:42 +0000
++++ new/plugins/feature/media-rss/Makefile	2010-03-10 23:48:37 +0000
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/media-rss/Makefile work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/Makefile
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/Makefile	2010-03-06 12:48:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/Makefile	2010-03-13 13:22:23.000000000 -0300
+@@ -12,17 +12,42 @@
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../output/ -I../tinyxml \
+ 	-I../../input/ -fPIC -shared
+ 
++
++PRG = mms-mediarss-thumb
++
++#PRG_CXXFLAGS= $(CXXFLAGS) -pipe -O0 -g -DDEBUG -DSTANDALONE
++
++PRG_OBJS = thumb-helper.o 
++PRG_SRCS = thumb-helper.cpp
++
++LIBTOOL_OPTS = --tag=CXX
++
++PRG_CXXFLAGS += $(taglib_FLAGS) $(COMMONCPP2_CFLAGS)
++LIBS += $(imlib_LIBS) $(taglib_LIBS) $(COMMONCPP2_LIBS)
++
+ SUBDIRS += po 
+-all: $(OBJS)
++
++all: $(PLUGIN_NAME) $(PRG) 
++
++$(PLUGIN_NAME): $(OBJS) $(DEP) $(PRG) 
+ 	$(DO_MAKE)
+ 	make -C po
+ 	$(CXX) $(CXXFLAGS) \
+ 	-Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS)
+ 
+-install:
++$(PRG): $(PRG_OBJS) $(DEP)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(PRG_CXXFLAGS) -o $(PRG) \
++	-rdynamic --export-dynamic $(PRG_OBJS) $(COMMON_LIBS) $(LIBS) \
++	-lmms-core -lmms-gui -lmms-plugins -lmms-input -lmms-output -lmms-feature -L$(MMSDIR)/libmms
++	@rm -r .libs
++
++install: all
+ 	@for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+ 	$(INSTALL) $(PLUGIN_NAME) $(DESTDIR)$(PLUGINDIR)/
+ 	make -C po install
++	#$(MAKE) install -C man;
++	$(INSTALL) -m 755 $(INSTALLSTRIP) $(PRG) $(DESTDIR)$(BINDIR)/$(PRG)
++
+ 
+ clean:
+ 	$(DO_MAKECLEAN)
+@@ -30,8 +55,7 @@
+ 	@if test -f $(PLUGIN_NAME) ; then rm *.so ; fi
+ 
+ depend:
+-	make -C notify-area depend
+-	$(CXX) -MM $(CXXFLAGS) $(SRCS) 1> .depend
++	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(PRG_SRCS) 1> .depend
+ 
+ # dependencies
+ ifneq ($(wildcard .depend),)
+=== added file 'plugins/feature/media-rss/thumb-helper.cpp'
+--- old/plugins/feature/media-rss/thumb-helper.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/media-rss/thumb-helper.cpp	2010-03-11 14:16:13 +0000
+@@ -0,0 +1,322 @@
++
++#include "thumb-helper.hpp"
++
++#include "renderer.hpp"
++#include "common-feature.hpp"
++#include "themes.hpp"
++#include "config.hpp"
++
++// --version
++#include <getopt.h>
++
++#ifdef use_nls
++#include <langinfo.h>
++#include <locale.h>
++#endif
++
++#include <vector>
++#include <stack>
++#include <list>
++#include <string>
++
++using std::vector;
++using std::list;
++using std::string;
++
++// stupid workaround
++void Mms::clean_up()
++{}
++
++static struct option longopts[] =
++{
++  { "conf", 1, 0, 'c' },
++  { "personal", 1, 0, 'p' },
++  { "help", 0, 0, 'h' },
++  { "type", 1, 0, 't' },
++  { "image", 1, 0, 'i' },
++  { "message", 1, 0, 'e' },
++  { "output", 1, 0, 'o' },
++  {0, 0, 0, 0}
++};
++
++void set_default(Config *conf)
++{
++  string homedir = "";
++
++  havemydir("", &homedir);
++  conf->s_var_data_dir(homedir);
++}
++
++void set_config(Config *conf, string config)
++{
++  if (config[config.size()-1] != '/')
++    config += '/';
++
++  conf->s_homedir(config);
++}
++
++void set_personal(Config *conf, string personal)
++{
++  if (personal[personal.size()-1] != '/')
++    personal += '/';
++
++  conf->s_var_data_dir(personal);
++}
++
++void pThumb::percentThumb(const string& message, const string& in_file, const string& out_file, const string& font_name, 
++				int max_x, int max_y, int r, int g, int b)
++{
++
++  string format = "png";
++
++  // BACKGROUND 
++  Imlib_Image bg  =  imlib_create_image(max_x, max_y);
++  imlib_context_set_image(bg);
++  imlib_image_clear_color(0,0,0,0);
++  imlib_image_set_has_alpha(1);
++
++  // IMG
++  Imlib_Image img = imlib_load_image_without_cache(in_file.c_str());
++
++  if (!img){ /* note, the imlib image context isn't really restored after
++		calling this method, it's just set to whatever 'img'
++		parameter is */
++    print_critical(gettext("The image ") + in_file + gettext(" could not be loaded"), "RENDER");
++    img = imlib_create_image(max_x, max_y);
++    imlib_context_set_image(img);
++    imlib_image_clear_color(0,0,0,255);
++  } else
++    imlib_context_set_image(img);
++
++  imlib_image_set_has_alpha(1);
++  char had_alpha = imlib_image_has_alpha();
++
++  int w = imlib_image_get_width();
++  int h = imlib_image_get_height();
++
++  int scaled_w, scaled_h;
++
++  int ratio = (w*100)/h;
++
++  if (ratio > ((max_x*100)/max_y)) {
++    scaled_w = max_x;
++    scaled_h = (max_x * 100) / ratio;
++  } else {
++    scaled_w = (max_y * ratio) / 100;
++    scaled_h = max_y;
++  }
++
++/*  // RESIZE IMG
++  Imlib_Image new_image = imlib_create_cropped_scaled_image(0, 0, max_x, max_y, scaled_w, scaled_h);
++
++  // delete old, we don't need it anymore
++  imlib_free_image(); */
++  //std::cout << "scaled_w=" << scaled_w << " - scaled_h=" <<   scaled_h <<std::endl;
++
++  imlib_context_set_image(bg);
++  imlib_blend_image_onto_image(img, 1, 0, 0, w, h, (max_x - scaled_w) / 2 , (max_y - scaled_h) / 2, scaled_w, scaled_h);
++
++  imlib_context_set_image(img);
++  imlib_free_image(); 
++
++ // imlib_context_set_image(new_image);
++
++  // TEXT
++  //std::cout << "creating text" << std::endl;
++  //std::cout << "text_w=" << size.first << " - text_h=" <<   size.second <<std::endl;
++  std::pair<int, int> size = string_format::calculate_string_size(message, font_name);
++  Imlib_Image text =  imlib_create_image(size.first, size.second);
++  imlib_context_set_image(text);
++  imlib_image_clear_color(0,0,0,0);
++  imlib_image_set_has_alpha(1);
++
++  int x = (max_x - size.first) / 2;
++  int y = (max_y - size.second) / 2;
++
++  //std::cout << "x=" << x << " - y=" << y <<std::endl;
++  if (set_font(font_name)) {
++
++    string fix_imlib = message;
++    fix_imlib.append(" ");
++
++#ifdef UGLY_FONT_FLICKER_HACK
++    // Don't use shadows for black text
++    if (r != 0 || g != 0 || b != 0) {
++      imlib_context_set_color(0, 0, 0, 255);
++      imlib_text_draw(2, 2, fix_imlib.c_str());
++    }
++#endif
++    imlib_context_set_color(r, g, b, 255);
++
++    imlib_text_draw(0, 0, fix_imlib.c_str());
++  }
++
++
++//    imlib_context_set_image(current.image_data);
++
++  //std::cout << "merging" << std::endl;
++  imlib_context_set_image(bg);
++  imlib_blend_image_onto_image(text,1, 0, 0, size.first, size.second, x, y, size.first, size.second);
++
++  imlib_context_set_image(text);
++  imlib_free_image();
++
++  imlib_context_set_image(bg);
++
++  if (had_alpha) {
++    format = "png";
++    imlib_image_set_has_alpha(had_alpha);
++  }
++
++  imlib_image_set_format(format.c_str());
++
++
++  /* save the image */
++  imlib_save_image(out_file.c_str());
++
++  imlib_free_image();
++
++  imlib_context_set_image(current.image_data);
++
++}
++
++int main(int argc,char* argv[])
++{
++
++  bool folder = false;
++  std::string custom = "";
++  std::string out = "test.png";
++  std::string msg = "none";
++ /* int otherinstance = -1;
++
++  for (int t = 0; t < 5; t++){
++    otherinstance = filemutex::lock();
++    if (!otherinstance){
++      break;
++    }
++    usleep(500*1000);
++  }
++
++  if (otherinstance < 0){
++    print_critical(gettext("An instance of MMS or another instance of movie/pic/audio library is already running\n"));
++    exit(1);
++  }
++
++  else if(otherinstance > 0){
++    fprintf(stderr, gettext("File lock is currently owned by another process (pid %d). Aborting\n"), otherinstance);
++    exit(1);
++  } */
++
++  Config *config = S_Config::get_instance();
++
++  string homedir = "", var_data = "";
++
++  // if env MMS_HOME is defined
++  if (!(homedir = s_getenv("MMS_HOME")).empty()) {
++    var_data = homedir;
++    set_config(config, homedir);
++    set_personal(config, var_data);
++  }
++  
++#ifdef use_nls
++  // gettext
++  setlocale(LC_ALL, ""); /* set from the environment variables */
++  bindtextdomain("mms", mms_prefix"/share/locale");
++  bind_textdomain_codeset("mms", nl_langinfo(CODESET));
++  textdomain("mms");
++#endif
++
++//  set_config(config, mms_config); // config
++//  set_default(config); // personal
++
++  int c;
++  int min_argc = 1;
++  std::list<std::string>directories;
++
++  while ((c = getopt_long(argc, argv, "c:p:t:i:o:e:h",
++			  longopts, NULL)) != -1)
++    switch (c) {
++    case 'c': // config
++      min_argc += 2;
++      homedir = optarg;
++      set_config(config, homedir);
++      break;
++    case 'p': // personal
++      min_argc += 2;
++      var_data = optarg;
++      set_personal(config, var_data);
++      break;
++    case 't':
++      min_argc += 2; 
++	if (string(optarg) == "folder")
++	      folder = true;
++      break;
++    case 'i':
++      min_argc += 2;// what is this for?
++      custom = optarg;
++      break;
++    case 'o':
++      min_argc += 2;// what is this for?
++      out = optarg;
++      break;
++    case 'e':
++      min_argc += 2;// what is this for?
++      msg = optarg;
++      break;
++    case 'h':
++      Print print (Print::INFO);
++      print.add_line(gettext("My Media System Media RSS thumbnailer tool"));
++      print.add_line("");
++      print.add_line(gettext("Usage: ./mms-thumb-helper"));
++      print.add_line("");
++      print.add_line(gettext("Options:"));
++      print.add_line(gettext(" -c <absolute> : use alternative config directory"));
++      print.add_line(gettext(" -p <absolute> : use alternative personal directory (db, playlist)"));
++      print.add_line(gettext(" -t <folder|wide> : aspect"));
++      print.add_line(gettext(" -i <image> : use custom image"));
++      print.add_line(gettext(" -e <message> : message to print"));
++      print.add_line(gettext(" -o <file> : file output"));
++      print.print();
++      exit(0);
++      break;
++    }
++
++  Print print(gettext("Using ") + config->p_homedir() + gettext(" as configuration directory"), Print::INFO);
++  Print print2(gettext("Using ") + config->p_var_data_dir() + gettext(" as personal directory"), Print::INFO);
++
++  if (homedir == ""){  //configuration files
++    if (!(homedir = s_getenv("HOME")).empty() && dir_exists(homedir + "/.mms"))
++      set_config(config, homedir + "/.mms");
++    else
++      set_config(config, mms_config); // hardcoded default config
++  }
++
++  // now pass the configuration file using the correct path
++  config->parse_configuration_file();
++
++  Themes *themes = S_Themes::get_instance();
++
++  pThumb *thumb = S_pThumb::get_instance();
++  thumb->set_theme();
++
++  string img;
++
++  if (custom.size())
++    img = custom;
++  else 
++    if (!folder)
++      img = thumb->default_path + themes->media_rss_download;
++    else
++      img = thumb->default_path + themes->media_rss_dir_download;
++
++  string font = graphics::resolution_dependant_font_wrapper(144, config);
++  std::pair<int, int> size = string_format::calculate_string_size(msg, font);
++
++  int w, h;
++  w = size.first * (folder ? 1 : 2);
++  h = size.second * 2; 
++
++
++  thumb->percentThumb(msg, img, out, font, w, h, themes->media_rss_font1, themes->media_rss_font2, themes->media_rss_font3);
++
++}
+
+=== added file 'plugins/feature/media-rss/thumb-helper.hpp'
+--- old/plugins/feature/media-rss/thumb-helper.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/media-rss/thumb-helper.hpp	2010-03-09 16:34:16 +0000
+@@ -0,0 +1,23 @@
++#ifndef THUMB_HELPER_HPP
++#define THUMB_HELPER_HPP
++
++#include "renderer.hpp"
++
++class pThumb : public Render 
++{
++
++  public:
++	void percentThumb(const std::string& message, 
++		const std::string& in_file, const std::string& out_file, const std::string& font_name, 
++		int w, int h, int r, int g, int b);
++	pThumb() : Render() {};
++};
++
++typedef Singleton<pThumb> S_pThumb;
++
++namespace Mms
++{
++  void clean_up();
++}
++
++#endif
+
+=== modified file 'themes.cpp'
+--- old/themes.cpp	2009-11-04 23:56:25 +0000
++++ new/themes.cpp	2010-03-10 23:08:35 +0000
+@@ -640,6 +640,10 @@
+ 	media_rss_header_font3 = atoi(value);
+       } else if (name == "media_rss.background") {
+ 	media_rss_background = resolution_dependant_background(value);
++      } else if (name == "media_rss.dir_download") {
++	media_rss_dir_download = value;
++      } else if (name == "media_rss.download") {
++	media_rss_download = value;
+       } else if (name == "epg.background") {
+ 	epg_background = resolution_dependant_background(value);
+       } else if (name == "weather.background") {
+
+=== modified file 'themes.hpp'
+--- old/themes.hpp	2009-11-04 23:56:25 +0000
++++ new/themes.hpp	2010-03-10 23:06:52 +0000
+@@ -289,6 +289,8 @@
+   int media_rss_header_font2;
+   int media_rss_header_font3;
+   std::string media_rss_background;
++  std::string media_rss_dir_download;
++  std::string media_rss_download;
+   
+   int dialog_font1;
+   int dialog_font2;
+
+=== modified file 'themes/standard/theme.conf'
+--- old/themes/standard/theme.conf	2009-11-04 23:56:25 +0000
++++ new/themes/standard/theme.conf	2010-03-10 23:44:36 +0000
+@@ -133,9 +133,11 @@
+ vbox.boxes_font = 255,255,255
+ vbox.background = vbox/bg.png
+ 
+-media_rss.font = 180,180,180
++media_rss.font = 255,255,255
+ media_rss.header_font = 255,255,255,255
+ media_rss.background = media_rss/bg.png
++media_rss.dir_download = media_rss/rss-dir-download.png
++media_rss.download = media_rss/rss-download.png
+ 
+ dialog.font =  255,255,255,250
+ dialog.background =  32,38,45,200
+

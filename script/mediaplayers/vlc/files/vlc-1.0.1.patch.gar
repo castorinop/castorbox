@@ -1,0 +1,47 @@
+diff -Naur vlc-1.0.1-old/bin/Makefile.am vlc-1.0.1-new/bin/Makefile.am
+--- vlc-1.0.1-old/bin/Makefile.am	2009-07-28 03:23:47.000000000 -0700
++++ vlc-1.0.1-new/bin/Makefile.am	2009-07-28 03:24:44.000000000 -0700
+@@ -26,7 +26,7 @@
+ 
+ vlc_DEPENDENCIES = ../src/libvlc.sym
+ vlc_LDFLAGS = `$(VLC_CONFIG) --ldflags vlc`
+-vlc_LDADD = ../src/libvlc.la `$(VLC_CONFIG) -libs vlc`
++vlc_LDADD = ../src/libvlc.la ../src/libvlccore.la `$(VLC_CONFIG) -libs vlc`
+ 
+ vlc_static_SOURCES = $(vlc_SOURCES)
+ vlc_static_CFLAGS = $(AM_CFLAGS) \
+diff -Naur vlc-1.0.1-old/bin/Makefile.in vlc-1.0.1-new/bin/Makefile.in
+--- vlc-1.0.1-old/bin/Makefile.in	2009-07-28 03:23:47.000000000 -0700
++++ vlc-1.0.1-new/bin/Makefile.in	2009-07-28 03:24:44.000000000 -0700
+@@ -76,7 +76,7 @@
+ @HAVE_WIN32_TRUE@am__objects_1 = vlc_static-winvlc.$(OBJEXT)
+ am_vlc_static_OBJECTS = $(am__objects_1)
+ vlc_static_OBJECTS = $(am_vlc_static_OBJECTS)
+-am__DEPENDENCIES_2 = ../src/libvlc.la `$(VLC_CONFIG) vlc` \
++am__DEPENDENCIES_2 = ../src/libvlc.la ../src/libvlccore.la `$(VLC_CONFIG) vlc` \
+ 	$(am__DEPENDENCIES_1)
+ vlc_static_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(vlc_static_CFLAGS) \
+@@ -665,7 +665,7 @@
+ vlc_wrapper_SOURCES = rootwrap.c
+ vlc_DEPENDENCIES = ../src/libvlc.sym $(am__append_3)
+ vlc_LDFLAGS = `$(VLC_CONFIG) --ldflags vlc`
+-vlc_LDADD = ../src/libvlc.la `$(VLC_CONFIG) -libs vlc` $(am__append_2)
++vlc_LDADD = ../src/libvlc.la ../src/libvlccore.la `$(VLC_CONFIG) -libs vlc` $(am__append_2)
+ vlc_static_SOURCES = $(vlc_SOURCES)
+ vlc_static_CFLAGS = $(AM_CFLAGS) \
+ 	-DTOP_BUILDDIR=\"$$(cd "$(top_builddir)"; pwd)\" \
+diff -Naur vlc-1.0.1-old/vlc-config.in.in vlc-1.0.1-new/vlc-config.in.in
+--- vlc-1.0.1-old/vlc-config.in.in	2009-07-28 03:23:47.000000000 -0700
++++ vlc-1.0.1-new/vlc-config.in.in	2009-07-28 03:24:44.000000000 -0700
+@@ -71,8 +71,8 @@
+ #  No need to include the default @*FLAGS@ values here because they are
+ #  automatically added when using $(COMPILE), $(CXXCOMPILE) or $(OBJCCOMPILE)
+ #
+-if test "@includedir@" != "/usr/include"; then
+-  includes="-I@includedir@"
++if test "$DESTDIR@includedir@" != "@GAR_DESTDIR@@GAR_includedir@"; then
++  includes="-I$DESTDIR@includedir@"
+ fi
+ if test "${top_builddir}" != ""; then
+   top_builddir="${top_builddir}/"

@@ -1,0 +1,11 @@
+diff --speed-large-files --minimal -Nru tmp/xcursor-transparent-theme-0.1.1/cursors/Makefile.am work/main.d/xcursor-transparent-theme-0.1.1/cursors/Makefile.am
+--- old/cursors/Makefile.am	2003-10-30 09:13:59.000000000 -0300
++++ new/cursors/Makefile.am	2007-01-24 20:06:12.000000000 -0300
+@@ -91,6 +91,6 @@
+ 	$(INSTALL_DATA) $(CURSOR_REAL) $(DESTDIR)$(CURSOR_DIR)/ 
+ 	for CURSOR in $(CURSOR_NAMES); do \
+ 		echo '-- Installing cursor '$$CURSOR; \
+-		ln -s $(DESTDIR)$(CURSOR_DIR)/transp $(DESTDIR)$(CURSOR_DIR)/$$CURSOR; \
++		ln -s transp $(DESTDIR)$(CURSOR_DIR)/$$CURSOR; \
+ 	done
+ 

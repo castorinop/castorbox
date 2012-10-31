@@ -1,0 +1,11 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/VirtualBox-3.2.6_OSE/src/VBox/Additions/linux/drm/vboxvideo_drm.c work/main.d/VirtualBox-3.2.6_OSE/src/VBox/Additions/linux/drm/vboxvideo_drm.c
+--- tmp/VirtualBox-3.2.6_OSE/src/VBox/Additions/linux/drm/vboxvideo_drm.c	2010-06-25 11:24:09.000000000 -0300
++++ new-VirtualBox-3.2.6_OSE/src/VBox/Additions/linux/drm/vboxvideo_drm.c	2010-07-31 12:46:54.000000000 -0300
+@@ -123,6 +123,7 @@
+ 
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_DESCRIPTION(DRIVER_DESC);
++MODULE_DEVICE_TABLE(pci, pciidlist);
+ 
+ #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27) */
+ 

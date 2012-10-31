@@ -1,0 +1,56 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.2.8/acinclude.m4 work/main.d/php-5.2.8/acinclude.m4
+--- tmp/php-5.2.8/acinclude.m4	2008-09-08 07:24:38.000000000 -0300
++++ new-php-5.2.8/acinclude.m4	2009-10-22 14:08:45.000000000 -0300
+@@ -2501,8 +2501,8 @@
+ AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
+ [
+   for i in $PHP_LIBXML_DIR /usr/local /usr; do
+-    if test -x "$i/bin/xml2-config"; then
+-      ac_cv_php_xml2_config_path="$i/bin/xml2-config"
++    if test -x "$i/bin-config/xml2-config"; then
++      ac_cv_php_xml2_config_path="$i/bin-config/xml2-config"
+       break
+     fi
+   done
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.2.8/aclocal.m4 work/main.d/php-5.2.8/aclocal.m4
+--- tmp/php-5.2.8/aclocal.m4	2008-12-07 16:31:10.000000000 -0300
++++ new-php-5.2.8/aclocal.m4	2009-10-22 14:08:47.000000000 -0300
+@@ -2501,8 +2501,8 @@
+ AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
+ [
+   for i in $PHP_LIBXML_DIR /usr/local /usr; do
+-    if test -x "$i/bin/xml2-config"; then
+-      ac_cv_php_xml2_config_path="$i/bin/xml2-config"
++    if test -x "$i/bin-config/xml2-config"; then
++      ac_cv_php_xml2_config_path="$i/bin-config/xml2-config"
+       break
+     fi
+   done
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.2.8/ext/pdo_mysql/config.m4 work/main.d/php-5.2.8/ext/pdo_mysql/config.m4
+--- tmp/php-5.2.8/ext/pdo_mysql/config.m4	2007-07-31 10:02:00.000000000 -0300
++++ new-php-5.2.8/ext/pdo_mysql/config.m4	2009-10-22 14:09:01.000000000 -0300
+@@ -42,8 +42,8 @@
+     fi
+   else
+     for i in /usr/local /usr ; do
+-      if test -x "$i/bin/mysql_config" ; then
+-        PDO_MYSQL_CONFIG="$i/bin/mysql_config"
++      if test -x "$i/bin-config/mysql_config" ; then
++        PDO_MYSQL_CONFIG="$i/bin-config/mysql_config"
+         break;
+       fi
+       if test -r $i/include/mysql/mysql.h || test -r $i/include/mysql.h ; then
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.2.8/ext/xsl/config.m4 work/main.d/php-5.2.8/ext/xsl/config.m4
+--- tmp/php-5.2.8/ext/xsl/config.m4	2007-07-03 14:25:35.000000000 -0300
++++ new-php-5.2.8/ext/xsl/config.m4	2009-10-22 14:08:50.000000000 -0300
+@@ -17,8 +17,8 @@
+   fi
+ 
+   for i in $PHP_XSL /usr/local /usr; do
+-    if test -x "$i/bin/xslt-config"; then
+-      XSLT_CONFIG=$i/bin/xslt-config
++    if test -x "$i/bin-config/xslt-config"; then
++      XSLT_CONFIG=$i/bin-config/xslt-config
+       break
+     fi
+   done

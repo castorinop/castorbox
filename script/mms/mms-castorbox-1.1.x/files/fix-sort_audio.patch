@@ -1,0 +1,13 @@
+=== modified file 'plugins/feature/audio/audio.hpp'
+--- old/plugins/feature/audio/audio.hpp	2009-01-04 00:36:58 +0000
++++ new/plugins/feature/audio/audio.hpp	2009-01-05 12:54:48 +0000
+@@ -1679,7 +1688,7 @@
+   {
+     audio_list = parse_dir(folders.top().first);
+ 
+-    if (audio_folders.size() >= 1 && folders.size() == 1)
++    if (audio_folders.size() >= 1)
+       std::sort(audio_list.begin(), audio_list.end(), file_sort());
+   }
+ 
+

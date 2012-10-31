@@ -1,0 +1,31 @@
+diff -Naur nss-3.12.4-old/mozilla/security/coreconf/Linux.mk nss-3.12.4-new/mozilla/security/coreconf/Linux.mk
+--- nss-3.12.4-old/mozilla/security/coreconf/Linux.mk	2009-07-29 16:43:41.000000000 -0700
++++ nss-3.12.4-new/mozilla/security/coreconf/Linux.mk	2009-09-01 11:10:18.000000000 -0700
+@@ -46,11 +46,11 @@
+ 	IMPL_STRATEGY = _PTH
+ endif
+ 
+-CC			= gcc
+-CCC			= g++
+-RANLIB			= ranlib
++CC			= @GAR_CC@
++CCC			= @GAR_CXX@
++RANLIB			= @GAR_RANLIB@
+ 
+-DEFAULT_COMPILER = gcc
++DEFAULT_COMPILER = @GAR_CC@
+ 
+ ifeq ($(OS_TEST),ppc64)
+ 	OS_REL_CFLAGS	= -DLINUX1_2 -D_XOPEN_SOURCE
+diff -Naur nss-3.12.4-old/mozilla/security/coreconf/UNIX.mk nss-3.12.4-new/mozilla/security/coreconf/UNIX.mk
+--- nss-3.12.4-old/mozilla/security/coreconf/UNIX.mk	2008-10-03 12:12:41.000000000 -0700
++++ nss-3.12.4-new/mozilla/security/coreconf/UNIX.mk	2009-09-01 11:10:18.000000000 -0700
+@@ -38,7 +38,7 @@
+ XP_DEFINE  += -DXP_UNIX
+ LIB_SUFFIX  = a
+ DLL_SUFFIX  = so
+-AR          = ar cr $@
++AR          = @GAR_AR@ cr $@
+ LDOPTS     += -L$(SOURCE_LIB_DIR)
+ 
+ ifdef BUILD_OPT

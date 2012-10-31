@@ -1,0 +1,84 @@
+Download an LNX-BBC Release ISO
+
+The LNX-BBC project produces physical CD-ROMs that fit in a wallet.
+We also provide ISO9660 CD-ROM image files for you to burn to a CD-R
+or CD-RW blank of any size.  For more information on finding business
+card-sized discs, please see our <printing.html printing> page for
+more information.
+
+If you're looking for the bleeding edge of LNX-BBC development,
+consider our <testing.html testing releases> or our
+<http://www.lnx-bbc.org/builds/ automated cvs builds>.
+
+We use several mirrors in order to make downloads quicker.  Please
+select one of the URLs listed for the image you wish to download.
+
+If you wish to help mirror the BBC images, the best way is to use our
+<http://bitconjurer.org/BitTorrent/ BitTorrent> service.  Simply use
+the torrent file with the
+<http://bitconjurer.org/BitTorrent/download.html bittorrent software>,
+and leave your downloader running -- it will help serve the file to
+other users.  We also have <bittorrent.html a tutorial> to help you
+out a bit.
+
+== Release 2.0 ==
+
+Released:
+January 2003
+
+md5sum:
+8bff9cc3ec0bfe9db2afadca6c55b525
+
+BitTorrent download:
+	* <http://www.lnx-bbc.org/images/bbc-2.0.iso.torrent>
+
+HTTP download:
+	* <http://www.lnx-bbc.org/images/bbc-2.0.iso> --  (<http://genetikayos.com Genetikayos>)
+
+== Release 1.618 ==
+
+Released:
+August 2001
+
+md5sum:
+2f87c9e823d44c65da95181cd3e77f4e 
+
+BitTorrent download:
+	* <http://www.lnx-bbc.org/images/lnx-bbc-1.618.iso.torrent>
+
+HTTP download:
+	* <http://xcssa.org/files/lnx-bbc-1.618.iso> -- (<http://xcssa.org/ Xotic>)
+	* <http://www.ibiblio.org/pub/Linux/distributions/lnx-bbc/lnx-bbc-1.618.iso> -- (<http://www.ibiblio.org/ Ibiblio>)
+	* <http://www.tux.org/pub/distributions/tinylinux/lnx-bbc/lnx-bbc-1.618.iso> -- (<http://www.tux.org Tux.org>)
+	* <http://images.mooseriver.com/lnx-bbc-1.618.iso> -- (<http://www.mooseriver.com Moose River>)
+	* <http://public.planetmirror.com/pub/lnx-bbc/lnx-bbc-1.618.iso> -- (<http://planetmirror.com/ Planet Mirror>)
+
+FTP download:
+	* <ftp://ftp.ibiblio.org/pub/Linux/distributions/lnx-bbc/lnx-bbc-1.618.iso> -- (<http://www.ibiblio.org/ Ibiblio>)
+	* <ftp://ftp.tux.org/pub/distributions/tinylinux/lnx-bbc/lnx-bbc-1.618.iso> -- (<http://www.tux.org Tux.org>)
+	* <ftp://planetmirror.com/pub/lnx-bbc/lnx-bbc-1.618.iso> -- (<http://planetmirror.com/ Planet Mirror>)
+
+== Release 1.6.0 ==
+
+Released:
+May 2001
+
+md5sum:
+5512af456ef1f4d87e35b0b0b3503687 
+
+BitTorrent download:
+	* <http://www.lnx-bbc.org/images/lnx-bbc-1.6.0.iso.torrent>
+
+HTTP download:
+	* <http://xcssa.org/files/lnx-bbc-1.6.0.iso> -- (<http://xcssa.org/ Xotic>)
+	* <http://www.ibiblio.org/pub/Linux/distributions/lnx-bbc/lnx-bbc-1.6.0.iso> -- (<http://www.ibiblio.org/ Ibiblio>)
+	* <http://www.tux.org/pub/distributions/tinylinux/lnx-bbc/lnx-bbc-1.6.0.iso> -- (<http://www.tux.org Tux.org>)
+	* <http://images.mooseriver.com/lnx-bbc-1.6.0.iso> -- (<http://www.mooseriver.com Moose River>)
+	* <http://public.planetmirror.com/pub/lnx-bbc/lnx-bbc-1.6.0.iso> -- (<http://planetmirror.com/ Planet Mirror>)
+
+FTP download:
+	* <ftp://ftp.ibiblio.org/pub/Linux/distributions/lnx-bbc/lnx-bbc-1.6.0.iso> -- (<http://www.ibiblio.org/ Ibiblio>)
+	* <ftp://ftp.tux.org/pub/distributions/tinylinux/lnx-bbc/lnx-bbc-1.6.0.iso> -- (<http://www.tux.org Tux.org>)
+	* <ftp://planetmirror.com/pub/lnx-bbc/lnx-bbc-1.6.0.iso> -- (<http://planetmirror.com/ Planet Mirror>)
+
+

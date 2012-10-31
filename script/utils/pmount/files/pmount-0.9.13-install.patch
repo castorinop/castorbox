@@ -1,0 +1,28 @@
+diff -Naur pmount-0.9.13-old/src/Makefile.am pmount-0.9.13-new/src/Makefile.am
+--- pmount-0.9.13-old/src/Makefile.am	2006-08-08 02:02:48.000000000 -0700
++++ pmount-0.9.13-new/src/Makefile.am	2007-03-27 11:15:39.000000000 -0700
+@@ -34,8 +34,8 @@
+ 
+ install-data-hook:
+ 	test -z $(INSTALL_DIR) || mkdir -p -- $(INSTALL_DIR)
+-	$(INSTALL_DATA) -o root -g root -m 4755 -D $(INSTALL_SRC)/pmount $(INSTALL_DIR)/pmount
+-	$(INSTALL_DATA) -o root -g root -m 4755 -D $(INSTALL_SRC)/pumount $(INSTALL_DIR)/pumount
++	$(INSTALL_DATA) -m 755 -D $(INSTALL_SRC)/pmount $(INSTALL_DIR)/pmount
++	$(INSTALL_DATA) -m 755 -D $(INSTALL_SRC)/pumount $(INSTALL_DIR)/pumount
+ 	
+ uninstall-hook:
+ 	rm -f $(INSTALL_DIR)/pmount
+diff -Naur pmount-0.9.13-old/src/Makefile.in pmount-0.9.13-new/src/Makefile.in
+--- pmount-0.9.13-old/src/Makefile.in	2006-08-15 14:42:43.000000000 -0700
++++ pmount-0.9.13-new/src/Makefile.in	2007-03-27 11:15:55.000000000 -0700
+@@ -570,8 +570,8 @@
+ 
+ install-data-hook:
+ 	test -z $(INSTALL_DIR) || mkdir -p -- $(INSTALL_DIR)
+-	$(INSTALL_DATA) -o root -g root -m 4755 -D $(INSTALL_SRC)/pmount $(INSTALL_DIR)/pmount
+-	$(INSTALL_DATA) -o root -g root -m 4755 -D $(INSTALL_SRC)/pumount $(INSTALL_DIR)/pumount
++	$(INSTALL_DATA) -m 755 -D $(INSTALL_SRC)/pmount $(INSTALL_DIR)/pmount
++	$(INSTALL_DATA) -m 755 -D $(INSTALL_SRC)/pumount $(INSTALL_DIR)/pumount
+ 
+ uninstall-hook:
+ 	rm -f $(INSTALL_DIR)/pmount

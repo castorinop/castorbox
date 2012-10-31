@@ -1,0 +1,35 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/configure.in work/main.d/NetworkManager-0.7.1/configure.in
+--- tmp/NetworkManager-0.7.1/configure.ac	2009-04-12 19:32:52.000000000 -0300
++++ new-NetworkManager-0.7.1/configure.ac	2009-04-23 15:35:10.000000000 -0300
+@@ -459,8 +482,6 @@
+ 	AC_MSG_RESULT(no)
+ fi
+ 
+-GTK_DOC_CHECK(1.0)
+-
+ dnl
+ dnl Tests
+ dnl
+@@ -535,9 +556,6 @@
+ man/nm-tool.1
+ po/Makefile.in
+ policy/Makefile
+-docs/Makefile
+-docs/libnm-glib/Makefile
+-docs/libnm-util/Makefile
+ NetworkManager.pc
+ ])
+ AC_OUTPUT
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/Makefile.am work/main.d/NetworkManager-0.7.1/Makefile.am
+--- tmp/NetworkManager-0.7.1/Makefile.am	2009-04-12 19:29:59.000000000 -0300
++++ new-NetworkManager-0.7.1/Makefile.am	2009-04-23 15:22:04.000000000 -0300
+@@ -17,8 +17,7 @@
+ 	   initscript \
+ 	   test \
+ 	   po \
+-	   man \
+-	   docs
++	   man
+ 
+ EXTRA_DIST = \
+ 	CONTRIBUTING \

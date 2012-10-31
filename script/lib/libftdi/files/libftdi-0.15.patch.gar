@@ -1,0 +1,21 @@
+diff -Naur libftdi-0.15-old/libftdi-config.in libftdi-0.15-new/libftdi-config.in
+--- libftdi-0.15-old/libftdi-config.in	2008-12-18 04:44:23.000000000 -0800
++++ libftdi-0.15-new/libftdi-config.in	2008-12-20 10:16:25.000000000 -0800
+@@ -50,8 +50,8 @@
+       exit 0
+       ;;
+     --cflags)
+-      if test "@includedir@" != /usr/include ; then
+-        includes="-I@includedir@"
++      if test "@GAR_DESTDIR@@includedir@" != @GAR_DESTDIR@@GAR_includedir@ ; then
++        includes="-I@GAR_DESTDIR@@includedir@"
+       fi
+       echo_cflags=yes
+       ;;
+@@ -75,5 +75,5 @@
+ 	echo $includes
+ fi
+ if test "$echo_libs" = "yes"; then
+-	echo -L@libdir@ -lftdi @LIBS@
++	echo -L@GAR_DESTDIR@@libdir@ -lftdi @LIBS@
+ fi

@@ -1,0 +1,56 @@
+diff -Naur fftw-2.1.5-old/configure fftw-2.1.5-new/configure
+--- fftw-2.1.5-old/configure	2003-03-23 23:09:56.000000000 -0800
++++ fftw-2.1.5-new/configure	2005-12-30 20:18:47.000000000 -0800
+@@ -9807,52 +9807,7 @@
+ if test "$ac_m_pref_stack_boundary_4" = "yes"; then
+ 	echo "$as_me:$LINENO: checking whether the stack is correctly aligned by gcc" >&5
+ echo $ECHO_N "checking whether the stack is correctly aligned by gcc... $ECHO_C" >&6
+-	save_CFLAGS="$CFLAGS"
+-	CFLAGS="-O -malign-double"
+-	if test "$cross_compiling" = yes; then
+-  acx_gcc_stack_align_bug=yes
+-else
+-  cat >conftest.$ac_ext <<_ACEOF
+-#line $LINENO "configure"
+-/* confdefs.h.  */
+-_ACEOF
+-cat confdefs.h >>conftest.$ac_ext
+-cat >>conftest.$ac_ext <<_ACEOF
+-/* end confdefs.h.  */
+-#include <stdlib.h>
+-#       include <stdio.h>
+-	struct yuck { int blechh; };
+-	int one(void) { return 1; }
+-	struct yuck ick(void) { struct yuck y; y.blechh = 3; return y; }
+-#       define CHK_ALIGN(x) if ((((long) &(x)) & 0x7)) { fprintf(stderr, "bad alignment of " #x "\n"); exit(1); }
+-	void blah(int foo) { double foobar; CHK_ALIGN(foobar); }
+-	int main(void) { double ok1; struct yuck y; double ok2; CHK_ALIGN(ok1);
+-                         CHK_ALIGN(ok2); y = ick(); blah(one()); return 0; }
+-
+-_ACEOF
+-rm -f conftest$ac_exeext
+-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+-  (eval $ac_link) 2>&5
+-  ac_status=$?
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); }; }; then
+   acx_gcc_aligns_stack=yes; acx_gcc_stack_align_bug=no
+-else
+-  echo "$as_me: program exited with status $ac_status" >&5
+-echo "$as_me: failed program was:" >&5
+-sed 's/^/| /' conftest.$ac_ext >&5
+-
+-( exit $ac_status )
+-acx_gcc_stack_align_bug=yes
+-fi
+-rm -f core core.* *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+-fi
+-	CFLAGS="$save_CFLAGS"
+ 	echo "$as_me:$LINENO: result: $acx_gcc_aligns_stack" >&5
+ echo "${ECHO_T}$acx_gcc_aligns_stack" >&6
+ fi

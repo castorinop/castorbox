@@ -1,0 +1,5 @@
+c4156e3e71123a54413e629f4806fc71  download/xorg-server-1.8.2.tar.bz2
+9bc87d7f0758078819134fe7f49bf4d7  download/xorg-server-1.8.2-perl.patch.gar
+24a597815537ae038fb1a41334d27022  download/xorg-server-1.8.2-pkg_config.patch
+a638464b7f0dfecb5d295d57cdd19498  download/xorg-server-1.8.2-detect_nouveau.patch
+18337b38b0b59330bdb92c5dceef977a  download/xorg-server-1.8.2-detect_radeon.patch

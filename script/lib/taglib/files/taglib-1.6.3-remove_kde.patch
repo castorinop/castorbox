@@ -1,0 +1,176 @@
+diff -Naur taglib-1.6.3-old/configure.in taglib-1.6.3-new/configure.in
+--- taglib-1.6.3-old/configure.in	2010-04-17 04:28:53.000000000 -0700
++++ taglib-1.6.3-new/configure.in	2010-08-19 08:46:37.000000000 -0700
+@@ -28,13 +28,7 @@
+ 
+ dnl Process this file with autoconf to produce a configure script.
+ 
+-AC_INIT(acinclude.m4) dnl a source file from your sub dir
+-
+-dnl This is so we can use kde-common
+-AC_CONFIG_AUX_DIR(admin)
+-
+-dnl This ksh/zsh feature conflicts with `cd blah ; pwd`
+-unset CDPATH
++AC_INIT() dnl a source file from your sub dir
+ 
+ dnl Checking host/target/build systems, for make, install etc.
+ AC_CANONICAL_SYSTEM
+@@ -44,9 +38,6 @@
+ dnl Automake doc recommends to do this only here. (Janos)
+ AM_INIT_AUTOMAKE(taglib,1.6.3)
+ 
+-dnl almost the same like KDE_SET_PEFIX but the path is /usr/local
+-dnl
+-unset CDPATH
+ dnl make /usr/local the default for the installation
+ AC_PREFIX_DEFAULT(/usr/local)
+ 
+@@ -54,8 +45,6 @@
+   prefix=$ac_default_prefix
+   ac_configure_args="$ac_configure_args --prefix $prefix"
+ fi
+-KDE_FAST_CONFIGURE
+-KDE_CONF_FILES
+ 
+ dnl without this order in this file, automake will be confused!
+ dnl
+@@ -64,7 +53,9 @@
+ 
+ dnl checks for programs.
+ dnl first check for c/c++ compilers
+-AC_CHECK_COMPILERS
++AC_PROG_CPP
++AC_PROG_CC
++AC_PROG_CXX
+ 
+ dnl CXXFLAGS="$NOOPT_CXXFLAGS" dnl __kdevelop[noopt]__
+ dnl CFLAGS="$NOOPT_CFLAGS" dnl __kdevelop[noopt]__
+@@ -78,22 +69,8 @@
+ AC_ENABLE_STATIC(no)
+ 
+ dnl create a working libtool-script
+-KDE_PROG_LIBTOOL
++LT_INIT
+ 
+-dnl activate the next macro call for DLOPEN tests and setting LIBDL
+-dnl   (n.b. KDE_MISC_TESTS does the same to you, so use either this or the next one)
+-dnl KDE_CHECK_DLOPEN
+-
+-dnl activate the next macro call for some additional tests
+-dnl   (compat, crypt, socket, nsl, dlopen, ...)
+-dnl KDE_MISC_TESTS dnl __kdevelop__
+-
+-dnl KDE_NEED_FLEX dnl __kdevelop__
+-dnl AC_PROG_YACC dnl __kdevelop__
+-
+-dnl KDE_CHECK_EXTRA_LIBS
+-all_libraries="$all_libraries $USER_LDFLAGS"
+-all_includes="$all_includes $USER_INCLUDES"
+ AC_SUBST(all_includes)
+ AC_SUBST(all_libraries)
+ 
+@@ -155,7 +132,6 @@
+ dnl =======================================================
+ 
+ dnl AC_OUTPUT(bindings/c/taglib_c.pc)
+-KDE_CREATE_SUBDIRSLIST
+ AC_CONFIG_FILES([ Makefile ])
+ AC_CONFIG_FILES([ bindings/Makefile ])
+ AC_CONFIG_FILES([ bindings/c/Makefile ])
+@@ -193,23 +169,6 @@
+ 	echo "*"
+ 	echo "**************************************************"
+ fi
+-# Check if KDE_SET_PREFIX was called, and --prefix was passed to configure
+-if test -n "$kde_libs_prefix" -a -n "$given_prefix"; then
+-  # And if so, warn when they don't match
+-  if test "$kde_libs_prefix" != "$given_prefix"; then
+-    # And if kde doesn't know about the prefix yet
+-    echo ":"`kde-config --path exe`":" | grep ":$given_prefix/bin/:" 2>&1 >/dev/null
+-    if test $? -ne 0; then
+-      echo ""
+-      echo "Warning: you chose to install this package in $given_prefix,"
+-      echo "but KDE was found in $kde_libs_prefix."
+-      echo "For this to work, you will need to tell KDE about the new prefix, by ensuring"
+-      echo "that KDEDIRS contains it, e.g. export KDEDIRS=$given_prefix:$kde_libs_prefix"
+-      echo "Then restart KDE."
+-      echo ""
+-    fi
+-  fi
+-fi
+ 
+ if test x$GXX = "xyes" -a x$kde_have_gcc_visibility = "xyes" -a x$kde_cv_val_qt_gcc_visibility_patched = "xno"; then
+   echo ""
+diff -Naur taglib-1.6.3-old/configure.in.in taglib-1.6.3-new/configure.in.in
+--- taglib-1.6.3-old/configure.in.in	2010-04-12 10:43:03.000000000 -0700
++++ taglib-1.6.3-new/configure.in.in	2010-08-19 08:48:26.000000000 -0700
+@@ -24,13 +24,7 @@
+ 
+ dnl Process this file with autoconf to produce a configure script.
+ 
+-AC_INIT(acinclude.m4) dnl a source file from your sub dir
+-
+-dnl This is so we can use kde-common
+-AC_CONFIG_AUX_DIR(admin)
+-
+-dnl This ksh/zsh feature conflicts with `cd blah ; pwd`
+-unset CDPATH
++AC_INIT()
+ 
+ dnl Checking host/target/build systems, for make, install etc.
+ AC_CANONICAL_SYSTEM
+@@ -40,9 +34,6 @@
+ dnl Automake doc recommends to do this only here. (Janos)
+ AM_INIT_AUTOMAKE(taglib,1.6.3)
+ 
+-dnl almost the same like KDE_SET_PEFIX but the path is /usr/local
+-dnl
+-unset CDPATH
+ dnl make /usr/local the default for the installation
+ AC_PREFIX_DEFAULT(/usr/local)
+ 
+@@ -50,8 +41,6 @@
+   prefix=$ac_default_prefix
+   ac_configure_args="$ac_configure_args --prefix $prefix"
+ fi
+-KDE_FAST_CONFIGURE
+-KDE_CONF_FILES
+ 
+ dnl without this order in this file, automake will be confused!
+ dnl
+@@ -60,7 +49,9 @@
+ 
+ dnl checks for programs.
+ dnl first check for c/c++ compilers
+-AC_CHECK_COMPILERS
++AC_PROG_CPP
++AC_PROG_CC
++AC_PROG_CXX
+ 
+ dnl CXXFLAGS="$NOOPT_CXXFLAGS" dnl __kdevelop[noopt]__
+ dnl CFLAGS="$NOOPT_CFLAGS" dnl __kdevelop[noopt]__
+@@ -74,22 +65,8 @@
+ AC_ENABLE_STATIC(no)
+ 
+ dnl create a working libtool-script
+-KDE_PROG_LIBTOOL
++LT_INIT
+ 
+-dnl activate the next macro call for DLOPEN tests and setting LIBDL
+-dnl   (n.b. KDE_MISC_TESTS does the same to you, so use either this or the next one)
+-dnl KDE_CHECK_DLOPEN
+-
+-dnl activate the next macro call for some additional tests
+-dnl   (compat, crypt, socket, nsl, dlopen, ...)
+-dnl KDE_MISC_TESTS dnl __kdevelop__
+-
+-dnl KDE_NEED_FLEX dnl __kdevelop__
+-dnl AC_PROG_YACC dnl __kdevelop__
+-
+-dnl KDE_CHECK_EXTRA_LIBS
+-all_libraries="$all_libraries $USER_LDFLAGS"
+-all_includes="$all_includes $USER_INCLUDES"
+ AC_SUBST(all_includes)
+ AC_SUBST(all_libraries)
+ 

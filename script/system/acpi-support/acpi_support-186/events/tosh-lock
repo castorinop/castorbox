@@ -1,0 +1,3 @@
+event=hkey VAL[DZ] 00000001 0000013b
+action=/etc/acpi/lockbtn.sh
+

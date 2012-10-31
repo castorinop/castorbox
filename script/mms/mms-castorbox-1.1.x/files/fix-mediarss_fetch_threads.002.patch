@@ -1,0 +1,189 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp	2010-03-06 12:48:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp	2010-04-16 10:48:06.000000000 -0300
+@@ -123,26 +123,42 @@
+   return true;
+ }
+ 
+-void MediaRssUpdate::run() 
++MediaRssUpdate::MediaRssUpdate() 
+ {
+-	MediaRss *mRss = get_class<MediaRss>(dgettext("mms-media-rss", "MediaRSS"));
+-	mRss->update_sources();
++	mRss = get_class<MediaRss>(dgettext("mms-media-rss", "MediaRSS"));
+ }
+ 
+-void MediaRssItemsUpdate::run() 
++void MediaRssUpdate::run() 
+ {
+-        MediaRss *mRss = get_class<MediaRss>(dgettext("mms-media-rss", "MediaRSS"));	
+-	mRss->update_items();
++
++  while (true) {
++    mRss->time_counter++;
++    if (mRss->fetch) return;
++    
++    int wait = (mRss->categ.size() ? conv::atoi(mRss->opts.refresh()) : 5);
++    if (mRss->time_counter < wait) {
++	if ( (mRss->time_counter % 5) == 0 ) {
++		std::cout << "MediaRss::start_update_rss() running update items" << std::endl;
++		mRss->update_items();
++	}
++    } else {
++  	std::cout << "MediaRss::start_update_rss() running update sources" << std::endl;
++  	mRss->update_sources();
++	mRss->time_counter = 0;
++    }
++
++    mmsUsleep(1000 * mRss->idle_rss());
++  }
+ }
+ 
++
+ pthread_mutex_t MediaRss::singleton_mutex = PTHREAD_MUTEX_INITIALIZER;
+ 
+ MediaRss::MediaRss()
+   : MediaDB("mediarss.db"), disabled(true), fetch(false), busy_upd(false), busy_audw(false), 
+     overlay("dialog"), pos_categ(0), pos_elem(0), 
+     count_new_elements(0), count_elements(0), count_downloading(0), time_counter(100),
+-    mru(0), mriu(0), 
+-    update_needed(true) ,exit_loop(false), in_categories(true)
++    mru(0), update_needed(true) ,exit_loop(false), in_categories(true)
+ {
+ 
+ #ifdef use_nls
+@@ -169,8 +186,6 @@
+ {
+   if (mru != 0)
+     delete mru;
+-  if (mriu != 0)
+-    delete mriu;
+ }
+ 
+ void MediaRss::startup_updater() {
+@@ -184,19 +199,14 @@
+   mr_down = S_MediaRssAutodownload::get_instance();
+   x_end = std::min(int((conf->p_h_res()-2*70)*0.33), conf->p_v_res() - 105);
+ 
+-  BackgroundUpdater *bg_updater = S_BackgroundUpdater::get_instance();
+-  bg_updater->timer.add(TimeElement("update MediaRSS", 
+-	boost::bind(&MediaRss::idle_rss, this),
+-        boost::bind(&MediaRss::start_update_rss, this)));
+-
+-  bg_updater->timer.add(TimeElement("update downloads MediaRSS", 
+-	boost::bind(&MediaRss::idle_item, this),
+-        boost::bind(&MediaRss::start_update_items, this)));
+-
+   S_Search::get_instance()->register_module(SearchModule(dgettext("mms-media-rss", "MediaRSS"),
+ 							 boost::bind(&MediaRss::gen_search_list, this, _1),
+ 							 boost::bind(&MediaRss::show_id, this, _1)));
+-  start_update_rss();
++  
++  // Startup Updater
++  mru = new MediaRssUpdate;
++  mru->start();
++  
+ }
+ 
+ void MediaRss::res_dependant_calc()
+@@ -932,14 +942,6 @@
+   return 300000; // 1000 * 60 * 5 ms = 5 mins
+ }
+ 
+-void MediaRss::start_update_items() {
+-
+-  if (fetch || disabled) return;
+-  mriu = new MediaRssItemsUpdate;
+-  mriu->start();
+-
+-}
+-
+ void MediaRss::update_items() {
+   if (!disabled) {
+ 	update_percents();
+@@ -1036,24 +1038,8 @@
+   if (opts.mainloop() && !fetch) {
+     // reload
+     clear();
+-    start_update_rss();
+-  }
+-}
+-
+-void MediaRss::start_update_rss()
+-{
+-  if (fetch) return;
+-  int wait = (categ.size() ? conv::atoi(opts.refresh()) : 5);
+-  if (time_counter < wait) {
+-	time_counter++;
+-	// std::cout << "MediaRss::start_update_rss()  increment " << conv::itos(time_counter) << std::endl;
+-	return;
+-
++    time_counter = conv::atoi(opts.refresh()) + 1;
+   }
+-  mru = new MediaRssUpdate;
+-  mru->start();
+-  time_counter = 0;
+-
+ }
+ 
+ void MediaRss::update_sources()
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp	2010-03-06 12:48:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp	2010-04-16 10:49:37.000000000 -0300
+@@ -30,16 +30,16 @@
+     bool call(const std::string& command, std::string& contents);
+ }
+ 
++class MediaRss;
++
+ class MediaRssUpdate : public ost::Thread
+ {
+ private:
++  MediaRss *mRss;
+   virtual void run();
+-};
+ 
+-class MediaRssItemsUpdate : public ost::Thread
+-{
+-private:
+-  virtual void run();
++public:
++	MediaRssUpdate();	
+ };
+ 
+ class MediaRss : public MediaDB
+@@ -105,7 +105,6 @@
+   void print_status();
+ 
+   int idle_rss();
+-  void start_update_rss();
+   void update_sources();
+ 
+   int idle_item();
+@@ -127,7 +126,6 @@
+   void download(string category, RssItem &item, DialogStepPrint wait_dialog, bool quiet = false);
+ 
+   MediaRssUpdate *mru;
+-  MediaRssItemsUpdate *mriu;
+ 
+   int system_helper(const std::string& call);
+   int pos_categ;
+@@ -167,7 +165,6 @@
+   void update_items();
+   void sort();
+ 
+-  void start_update_items();
+   void update_autodownloads();
+   void update_percents();
+ 
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss_plugin.cpp	2010-03-06 12:48:52.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/media_rss_plugin.cpp	2010-04-16 12:52:13.000000000 -0300
+@@ -18,7 +18,6 @@
+       DialogWaitPrint pdialog(dgettext("mms-media-rss", "Fetching Meta Data, please Wait"), 3000);
+     else {
+       DialogWaitPrint pdialog(dgettext("mss-media-rss", "No Data colected, fetching now..."), 3000);
+-      mr->start_update_rss();
+     }
+   } else {
+     mr->mainloop();
+

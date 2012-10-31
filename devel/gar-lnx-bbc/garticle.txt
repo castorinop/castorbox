@@ -1,0 +1,408 @@
+Linux Journal GAR Article
+
+(This article first appeared in the May/June issue of Embedded Linux
+Journal.  The original can be seen at
+<http://linuxjournal.com/article.php?sid=5819>, but see
+<http://linuxjournal.com/article.php?sid=6240> for why you will find
+this copy to be superior!  Thanks, Linux Journal!)
+
+     == GAR: Automating Entire OS Builds, by Nick Moffitt  ==
+
+I'm a member of the LNX-BBC Project. The LNX-BBC is a business
+card-sized CD-ROM containing a miniature distribution of GNU/Linux. In
+order to fit everything we wanted on the roughly 50MB volume, we had
+to build every single piece of software from scratch and weed out
+unnecessary files.
+
+The first few LNX-BBC releases were done entirely by hand, pulling
+precompiled binaries from existing distributions and hand compiling
+some 200 software packages. While ultimately successful, it made the
+process of upgrading individual packages difficult. It was also
+impossible to keep our work in any sort of revision-control system.
+
+User requests for source code revealed another problem with our
+development process. We had written some scripts to automate the
+creation of the compressed loopback filesystem and the El-Torito
+bootable ISO image, but the really difficult work was the compilation
+and installation of all the packages.  We had no way of giving people
+a single tarball for building a BBC from scratch.
+
+What we needed was a system for automating the compilation and
+installation of all of the third-party software. It needed to allow us
+to store our customizations in CVS and provide a simple mechanism for
+end users to build their own LNX-BBC ISO images.
+
+=== Enter BSD Ports ===
+
+These requirements had been noticed and met before. In 1994, Jordan
+Hubbard began work on the BSD Ports system. The FreeBSD operating
+system includes a great many programs and utilities, but it is not
+complete without a number of third-party programs. The BSD Ports
+system manages the compilation and installation of third-party
+software that has been ported to BSD.
+
+Often when one asks for help with FreeBSD, an expert may answer by
+saying "Just use ports!" and listing the following commands:
+
+----8<----
+cd /usr/ports/[category]/[package]
+make install
+----8<----
+
+to suggest that the user needs to install a particular software
+package. This is similar to the way many Debian experts will tell
+people to apt-get install [package]. It's a simple way for a user to
+install software and related dependencies.
+
+The Ports system is written entirely in pmake, the version of the make
+utility that comes with BSD. The choice to use make is both an obvious
+and a novel one. Make can be thought of as a language designed to
+automate software compilation and has many facilities for expressing
+build dependencies and rule-based build actions.
+
+On the other hand, make has very limited flow control and lacks many
+features traditionally found in procedural programming languages. It
+can be rather unwieldy when used to build large projects.
+
+As of the time of this writing, the core Ports runtime for FreeBSD has
+undergone 400 revisions since 1994. You can see all of the revisions
+and their changelog entries at
+<http://www.freebsd.org/cgi/cvsweb.cgi/ports/Mk/bsd.port.mk>.  The
+collection of software currently contains nearly 4,000 packages.
+
+=== The Gmake Autobuild Runtime ===
+
+I had made the mistake, in 1998, of making a fuss about the GNU system
+needing something like Ports. I made claims about how much more
+elegant Ports would be if written in GNU make and spent a lot of time
+reading the FSF's make book and the NetBSD Ports source code. It
+wasn't until an LNX-BBC meeting in 2001 that someone called my bluff,
+and I actually had to sit down and write the thing.
+
+GAR ostensibly stands for the Gmake Autobuild Runtime because it's a
+library of Makefile rules that provide Ports-like functionality to
+individual packages. (It's actually just named GAR because that's my
+favorite interjection: "Gar!")
+
+From the user's perspective, the GAR system may well be a tree of
+carefully maintained source code, ready to compile. The reality is
+that the system is just a tree of directories containing Makefiles,
+and the only thing that's stored in the GAR system itself is the
+information necessary to perform the steps a user would take in
+compiling and installing software.
+
+The base of the GAR directory tree contains a number of directories.
+These directories are package categories, and within each category is
+a directory for each package. Inside a package directory is (among
+other things) a Makefile.
+
+By way of the GAR system libraries, this Makefile provides seven basic
+targets for the package: fetch, checksum, extract, patch, configure,
+build and install.
+
+Thus, to install Python using the BBC's GAR tree, one would cd to
+lang/python and run make install. To look at the source code to
+netcat, one would cd to net/netcat and run make extract.
+
+Each of these seven targets runs all previous targets, though any of
+them may be undefined for a given package. If you run make patch, it's
+the same as running
+
+----8<----
+make fetch checksum extract patch
+----8<----
+
+fetch:
+	this target downloads all files and patches needed to compile
+	the package. Typically this is a single tarball, accompanied
+	by the occasional patch file.
+
+checksum:
+	uses md5sum to ensure that the downloaded files match those
+	with which the package maintainer worked.
+
+extract:
+	makes sure that all of the necessary source files are
+	available in a working directory. In some cases (such as when
+	downloading a single C source file), this will simply copy
+	files over.
+
+patch:
+	if the package has to be patched (either via third-party
+	patches or package maintainer patches), this target will
+	perform that step.
+
+configure:
+	configures the package as specified in the Makefile. It will
+	typically run the package's underlying configuration system
+	(such as autoconf or Imake).
+
+build:
+	performs the actual step of compilation.
+
+install:
+	puts files in the proper locations and performs any necessary
+	mop-up work.
+
+These targets are named after their counterparts in the BSD Ports
+system and behave in the same manner.
+
+=== Why GAR? ===
+
+One way to think of GAR is as a consistent interface for compiling a
+piece of software. No matter what mechanism the program uses to
+compile or install, a make install will install the program. The user
+need not care whether a program is a Python script or a C program that
+uses Imake.
+
+In fact, the system will even satisfy dependencies. If the
+robotfindskitten program uses libncurses, the GAR system will pause
+the robotfindskitten build process right before the configure stage
+and then go install libncurses.
+
+The GAR system is also centrally configurable, allowing the user to
+specify installation directories, CFLAGS and other useful environment
+variables. It is possible to configure default download locations, so
+that you can grab the code from a local cache or a nearby mirror of
+all the files.
+
+GAR was designed with the notion that the build system and the target
+system may be different machines. It is also possible that the build
+and target system are different architectures.  The following changes
+to gar.conf.mk show a possible way to configure GAR for a
+cross-compiling environment:
+
+----8<----
+DESTDIR = /usr/local/build/mips-build
+LDFLAGS += -L$(DESTDIR)/$(libdir) -L/usr/local/lib-mips
+CC = /usr/local/bin/gcc-mipsel
+LD_LIBRARY_PATH += :$(DESTDIR)/$(libdir):/usr/local/lib-mips
+
+export DESTDIR LDFLAGS CC LD_LIBRARY_PATH
+----8<----
+
+All of these settings will propagate down into each individual
+package.
+
+=== Building a GAR Package ===
+
+The best way to understand the process of making a new package is to
+look at an example. The following is the relevant parts of the grep
+package:
+
+
+----8<----
+GARNAME = grep
+GARVERSION = 2.4.2
+CATEGORIES = utils
+MASTER_SITES = ftp://ftp.gnu.org/pub/gnu/grep/
+DISTFILES = $(DISTNAME).tar.gz
+
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+include ../../gar.mk
+----8<----
+
+The first few lines set some basic bookkeeping information.  The
+GARNAME and GARVERSION refer to the package name and version string as
+the GAR system will manipulate them. They are also used to create the
+convenience variable DISTNAME, which is $(GARNAME)-$(GARVERSION) by
+default, since most GNU or automake-using packages name their tarballs
+in that fashion.
+
+The actual build of the system depends on the CONFIGURE_SCRIPTS,
+BUILD_SCRIPTS and INSTALL_SCRIPTS variables. These point to a
+space-separated list of files that are essential to the configure,
+build and install steps (respectively).
+
+The GAR system will know what to do with most types of scripts. It
+knows to run CONFIGURE_SCRIPTs named "configure", and to run make or
+make install in the directory where a Makefile lives. It also knows
+that Imakefiles use xmkmf, and so forth. For most packages, no extra
+work needs to be done here.
+
+We usually need to specify the CONFIGURE_ARGS to include the directory
+settings that we define in gar.conf.mk. This currently requires
+setting it to include $(DIRPATHS).
+
+Finally, we include the gar.mk library. This takes all of the variable
+setting we've done and puts it to good use. This allows your short
+Makefile to provide the seven basic targets described above. It must
+come last (or, at least, after all of the variables have been set) in
+order to function properly.
+
+=== Dependencies ===
+
+The automatic satisfaction of dependencies is deceptively simple. In
+order to specify a library dependency, for example, simply set the
+LIBDEPS variable to be a space-separated list of paths from the base
+GAR directory to the package you depend on. For example, the GNU
+parted program has the following:
+
+----8<----
+LIBDEPS = lib/e2fsprogs-libs
+----8<----
+
+Before the configure step is run, GAR will cd into
+../../lib/e2fsprogs-libs/ and run make install.
+
+=== Sometimes Defaults Aren't Enough ===
+
+Quite often, the default behavior isn't what one would hope.  You can
+pass parameters to a package's configure script with CONFIGURE_ARGS,
+but what if the GAR system doesn't know about your configuration
+script type? What if the configuration steps aren't enough? What if
+they're flat-out wrong? What if the same is true for the fetch,
+extract or install rules?
+
+Fortunately, the system provides for this in a number of ways.  What
+follows are a few of the mechanisms that a package maintainer can use
+to override or enhance the default behaviors.
+
+For each of the seven basic targets, there exist slots for
+per-package pre- and post- rules. That means that the package
+maintainer can specify work to be done immediately before or after a
+rule.
+
+To define a rule in make, simply place it at the beginning of a line,
+followed by a colon. The shell commands it should execute follow,
+preceded by a tab on each line.
+
+As an example, let's consider the util-linux package. It doesn't use a
+standard autoconf-style configure script, but it can be configured by
+setting a variable at the top of the MCONFIG file. Thus, the end of
+our utils/util-linux/Makefile looks like the following:
+
+----8<----
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+pre-configure:
+	echo "DESTDIR=$(DESTDIR)" > $(WORKSRC)/MCONFIG.NEW
+	cat $(WORKSRC)/MCONFIG << $(WORKSRC)/MCONFIG.NEW
+	mv $(WORKSRC)/MCONFIG.NEW $(WORKSRC)/MCONFIG
+	$(MAKECOOKIE)
+
+include ../../gar.mk
+----8<----
+
+So before the configure script is run, the package-defined
+pre-configure rule adds code setting DESTDIR to the $(DESTDIR) variable
+in MCONFIG.
+
+The $(MAKECOOKIE) variable is a macro that creates a cookie file
+signifying the completion of the pre-configure step; $(MAKECOOKIE)
+performs some housekeeping that ensures rules are run only once, so
+it's important to end each rule with $(MAKECOOKIE).
+
+As another example, the Bourne Again SHell (bash) can be linked to
+with the name "sh" in order to cause it to behave (somewhat) like a
+POSIX Bourne Shell. To do this, the end of our shells/bash/Makefile
+looks like:
+
+----8<----
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+post-install:
+	(cd $(DESTDIR)$(bindir); ln -sf bash sh)
+	$(MAKECOOKIE)
+
+include ../../gar.mk
+----8<----
+
+Thus creating the symbolic link to sh.
+
+=== Providing or Overriding Steps ===
+
+Suppose you want to perform a configure step, but there is no actual
+program or script associated with that step. For example, you could
+conceivably want to run a series of shell commands to create a
+configuration file. Simply pick a file associated with the configure
+step (or "custom" if there isn't one) and set your CONFIGURE_SCRIPTS to
+that. Then write a configure- rule to handle that file (or
+"configure-custom" if you used "custom").
+
+For example, look at the way the tracesroute package (Gavron's
+Traceroute) performs its build step. There was no Makefile, so the
+maintainer had to provide a method for the compilation commands to be
+run semi-manually. So the BUILD_SCRIPTS is set to the .c file, and a
+build- rule for that file is created:
+
+----8<----
+BUILD_SCRIPTS = $(WORKSRC)/traceroute.c
+
+build-$(WORKSRC)/traceroute.c:
+	mkdir -p $(COOKIEDIR)/build-$(WORKSRC)
+	$(CC) $(CFLAGS) -o $(WORKSRC)/traceroute $(WORKSRC)/traceroute.c -lresolv -lm
+	$(MAKECOOKIE)
+
+include ../../gar.mk
+----8<----
+
+This is in fact similar to the way that the default rules are defined
+in the GAR libraries. For example, here is how the library handles
+Makefiles as BUILD_SCRIPTS:
+
+----8<----
+build-%/Makefile:
+	mkdir -p $(COOKIEDIR)/build-$*
+	$(BUILD_ENV) $(MAKE) -C $* $(BUILD_ARGS)
+----8<----
+
+In make, the % is a wildcard (matching) character when used in the
+name of a rule, and the $* variable holds whatever it matched. This
+means that if we told the system to build using
+work/robotfindskitten-1.0/Makefile, then $* would be set to
+work/robotfindskitten-1.0 when this rule is run.
+
+=== A Complete Build System ===
+
+The GAR library takes advantage of many of the advanced features of
+GNU make and is written with the strengths of make in mind. This has
+been advantageous for a number of reasons.  Namely, the size of the
+GAR library files is a few hundred lines. The BSD Ports libraries are
+written more like shell scripts and weigh in at several thousand
+lines.
+
+In addition, the pattern-and-rule handling of package-specific build
+features fits the realm of make nicely. Also, make has facilities that
+help avoid redundant behavior. If a package has been installed,
+running make install will cause it to quickly run through the seven
+steps, verifying that it had already performed them. To force a
+package to rebuild from scratch, the make clean target is provided.
+
+GAR provides many features that are not present in most binary package
+systems, such as dpkg or RPM. This makes user customization of
+compiles much easier and allows you to rebuild your whole system with
+whatever optimization flags you choose. The software GAR builds can
+all be put in /usr/local, for example. The software can also be
+installed to a scratch directory or secondary volume for later
+packaging into a complete OS image.
+
+GAR has largely been a product of the LNX-BBC Project, but has also
+been adopted by many GNOME developers as a means for building the
+latest CVS build of GNOME from scratch. For more information on the
+LNX-BBC Project and the GAR system, visit <http://lnx-bbc.org/>. If
+you have any specific questions about GAR, feel free to ask on the
+lnx-bbc-devel list at
+<http://zork.net/mailman/listinfo/lnx-bbc-devel/>.
+
+=== Resources ===
+
+GARNOME, Jeff Waugh's Popular GAR-Based GNOME Distribution:
+   <http://www.gnome.org/~jdub/garnome/>
+
+How to Download and Install GAR:
+   <http://www.lnx-bbc.org/README.html>
+

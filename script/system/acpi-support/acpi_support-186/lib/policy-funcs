@@ -1,0 +1,25 @@
+CheckPolicy() {
+	local PMS
+	PMS="gnome-power-manager kpowersave xfce4-power-manager"
+	PMS="$PMS guidance-power-manager.py dalston-power-applet"
+	if pidof -x $PMS > /dev/null ||
+	   (pidof dcopserver > /dev/null && test -x /usr/bin/dcop && /usr/bin/dcop kded kded loadedModules | grep -q klaptopdaemon) ||
+	   PowerDevilRunning ; then
+		echo 0;
+	else
+		echo 1;
+	fi
+}
+
+PowerDevilRunning() {
+	test -x /usr/bin/dbus-send || return 1
+	
+	for p in $(pidof kded4); do
+		test -r /proc/$p/environ || continue
+		local DBUS_SESS=$(cat /proc/$p/environ | grep -z "DBUS_SESSION_BUS_ADDRESS=")
+		test "$DBUS_SESS" != "" || continue
+		(su - $(ps -o user= $p) -c "$DBUS_SESS dbus-send --print-reply --dest=org.kde.kded /kded org.kde.kded.loadedModules" | grep -q powerdevil) && return 0
+	done
+	
+	return 1
+}

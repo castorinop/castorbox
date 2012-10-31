@@ -1,0 +1,74 @@
+How to enable the ACPI daemon support for Toshiba ACPI enabled laptops
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have the acpi, acpid and acpi-support packages installed and are using
+the linux kernel version 2.6.10 packages (or better) from Ubuntu then you can
+enable support for passing the Toshiba hotkeys via the ACPI subsystem.
+
+This allows acpid to automatically launch the relevant scripts when you hit
+the hotkeys on your laptop.
+
+The following keys are currently supported:
+
+ * The Lock key
+ * The suspend to RAM key   (Also known as sleep)
+ * The suspend to DISK key  (Also known as hibernate)
+ * The brightness up/down keys
+
+The other hotkeys are passed through the acpi layer and you may be able to get
+other programs which can listen to the acpi events and respond appropriately.
+
+Note that if you enable this functionality then software such as fnfx will stop
+working because they rely on older functionality for obtaining the hotkey
+information from the kernel.
+
+If you want to enable the acpi daemon support for Toshiba ACPI then do the
+following simple set of operations.
+
+Open a terminal and...
+
+1. become root:
+   myuser@mymachine:~ $ sudo -s -H
+   Password:  <enter your password here>
+   root@mymachine:~ #
+
+(from now on I will simplify the root shell prompt to a single # symbol)
+2. unload the current toshiba kernel module
+   # rmmod toshiba_acpi
+
+   (Don't worry if you get an error at this point)
+
+3. create the configuration file
+   # cd /etc/modprobe.d
+   # cp /usr/share/doc/acpi-support/toshiba_acpi.modprobe .
+
+4. attempt to load the toshiba support module again
+   # modprobe toshiba_acpi
+
+5. check that the module loaded okay and enabled the hotkey support
+   # ps ax | grep ktoshkeyd
+
+   If you get no output from that command then the installation failed and
+   you should seek support on the ubuntu-users mailing list.
+
+6. ensure that the hotkey support is now working
+   Try pressing Fn+<key with brightness symbols on it>
+
+   Your brightness should change appropriately. Again if you see no difference
+   then seek support on the ubuntu-users mailinglist.
+
+7. ensure that the module will be loaded on boot
+   # grep toshiba_acpi /etc/modules
+   
+   if you see no output from that command you should do:
+   # echo toshiba_acpi >> /etc/modules
+
+That's it.
+
+If you need any more support, please contact the ubuntu-users mailing list.
+
+
+END
+
+
+Document written by Daniel Silverstone <daniel.silverstone@canonical.com>

@@ -1,0 +1,1222 @@
+=== modified file 'plugins/feature/audio/Makefile'
+--- old/plugins/feature/audio/Makefile	2008-05-03 21:59:11 +0000
++++ new/plugins/feature/audio/Makefile	2008-07-28 13:36:51 +0000
+@@ -6,16 +6,21 @@
+ 
+ PLUGIN_NAME = lib_feature_audio.so
+ 
++SRCS_LYRIC_FETCH = lyrics_fetch.cpp lyrics_helper_leoslyrics.cpp lyrics_helper_lyricwiki.cpp
++OBJS_LYRIC_FETCH = lyrics_fetch.o lyrics_helper_leoslyrics.o lyrics_helper_lyricwiki.o
++
+ SRCS = audio_config.cpp audio_s.cpp audio.cpp shuffle_list.cpp  \
+ 	audio_opts.cpp audio_plugin.cpp \
+-	simple_audio.cpp lastfm.cpp CD_Tag.cpp sha1.c base64.c lyrics.cpp
++	simple_audio.cpp lastfm.cpp CD_Tag.cpp sha1.c base64.c \
++	lyrics.cpp $(SRCS_LYRIC_FETCH)
+ 
+ OBJS = audio_config.o audio_s.o audio.o shuffle_list.o \
+ 	audio_opts.o audio_plugin.o \
+-	simple_audio.o lastfm.o CD_Tag.o sha1.o base64.o lyrics.o
++	simple_audio.o lastfm.o CD_Tag.o sha1.o base64.o \
++	lyrics.o $(OBJS_LYRIC_FETCH)
+ 
+ CXXFLAGS += -I. -I../ -I../../ -I../../../ -I../../output/ \
+-	-I../../input/ -I../tinyxml/ -I./players/ -fPIC -shared
++	-I../../input/ -I../tinyxml/ -I./players/ -fPIC
+ 
+ SUBDIRS += po
+ 
+@@ -47,7 +52,7 @@
+ all: $(OBJS)
+ 	$(DO_MAKE)
+ 	make -C po
+-	$(CXX) $(CXXFLAGS) $(LINKOPTS) \
++	$(CXX) $(CXXFLAGS) -shared $(LINKOPTS) \
+ 	-ltag -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) players/audio_player.o
+ 
+ install:
+@@ -60,10 +65,26 @@
+ 	@if test -f audio_config.o ; then rm *.o ; fi
+ 	@if test -f $(PLUGIN_NAME) ; then rm *.so ; fi
+ 
++wget_wrapper.o:
++	make -C ../ SUBDIRS=""
++
++lyrics-tester: lyrics-tester.o $(OBJS_LYRIC_FETCH) wget_wrapper.o
++	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) \
++	$(CXX) $(CXXFLAGS)  \
++	`imlib2-config --libs ` \
++	`pkg-config --silence-errors --cflags --libs libccext2` \
++	-o lyrics-tester lyrics-tester.o $(OBJS_LYRIC_FETCH) \
++	../../plugins.o ../../output/output.o ../../input/input-base.o ../../feature/feature.o \
++	`ls ../../../*.o |grep -v mms.o` \
++	-linotifytools -lsqlite3
++
+ depend:
+ 	make -C players depend
+ 	$(CXX) -MM $(CXXFLAGS) $(SRCS) 1> .depend
+ 
++depend-%:
++	$(CXX) -MM $(CXXFLAGS) $* 1>> .depend
++
+ # dependencies
+ ifneq ($(wildcard .depend),)
+ include .depend
+
+=== modified file 'plugins/feature/audio/audio.cpp'
+--- old/plugins/feature/audio/audio.cpp	2008-07-19 20:11:23 +0000
++++ new/plugins/feature/audio/audio.cpp	2008-08-04 14:34:44 +0000
+@@ -1169,6 +1169,13 @@
+ {
+   if (audio_state->p_playing() && audio_state->p->is_playing()) {
+ 
++     if (!audio_conf->p_na_on_scr()) {
++       if (is_screensaver_lyrics())
++         nArea->disable(); // disable if have a lyrics
++       else 
++	nArea->enable(); // enable if not
++    }
++
+     render->wait_and_aquire();
+ 
+     if (audio_state->playback_fullscreen.elements.size() > 0)
+@@ -1201,9 +1209,6 @@
+   int x_pos = max_x_pic+60+30;
+   int y = 0;
+ 
+-  int x_lyrics = 10;
+-  int y_lyrics;
+-
+   if ((!artist.empty() && !title.empty())
+       || (audio_state->p->p_cur_nr().type == "web" && !title.empty())) {
+ 
+@@ -1245,13 +1250,13 @@
+ 						  themes->audio_playback_font1, themes->audio_playback_font2,
+ 						  themes->audio_playback_font3, 1));
+ 
+-    y += screensaver_lyrics_normal_font_height;
+-
+     if (audio_state->p_pause()) {
+       int width = string_format::calculate_string_width(buffer, screensaver_normal_font);
+       audio_state->playback_fullscreen.add(new PObj(themes->audio_playback_pause, x_pos + width, y-24, 0, NOSCALING));
+     }
+ 
++    y += screensaver_lyrics_normal_font_height;
++
+   } else {
+ 
+     y = (conf->p_v_res()-165)/2;
+@@ -1275,12 +1280,13 @@
+     audio_state->playback_fullscreen.add(new TObj(buffer, screensaver_lyrics_normal_font, x_pos, y,
+ 						  themes->audio_playback_font1, themes->audio_playback_font2,
+ 						  themes->audio_playback_font3, 1));
+-    y += screensaver_lyrics_normal_font_height;
+ 
+     if (audio_state->p_pause()) {
+       int width = string_format::calculate_string_width(buffer, screensaver_normal_font);
+       audio_state->playback_fullscreen.add(new PObj(themes->audio_playback_pause, x_pos + width, y, 0, NOSCALING));
+     }
++
++     y += screensaver_lyrics_normal_font_height;
+   }
+ 
+   std::ostringstream played_info;
+@@ -1304,8 +1310,6 @@
+ 
+   string current_lyric;
+ 
+-  int percent;
+-
+   Lyrics *lyrics = S_Lyrics::get_instance();
+ 
+   lyrics->set_total_time(audio_state->p->p_total_time());
+@@ -1335,11 +1339,22 @@
+       std::pair<int, int> size = string_format::calculate_string_size(current_lyric, screensaver_lyric_font);
+ 
+       audio_state->playback_fullscreen.add(new TObj(current_lyric, screensaver_lyric_font,
++#ifdef use_notify_area
++						    (conf->p_h_res() - size.first - 10) , y + (conf->p_h_res() - y - NotifyArea::height) /2 - size.second/2,
++#else
+ 						    (conf->p_h_res() - size.first - 10) , y + (conf->p_h_res() - y) /2 - size.second/2,
++#endif
+ 						    themes->audio_playback_font1,
+ 						    themes->audio_playback_font2,
+ 						    themes->audio_playback_font3, 1));
+     }
++    /* std::cout << "Lyric: "
++	<< "lines=" << lyrics->vecLyric.size()
++	<< ", mline=" << lyrics->max_line()
++	<< ", freq=" << lyrics->get_frequency()
++	<< ", per=" << lyrics->get_period()
++	<< ", line=" << lyrics->get_line()
++        << std::endl; */
+ 
+     for(itVectorData = lyrics->vecLyric.begin() + lyrics->get_line();
+ 	itVectorData != lyrics->vecLyric.end() && itVectorData != lyrics->vecLyric.begin() + lyrics->get_line() + lyrics->display_lines();
+@@ -1805,7 +1820,7 @@
+ void Audio::naAudioPlayTrack()
+ {
+   pair<int, int> size;
+-  int played_info, ow, oh;
++  int played_info, ow;
+   string strMsg;
+ 
+   if (opts.shuffle() != dgettext("mms-audio", "off"))
+
+=== modified file 'plugins/feature/audio/audio.hpp'
+--- old/plugins/feature/audio/audio.hpp	2008-07-12 00:27:03 +0000
++++ new/plugins/feature/audio/audio.hpp	2008-07-23 18:43:56 +0000
+@@ -2148,6 +2148,9 @@
+ 
+       } else {
+ 	cleanup_audio_fullscreen();
++	// enable notify area if are disabled by screensaver
++	if (!audio_conf->p_na_on_scr())
++	  nArea->enable();
+       }
+     }
+   }
+
+=== modified file 'plugins/feature/audio/audio_config_parameters'
+--- old/plugins/feature/audio/audio_config_parameters	2008-03-09 20:37:02 +0000
++++ new/plugins/feature/audio/audio_config_parameters	2008-07-23 18:07:29 +0000
+@@ -5,7 +5,7 @@
+ #define S_PARAMETER_CLASS S_AudioConfig
+ #define STRING_PARAMETER_CLASS "AudioConfig"
+ 
+-#define MMS_CONFIG_VERSION "10"
++#define MMS_CONFIG_VERSION "11"
+ 
+ // AUDIO
+ PARAMETER_BOOL("graphical_audio_mode",  graphical_audio_mode,	true)
+@@ -20,6 +20,9 @@
+ PARAMETER_STR("last_fm_path",      last_fm_path,	"/usr/lib/lastfmsubmitd/lastfmsubmit")
+ PARAMETER_BOOL("display_buttons",  display_buttons,	false)
+ 
++// SCREEN SAVER
++PARAMETER_BOOL("notify_area_on_screensaver",  na_on_scr, true)
++
+ // BTTV RADIO
+ PARAMETER_STR("bttvradiooptsplay", bttvradiooptsplay,  "-q -c /dev/radio -f")
+ PARAMETER_STR("bttvradiooptsmute", bttvradiooptsmute,  "-qm -c /dev/radio")
+
+=== added file 'plugins/feature/audio/lyrics-tester.cpp'
+--- old/plugins/feature/audio/lyrics-tester.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/audio/lyrics-tester.cpp	2008-07-28 16:31:33 +0000
+@@ -0,0 +1,32 @@
++#include "lyrics_fetch.hpp"
++
++#include "config.hpp"
++
++#include <iostream>
++
++int  main () {
++
++   std::string homedir;
++
++  Config* conf = S_Config::get_instance();
++  conf->s_homedir("/home/pablo/.mms/");
++  conf->s_var_data_dir("/home/pablo/.mms/");
++
++  LyricsFetch* lyr;
++  lyr =  new LyricsFetch("rihanna", "good girl gone bad");
++  /*lyr =  new LyricsFetch("rihanna", "don't stop the music");
++  lyr =  new LyricsFetch("rihanna", "push up on me");
++  lyr =  new LyricsFetch("rihanna", "question existing");
++  lyr =  new LyricsFetch("rihanna", "say it"); 
++  lyr =  new LyricsFetch("amaral", "el universo sobre mi");
++  lyr =  new LyricsFetch("amaral", "salta");*/
++  //lyr =  new LyricsFetch("amaral", "kamikaze");
++
++  while ((lyr->is_busy() && !lyr->get_ready())) {
++        std::cout << "waiting info..." << std::endl;
++	sleep(1);
++  }
++  
++  std::cout << "ended test" << std::endl;
++}
++
+
+=== modified file 'plugins/feature/audio/lyrics.cpp'
+--- old/plugins/feature/audio/lyrics.cpp	2008-05-05 21:08:53 +0000
++++ new/plugins/feature/audio/lyrics.cpp	2008-08-03 19:02:18 +0000
+@@ -4,6 +4,7 @@
+ #include "common.hpp"
+ 
+ #include "lyrics.hpp"
++#include "lyrics_fetch.hpp"
+ 
+ #include "common.hpp"
+ #include "gettext.hpp"
+@@ -17,23 +18,20 @@
+ #include "tinyxml.h"
+ #include "tinystr.h"
+ 
++#include "boost.hpp"
++
+ #include "wget_wrapper.hpp"
+ 
+ // saving
+ #include <fstream>
+ #include <iostream>
+ 
+-#include <cc++/url.h>
++
+ 
+ using std::string;
+ 
+ pthread_mutex_t Lyrics::singleton_mutex = PTHREAD_MUTEX_INITIALIZER;
+ 
+-void LyricsFetch::run()
+-{
+-  S_Lyrics::get_instance()->check_status();
+-}
+-
+ void LyricsLoop::run()
+ {
+   Lyrics *lyrics = S_Lyrics::get_instance();
+@@ -44,33 +42,19 @@
+ }
+ 
+ Lyrics::Lyrics()
+-  : enabled(false), running(false)
++  : enabled(false), running(false), lf(0)
+ {
+   vecLyric.clear();
+ 
+-  render = S_Render::get_instance();
+-
+-  /*
+-  Updater &updater = Updater::get_instance();
+-  TimeFunctori<Lyrics> *time_func = new TimeFunctori<Lyrics>(this, &Lyrics::idle_status);
+-  TimeFunctorv<Lyrics> *call_func = new TimeFunctorv<Lyrics>(this, &Lyrics::check_status);
+-  updater.timer.add(TimeElement("fetchlyric", time_func, call_func));
+-  */
+-
+-  tmp_location = conf->p_temp_image_loc() + "/wget-temp-lyric";
+-
+-  if (!recurse_mkdir(conf->p_var_data_dir(),"lyrics/", &lyrics_dir)){
+-      DebugPrint perror(dgettext("mms-audio", "Could not create directory ") + lyrics_dir,
+-			Print::DEBUGGING, DebugPrint::CRITICAL, "LYRICS");
+-      //FIXME: shouldn't this be critical???
+-  }
+-
+   string screensaver_lyric_font = "Vera/" + conv::itos(resolution_dependant_font_size(22, conf->p_v_res()));
+ 
+   std::pair<int, int> size =  string_format::calculate_string_size("(asdfghjkjlASDFGHJKL):", screensaver_lyric_font);
+ 
+   font_size = size.second;
+ 
++  ScreenUpdater *screen_updater = S_ScreenUpdater::get_instance();
++  screen_updater->timer.add(TimeElement("audio_lyric_status", boost::bind(&Lyrics::idle_status, this),
++					boost::bind(&Lyrics::check_status, this)));
+   LyricsLoop *ll = new LyricsLoop;
+   ll->start();
+ 
+@@ -84,12 +68,19 @@
+ void Lyrics::check_status()
+ {
+   if (enabled) {
++    if (lf && !lf->is_busy() && lf->get_ready()) {
++	vecLyric = lf->get_lyric();
++	enabled = false;
++    }
++  }
++  
++/*  
+     std::cout << "Lyrics::check_status()" << std::endl;
+     Load() || search_result();
+     if (buff_text.size() && !vecLyric.size())
+       parse_text(buff_text);
+   }
+-  enabled = false;
++  enabled = false;*/
+ }
+ 
+ string Lyrics::mainloop()
+@@ -106,7 +97,6 @@
+   cache_artist = artist;
+   cache_title = title;
+   vecLyric.clear();
+-  buff_text = "";
+   px_count = 0;
+   tm_old = 0;
+   total_time = 0;
+@@ -116,203 +106,10 @@
+   period_fix = 0;
+   enabled = true;
+ 
+-  LyricsFetch *lf = new LyricsFetch;
+-  lf->start();
+-
+-  return true;
+-}
+-
+-bool Lyrics::Load()
+-{
+-  const int BUFFER_SIZE = 2048;
+-  std::ifstream file;
+-
+-  file.open(filename().c_str());
+-  if (file.is_open())
+-    {
+-      char tmpBuff[BUFFER_SIZE];
+-      while(!file.eof()) {
+-	file.getline(tmpBuff,BUFFER_SIZE -1);
+-	buff_text += tmpBuff;
+-	buff_text += "\n";
+-      }
+-      file.close();
+-      std::cout << "finding on cache" << std::endl;
+-      return true;
+-    }
+-  return false;
+-}
+-
+-void Lyrics::Save()
+-{
+-  std::cout << "Lyrics::Save()" << std::endl;
+-  if (buff_text.size())
+-    parse_text(buff_text);
+-  if (!vecLyric.size())
+-    return;
+-
+-  std::ofstream file;
+-  string curLine;
+-  std::vector<std::string>::iterator itVecLyr;
+-
+-  file.open(filename().c_str());
+-  if (file.is_open())
+-  {
+-
+-    for(itVecLyr = vecLyric.begin(); itVecLyr != vecLyric.end(); itVecLyr++) {
+-      curLine = *(itVecLyr);
+-      file << curLine << std::endl;
+-    }
+-    file.close();
+-    std::cout << "save on cache" << std::endl;
+-  }
+-}
+-
+-std::string Lyrics::filename()
+-{
+-   return (lyrics_dir + string_format::lowercase(string_format::convert(cache_artist)) + " - " + string_format::lowercase(string_format::convert(cache_title)));
+-}
+-
+-bool Lyrics::search_result()
+-{
+-  std::cout << "finding on inet" << std::endl;
+-  string url = "http://api.leoslyrics.com/api_search.php?auth=MMS&artist="
+-	+ string_format::lowercase(string_format::convert(cache_artist))
+-	+ "&songtitle="
+-	+ string_format::lowercase(string_format::convert(cache_title));
+-
+-  std::string searchxml, hid = "";
+-  int counter = 0;
+-  //list<pair<string, string> > genrelist;
+-
+-  if (WgetWrapper::download(url, searchxml) > 0)
+-  {
+-    TiXmlDocument searchxmldoc;
+-    int startpos = 0;
+-    if((startpos = searchxml.find("<?xml")) != string::npos)
+-    {
+-      if(searchxmldoc.Parse(searchxml.substr(startpos).c_str(), 0 , TIXML_ENCODING_UTF8))
+-      {
+-	TiXmlElement* root_element = searchxmldoc.RootElement();
+-	TiXmlElement* element;
+-
+-	if (root_element == 0)
+-	  return false;
+-
+-	for (element = root_element->FirstChildElement("searchResults"); element != 0;
+-	     element = element->NextSiblingElement("searchResults")) {
+-	  element= element->FirstChildElement("result");
+-	  if (element != 0)
+-	    hid = element->Attribute("hid");
+-	  else
+-	    break;
+-	}
+-
+-	std::cout << "hid :" << hid << std::endl;
+-
+-/*        TiXmlElement* element;
+-    	element = searchxmldoc.FirstChildElement();
+-    	hid = element->Attribute("hid");
+-  	std::cout << "hid :" << hid << std::endl;*/
+-
+-	if (!hid.empty())
+-	  return get_text(hid);
+-      }
+-    }
+-  }
+-  std::cout << "fail !!! " << std::endl;
+-  return false;
+-}
+-
+-bool Lyrics::get_text(const string& hid)
+-{
+-  std::cout << "Lyrics::get_text(" << hid << ")" << std::endl;
+-  char hid_encoded[100];
+-
+-  ost::urlEncode(hid.c_str(), hid_encoded, sizeof(hid_encoded));
+-  string url = "http://api.leoslyrics.com/api_lyrics.php?auth=MMS&hid=" + string(hid_encoded);
+-
+-
+-std::string searchxml;
+-
+-int ret;
+-
+-const char* text;
+-
+-  //list<pair<string, string> > genrelist;
+-
+-  if (WgetWrapper::download(url, searchxml) > 0)
+-  {
+-    TiXmlDocument searchxmldoc;
+-    int startpos = 0;
+-    if((startpos = searchxml.find("<?xml")) != string::npos)
+-    {
+-      //std::cout << "OPEN XML =" << searchxml << std::endl;
+-      if(searchxmldoc.Parse(searchxml.substr(startpos).c_str(), 0 , TIXML_ENCODING_UTF8))
+-      {
+-	TiXmlNode* root_element = searchxmldoc.RootElement();
+-	TiXmlNode* element;
+-	TiXmlNode* response;
+-
+-	if (root_element == 0)
+-    	  return false;
+-
+-	response = root_element->FirstChildElement("response");
+-	ret = conv::atoi(response->ToElement()->Attribute("code"));
+-
+-	if (ret == 0) {
+-	  for (element = root_element->FirstChildElement("lyric"); element != 0;
+-          element = element->NextSiblingElement("lyric")) {
+-	    element = element->FirstChildElement("text");
+-	    element = element->FirstChild();
+-	    buff_text = string_format::trim(element->Value());
+-            Save();
+-            std::cout << "ending Lyrics::get_text(" << hid << ")" << std::endl;
+-            return true;
+-          }
+-        }
+-      }
+-    }
+-  }
+-  return false;
+-}
+-
+-bool Lyrics::parse_text(const string& text, string nsec)
+-{
+-  int startpos = -1;
+-  int currentpos = 0;
+-  int w, h;
+-  string line, temp, buff;
+-  temp = text;
+-
+-  vector<std::string> vecTmp;
+-  vecTmp.clear();
+-
+-  /*for (int i=0; i < 14; i++)
+-	 vecTmp.push_back(" ");
+-*/
+-  std::string::size_type pos = temp.find(nsec);
+-  if (pos == std::string::npos)
+-	return parse_text(text, "\n");
+-
+-  while (pos != std::string::npos) {
+-    buff = string_format::trim(text.substr(startpos + 1 , pos - startpos - 1 ));
+-    vecTmp.push_back(buff);
+-    temp.replace(pos, 1, "|");
+-    startpos = pos;
+-    pos = temp.find(nsec);
+-  }
+-    buff = string_format::trim(text.substr(startpos + 1 , pos - startpos - 1 ));
+-    vecTmp.push_back(buff);
+-
+-  /*for (int i=0; i < 7; i++)
+-	 vecTmp.push_back(" "); */
+-
+-  vecLyric = vecTmp;
+-  std::cout << "Lyrics::parse_text(text) loaded "<< vecLyric.size() << " lines" << std::endl;
+-  return true;
+-}
+-
++  lf = new LyricsFetch(artist, title);
++
++  return true;
++}
+ 
+ bool Lyrics::is_enabled()
+ {
+@@ -345,7 +142,7 @@
+     int df = tm - tm_old;
+     // resync lyric with track time when rewind or fastforward
+     if (std::abs(df) > 2) {
+-      px_count = current_time * (vecLyric.size() * font_size - display_height) / total_time;
++      px_count = current_time * get_frequency();
+     }
+     tm_old = tm;
+     // end of count
+@@ -356,7 +153,7 @@
+ 
+ void Lyrics::update_px_count()
+ {
+-  if (running && get_line() + ln_displace <=  max_line())
++  if (running && get_line() + ln_displace < max_line())
+     px_count++;
+ }
+ 
+@@ -378,7 +175,7 @@
+ 
+ float Lyrics::get_frequency()
+ {
+-  float pixel = float(vecLyric.size()) * float(font_size) - display_height;
++  float pixel = float(vecLyric.size()) * float(font_size);
+   float freq  = total_time ? pixel / total_time : 0;
+   return freq;
+ }
+@@ -407,15 +204,15 @@
+   */
+ int Lyrics::max_line()
+ {
+-  return vecLyric.size() - display_lines();
++  return vecLyric.size() - (display_lines() * 0.80);
+ }
+ 
+ int Lyrics::get_line()
+ {
+   int val = px_count / font_size + ln_displace;
+ 
+-  if (val > 0 && val < vecLyric.size())
+-    return val;
++  if (val > 0)
++    return (val < max_line() ? val : max_line());
+   else
+     return 0;
+ }
+@@ -423,5 +220,5 @@
+ 
+ int Lyrics::get_anim()
+ {
+-  return (px_count / font_size + ln_displace) >= 0 ? px_count % font_size : 0;
++  return get_line() >= 0 ? px_count % font_size : 0;
+ }
+
+=== modified file 'plugins/feature/audio/lyrics.hpp'
+--- old/plugins/feature/audio/lyrics.hpp	2008-02-05 23:40:52 +0000
++++ new/plugins/feature/audio/lyrics.hpp	2008-07-28 13:30:55 +0000
+@@ -1,18 +1,14 @@
+ #ifndef LYRICS_HPP
+ #define LYRICS_HPP
+ 
++#include "lyrics_fetch.hpp"
++
+ #include "module.hpp"
+ #include "singleton.hpp"
+ 
+ #include <string>
+ #include <vector>
+ 
+-class LyricsFetch : public ost::Thread
+-{
+-private:
+-  virtual void run();
+-};
+-
+ class LyricsLoop : public ost::Thread
+ {
+ private:
+@@ -27,17 +23,9 @@
+ 
+   //void calculate();
+ 
+-  bool search_result();
+-  bool get_text(const std::string& ret);
+-  bool parse_text (const std::string& text, std::string nsec = "\xD");
+-
+   std::string cache_artist;
+   std::string cache_title;
+ 
+-  std::string lyrics_dir;
+-  std::string tmp_location;
+-
+-  std::string buff_text;
+   int px_count;
+   int tm_old;
+   int total_time;
+@@ -47,13 +35,10 @@
+   int font_size;
+   float period_fix;
+ 
+-  void Save();
+-  bool Load();
+-
+-  std::string filename();
+-
+   bool enabled;
+   bool running;
++  
++  LyricsFetch* lf;
+ 
+ public:
+ 
+
+=== added file 'plugins/feature/audio/lyrics_fetch.cpp'
+--- old/plugins/feature/audio/lyrics_fetch.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/audio/lyrics_fetch.cpp	2008-07-28 18:30:50 +0000
+@@ -0,0 +1,200 @@
++#include "lyrics_fetch.hpp"
++#include "lyrics_fetch_helper.hpp"
++
++#include "config.hpp"
++#include "common-feature.hpp"
++//#include "print.hpp"
++
++// for cache
++#include <fstream>
++#include <iostream>
++
++using std::string;
++
++//pthread_mutex_t LyricsFetch::singleton_mutex = PTHREAD_MUTEX_INITIALIZER;
++
++LyricsFetch::LyricsFetch(std::string _artist, std::string _title)
++	: busy(true), str_buffer("")
++{
++  artist = _artist;
++  title = _title;
++
++  conf = S_Config::get_instance();
++  
++  if (!recurse_mkdir(conf->p_var_data_dir(),"lyrics/", &lyrics_dir)) {
++      DebugPrint perror(dgettext("mms-audio", "Could not create directory ") + lyrics_dir,
++			Print::DEBUGGING, DebugPrint::CRITICAL, "LYRICS");
++      //FIXME: shouldn't this be critical???
++  }
++
++  // FIXME: take value from audio module
++  screensaver_lyric_font = graphics::resolution_dependant_font_wrapper(22, conf);
++
++  // start thread
++  start();
++}
++
++void LyricsFetch::run()
++{
++
++  std::cout << "LyricsFetch::run() starting for " << artist << " - " << title << std::endl;
++  std::string str_buffer;
++  bool from_cache = false; 
++
++  std::cout << "LyricsFetch::run() checking cache" << std::endl;
++  str_buffer = LoadCache();
++  if (str_buffer.size() > 0) {
++    from_cache = true;
++    std::cout << "LyricsFetch::run() loaded from cached" << std::endl;
++  } else {
++    std::cout << "LyricsFetch::run() try with lyricwiki..." << std::endl;
++    LFH_lyricwiki wiki = LFH_lyricwiki(artist, title);
++    wiki.fetch();
++    std::cout << "LyricsFetch::run() lyricwiki status " << wiki.status() << std::endl;
++    if (wiki.status()) {
++      str_buffer = wiki.get_text();
++    } else {
++      std::cout << "LyricsFetch::run() try with leolyrics..." << std::endl;
++      LFH_leoslyrics leo = LFH_leoslyrics(artist, title);
++      leo.fetch();
++      if (leo.status())
++        str_buffer = leo.get_text();
++    }    
++  }
++
++
++  parse_text(str_buffer);
++
++  std::cout << "LyricsFetch::run() get " << vecLyric.size() << " lines" << std::endl;
++
++  if (!from_cache && vecLyric.size()) 
++    SaveCache(vecLyric); 
++
++  busy = false;
++  std::cout << "LyricsFetch::run() ended for " << artist << " - " << title << std::endl;
++}
++
++bool LyricsFetch::is_busy() {
++  return busy;
++}
++
++bool LyricsFetch::get_ready() 
++{
++  return (!busy && vecLyric.size() > 0);
++}
++
++std::vector<std::string> LyricsFetch::get_lyric() 
++{
++  return vecLyric;
++}
++
++bool LyricsFetch::parse_text(const string& text, string nsec)
++{
++  string::size_type cur_pos, next_pos, start_pos;
++  
++  vecLyric.clear();
++
++  string buff;
++  cur_pos = 0;
++  cur_pos = 0;
++
++  next_pos = text.find(nsec);
++  if (next_pos == std::string::npos) {
++    if (nsec == "\n")
++      return parse_text(text, "\xD");
++    else 
++      return false;
++  }
++
++  while (cur_pos != std::string::npos) {
++    start_pos = (cur_pos == 0 ? cur_pos : cur_pos + 1);
++    next_pos = text.find(nsec, start_pos);
++    buff = text.substr(start_pos , next_pos - cur_pos - 1);
++    addLine(buff);
++    cur_pos = next_pos;
++  }
++
++  std::cout << "cut ended " << std::endl;
++  if (vecLyric.size() > 1)
++    return true;
++  return false;
++}
++
++void LyricsFetch::addLine(const std::string& line) {
++  string nline = string_format::trim(string_format::ConvertHTMLToAnsi(line.c_str()));
++  std::pair<int, int> size = string_format::calculate_string_size(nline, screensaver_lyric_font);
++
++  int scr_size = (conf->p_h_res() * 0.80);
++  int n_lines = (size.first / scr_size);
++  int n_lines_rest = (size.first % scr_size);
++  if (n_lines_rest > 0)
++	n_lines++;
++
++  if (n_lines <= 1) {
++	vecLyric.push_back(nline);
++  } else {
++	std::cout << "line too long : " << nline << std::endl;
++	std::cout << "lines estimated : " << n_lines << std::endl; 
++	int chars = int(nline.size()/n_lines);
++        string::size_type cur_space, next_space, start_space;
++        string buff;
++	cur_space = 0;
++	for (int i = 0; i < n_lines; i++) {
++	  start_space = (cur_space == 0 ? cur_space : cur_space + 1);
++	  next_space = nline.find(" ",(i + 1) * chars);
++	  buff = nline.substr(start_space, next_space - start_space);
++	  std::cout << "cuting " << start_space << "," << (next_space - start_space) << " => " << buff << std::endl;
++	  vecLyric.push_back(buff);
++          cur_space = next_space;
++	}
++  }
++}
++
++std::string LyricsFetch::LoadCache()
++{
++  const int BUFFER_SIZE = 2048;
++  std::ifstream file;
++  std::string buff_text;
++  std::cout << "LyricsFetch::LoadCache() try opening " << filename() << std::endl;
++  file.open(filename().c_str());
++  if (file.is_open())
++    {
++      char tmpBuff[BUFFER_SIZE];
++      while(!file.eof()) {
++	file.getline(tmpBuff,BUFFER_SIZE -1);
++	buff_text += tmpBuff;
++	buff_text += "\n";
++      }
++      file.close();
++      std::cout << "LyricsFetch::LoadCache() opened" << std::endl;
++      return buff_text;
++    }
++  return "";
++}
++
++void LyricsFetch::SaveCache(std::vector<std::string> vLyr)
++{
++  std::cout << "LyricsFetch::SaveCache()" << std::endl;
++  if (!vLyr.size())
++    return;
++
++  std::ofstream file;
++
++  file.open(filename().c_str());
++  if (file.is_open())
++  {
++    foreach (std::string line, vLyr) {
++      file << line << std::endl;
++    }
++    file.close();
++    std::cout << "LyricsFetch::SaveCache() saved" << std::endl;
++  }
++}
++
++std::string LyricsFetch::filename()
++{
++  return (lyrics_dir + string_format::lowercase(string_format::convert(artist)) + " - " + string_format::lowercase(string_format::convert(title)));
++}
++
++
++
+
+=== added file 'plugins/feature/audio/lyrics_fetch.hpp'
+--- old/plugins/feature/audio/lyrics_fetch.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/audio/lyrics_fetch.hpp	2008-07-28 13:42:31 +0000
+@@ -0,0 +1,45 @@
++#ifndef LYRICSFETCH_HPP
++#define LYRICSFETCH_HPP
++
++#include "config.hpp"
++
++#include "cc++/thread.h"
++
++class LyricsFetch : public ost::Thread
++{
++public: 
++
++  LyricsFetch(std::string _artist, std::string _title);
++
++  std::string filename();
++  std::string LoadCache();
++  void SaveCache(std::vector<std::string> vLyr);
++
++  bool is_busy();
++  bool get_ready();
++
++  std::vector<std::string> get_lyric();
++  
++private:
++
++  bool busy;
++
++  std::string artist;
++  std::string title;
++
++  std::vector<std::string> vecLyric;
++  
++  std::string screensaver_lyric_font;
++  std::string lyrics_dir;
++
++  std::string str_buffer;
++
++  Config *conf;
++
++  bool parse_text(const std::string& text, std::string nsec = "\n");
++  void addLine(const std::string& line);
++
++  virtual void run();
++};
++
++#endif
+
+=== added file 'plugins/feature/audio/lyrics_fetch_helper.hpp'
+--- old/plugins/feature/audio/lyrics_fetch_helper.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/audio/lyrics_fetch_helper.hpp	2008-07-28 16:30:41 +0000
+@@ -0,0 +1,151 @@
++#ifndef LYRIC_FETCH_HELPER_HPP
++#define LYRIC_FETCH_HELPER_HPP
++
++#include "common-feature.hpp"
++
++#include "tinyxml.h"
++#include "tinystr.h"
++
++#include <string>
++
++class LyricFetchHelper 
++{
++  public:
++    std::string artist;
++    std::string title;
++    std::string str_lyric;
++
++    virtual bool fetch() = 0;
++
++    bool status() {
++       std::cout << "LyricFetchHelper::status() " << artist << " - " << title << " result : " << str_lyric.size() << std::endl;
++       std::cout << "LyricFetchHelper::status() " << artist << " - " << title << " text : " << str_lyric << std::endl;
++       return (str_lyric.size() > 0);
++    }
++
++    std::string get_text() {
++       // std::cout << "LyricFetchHelper::get_text() result : " << str_lyric << std::endl;
++       return str_lyric;
++    }
++
++    LyricFetchHelper(std::string _artist, std::string _title)
++    {
++      // FIXME: strip extra title (), feat, ft, etc
++      artist = string_format::lowercase(string_format::convert(_artist));
++      title = string_format::lowercase(string_format::convert(_title));
++      str_lyric.clear();
++    }
++
++    std::string xml_normalize_newline(std::string text)
++    {
++        // take from tinyxml.cpp line 973
++        long length = text.size();
++
++        // If we have a file, assume it is all one big XML file, and read it in.
++	// The document parser may decide the document ends sooner than the entire file, however.
++	TIXML_STRING data;
++	data.reserve( length );
++
++	// Subtle bug here. TinyXml did use fgets. But from the XML spec:
++	// 2.11 End-of-Line Handling
++	// <snip>
++	// <quote>
++	// ...the XML processor MUST behave as if it normalized all line breaks in external 
++	// parsed entities (including the document entity) on input, before parsing, by translating 
++	// both the two-character sequence #xD #xA and any #xD that is not followed by #xA to 
++	// a single #xA character.
++	// </quote>
++	//
++	// It is not clear fgets does that, and certainly isn't clear it works cross platform. 
++	// Generally, you expect fgets to translate from the convention of the OS to the c/unix
++	// convention, and not work generally.
++
++	/*
++	while( fgets( buf, sizeof(buf), file ) )
++	{
++		data += buf;
++	}
++	*/
++
++	char* buf = new char[ length+1 ];
++        strcpy(buf, text.c_str());
++	/* buf[0] = 0;
++
++	if ( fread( buf, length, 1, file ) != 1 ) {
++		delete [] buf;
++		SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
++		return false;
++	} */
++
++	const char* lastPos = buf;
++	const char* p = buf;
++
++	buf[length] = 0;
++	while( *p ) {
++		assert( p < (buf+length) );
++		if ( *p == 0xa ) {
++			// Newline character. No special rules for this. Append all the characters
++			// since the last string, and include the newline.
++			data.append( lastPos, (p-lastPos+1) );	// append, include the newline
++			++p;									// move past the newline
++			lastPos = p;							// and point to the new buffer (may be 0)
++			assert( p <= (buf+length) );
++		}
++		else if ( *p == 0xd ) {
++			// Carriage return. Append what we have so far, then
++			// handle moving forward in the buffer.
++			if ( (p-lastPos) > 0 ) {
++				data.append( lastPos, p-lastPos );	// do not add the CR
++			}
++			data += (char)0xa;						// a proper newline
++
++			if ( *(p+1) == 0xa ) {
++				// Carriage return - new line sequence
++				p += 2;
++				lastPos = p;
++				assert( p <= (buf+length) );
++			}
++			else {
++				// it was followed by something else...that is presumably characters again.
++				++p;
++				lastPos = p;
++				assert( p <= (buf+length) );
++			}
++		}
++		else {
++			++p;
++		}
++	}
++	// Handle any left over characters.
++	if ( p-lastPos ) {
++		data.append( lastPos, p-lastPos );
++	}		
++	delete [] buf;
++	buf = 0;
++
++	return data.c_str();
++    }
++    
++};
++
++class LFH_leoslyrics : public LyricFetchHelper
++{
++  public: 
++    LFH_leoslyrics(std::string _artist, std::string _title)
++	: LyricFetchHelper(_artist, _title)
++    {}
++
++    bool fetch();
++    std::string get_hid();
++};
++
++class LFH_lyricwiki : public LyricFetchHelper
++{
++  public: 
++    LFH_lyricwiki(std::string _artist, std::string _title)
++	: LyricFetchHelper(_artist, _title)
++    {}
++
++    bool fetch();
++};
++#endif
+
+=== added file 'plugins/feature/audio/lyrics_helper_leoslyrics.cpp'
+--- old/plugins/feature/audio/lyrics_helper_leoslyrics.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/audio/lyrics_helper_leoslyrics.cpp	2008-07-26 01:29:43 +0000
+@@ -0,0 +1,110 @@
++#include "lyrics_fetch_helper.hpp"
++
++#include "wget_wrapper.hpp"
++
++#include "tinyxml.h"
++#include "tinystr.h"
++
++#include <cc++/url.h>
++
++using std::string;
++
++std::string LFH_leoslyrics::get_hid() 
++{
++  std::cout << "LFH_leoslyrics::get_hid()" << std::endl;
++
++  string url = "http://api.leoslyrics.com/api_search.php?auth=MMS&artist="
++	+ artist
++	+ "&songtitle="
++	+ title;
++
++  std::string searchxml, hid = "";
++
++  if (WgetWrapper::download(url, searchxml) > 0)
++  {
++    TiXmlDocument searchxmldoc;
++    int startpos = 0;
++    string match;
++    if((startpos = searchxml.find("<?xml")) != string::npos)
++    {
++      if(searchxmldoc.Parse(searchxml.substr(startpos).c_str(), 0 , TIXML_ENCODING_UTF8))
++      {
++	TiXmlElement* root_element = searchxmldoc.RootElement();
++	TiXmlElement* element;
++
++	if (root_element == 0)
++	  return "";
++
++	for (element = root_element->FirstChildElement("searchResults"); element != 0;
++	     element = element->NextSiblingElement("searchResults")) {
++	     element= element->FirstChildElement("result");
++	     match = element->Attribute("exactMatch");
++	  if (element != 0 && match == "true") {
++	    hid = element->Attribute("hid");
++            break;
++          }
++	}
++
++	std::cout << "hid :" << hid << std::endl;
++	if (!hid.empty())
++	  return hid;
++      }
++    }
++  }
++  std::cout << "fail !!! " << std::endl;
++  return "";
++}
++
++bool LFH_leoslyrics::fetch()
++{
++
++  std::cout << "LFH_leoslyrics::fetch()" << std::endl;
++
++  std::string hid = get_hid();
++  if (hid.empty()) 
++    return false;
++
++  std::cout << "LHS_leoslyrics::get_hid(" << hid << ")" << std::endl;
++  char hid_encoded[100];
++
++  ost::urlEncode(hid.c_str(), hid_encoded, sizeof(hid_encoded));
++  string url = "http://api.leoslyrics.com/api_lyrics.php?auth=MMS&hid=" + string(hid_encoded);
++
++
++  std::string searchxml;
++  int ret;
++
++  if (WgetWrapper::download(url, searchxml) > 0)
++  {
++    TiXmlDocument searchxmldoc;
++    int startpos = 0;
++    if((startpos = searchxml.find("<?xml")) != string::npos)
++    {
++      //std::cout << "OPEN XML =" << searchxml << std::endl;
++      if(searchxmldoc.Parse(searchxml.substr(startpos).c_str(), 0 , TIXML_ENCODING_UTF8))
++      {
++	TiXmlNode* root_element = searchxmldoc.RootElement();
++	TiXmlNode* element;
++	TiXmlNode* response;
++
++	if (root_element == 0)
++    	  return false;
++
++	response = root_element->FirstChildElement("response");
++	ret = conv::atoi(response->ToElement()->Attribute("code"));
++
++	if (ret == 0) {
++	  for (element = root_element->FirstChildElement("lyric"); element != 0;
++          element = element->NextSiblingElement("lyric")) {
++	    element = element->FirstChildElement("text");
++	    element = element->FirstChild();
++	    str_lyric = string_format::trim(element->Value());
++            std::cout << "ending Lyrics::get_text(" << hid << ")" << std::endl;
++            return true;
++          }
++        }
++      }
++    }
++  }
++  return false;
++}
+
+=== added file 'plugins/feature/audio/lyrics_helper_lyricwiki.cpp'
+--- old/plugins/feature/audio/lyrics_helper_lyricwiki.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/audio/lyrics_helper_lyricwiki.cpp	2008-07-28 02:09:33 +0000
+@@ -0,0 +1,26 @@
++#include "lyrics_fetch_helper.hpp"
++
++#include "wget_wrapper.hpp"
++
++
++using std::string;
++
++bool LFH_lyricwiki::fetch() 
++{
++  std::cout << "LFH_lyricwiki::fetch()" << std::endl;
++
++  string url = "http://lyricwiki.org/api.php?fmt=text&artist=" + artist + "&song=" + title;
++
++  std::string str_contents;
++
++  if (WgetWrapper::download(url, str_contents) > 0)
++  {
++    std::cout << "LFH_lyricwiki::fetch() fetch ok " << std::endl;
++    if (str_contents == "Not found")
++      return false;
++    str_lyric = str_contents;
++    return true;
++  }
++  std::cout << "LFH_lyricwiki::fetch() fail !!! " << std::endl;
++  return false;
++}
+

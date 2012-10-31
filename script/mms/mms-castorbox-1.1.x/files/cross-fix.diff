@@ -1,0 +1,12 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1769/plugins/feature/dbus/Makefile work/main.d/mms-1.1.0-1769/plugins/feature/dbus/Makefile
+--- old-mms-1.1.0-1769/plugins/feature/dbus/Makefile	2009-06-23 00:12:47.000000000 -0300
++++ new-mms-1.1.0-1769/plugins/feature/dbus/Makefile	2009-07-05 10:53:59.000000000 -0300
+@@ -10,7 +10,7 @@
+ OBJS = dbus.o dbus_plugin.o
+ 
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../output/ -I../tinyxml \
+-	-I../../input/ `pkg-config dbus-cxx-1.0 --cflags --libs` -fPIC -shared -std=c++0x 
++	-I../../input/ `$(PKGCONFIG) dbus-cxx-1.0 --cflags --libs` -fPIC -shared -std=c++0x 
+ 
+ #SUBDIRS += po 
+ all: $(OBJS)

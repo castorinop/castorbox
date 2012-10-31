@@ -1,0 +1,11 @@
+--- old/ext/exif/exif.c	2008-12-31 12:15:36.000000000 +0100
++++ new/ext/exif/exif.c.oden	2009-03-27 12:15:10.000000000 +0100
+@@ -99,7 +99,7 @@ typedef unsigned char uchar;
+ 
+ #define EFREE_IF(ptr)	if (ptr) efree(ptr)
+ 
+-#define MAX_IFD_NESTING_LEVEL 100
++#define MAX_IFD_NESTING_LEVEL 250
+ 
+ /* {{{ arginfo */
+ ZEND_BEGIN_ARG_INFO(arginfo_exif_tagname, 0)

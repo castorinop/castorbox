@@ -1,0 +1,45 @@
+diff -Naur mysql-5.1.58-old/mysql-test/mysql-stress-test.pl mysql-5.1.58-new/mysql-test/mysql-stress-test.pl
+--- mysql-5.1.58-old/mysql-test/mysql-stress-test.pl	2011-07-07 19:20:07.000000000 -0700
++++ mysql-5.1.58-new/mysql-test/mysql-stress-test.pl	2011-07-07 19:20:58.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_DESTDIR@@GAR_bindir@/perl
+ 
+ # Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
+ #
+diff -Naur mysql-5.1.58-old/mysql-test/mysql-test-run.pl mysql-5.1.58-new/mysql-test/mysql-test-run.pl
+--- mysql-5.1.58-old/mysql-test/mysql-test-run.pl	2011-07-07 19:20:07.000000000 -0700
++++ mysql-5.1.58-new/mysql-test/mysql-test-run.pl	2011-07-07 19:20:58.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_DESTDIR@@GAR_bindir@/perl
+ # -*- cperl -*-
+ 
+ # Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+diff -Naur mysql-5.1.58-old/mysql-test/suite/funcs_1/lib/DataGen_local.pl mysql-5.1.58-new/mysql-test/suite/funcs_1/lib/DataGen_local.pl
+--- mysql-5.1.58-old/mysql-test/suite/funcs_1/lib/DataGen_local.pl	2011-07-07 19:20:07.000000000 -0700
++++ mysql-5.1.58-new/mysql-test/suite/funcs_1/lib/DataGen_local.pl	2011-07-07 19:20:58.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_DESTDIR@@GAR_bindir@/perl
+ 
+ 
+ if ( (scalar(@ARGV) != 1 ) || ($ARGV[0] =~ /[^0-9]/i ) )
+diff -Naur mysql-5.1.58-old/mysql-test/suite/funcs_1/lib/DataGen_modify.pl mysql-5.1.58-new/mysql-test/suite/funcs_1/lib/DataGen_modify.pl
+--- mysql-5.1.58-old/mysql-test/suite/funcs_1/lib/DataGen_modify.pl	2011-07-07 19:20:07.000000000 -0700
++++ mysql-5.1.58-new/mysql-test/suite/funcs_1/lib/DataGen_modify.pl	2011-07-07 19:20:58.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_DESTDIR@@GAR_bindir@/perl
+ 
+ 
+ if ( (scalar(@ARGV) != 2 ) || ($ARGV[0] =~ /[^0-9]/i ) )
+diff -Naur mysql-5.1.58-old/mysql-test/suite/funcs_2/lib/gen_charset_utf8.pl mysql-5.1.58-new/mysql-test/suite/funcs_2/lib/gen_charset_utf8.pl
+--- mysql-5.1.58-old/mysql-test/suite/funcs_2/lib/gen_charset_utf8.pl	2011-07-07 19:20:07.000000000 -0700
++++ mysql-5.1.58-new/mysql-test/suite/funcs_2/lib/gen_charset_utf8.pl	2011-07-07 19:20:58.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_DESTDIR@@GAR_bindir@/perl
+ 
+ #################################################################################
+ # Author:  Serge Kozlov								#	

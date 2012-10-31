@@ -1,0 +1,362 @@
+diff -Naur ntp-4.2.4p4-old/include/ntpd.h ntp-4.2.4p4-new/include/ntpd.h
+--- old/ntp-4.2.4p4-old/include/ntpd.h	2006-12-28 04:03:06.000000000 -0800
++++ ntp-4.2.4p4-new/include/ntpd.h	2007-11-13 10:50:16.000000000 -0800
+@@ -118,8 +118,10 @@
+ /* ntp_loopfilter.c */
+ extern	void	init_loopfilter P((void));
+ extern	int 	local_clock P((struct peer *, double));
+-extern	void	adj_host_clock	P((void));
++extern	int	adj_host_clock_is_needed P((void));
++extern	void	adj_host_clock	P((int));
+ extern	void	loop_config P((int, double));
++extern	int	huffpuff_enabled P((void));
+ extern	void	huffpuff	P((void));
+ extern	u_long	sys_clocktime;
+ extern	u_long	sys_tai;
+@@ -219,7 +221,8 @@
+ /* ntp_timer.c */
+ extern	void	init_timer	P((void));
+ extern	void	reinit_timer	P((void));
+-extern	void	timer		P((void));
++extern	int	when_next_event	P((void));
++extern	void	timer		P((int));
+ extern	void	timer_clr_stats P((void));
+ extern  void    timer_interfacetimeout P((u_long));
+ extern  volatile int interface_interval;
+diff -Naur ntp-4.2.4p4-old/include/ntp_stdlib.h ntp-4.2.4p4-new/include/ntp_stdlib.h
+--- old/ntp-4.2.4p4-old/include/ntp_stdlib.h	2006-12-28 04:03:05.000000000 -0800
++++ ntp-4.2.4p4-new/include/ntp_stdlib.h	2007-11-13 10:50:16.000000000 -0800
+@@ -101,6 +101,7 @@
+ extern	void	signal_no_reset P((int, RETSIGTYPE (*func)(int)));
+ 
+ extern	void	getauthkeys 	P((const char *));
++extern	int	auth_agekeys_is_needed P((void));
+ extern	void	auth_agekeys	P((void));
+ extern	void	rereadkeys	P((void));
+ 
+diff -Naur ntp-4.2.4p4-old/libntp/authkeys.c ntp-4.2.4p4-new/libntp/authkeys.c
+--- old/ntp-4.2.4p4-old/libntp/authkeys.c	2004-02-24 21:58:03.000000000 -0800
++++ ntp-4.2.4p4-new/libntp/authkeys.c	2007-11-13 10:50:16.000000000 -0800
+@@ -394,6 +394,24 @@
+ 	}
+ }
+ 
++int auth_agekeys_is_needed() {
++	struct savekey *sk;
++	int i;
++
++	if (authnumkeys > 20)
++		return 1;
++
++	for (i = 0; i < HASHSIZE; i++) {
++		sk = key_hash[i];
++		while (sk != 0) {
++			if (sk->lifetime > 0)
++				return 1;
++			sk = sk->next;
++		}
++	}
++	return 0;
++}
++
+ /*
+  * auth_agekeys - delete keys whose lifetimes have expired
+  */
+diff -Naur ntp-4.2.4p4-old/ntpd/ntpd.c ntp-4.2.4p4-new/ntpd/ntpd.c
+--- old/ntp-4.2.4p4-old/ntpd/ntpd.c	2007-09-10 16:55:16.000000000 -0700
++++ ntp-4.2.4p4-new/ntpd/ntpd.c	2007-11-13 10:50:16.000000000 -0800
+@@ -188,8 +188,6 @@
+ 
+ char const *progname;
+ 
+-int was_alarmed;
+-
+ #ifdef DECL_SYSCALL
+ /*
+  * We put this here, since the argument profile is syscall-specific
+@@ -443,6 +441,7 @@
+ 		msyslog(LOG_ERR, "set_process_priority: No way found to improve our priority");
+ }
+ 
++#define TS_LAST_SIZE 2
+ 
+ /*
+  * Main program.  Initialize us, disconnect us from the tty if necessary,
+@@ -455,6 +454,9 @@
+ 	)
+ {
+ 	l_fp now;
++	l_fp ts_last[TS_LAST_SIZE];
++	unsigned int ts_last_index;
++	int time_elapsed;
+ 	struct recvbuf *rbuf;
+ #ifdef _AIX			/* HMS: ifdef SIGDANGER? */
+ 	struct sigaction sa;
+@@ -997,7 +999,11 @@
+ #else /* normal I/O */
+ 
+ 	BLOCK_IO_AND_ALARM();
+-	was_alarmed = 0;
++
++	for (ts_last_index = 0; ts_last_index < TS_LAST_SIZE; ts_last_index++)
++		L_CLR(&ts_last[ts_last_index]);
++	time_elapsed = 0;
++
+ 	for (;;)
+ 	{
+ # if !defined(HAVE_SIGNALED_IO) 
+@@ -1008,39 +1014,61 @@
+ 		int nfound;
+ # endif
+ 
+-		if (alarm_flag) 	/* alarmed? */
+-		{
+-			was_alarmed = 1;
+-			alarm_flag = 0;
+-		}
+-
+-		if (!was_alarmed && has_full_recv_buffer() == ISC_FALSE)
++		if (has_full_recv_buffer() == ISC_FALSE)
+ 		{
+ 			/*
+ 			 * Nothing to do.  Wait for something.
+ 			 */
+ # ifndef HAVE_SIGNALED_IO
++			extern l_fp timer_base;
++			l_fp ts, ts2, ts3;
++			double d;
++
+ 			rdfdes = activefds;
+-#  if defined(VMS) || defined(SYS_VXWORKS)
+-			/* make select() wake up after one second */
+-			{
++			ts2 = timer_base;
++			get_systime(&ts);
++			ts3 = ts;
++			L_SUB(&ts3, &ts_last[ts_last_index]);
++
++			/* don't call when_next_event() too often */
++			if (ts3.l_ui)
++				ts2.l_ui += when_next_event();
++			else
++				ts2.l_ui += 1;
++
++			L_SUB(&ts2, &ts);
++			LFPTOD(&ts2, d);
++#if 0
++			printf("%f ", d);
++#endif
++			if (d >= 0.0) {
+ 				struct timeval t1;
+ 
+-				t1.tv_sec = 1; t1.tv_usec = 0;
++				/* shoot 1ms over */
++				d += 0.001;
++				t1.tv_sec = floor(d);
++				t1.tv_usec = (d - t1.tv_sec) * 1000000;
+ 				nfound = select(maxactivefd+1, &rdfdes, (fd_set *)0,
+ 						(fd_set *)0, &t1);
+-			}
+-#  else
+-			nfound = select(maxactivefd+1, &rdfdes, (fd_set *)0,
+-					(fd_set *)0, (struct timeval *)0);
+-#  endif /* VMS */
+-			if (nfound > 0)
+-			{
+-				l_fp ts;
+-
+ 				get_systime(&ts);
++			} else
++				nfound = 0;
+ 
++			ts2 = ts;
++			L_SUB(&ts2, &timer_base);
++			time_elapsed += ts2.l_ui;
++			timer_base.l_ui += ts2.l_ui;
++#if 0
++			ts2 = ts;
++			ts2.l_ui = 0;
++			LFPTOD(&ts2, d);
++			printf("%f\n", d);
++#endif
++			if (nfound > 0)
++			{
+ 				(void)input_handler(&ts);
++				ts_last[ts_last_index] = ts;
++				ts_last_index = (ts_last_index + 1) % TS_LAST_SIZE;
+ 			}
+ 			else if (nfound == -1 && errno != EINTR)
+ 				netsyslog(LOG_ERR, "select() error: %m");
+@@ -1052,22 +1080,17 @@
+                         
+ 			wait_for_signal();
+ # endif /* HAVE_SIGNALED_IO */
+-			if (alarm_flag) 	/* alarmed? */
+-			{
+-				was_alarmed = 1;
+-				alarm_flag = 0;
+-			}
+ 		}
+ 
+-		if (was_alarmed)
++		if (time_elapsed)
+ 		{
+ 			UNBLOCK_IO_AND_ALARM();
+ 			/*
+ 			 * Out here, signals are unblocked.  Call timer routine
+ 			 * to process expiry.
+ 			 */
+-			timer();
+-			was_alarmed = 0;
++			timer(time_elapsed);
++			time_elapsed = 0;
+                         BLOCK_IO_AND_ALARM();
+ 		}
+ 
+diff -Naur ntp-4.2.4p4-old/ntpd/ntp_loopfilter.c ntp-4.2.4p4-new/ntpd/ntp_loopfilter.c
+--- old/ntp-4.2.4p4-old/ntpd/ntp_loopfilter.c	2007-02-24 03:02:05.000000000 -0800
++++ ntp-4.2.4p4-new/ntpd/ntp_loopfilter.c	2007-11-13 10:50:16.000000000 -0800
+@@ -755,6 +755,10 @@
+ #endif /* LOCKCLOCK */
+ }
+ 
++int adj_host_clock_is_needed() {
++	return !(!ntp_enable || mode_ntpdate || (pll_control &&
++	    kern_enable && clock_max < 0.5));
++}
+ 
+ /*
+  * adj_host_clock - Called once every second to update the local clock.
+@@ -764,7 +768,7 @@
+  */
+ void
+ adj_host_clock(
+-	void
++	int time_elapsed
+ 	)
+ {
+ 	double	adjustment;
+@@ -779,7 +783,10 @@
+ 	 * maximum error and the local clock driver will pick it up and
+ 	 * pass to the common refclock routines. Very elegant.
+ 	 */
+-	sys_rootdispersion += clock_phi;
++	sys_rootdispersion += clock_phi * time_elapsed;
++#if 0
++	printf("loopfilter: %d\n", time_elapsed);
++#endif
+ 
+ #ifndef LOCKCLOCK
+ 	/*
+@@ -839,6 +846,11 @@
+ }
+ 
+ 
++int huffpuff_enabled()
++{
++	return sys_huffpuff != NULL;
++}
++
+ /*
+  * huff-n'-puff filter
+  */
+diff -Naur ntp-4.2.4p4-old/ntpd/ntp_timer.c ntp-4.2.4p4-new/ntpd/ntp_timer.c
+--- old/ntp-4.2.4p4-old/ntpd/ntp_timer.c	2006-12-28 04:03:34.000000000 -0800
++++ ntp-4.2.4p4-new/ntpd/ntp_timer.c	2007-11-13 10:50:16.000000000 -0800
+@@ -63,6 +63,7 @@
+ #define HOUR	(60*60)
+ 
+ u_long current_time;
++l_fp timer_base;
+ 
+ /*
+  * Stats.  Number of overflows and number of calls to transmit().
+@@ -116,6 +117,8 @@
+ 	itimer.it_interval.tv_nsec = 0;
+ 	timer_settime(ntpd_timerid, 0 /*!TIMER_ABSTIME*/, &itimer, NULL);
+ #  else
++	get_systime(&timer_base);
++	return;
+ 	getitimer(ITIMER_REAL, &itimer);
+ 	if (itimer.it_value.tv_sec < 0 || itimer.it_value.tv_sec > (1<<EVENT_TIMEOUT)) {
+ 		itimer.it_value.tv_sec = (1<<EVENT_TIMEOUT);
+@@ -160,6 +163,8 @@
+ 	timer_timereset = 0;
+ 
+ #if !defined(SYS_WINNT)
++	get_systime(&timer_base);
++	return;
+ 	/*
+ 	 * Set up the alarm interrupt.	The first comes 2**EVENT_TIMEOUT
+ 	 * seconds from now and they continue on every 2**EVENT_TIMEOUT
+@@ -252,11 +257,51 @@
+ }
+ #endif
+ 
++int when_next_event() {
++	register struct peer *peer, *next_peer;
++	u_int n;
++	int next = current_time + HOUR;
++
++	if (adj_host_clock_is_needed())
++		return 1;
++	for (n = 0; n < NTP_HASH_SIZE; n++) {
++		for (peer = peer_hash[n]; peer != 0; peer = next_peer) {
++			next_peer = peer->next;
++#ifdef REFCLOCK
++			if (peer->flags & FLAG_REFCLOCK)
++				return 1;
++#endif /* REFCLOCK */
++			if (peer->action && peer->nextaction < next)
++				next = peer->nextaction;
++			if (peer->nextdate < next)
++				next = peer->nextdate;
++		}
++	}
++
++	if (auth_agekeys_is_needed() && keys_timer < next)
++		next = keys_timer;
++	if (huffpuff_enabled() && huffpuff_timer < next)
++		next = huffpuff_timer;
++#ifdef OPENSSL
++	if (revoke_timer < next)
++		next = revoke_timer;
++#endif /* OPENSSL */
++	if (interface_interval && interface_timer < next)
++		next = interface_timer;
++	if (stats_timer < next)
++		next = stats_timer;
++
++	next -= current_time;
++	if (next <= 0)
++		next = 1;
++	return next;
++}
++
+ /*
+  * timer - dispatch anyone who needs to be
+  */
+ void
+-timer(void)
++timer(int time_elapsed)
+ {
+ 	register struct peer *peer, *next_peer;
+ #ifdef OPENSSL
+@@ -264,14 +309,14 @@
+ #endif /* OPENSSL */
+ 	u_int n;
+ 
+-	current_time += (1<<EVENT_TIMEOUT);
++	current_time += time_elapsed;
+ 
+ 	/*
+ 	 * Adjustment timeout first.
+ 	 */
+ 	if (adjust_timer <= current_time) {
+-		adjust_timer += 1;
+-		adj_host_clock();
++		adj_host_clock(current_time - adjust_timer + 1);
++		adjust_timer = current_time + 1;
+ 		kod_proto();
+ #ifdef REFCLOCK
+ 		for (n = 0; n < NTP_HASH_SIZE; n++) {

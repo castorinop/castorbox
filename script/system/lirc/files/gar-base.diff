@@ -1,0 +1,11 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/lirc-0.9.0-pre1/drivers/lirc_serial/lirc_serial.c work/main.d/lirc-0.9.0-pre1/drivers/lirc_serial/lirc_serial.c
+--- tmp/lirc-0.9.0-pre1/drivers/lirc_serial/lirc_serial.c	2010-10-26 14:31:24.000000000 -0300
++++ new-lirc-0.9.0-pre1/drivers/lirc_serial/lirc_serial.c	2010-11-14 18:43:48.642911641 -0300
+@@ -1288,6 +1288,7 @@
+ 	result = init_port();
+ 	if (result < 0)
+ 		goto exit_serial_exit;
++	driver.dev = &lirc_serial_dev->dev;
+ 	driver.features = hardware[type].features;
+ 	driver.minor = lirc_register_driver(&driver);
+ 	if (driver.minor < 0) {

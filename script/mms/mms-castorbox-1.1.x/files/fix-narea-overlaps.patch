@@ -1,0 +1,45 @@
+=== modified file 'notify_area.cpp'
+--- old/notify_area.cpp	2008-08-14 17:39:41 +0000
++++ new/notify_area.cpp	2008-10-21 15:09:18 +0000
+@@ -181,4 +181,14 @@
+   return active_element;
+ }
+ 
++int  NotifyArea::getRealWidth()
++{
++  Config *conf = S_Config::get_instance();
++  int min = conf->p_h_res();
++  foreach(GObj* elem, status_overlay.elements) {
++    if (min > elem->x) min = elem->x;
++  }
++  int ret = conf->p_h_res() - min;
++  return (ret > width ? ret : width);
++}
+ 
+
+=== modified file 'notify_area.hpp'
+--- old/notify_area.hpp	2008-07-03 18:53:09 +0000
++++ new/notify_area.hpp	2008-10-21 14:28:35 +0000
+@@ -67,6 +67,8 @@
+   void disable();
+   void enable();
+ 
++  int getRealWidth();
++
+   Overlay status_overlay;
+ 
+ };
+
+=== modified file 'plugins/feature/audio/audio.cpp'
+--- old/plugins/feature/audio/audio.cpp	2008-10-21 00:13:05 +0000
++++ new/plugins/feature/audio/audio.cpp	2008-10-21 15:45:25 +0000
+@@ -1178,7 +1178,7 @@
+       }
+ 
+ #ifdef use_notify_area
+-      int max_size = conf->p_h_res()-(53+x_pos)-opts_offset+100-NotifyArea::width;
++      int max_size = conf->p_h_res()-(53+x_pos)-nArea->getRealWidth();
+ #else
+       int max_size = conf->p_h_res()-(53+x_pos)-opts_offset+50;
+ #endif
+

@@ -1,0 +1,31 @@
+diff -Naur vlc-1.1.0-git-old/configure.ac vlc-1.1.0-git-new/configure.ac
+--- vlc-1.1.0-git-old/configure.ac	2009-10-15 18:28:08.000000000 -0700
++++ vlc-1.1.0-git-new/configure.ac	2009-10-15 18:30:01.000000000 -0700
+@@ -2922,8 +2922,8 @@
+       AC_CHECK_HEADERS(libavcodec/avcodec.h ffmpeg/avcodec.h)
+       AC_CHECK_HEADERS(libavutil/avutil.h ffmpeg/avutil.h)
+       VLC_ADD_PLUGIN([avcodec])
+-      VLC_ADD_LIBS([avcodec],[$AVCODEC_LIBS])
+-      VLC_ADD_CFLAGS([avcodec],[$AVCODEC_CFLAGS])
++      VLC_ADD_LIBS([avcodec],[$AVCODEC_LIBS $X_LIBS $X_PRE_LIBS -lX11 -lva-x11])
++      VLC_ADD_CFLAGS([avcodec],[$AVCODEC_CFLAGS $X_CFLAGS])
+       VLC_RESTORE_FLAGS
+       have_avcodec="yes"
+     ],[
+diff -Naur vlc-1.1.0-git-old/modules/codec/avcodec/vaapi.c vlc-1.1.0-git-new/modules/codec/avcodec/vaapi.c
+--- vlc-1.1.0-git-old/modules/codec/avcodec/vaapi.c	2009-10-15 18:28:08.000000000 -0700
++++ vlc-1.1.0-git-new/modules/codec/avcodec/vaapi.c	2009-10-15 18:30:01.000000000 -0700
+@@ -344,8 +344,13 @@
+ {
+     VASurfaceID i_surface_id = (VASurfaceID)(uintptr_t)p_ff->data[3];
+ 
++#if !VA_CHECK_VERSION(0,31,0)
+     if( vaSyncSurface( p_va->p_display, p_va->i_context_id, i_surface_id ) )
+         return VLC_EGENERIC;
++#else
++    if( vaSyncSurface( p_va->p_display, i_surface_id ) )
++        return VLC_EGENERIC;
++#endif
+ 
+     /* XXX vaDeriveImage may be better but it is not supported by
+      * my setup.

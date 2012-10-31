@@ -1,0 +1,15 @@
+--- old/ext/imap/config.m4	2008-07-10 06:17:11.000000000 -0400
++++ new/ext/imap/config.m4.oden	2008-07-10 06:40:14.000000000 -0400
+@@ -174,12 +174,6 @@
+     ],[])
+     CPPFLAGS=$old_CPPFLAGS
+ 
+-    PHP_CHECK_LIBRARY(pam, pam_start, 
+-    [
+-      PHP_ADD_LIBRARY(pam,, IMAP_SHARED_LIBADD)
+-      AC_DEFINE(HAVE_LIBPAM,1,[ ])
+-    ])
+-
+     PHP_CHECK_LIBRARY(crypt, crypt, 
+     [
+       PHP_ADD_LIBRARY(crypt,, IMAP_SHARED_LIBADD)

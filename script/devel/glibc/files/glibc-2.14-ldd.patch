@@ -1,0 +1,12 @@
+diff -Naur glibc-2.14-old/elf/ldd.bash.in glibc-2.14-new/elf/ldd.bash.in
+--- glibc-2.14-old/elf/ldd.bash.in	2011-06-04 12:46:41.000000000 -0700
++++ glibc-2.14-new/elf/ldd.bash.in	2011-06-04 12:47:22.000000000 -0700
+@@ -112,7 +112,7 @@
+ # environments where the executed program might not have permissions
+ # to write to the console/tty.  But only bash 3.x supports the pipefail
+ # option, and we don't bother to handle the case for older bash versions.
+-if set -o pipefail 2> /dev/null; then
++if `set -o pipefail 2> /dev/null ; echo $?`; then
+   try_trace() {
+     eval $add_env '"$@"' | cat
+   }

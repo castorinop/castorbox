@@ -1,0 +1,989 @@
+GAR Architecture
+
+The GAR system is a similar system to the BSD ports collection.  It's
+a mechanism for automating the compilation and installation of
+third-party source code.  It appears in the form of a tree of
+directories containing Makefiles and other ancillary bookkeeping files
+(such as installation manifests and checksum lists).  
+
+GAR is currently used by The LNX-BBC project, as well as the
+<http://www.gnome.org/~jdub/garnome/ GARNOME> distribution of GNOME.
+
+
+Of interest to people wishing to learn the GAR system is
+<http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/ports-using.html
+this overview of the ports collection>.
+
+= User's Perspective =
+
+From the User's perspective, the GAR system may well be a tree of
+carefully maintained source code, ready to compile.  The reality is
+that the system automatically downloads and customizes third-party
+source code archives.  It builds necessary dependencies in the right
+order, and generally takes care of a lot of the work associated with
+compiling and installing software.
+
+== Building packages with the system ==
+
+The GAR system provides seven basic targets for each package:
+
+ * fetch 
+ * checksum 
+ * extract 
+ * patch 
+ * configure 
+ * build 
+ * install 
+
+The user who is building a package will use the system by entering
+your package's directory and running "make install" or "make
+patch" (for example).
+
+In the base GAR directory are a number of files that can mostly be
+ignored.  The really interesting stuff is in the subdirectories.
+There is one subdirectory for each category of package (shells,
+editors, development, games, etc), and inside each category directory
+is a directory for each package in that category.  Thus, the shells/
+dir will have directories named bash/, tcsh/, zsh/, ash/, sash/, and
+so on.
+
+To build and install a bash, for example, you simply cd into
+shells/bash/ and run "make install".  Couldn't be simpler, right?
+
+== Configuring the GAR system ==
+
+If you wish to configure the way the GAR system behaves, this is
+usually done by editing the file
+<http://cvs.lnx-bbc.org/cvs/gar/gar.conf.mk?rev=HEAD gar.conf.mk>,
+which lives in the base GAR directory.  In here you'll see a number of
+basic variables for things like the installation prefix, build prefix
+(for things like header files that are used as part of the build
+process but may not need to be installed), CFLAGS, a local file
+repository, and master backup site for source downloads.
+
+For most cases, only the main_DESTDIR and build_prefix variables will need
+to be changed.  A full description of all the variables in this file
+is in the <garvariables.html GAR Variables> document.
+
+= Maintainer's Perspective =
+
+== Basics ==
+
+This section tends to lag behind the <gartips.html GAR Tips> and
+<garvariables.html GAR Variables> documents, so be sure to read them
+regularly!
+
+From the package maintainer's perspective, the GAR system is a library
+of make targets that can be configured by setting certain special
+variables or overridden file-by-file.  To make a GAR package, you make
+a directory for a package inside the directory representing its
+category.  Inside this directory, you create a Makefile describing
+your package.
+
+=== An Example ===
+
+The best way to understand the process of making a new package is to
+look at an example:
+
+----8<----
+GARNAME = grep
+GARVERSION = 2.4.2
+CATEGORIES = utils
+MASTER_SITES = ftp://ftp.gnu.org/pub/gnu/grep/
+DISTFILES = $(DISTNAME).tar.gz 
+
+DESCRIPTION = grep
+define BLURB
+ The GNU family of grep utilities may be the "fastest grep in the west".
+ GNU grep is based on a fast lazy-state deterministic matcher (about
+ twice as fast as stock Unix egrep) hybridized with a Boyer-Moore-Gosper
+ search for a fixed string that eliminates impossible text from being
+ considered by the full regexp matcher without necessarily having to
+ look at every character. The result is typically many times faster
+ than Unix grep or egrep. (Regular expressions containing backreferencing
+ will run more slowly, however.)
+endef
+
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+include ../../gar.mk
+----8<----
+
+The first few lines set some basic bookkeeping info.  The GARNAME and
+GARVERSION refer to the package name and version string as the GAR
+system will manipulate them.  They are also used to create the
+convenience variable DISTNAME, which defaults to
+$(GARNAME)-$(GARVERSION) (since most GNU or automake-using packages
+name their tarballs in that fashion).
+
+The fetch target will, by default, try to grab
+$(MASTER_SITES)$(DISTFILES) for each of the space-separated entries in
+either variable.  
+
+Next are some basic description variables.  The DESCRIPTION variable
+should be a short, one-line description of the package, while the
+BLURB is a longer multi-paragraph description.  This BLURB is taken
+straight from the debian package for grep.
+
+The actual build of the system depends on the CONFIGURE_SCRIPTS,
+BUILD_SCRIPTS, and INSTALL_SCRIPTS variables.  These point to a
+space-separated list of files that are essential to the configure,
+build, and install steps (respectively).
+
+The GAR system is pretty smart, and will know what to do with most
+types of scripts.  It knows to just run CONFIGURE_SCRIPTs named
+"configure", and to run "make" or "make install" in the
+directory where a Makefile lives.  It also knows that Imakefiles
+use xmkmf, and so forth.  For most packages, no special magic needs
+to happen here.
+
+We usually, however, need to specify the CONFIGURE_ARGS to include the
+directory settings that we define in
+<http://cvs.lnx-bbc.org/cvs/gar/gar.conf.mk?rev=HEAD gar.conf.mk>.
+This currently requires setting it to include $(DIRPATHS).  This may,
+in future, not be necessary for packages that use autoconf-generated
+configure scripts.  Some older configure scripts don't accept all of
+the standard directories, so the package maintainer must set them by
+doing something like:
+
+----8<----
+NODIRPATHS += --bindir --sbindir --libexecdir --datadir --infodir 
+NODIRPATHS += --sysconfdir --sharedstatedir --localstatedir --libdir 
+NODIRPATHS += --includedir --mandir
+----8<----
+
+But this is uncommon.
+
+Finally, we include the
+<http://cvs.lnx-bbc.org/cvs/gar/gar.mk?rev=HEAD gar.mk> library.  This
+takes all of the variable setting we've done and puts it to good use.
+This allows your little teeny Makefile to provide the seven basic
+targets described in the User Perspective section.  It must come last
+(or, at least, after all of the variables have been set) in order to
+function properly.
+
+=== Dependencies ===
+
+Often a package will require the presence of another in order to
+compiler or run.  Most binary packaging systems require the user to
+satisfy these dependencies manually.  GAR, on the other hand, attempts
+to satisfy them automatically.
+
+To specify that one gar package depends on another, there are three
+basic variables (soon to become more):  DEPENDS, LIBDEPS, and
+BUILDDDEPS.  The format of these variables is a space-separated list
+of category/package tuples.  Thus, the parted package depends on
+e2fsprogs-libs, and its Makefile contains the following line:
+
+----8<----
+LIBDEPS = lib/e2fsprogs-libs
+----8<----
+
+This tells GAR to go into ../../lib/e2fsprogs-libs and install that
+package before proceeding with parted's configure step.
+
+=== Checksum file ===
+
+The package isn't complete until there is a checksum file.  Finish up
+your Makefile, and then run "make fetch".  If all the files look
+correct to you, run "make makesum" and check the resulting
+"checksums" file into CVS alongside the Makefile.  This checksums file
+will be consulted during the "make checksum" phase.
+
+== When defaults aren't enough ==
+
+Quite often, the default behavior isn't what one would hope.  You can
+pass parameters to your configure script with CONFIGURE_ARGS, but what
+if the GAR system doesn't know about your configuration script type?
+What if the configuration steps aren't enough?  What if they're
+flat-out wrong?  What if the same is true for the fetch, extract, or
+install rules?
+
+Fortunately, the system provides for this in a number of ways.  What
+follows are a few of the mechanisms that a package maintainer can use
+to override or enhance the default behaviors.
+
+=== Overriding Variables ===
+
+Sometimes, a package just doesn't treat your configuration information
+the way you'd like.  Either it munges the parameters you pass too much
+(or too little), or it just doesn't prompt you for certain variables.
+Fortunately, we have the technology to set variables so that they will
+keep our munged values. 
+
+For a detailed description of this, read the "Override Make Vars"
+<gartips.html GAR Tip>.
+
+Here is an example package that uses this.  w3m's Makefile uses
+non-standard directory variables internally, and does not allow you to
+specify them via the configure script.  Thus, we do the following:
+
+----8<----
+BIN_DIR = $(bindir)
+LIB_DIR = $(libdir)
+HELP_DIR = $(docdir)
+
+BUILD_ARGS = BIN_DIR="$(BIN_DIR)" LIB_DIR="$(LIB_DIR)" HELP_DIR="$(HELP_DIR)"
+INSTALL_ARGS = BIN_DIR="$(BIN_DIR)" LIB_DIR="$(LIB_DIR)" HELP_DIR="$(HELP_DIR)"
+----8<----
+
+Note that the BUILD_ARGS line could also be written as:
+
+----8<----
+BUILD_OVERRIDE_DIRS = BIN_DIR LIB_DIR HELP_DIR
+----8<----
+
+Although the INSTALL_ARGS could not, due to the fact that
+INSTALL_OVERRIDE_DIRS prepends $(DESTDIR), and the w3m package
+/already/ honors $(DESTDIR)!
+
+For more information on INSTALL_OVERRIDE_DIRS, see the "Install
+Override Dirs" <gartips.html GAR Tip>.  For more information on
+$(DESTDIR), see the "Implicit Destdir Considered Harmful"
+<gartips.html GAR Tip>.
+
+=== pre- and post- rules ===
+
+For each of the seven basic targets, there exist slots for per-package
+pre- and post- rules.  That means that the package maintainer can
+specify work to be done immediately before or after a rule.
+
+As an example, let's consider the util-linux package.  It doesn't use
+a standard autoconf-style configure script, but it can be configured
+by setting a variable at the top of the MCONFIG file.  Thus, the end
+of our utils/util-linux/Makefile looks like the following:
+
+----8<----
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+include ../../gar.mk
+
+pre-configure:
+        echo "DESTDIR=$(DESTDIR)" > $(WORKSRC)/MCONFIG.NEW
+        cat $(WORKSRC)/MCONFIG >> $(WORKSRC)/MCONFIG.NEW
+        mv $(WORKSRC)/MCONFIG.NEW $(WORKSRC)/MCONFIG
+        $(MAKECOOKIE)
+----8<----
+
+Thus, before the configure script is run, the package-defined
+pre-configure rule adds code setting DESTDIR to the $(prefix) variable
+in MCONFIG.  For more information on $(DESTDIR), see the
+"Implicit Destdir Considered Harmful <gartips.html GAR Tip>.
+
+Note that we put the pre-configure after the include, as per
+the "Rules After Include" <gartips.html GAR Tip>.  This ensures that
+our rule won't be trumped by any rules in the included files.
+
+As another example, the Bourne Again SHell (bash) can be linked to
+with the name "sh" in order to cause it to behave (somewhat) like a
+POSIX Bourne Shell.  Thus, the end of our shells/bash/Makefile looks
+like:
+
+----8<----
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+include ../../gar.mk
+
+post-install:
+        (cd $(DESTDIR)$(bindir); ln -sf bash sh)
+        $(MAKECOOKIE)
+----8<----
+
+Thus creating the symbolic link to sh.
+
+For more information on $(DESTDIR), see the "Implicit Destdir
+Considered Harmful <gartips.html GAR Tip>.
+
+=== Overriding default behavior ===
+
+Sometimes it's not enough to merely enhance the behavior of a rule.
+Sometimes the default handler for a given script is dead wrong, or the
+script has no default handler.  In this case, it is easy enough to
+provide your own handler.
+ 
+For example, the Perl package has a file called configure.gnu that
+needs to be run.  The GAR system doesn't know that it's just like a
+standard configure script, so we have to tell it like so:
+
+----8<----
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure.gnu
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+NODIRPATHS += --exec_prefix --bindir --sbindir --libexecdir \
+  --datadir --infodir --sysconfdir --sharedstatedir         \
+  --localstatedir --libdir --includedir --mandir
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+include ../../gar.mk
+
+configure-$(WORKSRC)/configure.gnu:
+        cd $(WORKSRC) && $(CONFIGURE_ENV) ./configure.gnu $(CONFIGURE_ARGS)
+        $(MAKECOOKIE)
+----8<----
+
+The custom configure target should perform the same steps that a user
+would at the command line, with appropriate changing of directories
+and setting of environment variables.  In this case, we do exactly
+what happens in the standard library routine for configure scripts,
+but we use configure.gnu instead of simply configure.  Notice that we
+put CONFIGURE_ENV in even though we don't use it, in order to be
+consistent with the standard library routines.
+
+At the end, we run $(MAKECOOKIE) to signify that this step is
+complete.  This lets GAR know where to pick up where it left off if
+the build only gets partway through.
+
+=== Putting the two together ====
+
+The following example is from the net-tools package, which has a
+bizarre interactive configuration system.  The maintainer automated
+this by setting some variables at the top of the package's Makefile
+and then piping the output of the "yes" program into the configurator
+in order to accept all defaults.
+
+----8<----
+CONFIGURE_SCRIPTS = $(WORKSRC)/Makefile
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+include ../../gar.mk
+
+pre-configure:
+        echo "BASEDIR=$(prefix)" > $(WORKSRC)/Makefile.NEW
+        cat $(WORKSRC)/Makefile >> $(WORKSRC)/Makefile.NEW
+        mv $(WORKSRC)/Makefile.NEW $(WORKSRC)/Makefile
+        $(MAKECOOKIE)
+
+configure-$(WORKSRC)/Makefile:
+        # if you want non-default answers to the "make config"
+        # questions, you'll have to go through and answer the
+        # questions the way you want, and then preserve the
+        # resulting file (instead of the action below, which
+        # simply uses the defaults every time)
+        yes '' | make -C $(WORKSRC) config
+        $(MAKECOOKIE)
+----8<----
+
+=== Patching ===
+
+Sometimes the system simply won't build from pristine upstream
+sources, no matter how much fiddling you do in pre- and post- rules.
+For instances like these, we provide patches with our packages.  
+
+The easiest way to make a patch is to have gar do it for you.  Run
+"make extract" and then go make your changes in work/. Once you're
+done making changes, run "make makepatch".  This will create a file
+named "gar-base.diff" in the files/ directory, representing all the
+differences between the upstream sources and your modified tree.
+
+Add this file to the PATCHFILES variable in your Makefile (e.g.,
+"PATCHFILES = gar-base.diff") and verify the effectiveness and integrity
+of your patch.  Then run "make makesum" to update the checksums file.
+Don't forget to commit all three files (Makefile, checksums, and
+files/gar-base.diff) into CVS.
+
+In addition, the system will download any third-party patches listed
+in PATCHFILES from the list of MASTER_SITES if it can't find them on
+the local system.  It is legitimate to have more than one patch
+file; some of our packages have several.
+
+
+Here's the util-linux package again as an example.  We made the file
+<http://cvs.lnx-bbc.org/cvs/gar/utils/util-linux/files/no-chown.patch?rev=1.1
+utils/util-linux/files/no-chown.patch> as a patch to the original
+sources.  Then in our Makefile we put:
+
+----8<----
+PATCHFILES = no-chown.patch
+----8<----
+
+=== Providing nonexistent behavior ===
+
+Suppose you want to perform a configure step, but there is no actual
+program or script associated with the step of configuration.  You
+could conceivably want to run a series of shell commands to create a
+configuration file.  Since there is no actual script to run, you would
+specify "custom" as the CONFIGURE_SCRIPTS.
+
+For example, look at the way the tracesroute package performs its
+build step.  There was no makefile, so the maintainer had to provide a
+method for the compilation commands to be run semi-manually.  Thus,
+the BUILD_SCRIPTS is set to "custom", and a build-custom target is
+created.
+
+----8<----
+WORKSRC = $(WORKDIR)
+
+BUILD_SCRIPTS = custom
+
+include ../../gar.mk
+
+build-custom:
+        $(CC) $(CFLAGS) -o $(WORKSRC)/tracesroute $(WORKSRC)/traceroute.c -lresolv -lm
+        $(MAKECOOKIE)
+----8<----
+
+It is worth noting that WORKSRC is set to WORKDIR because the .c file
+is extracted via extraordinary means.
+
+It is the opinion of the GAR authors that any package supplying a
+-custom rule should properly provide a generalized rule for inclusion in
+the <http://cvs.lnx-bbc.org/cvs/gar/gar.lib.mk?rev=HEAD gar.lib.mk>
+file.  It may or may not be useful; however, for there to be a
+generalized default rule that turns .c files into executables.
+
+=== Manifest-based installs ===
+
+One of the most common occasions where a package maintainer would like
+to use a -custom rule is when installing software that has no built-in
+installation mechanism.  Moving files from location to location is
+common enough that GAR provides a general mechanism for this.
+
+A package maintainer can specify the locations, permissions, and modes
+of a file (or collection of files) in a file called manifest.  This
+file contains a list of installation tuples (one per line) of the
+following format:
+
+----8<----
+source:destination[:mode[:owner[:group]]]
+----8<----
+
+An installation tuple may use shell variables taken from the GAR
+environment, but must enclose them in curly braces instead of
+parentheses.  Thus, a sample manifest file may contain the following:
+
+----8<----
+${WORKSRC}/nwall:${DESTDIR}${bindir}/nwall:2755:root:tty
+${WORKSRC}/src/foo:${DESTDIR}${sharedstatedir}/foo
+${WORKSRC}/yoink:${DESTDIR}${sysconfdir}/yoink:0600
+----8<----
+
+Note that all options after the destination location for the file are
+optional, but one must provide all preceeding options in order to
+define a given optional field.  Thus to specify the owner of a file,
+one must also specify the mode.
+
+For more information on $(DESTDIR), see the "Implicit Destdir
+Considered Harmful" <gartips.html GAR Tip>.
+
+= Building Your Own Package =
+
+This section will lead you through an example of package creation,
+using the GNU hello program.  Since this program is increidbly
+well-behaved, it won't require many of the features listed in the
+previous chapter.
+
+== The Template ==
+
+In the base gar directory is a file called pkg-template.mk.  This
+contains a quick form to fill out in order to get started.  Make a
+directory for your package and copy pkg-template.mk to Makefile in
+your package's directory.
+
+----8<----
+$ mkdir utils/hello
+$ cp pkg-template.mk utils/hello/Makefile
+$ cd utils/hello
+----8<----
+
+Begin by taking responsibility for your package, editing the Makefile
+and filling out the MAINTAINER variable with your e-mail address.
+
+----8<----
+MAINTAINER = J. Random Hacker <haesslich@zork.net>
+----8<----
+
+Note: 
+	The example e-mail address is a spam trap, and will list any
+	mails sent to it with the vipul's razor spam registry.  One of
+	the BBC developers, Seth Schoen, notes that his last name is
+	German for "beautiful", and so set up a spam trap using the
+	German word for "ugly".
+
+For aesthetic purposes, get rid of the pre-install rule at the bottom
+of the file, and set the CATEGORIES.
+
+----8<----
+CATEGORIES = utils
+----8<----
+
+== Fetch ==
+
+Our first step is to make sure the source archives can be fetched
+successfully.  The key elements here are the MASTER_SITES and
+DISTFILES.  The first step is to hunt around and find the upstream
+source archive.
+
+GNU hello is, like all GNU projects, released officially on the
+<ftp://ftp.gnu.org/gnu/> site.  A quick search finds the
+<ftp://ftp.gnu.org/gnu/hello/> directory, and the most recent version up
+at the <ftp://ftp.gnu.org/gnu/hello/hello-2.1.1.tar.gz> URL.
+
+Looking at this URL we must dissect it into two parts, the filename
+and the directory URL part.  The directory URL (including the trailing
+slash) goes into MASTER_SITES, and the filename goes into DISTFILES.
+
+----8<----
+MASTER_SITES = ftp://ftp.gnu.org/gnu/hello/
+DISTFILES = $(GARNAME)-$(GARVERSION).tar.gz
+----8<----
+
+Now that DISTFILES looks like it fits the pattern of the filename, so
+it's now up to us to fill in those two portions.
+
+----8<----
+GARNAME = hello
+GARVERSION = 2.1.1
+----8<----
+
+To test this, we now run "make fetch".
+
+----8<----
+$ make fetch
+[===== NOW BUILDING:	hello-2.1.1	=====]
+install -d download
+ ==> Grabbing download/hello-2.1.1.tar.gz
+ 	==> Trying file//files/hello-2.1.1.tar.gz
+make[1]: *** [file//files/hello-2.1.1.tar.gz] Error 1
+ 	==> Trying
+file///var/www/garchive/hello-2.1.1/hello-2.1.1.tar.gz
+make[1]: *** [file///var/www/garchive/hello-2.1.1/hello-2.1.1.tar.gz]
+Error 1
+ 	==> Trying ftp//ftp.gnu.org/gnu/hello/hello-2.1.1.tar.gz
+--21:58:16--  ftp://ftp.gnu.org/gnu/hello/hello-2.1.1.tar.gz
+           => `download/hello-2.1.1.tar.gz'
+Resolving ftp.gnu.org... done.
+Connecting to ftp.gnu.org[199.232.41.7]:21... connected.
+Logging in as anonymous ... Logged in!
+==> SYST ... done.    ==> PWD ... done.
+==> TYPE I ... done.  ==> CWD /gnu/hello ... done.
+==> PASV ... done.    ==> RETR hello-2.1.1.tar.gz ... done.
+Length: 389,363 (unauthoritative)
+
+100%[====================================>] 389,363       34.99K/s ETA
+00:00
+
+21:58:29 (34.99 KB/s) - `download/hello-2.1.1.tar.gz' saved [389363]
+
+	[fetch] complete for hello.
+----8<----
+
+Don't worry about those Error 1 lines.  They're saying that GAR didn't
+find the file to be fetched in any already-downloaded locations.  The
+system will try local dirs first, then on to the upstream site, and
+finally to our haphazardly-maintained archive of packages we've
+grabbed.
+
+We now check the tarball that's in the download/ dir to make sure it's
+what we wanted, and move on to the next step.
+
+== Checksum ==
+
+Once we're certain that we have our file locations worked out, we can
+make a set of md5 signatures.  To do so, just run "make makesum".
+
+----8<----
+$ make makesum
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+Checksums made for download/hello-2.1.1.tar.gz 
+----8<----
+
+Now you'll notice a file called "checksums" containing md5 signatures
+for all the DISTFILES.
+
+----8<----
+$ ls
+Makefile  checksums  download/
+$ cat checksums 
+70c9ccf9fac07f762c24f2df2290784d  download/hello-2.1.1.tar.gz
+----8<----
+
+Now when we run "make checksum", we see that the checksums match and
+the file validates.
+
+----8<----
+$ make checksum
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+install -d cookies
+ ==> Running checksum on hello-2.1.1.tar.gz
+70c9ccf9fac07f762c24f2df2290784d  download/hello-2.1.1.tar.gz
+file hello-2.1.1.tar.gz passes checksum test!
+	[checksum] complete for hello.
+----8<----
+
+== Extract ==
+
+Since hello-2.1.1.tar.gz is a gzipped tarball, we can just let GAR
+figure out how to handle extraction.  We run "make extract", and let
+the system unpack.
+
+----8<----
+$ make extract
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+	[checksum] complete for hello.
+install -d work
+ ==> Extracting download/hello-2.1.1.tar.gz
+	[extract] complete for hello.
+----8<----
+
+Now our tarball has been unpacked into the work/ subdirectory.
+
+----8<----
+$ ls
+Makefile  checksums  cookies/  download/  work/
+$ ls work
+hello-2.1.1/
+$ ls work/hello-2.1.1/
+ABOUT-NLS   INSTALL        TODO        configure*  intl/
+src/        AUTHORS        Makefile.am aclocal.m4  configure.ac
+m4/         tests/         BUGS        Makefile.in config.guess*
+contrib/    man/           COPYING     NEWS        config.h.in
+depcomp*    missing*       ChangeLog   README      config.rpath*
+doc/        mkinstalldirs* ChangeLog.O THANKS      config.sub*
+install-sh* po/
+----8<----
+
+== Patch ==
+
+Patching is a last-resort technique, as far as GAR packaging is
+concerned.  It's finnicky, causes problems when upstream upgrades
+occur, and generally is kept around as a last resort.  Of all the
+situations where a developer feels the need to patch, perhaps one in
+ten is a legitimate reason to patch.  The <gartips.html Gar Tips>
+file contains a list of techniques for avoiding patching, but here are
+a few in the context of how to avoid patching:
+
+Override Make Vars:
+	Perhaps you're patching a Makefile or Makefile.in to set some
+	variable.  Look up the Override Make Vars <gartips.html Gar
+	Tip> for a better way to set that variable that won't involve
+	a patch.
+
+Concatenation:
+	Most programming or scripting languages are procedural, and
+	events that come later in a file will adjust the state set up
+	by commands that came earlier.  If you're looking to adjust
+	some state, consider using "echo command >>
+	$(WORKSRC)/some-source-file" in a pre- or post-configure rule
+	to add a command that comes LAST in the source file or script
+	that does what you want.  Most often this has the effect of
+	overriding the existing behavior, and it is resistant to
+	change in upstream source files.
+
+That said, if you're still interested in patches, look at the "make
+makepatch" command, and check out the PATCHFILES variable.
+
+== Configure ==
+
+The key to configuration is the CONFIGURE_SCRIPTS variable.  As this
+is a GNU package, it uses GNU Autoconf to configure the source tree
+for compilation.  This is the most common format that we find source
+code packages, and it is nearly a Unix-wide standard now.
+
+----8<----
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+CONFIGURE_ARGS = $(DIRPATHS)
+----8<----
+
+These defaults (which came with the pkg-template.mk) should work just
+fine.  $(DIRPATHS) contains a set of configure arguments that set the
+directories where we want the package's files to ultimately live.  We
+run them, and get the following:
+
+----8<----
+$ make configure
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+	[checksum] complete for hello.
+	[extract] complete for hello.
+	[patch] complete for hello.
+ ==> Running configure in work/hello-2.1.1
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for gawk... gawk
+checking whether make sets ${MAKE}... yes
+checking for gcc... gcc
+----8<----
+
+...lots of checks follow, leading ultimately to...
+
+----8<----
+config.status: creating src/Makefile
+config.status: creating tests/Makefile
+config.status: creating config.h
+config.status: executing depfiles commands
+config.status: executing default-1 commands
+config.status: creating po/POTFILES
+config.status: creating po/Makefile
+config.status: executing default commands
+	[configure] complete for hello.
+----8<----
+
+== Build ==
+
+Since GNU hello uses Autoconf and Automake, we get a standard Makefile
+for building and installing.  Again, the default is good enough for
+us.
+
+----8<----
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+----8<----
+
+So we run "make build" and get a lot of compilation output:
+
+----8<----
+$ make build
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+	[checksum] complete for hello.
+	[extract] complete for hello.
+	[patch] complete for hello.
+	[configure] complete for hello.
+ ==> Running make in work/hello-2.1.1
+make[1]: Entering directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1'
+make  all-recursive
+make[2]: Entering directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1'
+Making all in contrib
+----8<----
+
+culminating in the magic message
+
+----8<----
+make[1]: Leaving directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1'
+	[build] complete for hello.
+----8<----
+
+== Install ==
+
+Since the GNU hello Makefile also handles installation just the way we
+like, using $(DESTDIR) as an installation superprefix for the standard
+dirs, we can also accept the default:
+
+----8<----
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+----8<----
+
+Thus, running "make install" gives us more voluminous output.
+
+----8<----
+$ make install
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+	[checksum] complete for hello.
+	[extract] complete for hello.
+	[patch] complete for hello.
+	[configure] complete for hello.
+	[build] complete for hello.
+ ==> Running make install in work/hello-2.1.1
+make[1]: Entering directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1'
+Making install in contrib
+make[2]: Entering directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1/contrib'
+make[3]: Entering directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1/contrib'
+----8<----
+
+...ending with the magical message...
+
+
+----8<----
+make[3]: Leaving directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1'
+make[2]: Leaving directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1'
+make[1]: Leaving directory
+`/home/nick/bbc/gar/utils/hello/work/hello-2.1.1'
+	[install] complete for hello.
+----8<----
+
+Now is the time to check that everything was installed properly in
+your $(DESTDIR).  The true test of this is to see if your "make
+tarball" works right.
+
+----8<----
+$ make tarball
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+	[checksum] complete for hello.
+	[extract] complete for hello.
+	[patch] complete for hello.
+	[configure] complete for hello.
+	[build] complete for hello.
+rm -rf cookies/install*
+make DESTDIR=/home/nick/bbc/gar/utils/hello/tmp
+BUILD_PREFIX=/../../../../../../..//../../../home/nick/built/ install
+make[1]: Entering directory `/home/nick/bbc/gar/utils/hello'
+[===== NOW BUILDING:	hello-2.1.1	=====]
+	[fetch] complete for hello.
+	[checksum] complete for hello.
+	[extract] complete for hello.
+	[patch] complete for hello.
+	[configure] complete for hello.
+	[build] complete for hello.
+----8<----
+
+As you can see, the tarball rule does some feints before actually
+building a tarball for your package.  First it does a normal build,
+but then it plays a few games with cookie dirs, and that's when things
+can get wonky.  Eventually it does its install into a tmp dir, and
+then builds the tarball:
+
+----8<----
+	[install] complete for hello.
+make[1]: Leaving directory `/home/nick/bbc/gar/utils/hello'
+find tmp -depth -type d | while read i; do rmdir $i > /dev/null 2>&1
+|| true; done
+tar czvf
+/home/nick/bbc/gar/utils/hello/work/hello-2.1.1-install.tar.gz -C tmp
+../
+./bin/
+./bin/hello
+./share/
+----8<----
+
+This goes on for every file it has installed, ending up with
+
+----8<----
+./share/locale/uk/LC_MESSAGES/
+./share/locale/uk/LC_MESSAGES/hello.mo
+mkdir -p cookies/. && date >> cookies/tarball
+----8<----
+
+Now we should see a tarball in work/ with the word "install" in the
+filename.
+
+----8<----
+$ ls
+Makefile  checksums  cookies/  download/  tmp/  work/
+$ ls work/
+hello-2.1.1/  hello-2.1.1-install.tar.gz
+----8<----
+
+Now we can check our tarball to see if it has what we want
+
+
+----8<----
+$ tar tvzf work/hello-2.1.1-install.tar.gz | head -30
+drwxr-xr-x nick/nick         0 2002-09-15 23:23:14 ./
+drwxr-xr-x nick/nick         0 2002-09-15 23:23:13 ./bin/
+-rwxr-xr-x nick/nick     11095 2002-09-15 23:23:13 ./bin/hello
+drwxr-xr-x nick/nick         0 2002-09-15 23:23:13 ./share/
+drwxrwxr-x nick/nick         0 2002-09-15 23:23:12 ./share/locale/
+drwxrwxr-x nick/nick         0 2002-09-15 23:23:10 ./share/locale/ca/
+----8<----
+
+(lots more output follows)
+
+Or we can inspect the tmp/ dir to see what was installed by the package.
+
+----8<----
+$ tree tmp/
+tmp/
+|-- bin
+|   `-- hello
+`-- share
+    `-- locale
+        |-- ca
+        |   `-- LC_MESSAGES
+        |       `-- hello.mo
+        |-- da
+        |   `-- LC_MESSAGES
+        |       `-- hello.mo
+----8<----
+
+(lots more follows)
+
+----8<----
+        |-- tr
+        |   `-- LC_MESSAGES
+        |       `-- hello.mo
+        `-- uk
+            `-- LC_MESSAGES
+                `-- hello.mo
+
+65 directories, 32 files
+----8<----
+
+== Our final Makefile ==
+
+Our final utils/hello/Makefile looks like so
+
+
+----8<----
+GARNAME = hello
+GARVERSION = 2.1.1
+CATEGORIES = utils
+MASTER_SITES = ftp://ftp.gnu.org/gnu/hello/
+DISTFILES = $(GARNAME)-$(GARVERSION).tar.gz
+MAINTAINER = J. Random Hacker <haesslich@zork.net>
+
+DESCRIPTION = The classic greeting, and a good example 
+define BLURB
+  The GNU hello program produces a familiar, friendly greeting.
+  It allows nonprogrammers to use a classic computer science tool
+  which would otherwise be unavailable to them.
+
+  In all seriousness, this is an example of how to do a GAR
+  package.  It is the GAR version of the GNU Project's `hello
+  world' program (which is itself an example for the GNU 
+  Project).
+endef
+
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+
+CONFIGURE_ARGS = $(DIRPATHS)
+
+include ../../gar.mk
+----8<----
+
+We then add the Makefile and checksums files to CVS, check our work
+in, and we are done packaging GNU hello!
+
+= Hacker's Perspective =
+
+== gar.conf.mk ==
+
+The <http://cvs.lnx-bbc.org/cvs/gar/gar.conf.mk?rev=HEAD gar.conf.mk>
+file is where all of the user configuration goes on.  Setting dir
+paths, compiler flags, download locations, etc all happens here.  
+
+== gar.mk ==
+
+The <http://cvs.lnx-bbc.org/cvs/gar/gar.mk?rev=HEAD gar.mk> file is
+where the seven basic rules are defined, and the dependency structure
+is created.  All of the commands that a user might type in as make
+targets are here.
+
+== gar.lib.mk ==
+
+
+This file is where all of the rules describing the nitty-gritty of how
+to handle particular scripts happens.  This is where the actual code
+to compile a list of URLs and attempt to download from each occurs.
+This is where the rules for deciding how to build with a Makefile,
+install with a manifest, or configure with a configure script are
+defined.  Most of the real hacking on GAR goes on in
+<http://cvs.lnx-bbc.org/cvs/gar/gar.lib.mk?rev=HEAD gar.lib.mk>!

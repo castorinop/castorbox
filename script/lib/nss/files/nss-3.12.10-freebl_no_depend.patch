@@ -1,0 +1,26 @@
+diff -Naur nss-3.12.10-old/mozilla/security/nss/lib/Makefile nss-3.12.10-new/mozilla/security/nss/lib/Makefile
+--- nss-3.12.10-old/mozilla/security/nss/lib/Makefile	2010-02-16 11:37:04.000000000 -0800
++++ nss-3.12.10-new/mozilla/security/nss/lib/Makefile	2011-05-10 18:03:47.000000000 -0700
+@@ -74,6 +74,22 @@
+ endif
+ endif
+ 
++ifeq ($(OS_TARGET),Linux)
++# If FREEBL_NO_DEPEND has not yet been defined,
++# we'll default to FREEBL_NO_DEPEND=1.
++# This can be overridden by defining FREEBL_NO_DEPEND=0
++ifndef FREEBL_NO_DEPEND
++FREEBL_NO_DEPEND := 1
++export FREEBL_NO_DEPEND
++else
++ifeq ($(FREEBL_NO_DEPEND), 0)
++then
++FREEBL_NO_DEPEND := 
++unexport FREEBL_NO_DEPEND
++endif
++endif
++endif
++
+ #######################################################################
+ # (5) Execute "global" rules. (OPTIONAL)                              #
+ #######################################################################

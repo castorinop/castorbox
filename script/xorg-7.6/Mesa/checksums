@@ -1,0 +1,6 @@
+caf5f553a4a3f98207bd3b30b3c7eb2e  download/MesaLib-7.11-rc2.tar.bz2
+b3595800deffdfa4e9b669fcea0079d1  download/Mesa-7.11-rc2-llvm_so.patch
+091e05904e9292c9a5155ef6093c1d06  download/Mesa-7.11-rc2-pkg_config.patch
+45e667e3175aa71565f9f4e16e9eb054  download/Mesa-7.11-rc2.patch.gar
+233df6237e5d284b00d3a610fd3b0f8e  download/Mesa-7.11-rc2-version.patch
+dfb49bbc701d9a3e04bcbaf8311e5c18  download/Mesa-7.11-rc2-cross.patch

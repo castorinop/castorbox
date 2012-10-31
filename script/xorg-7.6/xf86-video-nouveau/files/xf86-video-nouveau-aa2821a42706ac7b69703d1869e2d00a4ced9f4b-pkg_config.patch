@@ -1,0 +1,13 @@
+diff -Naur xf86-video-nouveau-aa2821a42706ac7b69703d1869e2d00a4ced9f4b-old/configure.ac xf86-video-nouveau-aa2821a42706ac7b69703d1869e2d00a4ced9f4b-new/configure.ac
+--- xf86-video-nouveau-aa2821a42706ac7b69703d1869e2d00a4ced9f4b-old/configure.ac	2010-12-21 10:30:41.000000000 -0800
++++ xf86-video-nouveau-aa2821a42706ac7b69703d1869e2d00a4ced9f4b-new/configure.ac	2010-12-21 10:31:17.000000000 -0800
+@@ -76,7 +76,8 @@
+ 		  HAVE_XEXTPROTO_71="yes"; AC_DEFINE(HAVE_XEXTPROTO_71, 1, [xextproto 7.1 available]),
+ 		  HAVE_XEXTPROTO_71="no")
+ AM_CONDITIONAL(HAVE_XEXTPROTO_71, [ test "$HAVE_XEXTPROTO_71" = "yes" ])
+-sdkdir=$(pkg-config --variable=sdkdir xorg-server)
++m4_pattern_allow([^PKG_CONFIG_SYSROOT_DIR$])
++sdkdir="$PKG_CONFIG_SYSROOT_DIR$($PKG_CONFIG --variable=sdkdir xorg-server)"
+ 
+ # Checks for libraries.
+ PKG_CHECK_MODULES([PCIACCESS], [pciaccess >= 0.10])

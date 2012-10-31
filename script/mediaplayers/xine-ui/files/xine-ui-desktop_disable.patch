@@ -1,0 +1,9 @@
+diff -Naur xine-ui-3056-old/misc/Makefile.am xine-ui-3056-new/misc/Makefile.am
+--- xine-ui-3056-old/misc/Makefile.am	2010-08-20 12:51:30.000000000 -0700
++++ xine-ui-3056-new/misc/Makefile.am	2010-08-20 12:51:31.000000000 -0700
+@@ -1,4 +1,4 @@
+-SUBDIRS = desktops visuals
++SUBDIRS = visuals
+ 
+ # splash-foo/manifest contains names of extra source files, distributed only.
+ 

@@ -1,0 +1,614 @@
+[===== NOW BUILDING:	gst-plugins-good-0.10.6	=====]
+	[fetch] complete for gst-plugins-good.
+	[checksum] complete for gst-plugins-good.
+	[extract] complete for gst-plugins-good.
+	[patch] complete for gst-plugins-good.
+ ==> Running configure in work/main.d/gst-plugins-good-0.10.6
+checking for a BSD-compatible install... //home/pablo/gar-castorbox/images/build/usr/bin/install -c
+checking whether build environment is sane... yes
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking for i586-castorbox-linux-gnu-strip... i586-castorbox-linux-gnu-strip
+checking nano version... 0 (release)
+checking whether to enable maintainer-specific portions of Makefiles... no
+checking build system type... x86_64-mandriva-linux-gnu
+checking host system type... i586-castorbox-linux-gnu
+checking for style of include used by make... GNU
+checking for i586-castorbox-linux-gnu-gcc... i586-castorbox-linux-gnu-gcc
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+checking whether we are cross compiling... yes
+checking for suffix of executables... 
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether i586-castorbox-linux-gnu-gcc accepts -g... yes
+checking for i586-castorbox-linux-gnu-gcc option to accept ISO C89... none needed
+checking dependency style of i586-castorbox-linux-gnu-gcc... gcc3
+checking for a sed that does not truncate output... //home/pablo/gar-castorbox/images/build/usr/bin/sed
+checking for grep that handles long lines and -e... //home/pablo/gar-castorbox/images/build/usr/bin/grep
+checking for egrep... //home/pablo/gar-castorbox/images/build/usr/bin/grep -E
+checking for ld used by i586-castorbox-linux-gnu-gcc... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking for i586-castorbox-linux-gnu-ld option to reload object files... -r
+checking for BSD-compatible nm... i586-castorbox-linux-gnu-nm
+checking whether ln -s works... yes
+checking how to recognise dependent libraries... pass_all
+checking how to run the C preprocessor... i586-castorbox-linux-gnu-cpp
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking dlfcn.h usability... yes
+checking dlfcn.h presence... yes
+checking for dlfcn.h... yes
+checking whether we are using the GNU C++ compiler... yes
+checking whether i586-castorbox-linux-gnu-g++ accepts -g... yes
+checking dependency style of i586-castorbox-linux-gnu-g++... gcc3
+checking how to run the C++ preprocessor... i586-castorbox-linux-gnu-g++ -E
+checking for i586-castorbox-linux-gnu-g77... no
+checking for i586-castorbox-linux-gnu-xlf... no
+checking for i586-castorbox-linux-gnu-f77... no
+checking for i586-castorbox-linux-gnu-frt... no
+checking for i586-castorbox-linux-gnu-pgf77... no
+checking for i586-castorbox-linux-gnu-cf77... no
+checking for i586-castorbox-linux-gnu-fort77... no
+checking for i586-castorbox-linux-gnu-fl32... no
+checking for i586-castorbox-linux-gnu-af77... no
+checking for i586-castorbox-linux-gnu-xlf90... no
+checking for i586-castorbox-linux-gnu-f90... no
+checking for i586-castorbox-linux-gnu-pgf90... no
+checking for i586-castorbox-linux-gnu-pghpf... no
+checking for i586-castorbox-linux-gnu-epcf90... no
+checking for i586-castorbox-linux-gnu-gfortran... no
+checking for i586-castorbox-linux-gnu-g95... no
+checking for i586-castorbox-linux-gnu-xlf95... no
+checking for i586-castorbox-linux-gnu-f95... no
+checking for i586-castorbox-linux-gnu-fort... no
+checking for i586-castorbox-linux-gnu-ifort... no
+checking for i586-castorbox-linux-gnu-ifc... no
+checking for i586-castorbox-linux-gnu-efc... no
+checking for i586-castorbox-linux-gnu-pgf95... no
+checking for i586-castorbox-linux-gnu-lf95... no
+checking for i586-castorbox-linux-gnu-ftn... no
+checking for g77... no
+checking for xlf... no
+checking for f77... no
+checking for frt... no
+checking for pgf77... no
+checking for cf77... no
+checking for fort77... no
+checking for fl32... no
+checking for af77... no
+checking for xlf90... no
+checking for f90... no
+checking for pgf90... no
+checking for pghpf... no
+checking for epcf90... no
+checking for gfortran... no
+checking for g95... no
+checking for xlf95... no
+checking for f95... no
+checking for fort... no
+checking for ifort... no
+checking for ifc... no
+checking for efc... no
+checking for pgf95... no
+checking for lf95... no
+checking for ftn... no
+checking whether we are using the GNU Fortran 77 compiler... no
+checking whether  accepts -g... no
+checking the maximum length of command line arguments... 32768
+checking command to parse i586-castorbox-linux-gnu-nm output from i586-castorbox-linux-gnu-gcc object... ok
+checking for objdir... .libs
+checking for i586-castorbox-linux-gnu-ar... i586-castorbox-linux-gnu-ar
+checking for i586-castorbox-linux-gnu-ranlib... i586-castorbox-linux-gnu-ranlib
+checking for i586-castorbox-linux-gnu-strip... (cached) i586-castorbox-linux-gnu-strip
+checking if i586-castorbox-linux-gnu-gcc supports -fno-rtti -fno-exceptions... no
+checking for i586-castorbox-linux-gnu-gcc option to produce PIC... -fPIC
+checking if i586-castorbox-linux-gnu-gcc PIC flag -fPIC works... yes
+checking if i586-castorbox-linux-gnu-gcc static flag -static works... yes
+checking if i586-castorbox-linux-gnu-gcc supports -c -o file.o... yes
+checking whether the i586-castorbox-linux-gnu-gcc linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+configure: creating libtool
+appending configuration tag "CXX" to libtool
+checking for ld used by i586-castorbox-linux-gnu-g++... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking for i586-castorbox-linux-gnu-g++ option to produce PIC... -fPIC
+checking if i586-castorbox-linux-gnu-g++ PIC flag -fPIC works... yes
+checking if i586-castorbox-linux-gnu-g++ static flag -static works... yes
+checking if i586-castorbox-linux-gnu-g++ supports -c -o file.o... yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+appending configuration tag "F77" to libtool
+checking for msgfmt... //home/pablo/gar-castorbox/images/build/usr/bin/msgfmt
+checking for gmsgfmt... //home/pablo/gar-castorbox/images/build/usr/bin/msgfmt
+checking for xgettext... //home/pablo/gar-castorbox/images/build/usr/bin/xgettext
+checking for msgmerge... //home/pablo/gar-castorbox/images/build/usr/bin/msgmerge
+checking for ld used by GCC... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking for shared library run path origin... done
+checking whether NLS is requested... yes
+checking for GNU gettext in libc... yes
+checking for i586-castorbox-linux-gnu-pkg-config... no
+checking for pkg-config... //home/pablo/gar-castorbox/images/build/usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for VALGRIND... no
+configure: Using GStreamer Good Plug-ins source release as package name
+configure: Using Unknown package origin as package origin
+checking sys/socket.h usability... yes
+checking sys/socket.h presence... yes
+checking for sys/socket.h... yes
+checking winsock2.h usability... no
+checking winsock2.h presence... no
+checking for winsock2.h... no
+
+configure: *** checking feature: building of plug-ins with external deps ***
+configure: building external plug-ins
+
+configure: *** checking feature: enable building of experimental plug-ins ***
+configure: not building experimental plug-ins
+checking whether byte ordering is bigendian... no
+checking whether byte ordering is bigendian... (cached) no
+checking for i586-castorbox-linux-gnu-gcc... (cached) i586-castorbox-linux-gnu-gcc
+checking whether we are using the GNU C compiler... (cached) yes
+checking whether i586-castorbox-linux-gnu-gcc accepts -g... (cached) yes
+checking for i586-castorbox-linux-gnu-gcc option to accept ISO C89... (cached) none needed
+checking dependency style of i586-castorbox-linux-gnu-gcc... (cached) gcc3
+checking whether we are using the GNU C++ compiler... (cached) yes
+checking whether i586-castorbox-linux-gnu-g++ accepts -g... (cached) yes
+checking dependency style of i586-castorbox-linux-gnu-g++... (cached) gcc3
+checking for i586-castorbox-linux-gnu-g++... yes
+checking how to run the C++ preprocessor... i586-castorbox-linux-gnu-g++ -E
+checking for i586-castorbox-linux-gnu-objcc... no
+checking for i586-castorbox-linux-gnu-objc... no
+checking for i586-castorbox-linux-gnu-gcc... i586-castorbox-linux-gnu-gcc
+checking dependency style of i586-castorbox-linux-gnu-gcc... gcc3
+checking if Objective C compiler works... no
+checking for valgrind... no
+Using config source  for schema installation
+Using $(sysconfdir)/gconf/schemas as install directory for schema files
+configure: Looking for Python version >= 2.1
+checking for python... no
+checking for python2.2... no
+checking for python2.1... no
+checking for python2.0... no
+checking for python2... no
+checking for python1.6... no
+checking for python1.5... no
+checking whether to build plugin documentation... no (gtk-doc disabled or not available)
+checking for cos in -lm... yes
+checking for ANSI C header files... (cached) yes
+checking for stdint types... stdint.h (shortcircuit)
+make use of stdint.h in _stdint.h (assuming C99 compatible system)
+checking netinet/in.h usability... yes
+checking netinet/in.h presence... yes
+checking for netinet/in.h... yes
+checking for winsock2.h... (cached) no
+checking for FIONREAD in sys/ioctl.h... yes
+checking for lrint... yes
+checking for lrintf... yes
+checking for stdlib.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for getpagesize... yes
+checking for working mmap... no
+checking for GLIB... yes
+checking for LIBOIL... yes
+checking for GST... yes
+configure: using GStreamer tools in //usr/bin
+configure: using GStreamer plug-ins in //usr/lib/gstreamer-0.10
+checking for GST_BASE... yes
+checking for GST_GDP... yes
+checking for GST_CONTROLLER... yes
+checking for GST_CHECK... no
+configure: Package gstreamer-check-0.10 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `gstreamer-check-0.10.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'gstreamer-check-0.10' found
+configure: no gstreamer-check-0.10 >= 0.10.13 (GStreamer Check unittest Library) found
+checking for GST_PLUGINS_BASE... yes
+configure: using GStreamer Base Plug-ins in //usr/lib/gstreamer-0.10
+configure: Using GStreamer Core Plugins in //usr/lib/gstreamer-0.10
+configure: Using GStreamer Base Plugins in //usr/lib/gstreamer-0.10
+disabled
+checking for GTK2... checking for GTK2... 
+configure: *** checking feature: GConf schemas ***
+checking for gconftool-2... no
+configure: Using //usr/lib/gstreamer-0.10 as the plugin install location
+checking to see if compiler understands -Wall... yes
+configure: set ERROR_CFLAGS to -Wall
+
+configure: Checking libraries for plugins in sys/
+
+
+configure: *** checking feature: DirectDraw plug-in ***
+configure: *** for plug-ins: directdrawsink ***
+checking for DirectDraw LDFLAGS... no
+configure: *** These plugins will not be built: directdrawsink
+
+configure: *** checking feature: DirectSound plug-in ***
+configure: *** for plug-ins: directsoundsink ***
+checking for DirectSound LDFLAGS... no
+configure: *** These plugins will not be built: directsoundsink
+
+configure: *** checking feature: OSS audio ***
+configure: *** for plug-ins: ossaudio ***
+checking sys/soundcard.h usability... yes
+checking sys/soundcard.h presence... yes
+checking for sys/soundcard.h... yes
+configure: *** These plugins will be built: ossaudio
+
+configure: *** checking feature: Sun Audio ***
+configure: *** for plug-ins: sunaudio ***
+checking sys/audioio.h usability... no
+checking sys/audioio.h presence... no
+checking for sys/audioio.h... no
+configure: *** These plugins will not be built: sunaudio
+
+configure: *** checking feature: OSX audio ***
+configure: *** for plug-ins: osxaudio ***
+checking CoreAudio/CoreAudio.h usability... no
+checking CoreAudio/CoreAudio.h presence... no
+checking for CoreAudio/CoreAudio.h... no
+configure: *** These plugins will not be built: osxaudio
+
+configure: *** checking feature: OSX video ***
+configure: *** for plug-ins: osxvideosink ***
+checking OpenGL/gl.h usability... no
+checking OpenGL/gl.h presence... no
+checking for OpenGL/gl.h... no
+configure: *** These plugins will not be built: osxvideosink
+
+configure: *** checking feature: Video 4 Linux 2 ***
+configure: *** for plug-ins: v4l2src ***
+configure: *** These plugins will not be built: v4l2src
+checking for X... libraries , headers 
+
+configure: *** checking feature: X libraries and plugins ***
+configure: *** for plug-ins: ximagesrc ***
+checking for gethostbyname... yes
+checking for connect... yes
+checking for remove... yes
+checking for shmat... yes
+checking for IceConnectionNumber in -lICE... yes
+checking X11/Xlib.h usability... yes
+checking X11/Xlib.h presence... yes
+checking for X11/Xlib.h... yes
+checking for XFIXES... yes
+checking for XDAMAGE... yes
+configure: *** These plugins will be built: ximagesrc
+
+configure: *** checking feature: X Shared Memory extension ***
+checking for XShmAttach in -lXext... yes
+
+configure: *** checking feature: X11 XVideo extensions ***
+checking for XvQueryExtension in -lXv_pic... no
+checking for XvQueryExtension in -lXv... yes
+
+configure: Checking libraries for plugins in ext/
+
+
+configure: *** checking feature: aalib ASCII Art library ***
+configure: *** for plug-ins: aasink ***
+checking for aalib-config... no
+checking for AALIB - version >= 0.11.0... no
+*** The aalib-config script installed by AALIB could not be found
+*** If AALIB was installed in PREFIX, make sure PREFIX/bin is in
+*** your path, or set the AALIB_CONFIG environment variable to the
+*** full path to aalib-config.
+configure: *** These plugins will not be built: aasink
+
+configure: *** checking feature: XML library ***
+configure: *** for plug-ins: annodex ***
+checking for ANNODEX... yes
+configure: *** These plugins will be built: annodex
+
+configure: *** checking feature: Cairo graphics rendering ***
+configure: *** for plug-ins: cairo ***
+checking for CAIRO... no
+configure: Package cairo was not found in the pkg-config search path.
+Perhaps you should add the directory containing `cairo.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'cairo' found
+configure: *** These plugins will not be built: cairo
+
+configure: *** checking feature: cdio library ***
+configure: *** for plug-ins: cdio ***
+checking for CDIO... yes
+configure: *** These plugins will be built: cdio
+
+configure: *** checking feature: ESounD sound daemon ***
+configure: *** for plug-ins: esdsink ***
+checking for ESD... no
+configure: Package esound was not found in the pkg-config search path.
+Perhaps you should add the directory containing `esound.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'esound' found
+checking for esd-config... no
+checking for ESD - version >= 0.2.12... no
+*** The esd-config script installed by ESD could not be found
+*** If ESD was installed in PREFIX, make sure PREFIX/bin is in
+*** your path, or set the ESD_CONFIG environment variable to the
+*** full path to esd-config.
+configure: *** These plugins will not be built: esdsink
+
+configure: *** checking feature: FLAC lossless audio ***
+configure: *** for plug-ins: flac ***
+checking for FLAC__stream_encoder_new in -lFLAC... yes
+checking FLAC/all.h usability... yes
+checking FLAC/all.h presence... yes
+checking for FLAC/all.h... yes
+checking whether FLAC__STREAM_ENCODER_TELL_STATUS_ERROR is declared... no
+configure: *** These plugins will not be built: flac
+
+configure: *** checking feature: GConf libraries ***
+configure: *** for plug-ins: gconfelements ***
+checking for GCONF... no
+configure: Package gconf-2.0 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `gconf-2.0.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'gconf-2.0' found
+configure: *** These plugins will not be built: gconfelements
+
+configure: *** checking feature: GDK pixbuf ***
+configure: *** for plug-ins: gdkpixbuf ***
+configure: *** These plugins will not be built: gdkpixbuf
+
+configure: *** checking feature: HAL libraries ***
+configure: *** for plug-ins: halelements ***
+checking for HAL... yes
+configure: *** These plugins will be built: halelements
+
+configure: *** checking feature: jpeg library ***
+configure: *** for plug-ins: jpeg ***
+checking for jpeg_set_defaults in -ljpeg-mmx... no
+checking for jpeg_set_defaults in -ljpeg... yes
+configure: *** These plugins will be built: jpeg
+
+configure: *** checking feature: ladspa ***
+configure: *** for plug-ins: ladspa ***
+configure: *** These plugins will not be built: ladspa
+
+configure: *** checking feature: libcaca coloured ASCII art ***
+configure: *** for plug-ins: cacasink ***
+checking for LIBCACA... no
+configure: Package caca was not found in the pkg-config search path.
+Perhaps you should add the directory containing `caca.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'caca' found
+checking for caca-config... no
+configure: *** These plugins will not be built: cacasink
+
+configure: *** checking feature: libdv DV demuxer/decoder ***
+configure: *** for plug-ins: dv ***
+checking for LIBDV... no
+configure: Package libdv was not found in the pkg-config search path.
+Perhaps you should add the directory containing `libdv.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'libdv' found
+configure: *** These plugins will not be built: dv
+
+configure: *** checking feature: Portable Network Graphics library ***
+configure: *** for plug-ins: png ***
+checking for LIBPNG... yes
+configure: *** These plugins will be built: png
+
+configure: *** checking feature: raw1394 and avc1394 library ***
+configure: *** for plug-ins: 1394 ***
+checking for RAW1394... no
+configure: Package libraw1394 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `libraw1394.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'libraw1394' found
+checking for LIBIEC61883... no
+configure: Package libiec61883 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `libiec61883.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'libiec61883' found
+checking for RAW1394... no
+configure: Package libraw1394 was not found in the pkg-config search path.
+Perhaps you should add the directory containing `libraw1394.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'libraw1394' found
+checking for avc1394_send_command in -lavc1394... no
+checking for rom1394_free_directory in -lrom1394... no
+configure: *** These plugins will not be built: 1394
+
+configure: *** checking feature: Shoutcast/Icecast client library ***
+configure: *** for plug-ins: shout2 ***
+configure: *** These plugins will not be built: shout2
+
+configure: *** checking feature: speex speech codec ***
+configure: *** for plug-ins: speex ***
+checking for SPEEX... no
+configure: Package speex was not found in the pkg-config search path.
+Perhaps you should add the directory containing `speex.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'speex' found
+checking for speex_bits_init in -lspeex... no
+configure: *** These plugins will not be built: speex
+
+configure: *** checking feature: taglib tagging library ***
+configure: *** for plug-ins: taglib ***
+checking for TAGLIB... yes
+configure: *** These plugins will be built: taglib
+
+configure: *** checking feature: wavpack plug-in ***
+configure: *** for plug-ins: wavpack ***
+checking for WAVPACK... checking for WAVPACK... no
+configure: *** These plugins will not be built: wavpack
+
+configure: *** checking feature: zlib support for id3demux/qtdemux ***
+checking for uncompress in -lz... yes
+checking zlib.h usability... yes
+checking zlib.h presence... yes
+checking for zlib.h... yes
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating gst/Makefile
+config.status: creating gst/alpha/Makefile
+config.status: creating gst/apetag/Makefile
+config.status: creating gst/audiofx/Makefile
+config.status: creating gst/auparse/Makefile
+config.status: creating gst/autodetect/Makefile
+config.status: creating gst/avi/Makefile
+config.status: creating gst/cutter/Makefile
+config.status: creating gst/debug/Makefile
+config.status: creating gst/effectv/Makefile
+config.status: creating gst/id3demux/Makefile
+config.status: creating gst/icydemux/Makefile
+config.status: creating gst/goom/Makefile
+config.status: creating gst/law/Makefile
+config.status: creating gst/level/Makefile
+config.status: creating gst/matroska/Makefile
+config.status: creating gst/monoscope/Makefile
+config.status: creating gst/multipart/Makefile
+config.status: creating gst/qtdemux/Makefile
+config.status: creating gst/rtp/Makefile
+config.status: creating gst/rtsp/Makefile
+config.status: creating gst/smpte/Makefile
+config.status: creating gst/udp/Makefile
+config.status: creating gst/videobox/Makefile
+config.status: creating gst/videocrop/Makefile
+config.status: creating gst/videofilter/Makefile
+config.status: creating gst/videomixer/Makefile
+config.status: creating gst/wavenc/Makefile
+config.status: creating gst/wavparse/Makefile
+config.status: creating gst/flx/Makefile
+config.status: creating ext/jpeg/Makefile
+config.status: creating ext/Makefile
+config.status: creating ext/aalib/Makefile
+config.status: creating ext/annodex/Makefile
+config.status: creating ext/cairo/Makefile
+config.status: creating ext/cdio/Makefile
+config.status: creating ext/dv/Makefile
+config.status: creating ext/esd/Makefile
+config.status: creating ext/flac/Makefile
+config.status: creating ext/gconf/Makefile
+config.status: creating ext/gdk_pixbuf/Makefile
+config.status: creating ext/hal/Makefile
+config.status: creating ext/ladspa/Makefile
+config.status: creating ext/libcaca/Makefile
+config.status: creating ext/libpng/Makefile
+config.status: creating ext/raw1394/Makefile
+config.status: creating ext/shout2/Makefile
+config.status: creating ext/speex/Makefile
+config.status: creating ext/taglib/Makefile
+config.status: creating ext/wavpack/Makefile
+config.status: creating sys/Makefile
+config.status: creating sys/directdraw/Makefile
+config.status: creating sys/directsound/Makefile
+config.status: creating sys/oss/Makefile
+config.status: creating sys/sunaudio/Makefile
+config.status: creating sys/osxaudio/Makefile
+config.status: creating sys/osxvideo/Makefile
+config.status: creating sys/v4l2/Makefile
+config.status: creating sys/waveform/Makefile
+config.status: creating sys/ximage/Makefile
+config.status: creating po/Makefile.in
+config.status: creating tests/Makefile
+config.status: creating tests/check/Makefile
+config.status: creating tests/examples/Makefile
+config.status: creating tests/examples/level/Makefile
+config.status: creating tests/files/Makefile
+config.status: creating tests/icles/Makefile
+config.status: creating gconf/Makefile
+config.status: creating gconf/gstreamer.schemas
+config.status: creating common/Makefile
+config.status: creating common/m4/Makefile
+config.status: creating m4/Makefile
+config.status: creating docs/Makefile
+config.status: creating docs/plugins/Makefile
+config.status: creating docs/version.entities
+config.status: creating win32/common/config.h
+config.status: creating pkgconfig/Makefile
+config.status: creating pkgconfig/gstreamer-plugins-good-uninstalled.pc
+config.status: creating gst-plugins-good.spec
+config.status: creating config.h
+config.status: config.h is unchanged
+config.status: executing depfiles commands
+config.status: executing default-1 commands
+config.status: creating po/POTFILES
+config.status: creating po/Makefile
+config.status: executing _stdint.h commands
+config.status: creating _stdint.h : _GST_PLUGINS_GOOD__STDINT_H
+config.status: _stdint.h is unchanged
+configure: *** Plug-ins without external dependencies that will be built:
+	alpha
+	apetag
+	audiofx
+	auparse
+	autodetect
+	avi
+	cutter
+	debug
+	effectv
+	flx
+	goom
+	icydemux
+	id3demux
+	law
+	level
+	matroska
+	multipart
+	qtdemux
+	rtp
+	rtsp
+	smpte
+	udp
+	videobox
+	videocrop
+	videofilter
+	videomixer
+	wavenc
+	wavparse
+
+configure: *** Plug-ins without external dependencies that will NOT be built:
+	monoscope
+
+configure: *** Plug-ins with dependencies that will be built:
+	annodex
+	cdio
+	halelements
+	jpeg
+	ossaudio
+	png
+	taglib
+	ximagesrc
+
+configure: *** Plug-ins with dependencies that will NOT be built:
+	1394
+	aasink
+	cacasink
+	cairo
+	directdrawsink
+	directsoundsink
+	dv
+	esdsink
+	flac
+	gconfelements
+	gdkpixbuf
+	ladspa
+	osxaudio
+	osxvideosink
+	shout2
+	speex
+	sunaudio
+	v4l2src
+	wavpack
+
+	[configure] complete for gst-plugins-good.

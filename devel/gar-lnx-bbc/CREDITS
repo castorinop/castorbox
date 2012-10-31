@@ -1,0 +1,192 @@
+Credits for LNX-BBC 2.1
+
+                          AND WITH THE COOPERATION OF
+                                 MANY SCHOLARS
+
+   -- from the title page of Henry George Liddell and Robert Scott, et al.,
+      _A Greek-English Lexicon_, 9th edition (Oxford: Clarendon Press, 1996)
+
+
+The bootable business card project is an international collaboration.  We
+owe thanks to many people, and these include
+
+
+DEVELOPMENT WORK
+----------------
+
+D. Joe "yes, I logged in" Anderson
+Juraj Bednar
+Dave "hmmm, I think I'll break the build" Barry
+Curtis "more is queued for immediate rebuild" Doty
+Paul "this is research, dammit" Gray
+Ian "what the...?" Harding
+Duncan MacKinnon
+Nick "makes make make sense" Moffitt
+Sean "keen with the winchesters" Neakums
+Niall O Broin
+"Yosemite" Sam Phillips
+Nate "<@CrackMonkey> I thought for sure that'd be insurmountable" Riffe
+Seth "Seth David Schoen" Schoen
+Andrew Scott
+Heather Stern
+Len Trigg
+Jon Webb
+
+
+RESOURCES, ADVICE, AND MISCELLANEOUS CONTRIBUTIONS PROVIDED BY
+--------------------------------------------------------------
+
+Patrick Devine
+Electronic Frontier Foundation
+T.R. Fullhart
+Brian Danger Hicks
+Bill Immerman
+Jac Kersing
+C.J. Kucera
+Fabrice Laborie
+Tripp Lilley      
+"Tricky" Rick Moen
+K. Murray
+Jon Niehof
+Peter A. "Pedro" Peterson II
+Tim Tompkins
+U.C. Berkeley Computer Science Undergraduate Association
+Jani Virta
+Jeff "GARNOME" Waugh 
+Zack Weinberg
+
+
+SPECIAL THANKS
+--------------
+
+Boot sequence: busybox and uClibc (Erik Anderson, et al.)
+
+Build: accelerated by ccache and rsync (Andrew Tridgell and Martin Pool)
+
+Compression: cloop (Rusty Russell and Klaus Knopper)
+
+Development: gar (Nick Moffitt)
+
+Disc Label Design and Artwork: Rev. Patty "icon bitch" Morin
+
+And thanks to all the subscribers of the lnx-bbc-devel and lnx-bbc lists for
+their useful questions and advice, and to all beta testers and reporters
+of bugs.
+
+
+EARLIER VERSIONS' ACKNOWLEDGMENTS
+---------------------------------
+
+LNX-BBC 1.618, on which LNX-BBC 2.1 is based, included the following
+acknowledgements (including acknowledgments for Linuxcare Bootable
+Business Card versions 1.6, 1.5, 1.21, 1.2, and 1.0).  Financial
+support for duplication of the second printing of LNX-BBC 1.618 was
+provided by Bradford Learning.
+
+
+
+   Technical work & support
+   ------------------------
+
+   Juraj Bednar
+   Zack Brown
+   Jim Dennis
+   Amy Foldesi
+   Ian Harding
+   Klaus Knopper (cloop)
+   Duncan MacKinnon <duncan@randometry.org>
+   Nick Moffitt
+   Niall O Broin
+   Daniel J. O'Neill
+   Seth Schoen <schoen@loyalty.org>
+   Heather Stern <star@starshine.org>
+   Andrew Scott <ascott@tathata.org>
+
+
+   Financial support for duplication
+   ---------------------------------
+
+   David W. Bryson
+   Irish Linux Users Group (ILUG)
+   Duncan MacKinnon
+   Chuck Moss
+   Andrew Scott
+   Heather Stern
+   Michael E. Weiblen
+
+
+   "Facile credo, plures esse Naturas invisibiles quam visibiles in rerum
+   universitate.  Sed horum omnium familiam quis nobis enarrabit? et gradus
+   et cognationes et discrimina et singulorum munera?"
+
+   	-- Burnet, in Coleridge
+
+Acknowledgements:
+
+   Andy Yuen helped us substantially with duplication logistics.  Thanks!
+
+   Thanks to the following people for their contributions and support for the
+   original project:
+
+   Duncan MacKinnon (duncan@randometry.org)
+   Seth Schoen
+   Tom "inf" Crimi
+   Tim Moss
+   Andrew "tty" Scott
+   Sylvester "Sly" Smith
+   David "hacker" Desrosiers
+   Mike Perry
+   David Benfell
+   Marjorie Cango
+   Mike Hartley
+   Rasmus Lerdorf
+   Melissa Almgren
+   Ian Macdonald
+   Shawn Mckenzie
+   Andrew Gavurnik
+   Sam McDonald
+   Mike Higashi
+   Jim Dennis
+   Patrice Regan
+   Art Tyde
+   Dave Sifry
+   Dave Mandala
+   Rob "lilo" Levin
+   Paul "Rusty" Russell
+   David Welton
+   Brian Abshier
+   Rick Moen
+   Michael Angelo (yes, that's his real name)
+   Minh "Ming" Trinh
+   David Kaiser
+   Nick Moffitt
+   Christopher Beard
+   Phil Schwan
+   David Kennedy
+   Matthew Wilcox
+   Marc Merlin
+   Nathan Myers
+   The Linuxcare Labs Team
+   The Linuxcare Tech Support Team
+   The Puffin Group
+   Other Linuxcare staff
+
+   Linuxcare, Inc., supported development and developers for five prior
+   releases of the Linuxcare Bootable Business Card, from which this
+   project is derived, and produced and distributed at its own expense
+   tens of thousands of free copies for Linux enthusiasts all over the
+   world.
+
+   Special thanks go to the folks who made Tom's Root/Boot, Hal91, and
+   ODL, to the Debian Project, Red Hat, Inc., and to all the people who
+   have contributed to the programs included on this CD-ROM -- and to the
+   worldwide free software community.
+
+   For their comments and assistance, we wish to thank Adam Di Carlo,
+   Joey Hess, and Sean "Shaleh" Perry of the Debian Project, as well as
+   the members of Linuxcare's lnx-bbc mailing list.
+
+   Tux, the Linux penguin, was created by Larry Ewing <lewing@isc.tamu.edu>
+   using the GIMP (GNU Image Manipulation Program).
+
+   Linux is a registered trademark of Linus Torvalds.

@@ -1,0 +1,9 @@
+--- tmp/darkmix-2/theme.conf    2008-12-14 17:52:29.000000000 -0300
++++ new-darkmix-2/theme.conf    2009-10-07 23:50:00.000000000 -0300
+@@ -1,4 +1,4 @@
+-version = 36
++version = 39
+
+ show_header = yes
+
+

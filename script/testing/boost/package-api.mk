@@ -1,0 +1,2 @@
+BOOST_VERSION = 1.33.1
+DISTNAME = $(GARNAME)_$(subst .,_,$(GARVERSION))

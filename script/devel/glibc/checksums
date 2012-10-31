@@ -1,0 +1,21 @@
+903fcfa547df2f453476800e0838fe52  download/glibc-2.12.2.tar.bz2
+d41d8cd98f00b204e9800998ecf8427e  download/glibc-2.12.2-rpc_key_prot_h.patch
+7d71fab74eb616ae7fb29d994f86269a  download/glibc-2.12.2-select_fd_type.patch
+63eef7a8031d19ce0817cda4e3ecefdb  download/glibc-2.12.2-__i686.patch
+8b4ddb4c13bd4ba71afb0cd25de5cd94  download/glibc-2.12.2-build_lib.patch
+df88b1293ff7a85ee1f14f0d63b4861d  download/glibc-2.12.2-build_locale.patch
+b30c31cb2d3e7ea08c460d9f388ffb72  download/glibc-2.12.2-build_sunrpc.patch
+afa034eaf28ddd2ccf537e572973c9a8  download/glibc-2.12.2-perl.patch.gar
+7b84d809bd5602e01e7c7417c1481590  download/glibc-2.12.2.patch
+e5390aa319a3c3e05148e864e6cac7aa  download/glibc-2.12.2-ldd.patch
+
+1588cc22e796c296223744895ebc4cef  download/glibc-2.14.tar.bz2
+c75c435960fd56aa50a176a107a3f148  download/glibc-2.14-rpc_key_prot_h.patch
+7614680a37f54f4da4a436f9d4e5bbc1  download/glibc-2.14-select_fd_type.patch
+ab9052d39d327485f19eca95fbf79553  download/glibc-2.14-__i686.patch
+603081e5322ea1ff56494b6a85c9df24  download/glibc-2.14-build_lib.patch
+a5e0095b9cb962b0559bdd7d859cd26e  download/glibc-2.14-build_locale.patch
+8abde358f194cf6a8eaca24a9d6f1bb2  download/glibc-2.14-build_sunrpc.patch
+1d802f6cf0ec873ee31372c4371ccd1c  download/glibc-2.14-perl.patch.gar
+12686e3373d75db7b2fa40d3fdd0e83c  download/glibc-2.14.patch
+18d05e6efedeb85b0cc653009a333789  download/glibc-2.14-ldd.patch

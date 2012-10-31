@@ -1,0 +1,251 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/system-settings/src/nm-sysconfig-connection.c new-NetworkManager-0.7.1/system-settings/src/nm-sysconfig-connection.c
+--- tmp/NetworkManager-0.7.1/system-settings/src/nm-sysconfig-connection.c	2009-04-04 12:42:48.000000000 -0300
++++ new-NetworkManager-0.7.1/system-settings/src/nm-sysconfig-connection.c	2009-04-27 16:04:41.000000000 -0300
+@@ -21,7 +21,12 @@
+ #include <NetworkManager.h>
+ #include "nm-sysconfig-connection.h"
+ #include "nm-system-config-error.h"
++#ifdef POLKIT_ENABLE
+ #include "nm-polkit-helpers.h"
++#else
++#include <dbus/dbus-glib.h>
++#include <dbus/dbus-glib-lowlevel.h>
++#endif
+ #include "nm-dbus-glib-types.h"
+ 
+ G_DEFINE_ABSTRACT_TYPE (NMSysconfigConnection, nm_sysconfig_connection, NM_TYPE_EXPORTED_CONNECTION)
+@@ -30,8 +35,9 @@
+ 
+ typedef struct {
+ 	DBusGConnection *dbus_connection;
++#ifdef POLKIT_ENABLE
+ 	PolKitContext *pol_ctx;
+-
++#endif
+ 	DBusGProxy *proxy;
+ } NMSysconfigConnectionPrivate;
+ 
+@@ -39,26 +45,38 @@
+ update (NMExportedConnection *exported,
+ 	   GHashTable *new_settings,
+ 	   GError **err)
++
+ {
++#ifdef POLKIT_ENABLE
+ 	NMSysconfigConnectionPrivate *priv = NM_SYSCONFIG_CONNECTION_GET_PRIVATE (exported);
++#endif
+ 	DBusGMethodInvocation *context;
+ 
+ 	context = g_object_get_data (G_OBJECT (exported), NM_EXPORTED_CONNECTION_DBUS_METHOD_INVOCATION);
+ 	g_return_val_if_fail (context != NULL, FALSE);
+-
++#ifdef POLKIT_ENABLE
+ 	return check_polkit_privileges (priv->dbus_connection, priv->pol_ctx, context, err);
++#else
++	return TRUE;
++#endif
+ }
+ 
+ static gboolean
+ do_delete (NMExportedConnection *exported, GError **err)
+ {
++#ifdef POLKIT_ENABLE
+ 	NMSysconfigConnectionPrivate *priv = NM_SYSCONFIG_CONNECTION_GET_PRIVATE (exported);
++#endif
+ 	DBusGMethodInvocation *context;
+ 
+ 	context = g_object_get_data (G_OBJECT (exported), NM_EXPORTED_CONNECTION_DBUS_METHOD_INVOCATION);
+ 	g_return_val_if_fail (context != NULL, FALSE);
+ 
++#ifdef POLKIT_ENABLE
+ 	return check_polkit_privileges (priv->dbus_connection, priv->pol_ctx, context, err);
++#else
++	return TRUE;
++#endif
+ }
+ 
+ static GValue *
+@@ -202,11 +220,13 @@
+ 	if (!dbus_g_proxy_end_call (proxy, call, &error, G_TYPE_UINT, &requestor_uid, G_TYPE_INVALID))
+ 		goto error;
+ 
++#ifdef POLKIT_ENABLE
+ 	/* Non-root users need PolicyKit authorization */
+ 	if (requestor_uid != 0) {
+ 		if (!check_polkit_privileges (priv->dbus_connection, priv->pol_ctx, info->context, &error))
+ 			goto error;
+ 	}
++#endif
+ 
+ 	secrets = real_get_secrets (self, info->setting_name, NULL, FALSE, &error);
+ 	if (secrets) {
+@@ -302,12 +322,14 @@
+ 		g_error_free (err);
+ 	}
+ 
++#ifdef POLKIT_ENABLE
+ 	priv->pol_ctx = create_polkit_context (&err);
+ 	if (!priv->pol_ctx) {
+ 		g_warning ("%s: error creating PolicyKit context: %s",
+ 		           __func__,
+ 		           (err && err->message) ? err->message : "(unknown)");
+ 	}
++#endif
+ }
+ 
+ static void
+@@ -317,10 +339,10 @@
+ 
+ 	if (priv->proxy)
+ 		g_object_unref (priv->proxy);
+-
++#ifdef POLKIT_ENABLE
+ 	if (priv->pol_ctx)
+ 		polkit_context_unref (priv->pol_ctx);
+-
++#endif
+ 	if (priv->dbus_connection)
+ 		dbus_g_connection_unref (priv->dbus_connection);
+ 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/system-settings/src/dbus-settings.c new-NetworkManager-0.7.1/system-settings/src/dbus-settings.c
+--- tmp/NetworkManager-0.7.1/system-settings/src/dbus-settings.c	2009-04-04 12:42:48.000000000 -0300
++++ new-NetworkManager-0.7.1/system-settings/src/dbus-settings.c	2009-04-27 15:58:09.000000000 -0300
+@@ -33,7 +33,9 @@
+ 
+ #include "nm-dbus-glib-types.h"
+ #include "dbus-settings.h"
++#ifdef POLKIT_ENABLE
+ #include "nm-polkit-helpers.h"
++#endif
+ #include "nm-system-config-error.h"
+ #include "nm-utils.h"
+ 
+@@ -49,7 +51,9 @@
+ 
+ typedef struct {
+ 	DBusGConnection *g_connection;
++#ifdef POLKIT_ENABLE
+ 	PolKitContext *pol_ctx;
++#endif
+ 	NMSystemConfigHalManager *hal_mgr;
+ 
+ 	GSList *plugins;
+@@ -145,9 +149,10 @@
+ 
+ 	g_slist_foreach (priv->plugins, (GFunc) g_object_unref, NULL);
+ 	g_slist_free (priv->plugins);
+-
++#ifdef POLKIT_ENABLE
+ 	if (priv->pol_ctx)
+ 		polkit_context_unref (priv->pol_ctx);
++#endif
+ 
+ 	g_object_unref (priv->hal_mgr);
+ 	dbus_g_connection_unref (priv->g_connection);
+@@ -355,17 +360,21 @@
+ {
+ 	NMSysconfigSettingsPrivate *priv = NM_SYSCONFIG_SETTINGS_GET_PRIVATE (self);
+ 	char hostname[HOST_NAME_MAX + 2];
++#ifdef POLKIT_ENABLE
+ 	GError *error = NULL;
++#endif
+ 
+ 	priv->connections = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, NULL);
+ 	priv->unmanaged_devices = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+ 
++#ifdef POLKIT_ENABLE
+ 	priv->pol_ctx = create_polkit_context (&error);
+ 	if (!priv->pol_ctx) {
+ 		g_warning ("%s: failed to create PolicyKit context: %s",
+ 		           __func__,
+ 		           (error && error->message) ? error->message : "(unknown)");
+ 	}
++#endif
+ 
+ 	/* Grab hostname on startup and use that if no plugins provide one */
+ 	memset (hostname, 0, sizeof (hostname));
+@@ -593,7 +602,9 @@
+                               GHashTable *hash,
+                               DBusGMethodInvocation *context)
+ {
++#ifdef POLKIT_ENABLE
+ 	NMSysconfigSettingsPrivate *priv = NM_SYSCONFIG_SETTINGS_GET_PRIVATE (self);
++#endif
+ 	GError *err = NULL;
+ 
+ 	/* Do any of the plugins support adding? */
+@@ -604,8 +615,10 @@
+ 		goto out;
+ 	}
+ 
++#ifdef POLKIT_ENABLE
+ 	if (!check_polkit_privileges (priv->g_connection, priv->pol_ctx, context, &err))
+ 		goto out;
++#endif
+ 
+ 	nm_sysconfig_settings_add_new_connection (self, hash, &err);
+ 
+@@ -638,8 +651,10 @@
+ 		goto out;
+ 	}
+ 
++#ifdef POLKIT_ENABLE
+ 	if (!check_polkit_privileges (priv->g_connection, priv->pol_ctx, context, &err))
+ 		goto out;
++#endif
+ 
+ 	/* Set the hostname in all plugins */
+ 	for (iter = priv->plugins; iter; iter = iter->next) {
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/configure.in new-NetworkManager-0.7.1/configure.in
+--- tmp/NetworkManager-0.7.1/configure.ac	2009-04-12 19:32:52.000000000 -0300
++++ new-NetworkManager-0.7.1/configure.ac	2009-04-27 13:57:59.000000000 -0300
+@@ -207,6 +207,15 @@
+ AC_SUBST(UUID_CFLAGS)
+ AC_SUBST(UUID_LIBS)
+ 
++PKG_CHECK_EXISTS(polkit-dbus,[have_polkit=yes],[have_polkit=no])
++AC_ARG_WITH(polkit, AC_HELP_STRING([--disable-polkit], [disable polkit support]), have_polkit=yes, have_polkit=no)
++
++if test x"$have_polkit" == "xyes"; then 
++AC_DEFINE([POLKIT_ENABLE],[1],[Define if you have POLKIT])
++fi
++AM_CONDITIONAL(POLKIT_ENABLE, test x"$have_polkit" == "xyes")
++
++if test x"$have_polkit" = "xyes"; then
+ PKG_CHECK_MODULES(POLKIT, polkit-dbus)
+ 
+ ##### Find out the version of PolicyKit we're using
+@@ -240,6 +247,7 @@
+ 	POLKIT_CFLAGS="$POLKIT_CFLAGS -DPOLKIT_VERSION_MICRO=$POLKIT_VERSION_MICRO"
+ fi
+ AC_SUBST(POLKIT_CFLAGS)
++fi
+ 
+ AC_PATH_PROG([POLKIT_POLICY_FILE_VALIDATE], [polkit-policy-file-validate], [false])
+  
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/system-settings/src/Makefile.am new-NetworkManager-0.7.1/system-settings/src/Makefile.am
+--- tmp/NetworkManager-0.7.1/system-settings/src/Makefile.am	2009-03-03 13:55:48.000000000 -0300
++++ new-NetworkManager-0.7.1/system-settings/src/Makefile.am	2009-04-27 14:33:30.000000000 -0300
+@@ -15,8 +15,6 @@
+ 	main.c \
+ 	nm-inotify-helper.c \
+ 	nm-inotify-helper.h \
+-	nm-polkit-helpers.c \
+-	nm-polkit-helpers.h \
+ 	nm-system-config-error.c \
+ 	nm-system-config-error.h \
+ 	nm-system-config-interface.c \
+@@ -30,6 +28,12 @@
+ 	sha1.c \
+ 	sha1.h
+ 
++if POLKIT_ENABLE
++	nm_system_settings_SOURCES += \
++		nm-polkit-helpers.c \
++		nm-polkit-helpers.h
++endif
++
+ nm_system_settings_CPPFLAGS = \
+ 	$(DBUS_CFLAGS) \
+ 	$(GLIB_CFLAGS) \
+

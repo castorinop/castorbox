@@ -1,0 +1,14 @@
+=== modified file 'notify_area.cpp'
+--- old/notify_area.cpp	2008-08-04 21:34:07 +0000
++++ new/notify_area.cpp	2008-08-13 14:05:43 +0000
+@@ -158,6 +158,9 @@
+        iter != end; ++iter)
+     if (iter->name == name) {
+       iter->active = false;
++     if (iter == index) {
++	update_item();
++      }
+       break;
+     }
+   elements_mut.leaveMutex();
+

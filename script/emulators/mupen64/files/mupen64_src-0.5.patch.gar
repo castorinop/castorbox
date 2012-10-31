@@ -1,0 +1,273 @@
+diff --speed-large-files --minimal -Nru tmp/mupen64_src-0.5/Makefile work/main.d/mupen64_src-0.5/Makefile
+--- mupen64_src-0.5/Makefile	2005-08-26 16:52:13.000000000 -0300
++++ mupen64_src-0.5/Makefile	2007-03-06 16:15:34.000000000 -0300
+@@ -4,7 +4,7 @@
+ CXX		=g++
+ 
+ #CFLAGS		=-DX86 -O3 -mpentium -Wall -DEMU64_DEBUG
+-CFLAGS		=-DX86 -O3 -fexpensive-optimizations -fomit-frame-pointer -funroll-loops -ffast-math -fno-strict-aliasing -mcpu=athlon -Wall -pipe
++CFLAGS		=-DX86 -fexpensive-optimizations -fomit-frame-pointer -funroll-loops -fno-strict-aliasing -pipe $(OPT_FLAGS)
+ #CFLAGS		=-DX86 -O3 -mcpu=pentium -Wall -g -pg
+ #CFLAGS		=-DX86 -Wall -pipe -g3 -DEMU64_DEBUG
+ #CFLAGS		=-DX86 -Wall -pipe -g -DEMU64_DEBUG -DCOMPARE_CORE
+@@ -80,9 +80,6 @@
+ OBJ_INPUT	=mupen64_input/main.o
+ 
+ OBJ_BLIGHT	=blight_input/plugin.o \
+-		blight_input/SDL_ttf.o \
+-		blight_input/arial.ttf.o \
+-		blight_input/configdialog_sdl.o \
+ 		blight_input/pad.o
+ 
+ OBJ_RSPHLE	=rsp_hle/main.o \
+@@ -165,24 +162,31 @@
+ GTHREAD_LIBS	=`pkg-config gthread-2.0 --libs`
+ endif
+ 
++SDL_FLAGS = `sdl-config --cflags`
++SDL_LIBS = `sdl-config --libs`
++
++FREETYPE_FLAGS = `freetype-config --cflags`
++FREETYPE_LIBS = `freetype-config --libs`
++
++
+ PREFIX		=$(shell grep WITH_HOME config.h | cut -d '"' -f 2)
+ SHARE		="$(PREFIX)share/mupen64/"
+ 
+ PLUGINS		=plugins/mupen64_input.so plugins/blight_input.so plugins/mupen64_hle_rsp_azimer.so plugins/dummyaudio.so plugins/mupen64_audio.so plugins/jttl_audio.so plugins/mupen64_soft_gfx.so plugins/glN64.so
+ 
+-all:	mupen64 mupen64_nogui $(PLUGINS)
++all: mupen64_nogui $(PLUGINS)
+ 
+ r4300/interupt.o:	r4300/interupt.c
+-			$(CC) $(CFLAGS) `sdl-config --cflags` -c -o $@ $<
++			$(CC) $(CFLAGS) $(SDL_FLAGS) -c -o $@ $<
+ 
+ main/main.o:	main/main.c
+-		$(CC) $(CFLAGS) -c -o $@ $< `sdl-config --cflags`
++		$(CC) $(CFLAGS) -c -o $@ $< $(SDL_FLAGS)
+ 
+ main/main_gtk.o:	main/main_gtk.c
+-			$(CC) $(CFLAGS) -c -o $@ $< $(GTK_FLAGS) `sdl-config --cflags`
++			$(CC) $(CFLAGS) -c -o $@ $< $(GTK_FLAGS) $(SDL_FLAGS)
+ 
+ main/gui_gtk/main_gtk.o:	main/gui_gtk/main_gtk.c
+-				$(CC) $(CFLAGS) -c -o $@ $< $(GTK_FLAGS) `sdl-config --cflags`
++				$(CC) $(CFLAGS) -c -o $@ $< $(GTK_FLAGS) $(SDL_FLAGS)
+ 
+ main/gui_gtk/translate.o:	main/gui_gtk/translate.c
+ 				$(CC) $(CFLAGS) -c -o $@ $< $(GTK_FLAGS)
+@@ -218,13 +222,13 @@
+ 				$(CXX) $(CXXFLAGS) -c -o $@ $< `avifile-config --cflags`
+ 
+ mupen64_input/main.o:		mupen64_input/main.c
+-				$(CC) $(CFLAGS) -DUSE_GTK -c -o $@ $< $(GTK_FLAGS) `sdl-config --cflags`
++				$(CC) $(CFLAGS) -DUSE_GTK -c -o $@ $< $(GTK_FLAGS) $(SDL_FLAGS)
+ 
+ blight_input/plugin.o:		blight_input/plugin.c
+-				$(CC) $(CFLAGS) "-DPACKAGE=\"$(shell grep PACKAGE blight_input/package | cut -d "=" -f 2)\"" "-DVERSION=\"$(shell grep VERSION blight_input/package | cut -d "=" -f 2)\"" `sdl-config --cflags` -DGUI_SDL -c -o $@ $<
++				$(CC) $(CFLAGS) "-DPACKAGE=\"$(shell grep PACKAGE blight_input/package | cut -d "=" -f 2)\"" "-DVERSION=\"$(shell grep VERSION blight_input/package | cut -d "=" -f 2)\"" $(SDL_FLAGS)  -c -o $@ $<
+ 
+ blight_input/SDL_ttf.o:		blight_input/SDL_ttf.c
+-				$(CC) $(CFLAGS) `freetype-config --cflags` `sdl-config --cflags` -c -o $@ $<
++				$(CC) $(CFLAGS) $(FREETYPE_FLAGS) $(SDL_FLAGS) -c -o $@ $<
+ 
+ blight_input/arial.ttf.o:	blight_input/arial.ttf.c
+ 
+@@ -237,10 +241,10 @@
+ 				strip --strip-all $@
+ 
+ blight_input/configdialog_sdl.o: blight_input/configdialog_sdl.c
+-				$(CC) $(CFLAGS) "-DPACKAGE=\"$(shell grep PACKAGE blight_input/package | cut -d "=" -f 2)\"" "-DVERSION=\"$(shell grep VERSION blight_input/package | cut -d "=" -f 2)\"" -DGUI_SDL `sdl-config --cflags` -c -o $@ $<
++				$(CC) $(CFLAGS) "-DPACKAGE=\"$(shell grep PACKAGE blight_input/package | cut -d "=" -f 2)\"" "-DVERSION=\"$(shell grep VERSION blight_input/package | cut -d "=" -f 2)\""  $(SDL_FLAGS) -c -o $@ $<
+ 
+ blight_input/pad.o:		blight_input/pad.c
+-				$(CC) $(CFLAGS) -DGUI_SDL -c -o $@ $<
++				$(CC) $(CFLAGS)  -c -o $@ $<
+ 
+ rsp_hle/main.o:			rsp_hle/main.c
+ 				$(CC) $(CFLAGS) $(GTK_FLAGS) -DUSE_GTK -c -o $@ $<
+@@ -249,117 +253,117 @@
+ 				$(CC) $(CFLAGS) $(GTK_FLAGS) -DUSE_GTK -c -o $@ $<
+ 
+ jttl_audio/main.o:		jttl_audio/main.c
+-				$(CC) $(CFLAGS) $(GTK_FLAGS) -DUSE_GTK `sdl-config --cflags` -c -o $@ $<
++				$(CC) $(CFLAGS) $(GTK_FLAGS) -DUSE_GTK $(SDL_FLAGS) -c -o $@ $<
+ 
+ mupen64_soft_gfx/main.o:	mupen64_soft_gfx/main.cpp
+-				$(CXX) $(CFLAGS) `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) $(SDL_FLAGS) -c -o $@ $<
+ 
+ mupen64_soft_gfx/vi_SDL.o:	mupen64_soft_gfx/vi_SDL.cpp
+-				$(CXX) $(CFLAGS) `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/glN64.o:			glN64/glN64.cpp
+-				$(CXX) $(CFLAGS) -DMAINDEF -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -DMAINDEF -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/Config_linux.o:		glN64/Config_linux.cpp
+-				$(CXX) $(CFLAGS) $(GTK_FLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) $(GTK_FLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/OpenGL.o:			glN64/OpenGL.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/N64.o:			glN64/N64.cpp
+ 				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM -c -o $@ $<
+ 
+ glN64/RSP.o:			glN64/RSP.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/VI.o:			glN64/VI.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/Textures.o:		glN64/Textures.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/FrameBuffer.o:		glN64/FrameBuffer.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/Combiner.o:		glN64/Combiner.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/gDP.o:			glN64/gDP.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/gSP.o:			glN64/gSP.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/GBI.o:			glN64/GBI.cpp
+-				$(CXX) $(CFLAGS) $(GTK_FLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) $(GTK_FLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/CRC.o:			glN64/CRC.cpp
+ 				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM -c -o $@ $<
+ 
+ glN64/NV_register_combiners.o:	glN64/NV_register_combiners.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/texture_env.o:		glN64/texture_env.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/texture_env_combine.o:	glN64/texture_env_combine.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/RDP.o:			glN64/RDP.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/F3D.o:			glN64/F3D.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/F3DEX.o:			glN64/F3DEX.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/F3DEX2.o:			glN64/F3DEX2.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/L3D.o:			glN64/L3D.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/L3DEX.o:			glN64/L3DEX.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/L3DEX2.o:			glN64/L3DEX2.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/S2DEX.o:			glN64/S2DEX.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/S2DEX2.o:			glN64/S2DEX2.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/F3DPD.o:			glN64/F3DPD.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/F3DDKR.o:			glN64/F3DDKR.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ glN64/F3DWRUS.o:		glN64/F3DWRUS.cpp
+-				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM `sdl-config --cflags` -c -o $@ $<
++				$(CXX) $(CFLAGS) -D__LINUX__ -DX86_ASM $(SDL_FLAGS) -c -o $@ $<
+ 
+ mupen64_nogui:	$(OBJ) $(OBJ_X86) main/main.o main/gui_gtk/config.o
+-		$(CC) $^ $(LIB) -Wl,-export-dynamic -L/usr/X11R6/lib `sdl-config --libs` -lGL -lpthread -ldl -o $@
++		$(CC) $^ $(LIB) -Wl,-export-dynamic -L/usr/X11R6/lib $(SDL_LIBS) -lGL -lpthread -ldl -o $@
+ 		strip --strip-all $@
+ 
+ ifneq ("$(shell grep VCR config.h)","\#define VCR_SUPPORT 1")
+ 
+ mupen64:	$(OBJ) $(OBJ_X86) $(OBJ_GTK_GUI)
+-		$(CC) $^ $(CFLAGS) $(LIB) -Wl,-export-dynamic $(GTK_LIBS) -L/usr/X11R6/lib `sdl-config --libs` -lGL -lpthread -ldl -o $@
++		$(CC) $^ $(CFLAGS) $(LIB) -Wl,-export-dynamic $(GTK_LIBS) -L/usr/X11R6/lib $(SDL_LIBS) -lGL -lpthread -ldl -o $@
+ 		strip --strip-all $@
+ 
+ else
+ 
+ mupen64:	$(OBJ) $(OBJ_X86) $(OBJ_GTK_GUI) $(OBJ_VCR)
+-		$(CXX) $^ $(CFLAGS) $(LIB) -Wl,-export-dynamic $(GTK_LIBS) `avifile-config --libs` `sdl-config --libs` -L/usr/X11R6/lib -lGL -lpthread -ldl -o $@
++		$(CXX) $^ $(CFLAGS) $(LIB) -Wl,-export-dynamic $(GTK_LIBS) `avifile-config --libs` $(SDL_LIBS) -L/usr/X11R6/lib -lGL -lpthread -ldl -o $@
+ 		strip --strip-all $@
+ endif
+ 
+ mupen64_oldgui:	$(OBJ) $(OBJ_X86) main/main_gtk.o
+-		$(CC) $^ $(LIB) -Wl,-export-dynamic $(GTK_LIBS) `sdl-config --libs` -L/usr/X11R6/lib -lGL -lpthread -ldl -o $@
++		$(CC) $^ $(LIB) -Wl,-export-dynamic $(GTK_LIBS) $(SDL_LIBS) -L/usr/X11R6/lib -lGL -lpthread -ldl -o $@
+ 		strip --strip-all $@
+ 
+ plugins/mupen64_input.so: $(OBJ_INPUT)
+@@ -367,7 +371,7 @@
+ 			  strip --strip-all $@
+ 
+ plugins/blight_input.so: $(OBJ_BLIGHT)
+-			 $(CC) $^ -Wl,-Bsymbolic -shared `sdl-config --libs` `freetype-config --libs` -o $@
++			 $(CC) $^ -Wl,-Bsymbolic -shared $(SDL_LIBS) $(FREETYPE_LIBS) -o $@
+ 			 strip --strip-all $@
+ 
+ plugins/mupen64_hle_rsp_azimer.so: $(OBJ_RSPHLE)
+@@ -383,19 +387,19 @@
+ 				strip --strip-all $@
+ 
+ plugins/jttl_audio.so:	$(OBJ_JTTL)
+-			$(CC) $^ -Wl,-Bsymbolic -shared `sdl-config --libs` $(GTK_LIBS) -o $@
++			$(CC) $^ -Wl,-Bsymbolic -shared $(SDL_LIBS) $(GTK_LIBS) -o $@
+ 			strip --strip-all $@
+ 
+ plugins/mupen64_soft_gfx.so:	$(OBJ_SOFT_GFX)
+-				$(CXX) `sdl-config --libs` $^ -Wl,-Bsymbolic -shared -o $@
++				$(CXX) $(SDL_LIBS) $^ -Wl,-Bsymbolic -shared -o $@
+ 				strip --strip-all $@
+ 
+ plugins/glN64.so:	$(OBJ_GLN64)
+-			$(CXX) $^ -Wl,-Bsymbolic -shared $(GTK_LIBS) $(GTHREAD_LIBS) `sdl-config --libs` -lGL -o $@
++			$(CXX) $^ -Wl,-Bsymbolic -shared $(GTK_LIBS) $(GTHREAD_LIBS) $(SDL_LIBS) -lGL -o $@
+ 			strip --strip-all $@
+ 
+ install:
+-	cp mupen64 "$(PREFIX)bin"
++	#cp mupen64 "$(PREFIX)bin"
+ 	cp mupen64_nogui "$(PREFIX)bin"
+ 	mkdir "$(SHARE)" | echo
+ 	cp -rv mupen64.ini "$(SHARE)"

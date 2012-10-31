@@ -1,0 +1,11 @@
+--- old/src/Makefile.am	2006-01-30 20:42:42.000000000 -0500
++++ new/src/Makefile.am.oden	2008-06-28 14:33:42.000000000 -0400
+@@ -26,7 +26,7 @@
+ AM_CFLAGS = @XIPH_CFLAGS@
+ 
+ libshout_la_LIBADD = net/libicenet.la timing/libicetiming.la avl/libiceavl.la\
+-		httpp/libicehttpp.la $(MAYBE_THREAD_LIB) $(THEORA_LIBS) $(VORBIS_LIBS)
++		httpp/libicehttpp.la $(MAYBE_THREAD_LIB) $(THEORA_LIBS) $(VORBIS_LIBS) $(SPEEX_LIBS)
+ 
+ INCLUDES = -I$(top_builddir)/include
+ 

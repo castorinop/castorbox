@@ -1,0 +1,9 @@
+--- old/Makefile	2011-07-26 21:24:30.983700998 -0300
++++ new/Makefile	2012-06-09 15:39:23.360666998 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = python-oauth
+-GARVERSION = 1262
++GARVERSION = 1267
+ CATEGORIES = python
+ MASTER_SITES = svn://oauth.googlecode.com/svn/code/python/
+ DISTFILES = $(patsubst python-%,%,$(GARNAME))-$(GARVERSION).tar.bz2

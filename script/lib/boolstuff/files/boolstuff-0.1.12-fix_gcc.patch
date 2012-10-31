@@ -1,0 +1,11 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/boolstuff-0.1.12/src/commands/booldnf.cpp work/main.d/boolstuff-0.1.12/src/commands/booldnf.cpp
+--- tmp/boolstuff-0.1.12/src/commands/booldnf.cpp	2008-10-08 00:52:15.000000000 -0300
++++ new-boolstuff-0.1.12/src/commands/booldnf.cpp	2009-07-07 16:17:27.000000000 -0300
+@@ -22,6 +22,7 @@
+ 
+ #include <boolstuff/BoolExprParser.h>
+ #include <assert.h>
++#include <cstdio>
+ #include <stdlib.h>
+ 
+ #ifdef HAVE_GETOPT_LONG

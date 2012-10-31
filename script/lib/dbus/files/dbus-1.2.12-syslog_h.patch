@@ -1,0 +1,18 @@
+diff -Naur dbus-1.2.12-old/dbus/dbus-sysdeps-util-unix.c dbus-1.2.12-new/dbus/dbus-sysdeps-util-unix.c
+--- dbus-1.2.12-old/dbus/dbus-sysdeps-util-unix.c	2009-01-06 14:52:23.000000000 -0800
++++ dbus-1.2.12-new/dbus/dbus-sysdeps-util-unix.c	2009-01-07 16:00:42.000000000 -0800
+@@ -36,6 +36,7 @@
+ #include <signal.h>
+ #include <unistd.h>
+ #include <stdio.h>
++#include <syslog.h>
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sys/stat.h>
+@@ -1233,4 +1234,4 @@
+   _dbus_string_free (&cmdline);
+   _dbus_string_free (&path);
+   return FALSE;
+-}
+\ No newline at end of file
++}

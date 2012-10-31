@@ -1,0 +1,45 @@
+diff -Naur binutils-2.20.51.0.10-old/bfd/mep-relocs.pl binutils-2.20.51.0.10-new/bfd/mep-relocs.pl
+--- binutils-2.20.51.0.10-old/bfd/mep-relocs.pl	2010-07-09 14:43:52.000000000 -0700
++++ binutils-2.20.51.0.10-new/bfd/mep-relocs.pl	2010-07-09 14:45:22.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ # -*- perl -*-
+ #
+ # Toshiba MeP Media Engine Relocation Generator
+diff -Naur binutils-2.20.51.0.10-old/etc/texi2pod.pl binutils-2.20.51.0.10-new/etc/texi2pod.pl
+--- binutils-2.20.51.0.10-old/etc/texi2pod.pl	2010-07-09 14:43:52.000000000 -0700
++++ binutils-2.20.51.0.10-new/etc/texi2pod.pl	2010-07-09 14:45:22.000000000 -0700
+@@ -1,4 +1,4 @@
+-#! /usr/bin/perl -w
++#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ #   Copyright (C) 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
+ 
+diff -Naur binutils-2.20.51.0.10-old/gprof/bbconv.pl binutils-2.20.51.0.10-new/gprof/bbconv.pl
+--- binutils-2.20.51.0.10-old/gprof/bbconv.pl	2010-07-09 14:43:51.000000000 -0700
++++ binutils-2.20.51.0.10-new/gprof/bbconv.pl	2010-07-09 14:45:22.000000000 -0700
+@@ -1,4 +1,4 @@
+-#! /usr/bin/perl
++#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ 
+ # This script converts a "bb.out" file into a format
+ # suitable for processing by gprof
+diff -Naur binutils-2.20.51.0.10-old/libiberty/gather-docs binutils-2.20.51.0.10-new/libiberty/gather-docs
+--- binutils-2.20.51.0.10-old/libiberty/gather-docs	2010-07-09 14:43:51.000000000 -0700
++++ binutils-2.20.51.0.10-new/libiberty/gather-docs	2010-07-09 14:45:22.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ # -*- perl -*-
+ 
+ #   Copyright (C) 2001
+diff -Naur binutils-2.20.51.0.10-old/libiberty/maint-tool binutils-2.20.51.0.10-new/libiberty/maint-tool
+--- binutils-2.20.51.0.10-old/libiberty/maint-tool	2010-07-09 14:43:51.000000000 -0700
++++ binutils-2.20.51.0.10-new/libiberty/maint-tool	2010-07-09 14:45:22.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ # -*- perl -*-
+ 
+ #   Copyright (C) 2001, 2007

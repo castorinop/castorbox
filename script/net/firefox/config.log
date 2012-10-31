@@ -1,0 +1,11 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:964: checking host system type
+configure:985: checking target system type
+configure:1003: checking build system type
+configure:1078: checking for gawk
+configure:1176: checking for nsinstall
+configure:2232: checking for gcc
+configure:2345: checking whether the C compiler (gcc  ) works
+configure:2361: gcc -o conftest    conftest.c  1>&5

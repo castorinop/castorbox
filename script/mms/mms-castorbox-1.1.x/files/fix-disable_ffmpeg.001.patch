@@ -1,0 +1,19 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1792/plugins/feature/movie/series.cpp work/main.d/mms-1.1.0-1792/plugins/feature/movie/series.cpp
+--- tmp/mms-1.1.0-1792/plugins/feature/movie/series.cpp	2010-07-24 00:09:06.000000000 -0300
++++ new-mms-1.1.0-1792/plugins/feature/movie/series.cpp	2010-07-28 10:52:52.000000000 -0300
+@@ -37,13 +37,13 @@
+ 
+ void Series::startup_updater()
+ {
+-#ifndef use_ffmpeg_thumbnailer
++/* #ifndef use_ffmpeg_thumbnailer
+   Plugins *plugins = S_Plugins::get_instance();
+   thumbnailer = plugins->find(plugins->movie_players, "MPlayer");
+ 
+   if (thumbnailer == 0)
+     std::cerr << "Warning, thumbnailer not found, please install mplayer plugin" << std::endl;
+-#endif
++#endif */
+ 
+   set_folders();
+ 

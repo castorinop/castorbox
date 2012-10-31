@@ -1,0 +1,7 @@
+5571134c3863686b623ebe4e6b1f6fe6  download/js-1.7.0.tar.gz
+82057a1e364af9ce0476ee58bd845943  download/libjs.pc
+64cd16308628447f0a7f5def711856a5  download/js-1.7.0-make.patch
+3e9323f2092f2d00ca207698519b274b  download/js-1.7.0-threadsafe.patch
+9ae9d97430f81811fb5123bcc6db8f90  download/js-1.7.0-fix_strings.patch
+fc61e9cc8527a458f836c4297e39317e  download/js-1.7.0-shlib.patch
+6db5167f2f1c436898e055121fe54310  download/js-1.7.0-editline.patch

@@ -1,0 +1,19 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/m-feeds-cli-cross/src/m-feeds-cli.py work/main.d/m-feeds-cli-cross/src/m-feeds-cli.py
+--- tmp/m-feeds-cli-cross/src/m-feeds-cli.py	2012-02-27 13:12:27.000000000 -0300
++++ new-m-feeds-cli-cross/src/m-feeds-cli.py	2012-08-05 15:29:15.476546155 -0300
+@@ -30,7 +30,7 @@
+         self.files = []
+         self.done = []
+         
+-        self.filename = 'm-feeds-cli.json'
++        self.filename = os.path.expanduser( os.path.join('~', 'm-feeds-cli.json'))
+         self.loadFile()
+     
+   def saveFile(self):
+@@ -199,4 +199,4 @@
+     mfc.parseFeed()
+     #except:
+       #print "error!!!"
+-      #pass
+\ No newline at end of file
++      #pass

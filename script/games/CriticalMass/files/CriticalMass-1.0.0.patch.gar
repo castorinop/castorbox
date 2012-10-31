@@ -1,0 +1,56 @@
+diff --speed-large-files --minimal -Nru tmp/CriticalMass-1.0.0/configure.in work/main.d/CriticalMass-1.0.0/configure.in
+--- CriticalMass-1.0.0/configure.in	2005-12-31 04:27:02.000000000 -0300
++++ CriticalMass-1.0.0/configure.in	2007-07-14 23:19:59.000000000 -0300
+@@ -35,14 +35,6 @@
+ AM_CONDITIONAL(APPLE,test "x$TARGET" = xAPPLE)
+ AM_CONDITIONAL(WIN32,test "x$TARGET" = xWIN32)
+ 
+-CFLAGS=""
+-CXXFLAGS=""
+-
+-if test "x$GCC" = xyes; then
+-   CFLAGS="$CFLAGS -W -Wall"
+-   CXXFLAGS="$CXXFLAGS -W -Wall -fno-exceptions"
+-fi
+-
+ AC_ARG_ENABLE(debug,
+ [  --enable-debug               Enable debugging [default=off]],
+         enable_debug=$enableval, enable_debug=off)
+@@ -51,14 +43,6 @@
+         CXXFLAGS="$CXXFLAGS -g"
+ fi
+ 
+-AC_ARG_ENABLE(optimize,
+-[  --enable-optimize=level      Enable optimization [default=2]],
+-        enable_optmize=$enableval, enable_optimize=2)
+-if test "x$enable_optimize" != "xno" ; then
+-        CFLAGS="$CFLAGS -O$enable_optimize"
+-        CXXFLAGS="$CXXFLAGS -O$enable_optimize"
+-fi
+-
+ AC_ARG_ENABLE(dyngl,
+ [  --enable-dyngl               Load GL library dynamically [default=off]],
+         enable_dyngl=$enableval, enable_dyngl=off)
+@@ -97,8 +81,8 @@
+     LIBS="$LIBS -lopengl32 -lpng -lz -ljpeg -lstdc++ -lws2_32 -lwinmm"
+     CXXFLAGS="$CXXFLAGS -DCURL_STATICLIB"
+ else
+-    LIBS="-L/usr/local/lib -L/usr/X11R6/lib $LIBS"
+-    CXXFLAGS="$CXXFLAGS -I/usr/X11R6/include"
++    LIBS="-L$(DESTDIR)$(games_libdir) -L$(DESTDIR)$(libdir) $LIBS"
++    CXXFLAGS="$CXXFLAGS -I$(DESTDIR)$(games_includedir) -I$(DESTDIR)$(includedir)"
+ 	AC_CHECK_LIB(png12, main,, AC_MSG_ERROR(libpng is needed))
+ 	AC_CHECK_LIB(z, main,, AC_MSG_ERROR(libz is needed))
+ 	if test "x$TARGET" = xUNIX; then
+diff --speed-large-files --minimal -Nru tmp/CriticalMass-1.0.0/game/Makefile.am work/main.d/CriticalMass-1.0.0/game/Makefile.am
+--- CriticalMass-1.0.0/game/Makefile.am	2005-12-30 21:37:26.000000000 -0300
++++ CriticalMass-1.0.0/game/Makefile.am	2007-07-16 12:23:20.000000000 -0300
+@@ -68,7 +68,7 @@
+ pkgdata_DATA = resource.dat
+ 
+ resource.dat:
+-	../tools/Packer ../data/description_file resource.dat
++	LD_LIBRARY_PATH="$(LD_LIBPATH)" ../tools/Packer ../data/description_file resource.dat
+ 
+ DISTCLEANFILES = resource.dat critter-static
+ endif

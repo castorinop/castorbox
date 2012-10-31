@@ -1,0 +1,15 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/tvtime-1.0.2-ax/src/xmltv.c work/main.d/tvtime-1.0.2-ax/src/xmltv.c
+--- tmp/tvtime-1.0.2-ax/src/xmltv.c	2004-09-26 13:40:01.000000000 -0300
++++ new-tvtime-1.0.2-ax/src/xmltv.c	2010-06-18 14:38:26.000000000 -0300
+@@ -118,9 +118,9 @@
+ typedef struct {
+     const char *code;
+     const char *name;
+-} locale_t;
++} lcl_t;
+ 
+-static locale_t locale_table[] = {
++static lcl_t locale_table[] = {
+     {"AA", "Afar"},           {"AB", "Abkhazian"},      {"AF", "Afrikaans"},
+     {"AM", "Amharic"},        {"AR", "Arabic"},         {"AS", "Assamese"},
+     {"AY", "Aymara"},         {"AZ", "Azerbaijani"},    {"BA", "Bashkir"},

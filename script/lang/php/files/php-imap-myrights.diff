@@ -1,0 +1,82 @@
+diff -Naurp php-5.2.6/ext/imap/php_imap.c php-5.2.6.oden/ext/imap/php_imap.c
+--- php-5.2.6/ext/imap/php_imap.c	2008-09-11 12:25:01.000000000 +0200
++++ php-5.2.6.oden/ext/imap/php_imap.c	2008-09-11 12:24:45.000000000 +0200
+@@ -155,6 +155,7 @@ zend_function_entry imap_functions[] = {
+ 	PHP_FE(imap_set_quota,							NULL)
+ 	PHP_FE(imap_setacl,								NULL)
+ 	PHP_FE(imap_getacl,								NULL)
++	PHP_FE(imap_myrights,							NULL)
+ #endif
+ #if defined(HAVE_IMAP2005)
+  	PHP_FE(imap_setannotation,							NULL)
+@@ -418,6 +419,20 @@ void mail_getacl(MAILSTREAM *stream, cha
+ }
+ /* }}} */
+ 
++/* {{{ mail_myrights
++ *
++ * Mail MYRIGHTS callback
++ * Called via the mail_parameter function in c-client:src/c-client/mail.c
++ */
++void mail_myrights(MAILSTREAM *stream, char *mailbox, char *rights)
++{
++	TSRMLS_FETCH();
++
++	ZVAL_STRING(IMAPG(imap_acl_list), rights, 1)
++
++}
++/* }}} */
++
+ #endif
+ 
+ 
+@@ -1124,6 +1139,38 @@ PHP_FUNCTION(imap_getacl)
+ }
+ /* }}} */
+ 
++/* {{{ proto array imap_getacl(resource stream_id, string mailbox)
++	Gets the ACL for a given mailbox */
++PHP_FUNCTION(imap_myrights)
++{
++	zval **streamind, **mailbox;
++	pils *imap_le_struct;
++
++	if(ZEND_NUM_ARGS() != 2 || zend_get_parameters_ex(2, &streamind, &mailbox) == FAILURE) {
++		ZEND_WRONG_PARAM_COUNT();
++	}
++
++	ZEND_FETCH_RESOURCE(imap_le_struct, pils *, streamind, -1, "imap", le_imap);
++
++	convert_to_string_ex(mailbox);
++
++	/* initializing the special array for the return values */
++	array_init(return_value);
++
++	IMAPG(imap_acl_list) = return_value;
++
++	/* set the callback for the GET_ACL function */
++	mail_parameters(NIL, SET_MYRIGHTS, (void *) mail_myrights);
++	if(!imap_myrights(imap_le_struct->imap_stream, Z_STRVAL_PP(mailbox))) {
++		php_error(E_WARNING, "c-client imap_myrights failed");
++		zval_dtor(return_value);
++		RETURN_FALSE;
++	}
++
++	IMAPG(imap_acl_list) = NIL;
++}
++/* }}} */
++
+ #endif /* HAVE_IMAP2000 || HAVE_IMAP2001 */
+ 
+ #if defined(HAVE_IMAP2005)
+diff -Naurp php-5.2.6/ext/imap/php_imap.h php-5.2.6.oden/ext/imap/php_imap.h
+--- php-5.2.6/ext/imap/php_imap.h	2008-09-11 12:25:01.000000000 +0200
++++ php-5.2.6.oden/ext/imap/php_imap.h	2008-09-11 12:24:45.000000000 +0200
+@@ -178,6 +178,7 @@ PHP_FUNCTION(imap_get_quotaroot);
+ PHP_FUNCTION(imap_set_quota);
+ PHP_FUNCTION(imap_setacl);
+ PHP_FUNCTION(imap_getacl);
++PHP_FUNCTION(imap_myrights);
+ #endif
+ #if defined(HAVE_IMAP2005)
+ PHP_FUNCTION(imap_setannotation);

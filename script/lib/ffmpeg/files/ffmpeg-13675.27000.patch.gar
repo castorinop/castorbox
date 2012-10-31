@@ -1,0 +1,27 @@
+diff -Naur ffmpeg-13675.27000-old/configure ffmpeg-13675.27000-new/configure
+--- ffmpeg-13675.27000-old/configure	2008-06-06 12:11:47.000000000 -0700
++++ ffmpeg-13675.27000-new/configure	2008-06-06 12:12:44.000000000 -0700
+@@ -603,11 +603,11 @@
+     func=$4
+     shift 4
+     disable $cfg
+-    check_cmd ${pkg}-config --version
++    check_cmd @GAR_DESTDIR@@GAR_bindir@/${pkg}-config --version
+     err=$?
+     if test "$err" = 0; then
+-        temp_cflags `${pkg}-config --cflags`
+-        temp_extralibs `${pkg}-config --libs`
++        temp_cflags `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --cflags`
++        temp_extralibs `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --libs`
+         check_lib "$@" $header $func && enable $cfg
+     fi
+     return $err
+@@ -1730,7 +1730,7 @@
+ 
+ disable sdl_too_old
+ disable sdl
+-SDL_CONFIG="${cross_prefix}sdl-config"
++SDL_CONFIG="@GAR_DESTDIR@@GAR_bindir@/sdl-config"
+ if "${SDL_CONFIG}" --version > /dev/null 2>&1; then
+     sdl_cflags=`"${SDL_CONFIG}" --cflags`
+     temp_cflags $sdl_cflags

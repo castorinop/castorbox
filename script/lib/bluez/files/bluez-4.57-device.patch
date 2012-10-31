@@ -1,0 +1,54 @@
+diff -Naur bluez-4.57-old/input/device.c bluez-4.57-new/input/device.c
+--- bluez-4.57-old/input/device.c	2009-05-09 02:31:01.000000000 -0700
++++ bluez-4.57-new/input/device.c	2009-10-31 13:48:09.000000000 -0700
+@@ -83,18 +83,6 @@
+ 	struct input_device	*idev;
+ };
+ 
+-struct input_device {
+-	DBusConnection		*conn;
+-	char			*path;
+-	bdaddr_t		src;
+-	bdaddr_t		dst;
+-	uint32_t		handle;
+-	guint			dc_id;
+-	char			*name;
+-	struct btd_device	*device;
+-	GSList			*connections;
+-};
+-
+ GSList *devices = NULL;
+ 
+ static struct input_device *find_device_by_path(GSList *list, const char *path)
+@@ -636,6 +624,8 @@
+ 
+ 	fake_hid = get_fake_hid(req->vendor, req->product);
+ 	if (fake_hid) {
++		fake_hid->idev = idev;
++		fake_hid->timeout = iconn->timeout/60;
+ 		fake = g_new0(struct fake_input, 1);
+ 		fake->connect = fake_hid_connect;
+ 		fake->disconnect = fake_hid_disconnect;
+diff -Naur bluez-4.57-old/input/device.h bluez-4.57-new/input/device.h
+--- bluez-4.57-old/input/device.h	2009-04-22 18:40:04.000000000 -0700
++++ bluez-4.57-new/input/device.h	2009-10-31 13:48:09.000000000 -0700
+@@ -27,7 +27,18 @@
+ #define L2CAP_PSM_HIDP_CTRL	0x11
+ #define L2CAP_PSM_HIDP_INTR	0x13
+ 
+-struct input_device;
++struct input_device {
++	DBusConnection		*conn;
++	char			*path;
++	bdaddr_t		src;
++	bdaddr_t		dst;
++	uint32_t		handle;
++	guint			dc_id;
++	char			*name;
++	struct btd_device	*device;
++	GSList			*connections;
++};
++
+ struct input_conn;
+ 
+ struct fake_input {

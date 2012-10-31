@@ -1,0 +1,26 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -ru tmp/m-feeds-cli-buggy//m-feeds-cli.py work/main.d/m-feeds-cli-buggy//m-feeds-cli.py
+--- old-m-feeds-cli-buggy/src/m-feeds-cli.py	2012-08-09 19:01:17.000000000 -0300
++++ new-m-feeds-cli-buggy/src/m-feeds-cli.py	2012-09-22 12:01:13.256529997 -0300
+@@ -42,11 +42,18 @@
+     tmp = []
+     for i in self.files:
+       tmp.append( { 'added': i['added'], 'title': i['title'], 'link': i['link'], 'dest': i['dest'], 'down': None , 'stat': i['stat']} )
+-     
+-    fp  = open(self.filename, 'w')
++    
++    fbkp = "%s.bkp" % self.filename 
++    ftmp = "%s.tmp" % self.filename 
++    fp  = open(ftmp, 'w')
+     fp.write(str(tmp))
+     fp.close()
+-
++    
++    if os.path.isfile(fbkp):
++    	os.remove(fbkp)
++    if os.path.isfile(self.filename):
++    	os.rename(self.filename, fbkp)
++    os.rename(ftmp, self.filename)
+ 
+   def loadFile(self):
+     if not os.path.isfile(self.filename):
+                 for k, i in enumerate(self.files):

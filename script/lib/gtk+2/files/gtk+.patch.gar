@@ -1,0 +1,32 @@
+diff --speed-large-files --minimal -Nru tmp/gtk+-1.2.10/gtk-config.in work/main.d/gtk+-1.2.10/gtk-config.in
+--- gtk+-1.2.10/gtk-config.in	2000-10-21 11:20:40.000000000 -0700
++++ gtk+-1.2.10/gtk-config.in	2003-02-10 13:55:12.000000000 -0800
+@@ -91,14 +91,14 @@
+ fi
+ 
+ if test "$echo_cflags" = "yes"; then
+-      echo -I@includedir@/gtk-1.2 $glib_cflags @x_cflags@ 
++      echo -I${DESTDIR}@includedir@/gtk-1.2 $glib_cflags @x_cflags@ 
+ fi
+ 
+ if test "$echo_libs" = "yes"; then
+       my_glib_libs=
+-      libdirs=-L@libdir@
++      libdirs=-L${DESTDIR}@libdir@
+       for i in $glib_libs ; do
+-        if test $i != -L@libdir@ ; then
++        if test $i != -L${DESTDIR}@libdir@ ; then
+           if test -z "$my_glib_libs" ; then
+             my_glib_libs="$i"
+           else
+diff --speed-large-files --minimal -Nru tmp/gtk+-1.2.10/Makefile.in work/main.d/gtk+-1.2.10/Makefile.in
+--- gtk+-1.2.10/Makefile.in	2001-04-02 00:14:07.000000000 -0300
++++ gtk+-1.2.10/Makefile.in	2007-08-03 12:52:34.000000000 -0300
+@@ -10,6 +10,7 @@
+ # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ # PARTICULAR PURPOSE.
+ 
++LD_LIBRARY_PATH= @LD_LIBRARY_PATH@:$(DESTDIR)$(libdir)
+ 
+ SHELL = @SHELL@
+ 

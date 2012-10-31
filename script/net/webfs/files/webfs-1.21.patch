@@ -1,0 +1,12 @@
+diff -Naur webfs-1.21-old/mk/Variables.mk webfs-1.21-new/mk/Variables.mk
+--- webfs-1.21-old/mk/Variables.mk	2004-06-08 05:52:04.000000000 -0700
++++ webfs-1.21-new/mk/Variables.mk	2005-12-30 20:02:48.000000000 -0800
+@@ -23,7 +23,7 @@
+ CXX		?= g++
+ MOC             ?= $(if $(QTDIR),$(QTDIR)/bin/moc,moc)
+ INSTALL		?= install
+-INSTALL_BINARY  := $(INSTALL) -s
++INSTALL_BINARY  := $(INSTALL)
+ INSTALL_SCRIPT  := $(INSTALL)
+ INSTALL_DATA	:= $(INSTALL) -m 644
+ INSTALL_DIR	:= $(INSTALL) -d

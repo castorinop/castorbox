@@ -1,0 +1,72 @@
+diff --speed-large-files --minimal -Nru tmp/js2mouse/js2mouse/Makefile work/main.d/js2mouse/js2mouse/Makefile
+--- tmp/js2mouse/js2mouse/Makefile	2003-12-10 15:53:40.000000000 -0300
++++ work/main.d/js2mouse/js2mouse/Makefile	2007-02-04 14:44:21.000000000 -0300
+@@ -1,40 +1,40 @@
+ all:
+-	gcc -Wall -c main.c 
+-	gcc -Wall -c start.c
+-	gcc -Wall -c loop.c
+-	gcc -Wall -c init.c
+-	gcc -Wall -c usage.c
++	$(CC) -c main.c 
++	$(CC) -c start.c
++	$(CC) -c loop.c
++	$(CC) -c init.c
++	$(CC) -c usage.c
+ 	
+-	gcc -Wall -c parser/remap.c
+-	gcc -Wall -c parser/parse_map.c
+-	gcc -Wall -c parser/add_key.c
++	$(CC) -c parser/remap.c
++	$(CC) -c parser/parse_map.c
++	$(CC) -c parser/add_key.c
+ 
+-	gcc -Wall -c ps2/accel_ps2.c
+-	gcc -Wall -c ps2/buffsize_ps2.c
+-	gcc -Wall -c ps2/click_ps2.c
+-	gcc -Wall -c ps2/convert_ps2.c
+-	gcc -Wall -c ps2/move_ps2.c
++	$(CC) -c ps2/accel_ps2.c
++	$(CC) -c ps2/buffsize_ps2.c
++	$(CC) -c ps2/click_ps2.c
++	$(CC) -c ps2/convert_ps2.c
++	$(CC) -c ps2/move_ps2.c
+ 
+-	gcc -Wall -c imps2/accel_imps2.c
+-	gcc -Wall -c imps2/buffsize_imps2.c
+-	gcc -Wall -c imps2/click_imps2.c
+-	gcc -Wall -c imps2/convert_imps2.c
+-	gcc -Wall -c imps2/move_imps2.c
++	$(CC) -c imps2/accel_imps2.c
++	$(CC) -c imps2/buffsize_imps2.c
++	$(CC) -c imps2/click_imps2.c
++	$(CC) -c imps2/convert_imps2.c
++	$(CC) -c imps2/move_imps2.c
+ 
+-	gcc -Wall -c exps2/accel_exps2.c
+-	gcc -Wall -c exps2/buffsize_exps2.c
+-	gcc -Wall -c exps2/click_exps2.c
+-	gcc -Wall -c exps2/convert_exps2.c
+-	gcc -Wall -c exps2/move_exps2.c
++	$(CC) -c exps2/accel_exps2.c
++	$(CC) -c exps2/buffsize_exps2.c
++	$(CC) -c exps2/click_exps2.c
++	$(CC) -c exps2/convert_exps2.c
++	$(CC) -c exps2/move_exps2.c
+ 	
+-	gcc -Wall -c map/create_default_map.c
+-	gcc -Wall -c map/create_map.c
+-	gcc -Wall -c map/map_it.c
++	$(CC) -c map/create_default_map.c
++	$(CC) -c map/create_map.c
++	$(CC) -c map/map_it.c
+ 
+-	gcc -Wall *.o -o js2mouse
++	$(CC) *.o -o js2mouse
+ 
+ install:
+-	cp js2mouse /usr/local/bin/
++	cp js2mouse $(DESTDIR)$(bindir)
+ 
+ clean:
+ 	rm -f *.o

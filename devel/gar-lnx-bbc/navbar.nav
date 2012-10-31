@@ -1,0 +1,41 @@
+<h4 class="navbar">LNX-BBC</h4>
+
+<li class="navbar"><a class="navbar" href="faq.html">FAQ</a></li>
+
+<li class="navbar"><a class="navbar" href="download.html">Download</a></li>
+
+<li class="navbar"><a class="navbar" href="printing.html">Printing</a></li>
+
+<li class="navbar"><a class="navbar" href="lists.html">Mailing Lists</a></li>
+
+<h4 class="navbar">Development</h4>
+
+<li class="navbar"><a class="navbar" href="testing.html">Download Test Releases</a></li>
+
+<li class="navbar"><a class="navbar" href="README.html">Getting Started with GAR</a></li>
+
+<li class="navbar"><a class="navbar" href="garchitecture.html">Package Maintainer's Guide</a></li>
+
+<li class="navbar"><a class="navbar" href="garvariables.html">GAR Variable list</a></li>
+
+<li class="navbar"><a class="navbar" href="gartips.html">GAR Tips and Tricks</a></li>
+
+<li class="navbar"><a class="navbar" href="bbctools.html">Structure of the BBC</a></li>
+
+<!-- li class="navbar"><a class="navbar" href="bbc_policy.html">BBC Policy Document</a></li -->
+
+<li class="navbar"><a class="navbar" href="garticle.html">Linux Journal GAR Article</a></li>
+
+
+<h4 class="navbar">Resources</h4>
+
+<li class="navbar"><a class="navbar" href="http://cvs.lnx-bbc.org/cvs/gar/">GAR CVS</a></li>
+
+<li class="navbar"><a class="navbar" href="http://build.lnx-bbc.org/packages/">Package List</a></li>
+
+<li class="navbar"><a class="navbar" href="reports/stable-head/">Branch Status Report</a></li>
+
+<li class="navbar"><a class="navbar" href="http://bugs.lnx-bbc.org/bugs/">Bug Tracking System</a></li>
+
+<li class="navbar"><a class="navbar" href="http://www.lnx-bbc.org/builds/">Nightly Build ISOs</a></li>
+

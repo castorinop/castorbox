@@ -1,0 +1,31 @@
+--- old/Makefile	2005-05-14 03:31:48.000000000 -0300
++++ new/Makefile	2009-04-10 14:33:35.000000000 -0300
+@@ -1,21 +1,21 @@
+ SHELL = /bin/sh
+-SYSTEM = $(shell uname)
+-C++ = g++
++SYSTEM = linux
++C++ = $(CXX)
+ 
+ # Debug Flags
+ DFLAGS =
+ # Warnings Flags (GCC)
+-WFLAGS = -w
++WFLAGS =
+ # Warnings Pre Processor Flags (G++)
+ WPPFLAGS = 
+ # Remove the -O3 or reduce to -O2,-O1 or -O if anything fails to compile, i.e. tracker_index.html
+-OFLAGS =
++OFLAGS = 
+ # Library paths for linker 
+-LFLAGS = -L. -lz  -L/usr/local/lib/mysql/ -L/usr/lib/mysql/ -L/usr/local/lib/ -L/usr/lib/
++LFLAGS = -L. -L$(DESTDIR)$(libdir) -lz -lpthread
+ # Set your machine architecture eg -march=i686
+-CFLAGS =
++CFLAGS = ${CXXFLAGS}
+ # Include paths for compiler
+-IFLAGS = -I. -I/usr/local/include/mysql/ -I/usr/include/mysql/ -I/usr/local/include/ -I/usr/include/ 
++IFLAGS = -I. -I$(DESTDIR)$(includedir)
+ 
+ ifeq ($(SYSTEM),Linux)
+ DFLAGS += -D__LINUX__

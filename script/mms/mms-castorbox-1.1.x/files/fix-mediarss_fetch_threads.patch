@@ -1,0 +1,219 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp	2010-03-06 12:48:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp	2010-04-13 09:41:57.000000000 -0300
+@@ -123,9 +123,13 @@
+   return true;
+ }
+ 
++MediaRssUpdate::MediaRssUpdate() 
++{
++	mRss = get_class<MediaRss>(dgettext("mms-media-rss", "MediaRSS"));
++}
++
+ void MediaRssUpdate::run() 
+ {
+-	MediaRss *mRss = get_class<MediaRss>(dgettext("mms-media-rss", "MediaRSS"));
+ 	mRss->update_sources();
+ }
+ 
+@@ -189,13 +193,16 @@
+ 	boost::bind(&MediaRss::idle_rss, this),
+         boost::bind(&MediaRss::start_update_rss, this)));
+ 
+-  bg_updater->timer.add(TimeElement("update downloads MediaRSS", 
++  /* bg_updater->timer.add(TimeElement("update downloads MediaRSS", 
+ 	boost::bind(&MediaRss::idle_item, this),
+-        boost::bind(&MediaRss::start_update_items, this)));
++        boost::bind(&MediaRss::start_update_items, this))); */
+ 
+   S_Search::get_instance()->register_module(SearchModule(dgettext("mms-media-rss", "MediaRSS"),
+ 							 boost::bind(&MediaRss::gen_search_list, this, _1),
+ 							 boost::bind(&MediaRss::show_id, this, _1)));
++
++  mru = new MediaRssUpdate;
++  mriu = new MediaRssItemsUpdate;
+   start_update_rss();
+ }
+ 
+@@ -934,8 +941,10 @@
+ 
+ void MediaRss::start_update_items() {
+ 
++  std::cout << "MediaRss::start_update_items() check" << std::endl;
+   if (fetch || disabled) return;
+-  mriu = new MediaRssItemsUpdate;
++  std::cout << "MediaRss::start_update_items() running" << std::endl;
++  //mriu = new MediaRssItemsUpdate;
+   mriu->start();
+ 
+ }
+@@ -1042,15 +1051,21 @@
+ 
+ void MediaRss::start_update_rss()
+ {
++  std::cout << "MediaRss::start_update_rss() check: " << fetch << std::endl;
+   if (fetch) return;
+   int wait = (categ.size() ? conv::atoi(opts.refresh()) : 5);
+   if (time_counter < wait) {
++	if (time_counter > 0 && (time_counter % 5) == 0) {
++		std::cout << "MediaRss::start_update_rss() running update items" << std::endl;
++		mriu->start();
++	}
+ 	time_counter++;
+-	// std::cout << "MediaRss::start_update_rss()  increment " << conv::itos(time_counter) << std::endl;
++	std::cout << "MediaRss::start_update_rss()  increment " << conv::itos(time_counter) << std::endl;
+ 	return;
+ 
+   }
+-  mru = new MediaRssUpdate;
++  std::cout << "MediaRss::start_update_rss() running update sources" << std::endl;
++  //mru = new MediaRssUpdate;
+   mru->start();
+   time_counter = 0;
+ 
+@@ -1058,10 +1073,12 @@
+ 
+ void MediaRss::update_sources()
+ {
+-
++  std::cout << "MediaRss::update_sources() check: " << fetch << std::endl;
+   if (!fetch) {
+     std::cout << "MediaRss::update_sources() start" << std::endl;
++    fetch_mutex.enterMutex();
+     fetch = true;
++    fetch_mutex.leaveMutex();
+     if (conf->p_priority_change())
+       nice(19); //Lower priority to keep audio from skipping	
+     disable();
+@@ -1070,7 +1087,9 @@
+     update_percents();
+     update_autodownloads();
+     enable();
++    fetch_mutex.enterMutex();
+     fetch = false;
++    fetch_mutex.leaveMutex();
+     std::cout << "MediaRss::update_sources() end" << std::endl;
+   }
+ }
+Binary files tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss_db.o and work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/media_rss_db.o differ
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss_db.cpp	2010-03-06 12:48:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/media_rss_db.cpp	2010-04-13 11:54:52.000000000 -0300
+@@ -304,7 +304,7 @@
+ 		  + " AND enable = 1"
+ 		  + " ORDER BY pubdate desc, title";
+ 
+-  std::cout << "Check" << query << std::endl;
++  std::cout << "Check: " << query << std::endl;
+ 
+   db_mutex.enterMutex();
+   SQLQuery *q = db.query("Item", query.c_str());
+@@ -473,37 +473,36 @@
+ {
+   RssItem ep;
+   string query;
+-  SQLQuery *q;
+   query = "SELECT * FROM Item WHERE id = '"+ conv::itos(id) + "'";
+ 
+   db_mutex.enterMutex();
+-  q = db.query("Serie", query.c_str());
++  SQLQuery *q = db.query("Serie", query.c_str());
+   if (q && q->numberOfTuples() > 0) {
+-        SQLRow &row = (*q)[0];
+-        ep.id = conv::atoi(row["id"]);
+-        ep.status = conv::atoi(row["status"]);
+-        ep.percent = conv::atoi(row["percent"]);
+-        ep.pubdate = conv::atoi(row["pubdate"]);
+-	ep.title = row["title"];
+-	ep.link = row["link"];
+-	ep.description = row["description"];
+-	ep.img = row["image"];
++        //SQLRow &row = (*q)[0];
++        ep.id = conv::atoi((*q)[0]["id"].c_str());
++        ep.status = conv::atoi((*q)[0]["status"].c_str());
++        ep.percent = conv::atoi((*q)[0]["percent"].c_str());
++        ep.pubdate = conv::atoi((*q)[0]["pubdate"].c_str());
++	ep.title = (*q)[0]["title"].c_str();
++	ep.link = (*q)[0]["link"].c_str();
++	ep.description = (*q)[0]["description"].c_str();
++	ep.img = (*q)[0]["image"].c_str();
+   }
+   delete q;
+ 
+   query = "SELECT * FROM Enclosure WHERE idItem = '"+ conv::itos(id) + "'";
+-  q = db.query("Serie", query.c_str());
+-  if (q)
+-    for (int i = 0; i < q->numberOfTuples(); ++i) {
++  SQLQuery *q2 = db.query("Serie", query.c_str());
++  if (q2)
++    for (int i = 0; i < q2->numberOfTuples(); ++i) {
+         RssEnclosure enc = RssEnclosure();
+-        SQLRow &row = (*q)[i];
++        //SQLRow &row = (*q)[i];
+         //enc.id = conv::atoi(row["id"]);
+-	enc.url = row["url"];
+-	enc.type = row["type"];
+-	enc.length = row["length"];
++	enc.url = (*q2)[i]["url"].c_str();
++	enc.type = (*q2)[i]["type"].c_str();
++	enc.length = (*q2)[i]["length"].c_str();
+ 	ep.enclosure.push_back(enc);
+   }
+-  delete q;
++  delete q2;
+ 
+   db_mutex.leaveMutex();
+ 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp	2010-03-06 12:48:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/media_rss.hpp	2010-04-13 09:43:21.000000000 -0300
+@@ -30,10 +30,16 @@
+     bool call(const std::string& command, std::string& contents);
+ }
+ 
++class MediaRss;
++
+ class MediaRssUpdate : public ost::Thread
+ {
+ private:
++  MediaRss *mRss;
+   virtual void run();
++
++public:
++	MediaRssUpdate();	
+ };
+ 
+ class MediaRssItemsUpdate : public ost::Thread
+@@ -175,6 +181,8 @@
+   
+   MediaRssOpts opts;
+ 
++  ost::Mutex fetch_mutex;
++
+ private:
+ 
+   std::string mediarss_dir;
+
+=== modified file 'plugins/feature/media-rss/media_rss.cpp'
+--- old/plugins/feature/media-rss/media_rss.cpp	2010-02-23 18:47:11 +0000
++++ new/plugins/feature/media-rss/media_rss.cpp	2010-04-13 22:28:22 +0000
+@@ -69,7 +69,9 @@
+ 
+     dup2(filedesc[1], STDOUT_FILENO); /* child's output redirected to write end of pipe */
+     close(filedesc[1]);
+-
++    for (int x = 3; x <sysconf(_SC_OPEN_MAX) - 1; x++)
++      close(x);
++    
+     //fprintf(stderr, "%s%s\n", OBJOUTPUT("call "), command.c_str());
+     execl ("/bin/sh", "sh", "-c", command.c_str() , NULL);
+ 	
+@@ -88,7 +90,7 @@
+ bool SystemWrapper::call(const std::string& command, std::string& contents)
+ {
+   int fd = set_command(command);
+-  if (fd == -1){ /* wget failed, exit */
++  if (fd == -1){ /* system failed, exit */
+     fprintf(stderr, OBJOUTPUT("command failed\n"));
+     return false;
+   }
+

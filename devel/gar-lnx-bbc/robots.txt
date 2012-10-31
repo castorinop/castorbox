@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /garchive/
+Disallow: /cgi-bin/
+Disallow: *.gz
+Disallow: *?tarball=1
+Disallow: /build*
+Disallow: *.iso
+
+# A robot may not injure a human, or, through inaction, allow a human
+# to come to harm.

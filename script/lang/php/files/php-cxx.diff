@@ -1,0 +1,18 @@
+--- old/aclocal.m4	2007-05-30 20:50:50.000000000 +0200
++++ new/aclocal.m4.oden	2007-06-20 13:18:38.000000000 +0200
+@@ -768,13 +768,8 @@
+ dnl
+ dnl PHP_REQUIRE_CXX
+ dnl
+-AC_DEFUN([PHP_REQUIRE_CXX],[
+-  if test -z "$php_cxx_done"; then
+-    AC_PROG_CXX
+-    AC_PROG_CXXCPP
+-    php_cxx_done=yes
+-  fi
+-])
++
++AC_DEFUN([PHP_REQUIRE_CXX])
+ 
+ dnl
+ dnl PHP_BUILD_SHARED

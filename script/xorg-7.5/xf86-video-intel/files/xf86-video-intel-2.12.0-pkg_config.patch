@@ -1,0 +1,21 @@
+diff -Naur xf86-video-intel-2.12.0-old/configure.ac xf86-video-intel-2.12.0-new/configure.ac
+--- xf86-video-intel-2.12.0-old/configure.ac	2010-06-24 14:07:08.000000000 -0700
++++ xf86-video-intel-2.12.0-new/configure.ac	2010-06-24 20:07:54.000000000 -0700
+@@ -45,6 +45,7 @@
+ AC_PROG_LIBTOOL
+ AC_PROG_CC
+ AM_PROG_CC_C_O
++PKG_PROG_PKG_CONFIG
+ 
+ PKG_CHECK_MODULES(GEN4ASM, [intel-gen4asm >= 1.0], [gen4asm=yes], [gen4asm=no])
+ AM_CONDITIONAL(HAVE_GEN4ASM, test x$gen4asm = xyes)
+@@ -96,7 +97,8 @@
+                   HAVE_XEXTPROTO_71="no")
+ AM_CONDITIONAL(HAVE_XEXTPROTO_71, [ test "$HAVE_XEXTPROTO_71" = "yes" ])
+ 
+-sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
++m4_pattern_allow([^PKG_CONFIG_SYSROOT_DIR$])
++sdkdir="$PKG_CONFIG_SYSROOT_DIR$($PKG_CONFIG --variable=sdkdir xorg-server)"
+ 
+ save_CFLAGS="$CFLAGS"
+ CFLAGS="$XORG_CFLAGS $DRI_CFLAGS $DRM_CFLAGS"

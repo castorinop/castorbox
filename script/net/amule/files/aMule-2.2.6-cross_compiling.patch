@@ -1,0 +1,12 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/aMule-2.2.2/configure work/main.d/aMule-2.2.2/configure
+--- tmp/aMule-2.2.2/configure	2008-08-08 10:29:04.000000000 -0300
++++ aMule-2.2.2/configure	2008-09-03 12:19:54.000000000 -0300
+@@ -8264,7 +8265,7 @@
+   export PKG_CONFIG_PATH=$withval/lib/pkgconfig
+ fi;
+ 
+-	if test $cross_compiling = no; then
++	if test $cross_compiling != xyes; then
+   		echo "$as_me:$LINENO: checking for libupnp version >= 1.6.6" >&5
+ echo $ECHO_N "checking for libupnp version >= 1.6.6... $ECHO_C" >&6
+ 		if test -n "$PKG_CONFIG"; then

@@ -1,0 +1,65 @@
+diff --speed-large-files --minimal -Nru tmp/mixerosd-0.01/mixerosd.c work/main.d/mixerosd-0.01/mixerosd.c
+--- old/mixerosd.c	2006-12-15 17:57:55.000000000 -0300
++++ new/mixerosd.c	2007-01-25 18:42:32.000000000 -0300
+@@ -23,6 +23,7 @@
+ char *progname;
+ int step = 0;
+ int listChannels = 0;
++int showOSD = 1;
+ static int quiet = 0;
+ xosd *osd;
+ 
+@@ -633,10 +634,11 @@
+ 			{"version",no_argument,NULL,'v'},
+ 			{"daemon",no_argument,NULL,'d'},
+ 			{"quiet",no_argument,NULL,'q'},
++			{"no-osd",no_argument,NULL,'n'},
+ 			{"list-channels",no_argument,NULL,'l'},
+ 			{0, 0, 0, 0}
+ 		};
+-		c = getopt_long(argc,argv,"hvdql",long_options,NULL);
++		c = getopt_long(argc,argv,"hvdqln",long_options,NULL);
+ 		if (c==-1)
+ 			break;
+ 		switch (c)
+@@ -647,6 +649,7 @@
+ 				printf("\t -v --version\t\tdisplay version\n");
+ 				printf("\t -d --daemon\t\trun in background\n");
+ 				printf("\t -q --quiet\t\tdon't display any message\n");
++				printf("\t -n --no-osd\t\tdon't display any osd message\n");
+ 				printf("\t -l --list-channels\tshow channels aviable from alsa\n");
+ 			return(EXIT_SUCCESS);
+ 			case 'v':
+@@ -661,6 +664,9 @@
+ 			case 'l':
+ 				listChannels=1;
+ 			break;
++			case 'n':
++				showOSD=0;
++			break;
+ 			default:
+ 				printf("Usage: %s [options] [config_file]\n",argv[0]);
+ 			return(EXIT_FAILURE);
+@@ -744,14 +750,15 @@
+ 					
+ 					volumen = mixer_get_volume("Master");
+ 					sw = mixer_get_switch("Master");
+-					if (sw && volumen > 0) {
+-						xosd_display(osd, 0, XOSD_string, "Volumen");
+-						xosd_display(osd, 1, XOSD_percentage, volumen);
+-					} else { 
+-						xosd_display(osd, 0, XOSD_string, "Mudo");
+-						xosd_display(osd, 1, XOSD_string,"");
++					if (showOSD) {
++						if (sw && volumen > 0) {
++							xosd_display(osd, 0, XOSD_string, "Volumen");
++							xosd_display(osd, 1, XOSD_percentage, volumen);
++						} else { 
++							xosd_display(osd, 0, XOSD_string, "Mudo");
++							xosd_display(osd, 1, XOSD_string,"");
++						}
+ 					}
+-							
+ #ifndef DEBUG
+ 					//system(command);
+ #endif

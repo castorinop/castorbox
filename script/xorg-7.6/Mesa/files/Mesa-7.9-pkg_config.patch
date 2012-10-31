@@ -1,0 +1,361 @@
+diff -Naur Mesa-7.9-old/configs/default Mesa-7.9-new/configs/default
+--- Mesa-7.9-old/configs/default	2010-10-04 18:58:00.000000000 -0700
++++ Mesa-7.9-new/configs/default	2010-10-31 05:49:34.000000000 -0700
+@@ -37,6 +37,7 @@
+ MKDEP = makedepend
+ MKDEP_OPTIONS = -fdepend
+ MAKE = make
++PKG_CONFIG = pkg-config
+ 
+ # Use MINSTALL for installing libraries, INSTALL for everything else
+ MINSTALL = $(SHELL) $(TOP)/bin/minstall
+@@ -82,8 +83,8 @@
+ GLESv2_LIB_GLOB = $(GLESv2_LIB_NAME)*
+ VG_LIB_GLOB = $(VG_LIB_NAME)*
+ 
+-TALLOC_LIBS = `pkg-config --libs talloc`
+-TALLOC_CFLAGS = `pkg-config --cflags talloc`
++TALLOC_LIBS = `$(PKG_CONFIG) --libs talloc`
++TALLOC_CFLAGS = `$(PKG_CONFIG) --cflags talloc`
+ 
+ # Optional assembly language optimization files for libGL
+ MESA_ASM_SOURCES = 
+diff -Naur Mesa-7.9-old/configs/freebsd-dri Mesa-7.9-new/configs/freebsd-dri
+--- Mesa-7.9-old/configs/freebsd-dri	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/configs/freebsd-dri	2010-10-31 05:48:47.000000000 -0700
+@@ -30,8 +30,8 @@
+ MESA_ASM_SOURCES = 
+ 
+ # Library/program dependencies
+-LIBDRM_CFLAGS = `pkg-config --cflags libdrm`
+-LIBDRM_LIB = `pkg-config --libs libdrm`
++LIBDRM_CFLAGS = `$(PKG_CONFIG) --cflags libdrm`
++LIBDRM_LIB = `$(PKG_CONFIG) --libs libdrm`
+ DRI_LIB_DEPS = -L/usr/local/lib -lm -pthread -lexpat $(LIBDRM_LIB)
+ GL_LIB_DEPS = -L/usr/local/lib -lX11 -lXext -lXxf86vm -lXdamage -lXfixes \
+ 	-lm -pthread $(LIBDRM_LIB)
+diff -Naur Mesa-7.9-old/configs/linux-dri Mesa-7.9-new/configs/linux-dri
+--- Mesa-7.9-old/configs/linux-dri	2010-10-04 18:58:00.000000000 -0700
++++ Mesa-7.9-new/configs/linux-dri	2010-10-31 05:48:47.000000000 -0700
+@@ -43,8 +43,8 @@
+ # Library/program dependencies
+ EXTRA_LIB_PATH=-L/usr/X11R6/lib
+ 
+-LIBDRM_CFLAGS = $(shell pkg-config --cflags libdrm)
+-LIBDRM_LIB = $(shell pkg-config --libs libdrm)
++LIBDRM_CFLAGS = `$(PKG_CONFIG) --cflags libdrm`
++LIBDRM_LIB = `$(PKG_CONFIG) --libs libdrm`
+ DRI_LIB_DEPS  = $(EXTRA_LIB_PATH) -lm -lpthread -lexpat -ldl -ltalloc $(LIBDRM_LIB)
+ GL_LIB_DEPS   = $(EXTRA_LIB_PATH) -lX11 -lXext -lXxf86vm -lXdamage -lXfixes \
+ 		-lm -lpthread -ldl $(LIBDRM_LIB)
+@@ -64,8 +64,8 @@
+ DRI_DIRS = i810 i915 i965 mach64 mga r128 r200 r300 radeon \
+ 	savage sis tdfx unichrome swrast
+ 
+-INTEL_LIBS = `pkg-config --libs libdrm_intel`
+-INTEL_CFLAGS = `pkg-config --cflags libdrm_intel`
++INTEL_LIBS = `$(PKG_CONFIG) --libs libdrm_intel`
++INTEL_CFLAGS = `$(PKG_CONFIG) --cflags libdrm_intel`
+ 
+-RADEON_LIBS = `pkg-config --libs libdrm_radeon`
+-RADEON_CFLAGS = `pkg-config --cflags libdrm_radeon`
++RADEON_LIBS = `$(PKG_CONFIG) --libs libdrm_radeon`
++RADEON_CFLAGS = `$(PKG_CONFIG) --cflags libdrm_radeon`
+diff -Naur Mesa-7.9-old/configs/linux-dri-xcb Mesa-7.9-new/configs/linux-dri-xcb
+--- Mesa-7.9-old/configs/linux-dri-xcb	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/configs/linux-dri-xcb	2010-10-31 05:48:47.000000000 -0700
+@@ -25,7 +25,7 @@
+ 	-DGLX_DIRECT_RENDERING -DGLX_INDIRECT_RENDERING \
+         -DHAVE_ALIAS -DUSE_XCB -DHAVE_POSIX_MEMALIGN
+ 
+-X11_INCLUDES = $(shell pkg-config --cflags-only-I x11) $(shell pkg-config --cflags-only-I xcb) $(shell pkg-config --cflags-only-I x11-xcb) $(shell pkg-config --cflags-only-I xcb-glx)
++X11_INCLUDES = `$(PKG_CONFIG) --cflags-only-I x11` `$(PKG_CONFIG) --cflags-only-I xcb` `$(PKG_CONFIG) --cflags-only-I x11-xcb` `$(PKG_CONFIG) --cflags-only-I xcb-glx`
+ 
+ CFLAGS = -Wall -Wmissing-prototypes $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) \
+ 	$(DEFINES) $(ASM_FLAGS) -std=c99 -ffast-math 
+@@ -39,13 +39,13 @@
+ MESA_ASM_SOURCES = 
+ 
+ # Library/program dependencies
+-EXTRA_LIB_PATH=$(shell pkg-config --libs-only-L x11)
++EXTRA_LIB_PATH=`$(PKG_CONFIG) --libs-only-L x11`
+ 
+-LIBDRM_CFLAGS = $(shell pkg-config --cflags libdrm)
+-LIBDRM_LIB = $(shell pkg-config --libs libdrm)
++LIBDRM_CFLAGS = `$(PKG_CONFIG) --cflags libdrm`
++LIBDRM_LIB = `$(PKG_CONFIG) --libs libdrm`
+ DRI_LIB_DEPS  = $(EXTRA_LIB_PATH) -lm -lpthread -lexpat -ldl $(LIBDRM_LIB)
+ GL_LIB_DEPS   = $(EXTRA_LIB_PATH) -lX11 -lXext -lXxf86vm -lm -lpthread -ldl \
+-                $(LIBDRM_LIB) $(shell pkg-config --libs xcb) $(shell pkg-config --libs x11-xcb) $(shell pkg-config --libs xcb-glx)
++                $(LIBDRM_LIB) `$(PKG_CONFIG) --libs xcb` `$(PKG_CONFIG) --libs x11-xcb` `$(PKG_CONFIG) --libs xcb-glx`
+ 
+ SRC_DIRS = glx gallium mesa glu glut/glx glw
+ 
+diff -Naur Mesa-7.9-old/configs/linux-egl Mesa-7.9-new/configs/linux-egl
+--- Mesa-7.9-old/configs/linux-egl	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/configs/linux-egl	2010-10-31 05:48:47.000000000 -0700
+@@ -38,8 +38,8 @@
+ # Library/program dependencies
+ EXTRA_LIB_PATH=-L/usr/X11R6/lib
+ 
+-LIBDRM_CFLAGS = $(shell pkg-config --cflags libdrm)
+-LIBDRM_LIB = $(shell pkg-config --libs libdrm)
++LIBDRM_CFLAGS = `$(PKG_CONFIG) --cflags libdrm`
++LIBDRM_LIB = `$(PKG_CONFIG) --libs libdrm`
+ DRI_LIB_DEPS  = $(EXTRA_LIB_PATH) -lm -lpthread -lexpat -ldl $(LIBDRM_LIB)
+ GL_LIB_DEPS   = $(EXTRA_LIB_PATH) -lX11 -lXext -lXxf86vm -lXdamage -lXfixes \
+ 		-lm -lpthread -ldl \
+diff -Naur Mesa-7.9-old/src/gallium/drivers/r600/Makefile Mesa-7.9-new/src/gallium/drivers/r600/Makefile
+--- Mesa-7.9-old/src/gallium/drivers/r600/Makefile	2010-10-04 18:58:00.000000000 -0700
++++ Mesa-7.9-new/src/gallium/drivers/r600/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -4,7 +4,7 @@
+ LIBNAME = r600
+ 
+ LIBRARY_INCLUDES = \
+-	$(shell pkg-config libdrm --cflags-only-I)
++	`$(PKG_CONFIG) libdrm --cflags-only-I`
+ 
+ C_SOURCES = \
+ 	r600_buffer.c \
+diff -Naur Mesa-7.9-old/src/gallium/state_trackers/dri/drm/Makefile Mesa-7.9-new/src/gallium/state_trackers/dri/drm/Makefile
+--- Mesa-7.9-old/src/gallium/state_trackers/dri/drm/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/state_trackers/dri/drm/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -10,7 +10,7 @@
+ 	-I$(TOP)/src/gallium/state_trackers/dri/common \
+ 	-I$(TOP)/src/mesa/drivers/dri/common \
+ 	-I$(TOP)/src/mesa/main \
+-         $(shell pkg-config --cflags-only-I libdrm)
++         `$(PKG_CONFIG) --cflags-only-I libdrm`
+ 
+ 
+ C_SOURCES = \
+diff -Naur Mesa-7.9-old/src/gallium/state_trackers/egl/Makefile Mesa-7.9-new/src/gallium/state_trackers/egl/Makefile
+--- Mesa-7.9-old/src/gallium/state_trackers/egl/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/state_trackers/egl/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -17,14 +17,14 @@
+ 	-I$(TOP)/src/mapi \
+ 	-I$(TOP)/src/mesa \
+ 	$(X11_CFLAGS) \
+-	$(shell pkg-config --cflags-only-I libdrm)
++	`$(PKG_CONFIG) --cflags-only-I libdrm`
+ 
+ x11_SOURCES = $(wildcard x11/*.c) \
+ 	      $(TOP)/src/glx/dri2.c
+ x11_OBJECTS = $(x11_SOURCES:.c=.o)
+ 
+ 
+-drm_INCLUDES = -I$(TOP)/src/gallium/winsys $(shell pkg-config --cflags-only-I libdrm)
++drm_INCLUDES = -I$(TOP)/src/gallium/winsys `$(PKG_CONFIG) --cflags-only-I libdrm`
+ drm_SOURCES = $(wildcard drm/*.c)
+ drm_OBJECTS = $(drm_SOURCES:.c=.o)
+ 
+diff -Naur Mesa-7.9-old/src/gallium/state_trackers/xorg/Makefile Mesa-7.9-new/src/gallium/state_trackers/xorg/Makefile
+--- Mesa-7.9-old/src/gallium/state_trackers/xorg/Makefile	2010-03-30 15:40:35.000000000 -0700
++++ Mesa-7.9-new/src/gallium/state_trackers/xorg/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -5,12 +5,12 @@
+ 
+ LIBRARY_INCLUDES = \
+ 	-DHAVE_CONFIG_H \
+-	$(shell pkg-config xextproto --atleast-version=7.0.99.1 \
+-				&& echo "-DHAVE_XEXTPROTO_71") \
+-	$(shell pkg-config libkms --atleast-version=1.0 \
+-				&& echo "-DHAVE_LIBKMS") \
+-	$(shell pkg-config libkms --silence-errors --cflags-only-I) \
+-	$(shell pkg-config --cflags-only-I pixman-1 xorg-server libdrm xproto) \
++	`$(PKG_CONFIG) xextproto --atleast-version=7.0.99.1 \
++				&& echo "-DHAVE_XEXTPROTO_71"` \
++	`$(PKG_CONFIG) libkms --atleast-version=1.0 \
++				&& echo "-DHAVE_LIBKMS"` \
++	`$(PKG_CONFIG) libkms --silence-errors --cflags-only-I` \
++	`$(PKG_CONFIG) --cflags-only-I pixman-1 xorg-server libdrm xproto` \
+ 	-I$(TOP)/src/gallium/include \
+ 	-I$(TOP)/src/gallium/auxiliary \
+ 	-I$(TOP)/include \
+diff -Naur Mesa-7.9-old/src/gallium/targets/dri-nouveau/Makefile Mesa-7.9-new/src/gallium/targets/dri-nouveau/Makefile
+--- Mesa-7.9-old/src/gallium/targets/dri-nouveau/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/targets/dri-nouveau/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -22,6 +22,6 @@
+ 
+ include ../Makefile.dri
+ 
+-DRI_LIB_DEPS += $(shell pkg-config libdrm_nouveau --libs)
++DRI_LIB_DEPS += `$(PKG_CONFIG) libdrm_nouveau --libs`
+ 
+ symlinks:
+diff -Naur Mesa-7.9-old/src/gallium/targets/Makefile.xorg Mesa-7.9-new/src/gallium/targets/Makefile.xorg
+--- Mesa-7.9-old/src/gallium/targets/Makefile.xorg	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/targets/Makefile.xorg	2010-10-31 05:48:47.000000000 -0700
+@@ -19,7 +19,7 @@
+ 	$(ASM_SOURCES:.S=.o)
+ 
+ INCLUDES = \
+-	$(shell pkg-config --cflags-only-I pixman-1 xorg-server libdrm xproto) \
++	$(PKG_CONFIG) --cflags-only-I pixman-1 xorg-server libdrm xproto` \
+ 	-I$(TOP)/src/gallium/include \
+ 	-I$(TOP)/src/gallium/drivers \
+ 	-I$(TOP)/src/gallium/auxiliary \
+diff -Naur Mesa-7.9-old/src/gallium/targets/xorg-i915/Makefile Mesa-7.9-new/src/gallium/targets/xorg-i915/Makefile
+--- Mesa-7.9-old/src/gallium/targets/xorg-i915/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/targets/xorg-i915/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -19,6 +19,6 @@
+ 	$(TOP)/src/gallium/drivers/rbug/librbug.a
+ 
+ DRIVER_LINKS = \
+-	$(shell pkg-config --libs libdrm libdrm_intel)
++	`$(PKG_CONFIG) --libs libdrm libdrm_intel`
+ 
+ include ../Makefile.xorg
+diff -Naur Mesa-7.9-old/src/gallium/targets/xorg-i965/Makefile Mesa-7.9-new/src/gallium/targets/xorg-i965/Makefile
+--- Mesa-7.9-old/src/gallium/targets/xorg-i965/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/targets/xorg-i965/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -21,6 +21,6 @@
+ 	$(TOP)/src/gallium/drivers/softpipe/libsoftpipe.a
+ 
+ DRIVER_LINKS = \
+-	$(shell pkg-config --libs libdrm libdrm_intel)
++	`$(PKG_CONFIG) --libs libdrm libdrm_intel`
+ 
+ include ../Makefile.xorg
+diff -Naur Mesa-7.9-old/src/gallium/targets/xorg-nouveau/Makefile Mesa-7.9-new/src/gallium/targets/xorg-nouveau/Makefile
+--- Mesa-7.9-old/src/gallium/targets/xorg-nouveau/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/targets/xorg-nouveau/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -20,6 +20,6 @@
+ 	$(TOP)/src/gallium/drivers/rbug/librbug.a
+ 
+ DRIVER_LINKS = \
+-	$(shell pkg-config --libs libdrm libdrm_nouveau)
++	`$(PKG_CONFIG) --libs libdrm libdrm_nouveau`
+ 
+ include ../Makefile.xorg
+diff -Naur Mesa-7.9-old/src/gallium/targets/xorg-radeon/Makefile Mesa-7.9-new/src/gallium/targets/xorg-radeon/Makefile
+--- Mesa-7.9-old/src/gallium/targets/xorg-radeon/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/targets/xorg-radeon/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -19,6 +19,6 @@
+ 	$(TOP)/src/gallium/drivers/rbug/librbug.a
+ 
+ DRIVER_LINKS = \
+-	$(shell pkg-config --libs libdrm libdrm_radeon)
++	`$(PKG_CONFIG) --libs libdrm libdrm_radeon`
+ 
+ include ../Makefile.xorg
+diff -Naur Mesa-7.9-old/src/gallium/targets/xorg-vmwgfx/Makefile Mesa-7.9-new/src/gallium/targets/xorg-vmwgfx/Makefile
+--- Mesa-7.9-old/src/gallium/targets/xorg-vmwgfx/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/targets/xorg-vmwgfx/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -28,6 +28,6 @@
+ 	$(TOP)/src/gallium/drivers/rbug/librbug.a
+ 
+ DRIVER_LINKS = \
+-	$(shell pkg-config --libs libdrm libkms)
++	`$(PKG_CONFIG) --libs libdrm libkms`
+ 
+ include ../Makefile.xorg
+diff -Naur Mesa-7.9-old/src/gallium/winsys/i915/drm/Makefile Mesa-7.9-new/src/gallium/winsys/i915/drm/Makefile
+--- Mesa-7.9-old/src/gallium/winsys/i915/drm/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/winsys/i915/drm/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -9,8 +9,8 @@
+ 	i915_drm_fence.c \
+ 	i915_drm_winsys.c
+ 
+-LIBRARY_INCLUDES = $(shell pkg-config libdrm --cflags-only-I)
++LIBRARY_INCLUDES = `$(PKG_CONFIG) libdrm --cflags-only-I`
+ 
+-LIBRARY_DEFINES = $(shell pkg-config libdrm --cflags-only-other)
++LIBRARY_DEFINES = `$(PKG_CONFIG) libdrm --cflags-only-other`
+ 
+ include ../../../Makefile.template
+diff -Naur Mesa-7.9-old/src/gallium/winsys/i965/drm/Makefile Mesa-7.9-new/src/gallium/winsys/i965/drm/Makefile
+--- Mesa-7.9-old/src/gallium/winsys/i965/drm/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/winsys/i965/drm/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -7,8 +7,8 @@
+ 	i965_drm_buffer.c \
+ 	i965_drm_winsys.c
+ 
+-LIBRARY_INCLUDES = $(shell pkg-config libdrm --cflags-only-I)
++LIBRARY_INCLUDES = `$(PKG_CONFIG) libdrm --cflags-only-I`
+ 
+-LIBRARY_DEFINES = $(shell pkg-config libdrm --cflags-only-other)
++LIBRARY_DEFINES = `$(PKG_CONFIG) libdrm --cflags-only-other`
+ 
+ include ../../../Makefile.template
+diff -Naur Mesa-7.9-old/src/gallium/winsys/nouveau/drm/Makefile Mesa-7.9-new/src/gallium/winsys/nouveau/drm/Makefile
+--- Mesa-7.9-old/src/gallium/winsys/nouveau/drm/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/winsys/nouveau/drm/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -5,7 +5,7 @@
+ 
+ C_SOURCES = nouveau_drm_winsys.c
+ 
+-LIBRARY_INCLUDES = $(shell pkg-config libdrm libdrm_nouveau --cflags-only-I)
+-LIBRARY_DEFINES = $(shell pkg-config libdrm libdrm_nouveau --cflags-only-other)
++LIBRARY_INCLUDES = `$(PKG_CONFIG) libdrm libdrm_nouveau --cflags-only-I`
++LIBRARY_DEFINES = `$(PKG_CONFIG) libdrm libdrm_nouveau --cflags-only-other`
+ 
+ include ../../../Makefile.template
+diff -Naur Mesa-7.9-old/src/gallium/winsys/r600/drm/Makefile Mesa-7.9-new/src/gallium/winsys/r600/drm/Makefile
+--- Mesa-7.9-old/src/gallium/winsys/r600/drm/Makefile	2010-10-04 18:58:00.000000000 -0700
++++ Mesa-7.9-new/src/gallium/winsys/r600/drm/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -16,7 +16,7 @@
+ 	r600_drm.c
+ 
+ LIBRARY_INCLUDES = -I$(TOP)/src/gallium/drivers/r600 \
+-		   $(shell pkg-config libdrm --cflags-only-I)
++		   `$(PKG_CONFIG) libdrm --cflags-only-I`
+ 
+ include ../../../Makefile.template
+ 
+diff -Naur Mesa-7.9-old/src/gallium/winsys/radeon/drm/Makefile Mesa-7.9-new/src/gallium/winsys/radeon/drm/Makefile
+--- Mesa-7.9-old/src/gallium/winsys/radeon/drm/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/winsys/radeon/drm/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -10,7 +10,7 @@
+ 	radeon_r300.c
+ 
+ LIBRARY_INCLUDES = -I$(TOP)/src/gallium/drivers/r300 \
+-		   $(shell pkg-config libdrm --cflags-only-I)
++		   `$(PKG_CONFIG) libdrm --cflags-only-I`
+ 
+ include ../../../Makefile.template
+ 
+diff -Naur Mesa-7.9-old/src/gallium/winsys/svga/drm/Makefile Mesa-7.9-new/src/gallium/winsys/svga/drm/Makefile
+--- Mesa-7.9-old/src/gallium/winsys/svga/drm/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/gallium/winsys/svga/drm/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -17,11 +17,11 @@
+ LIBRARY_INCLUDES = \
+        -I$(TOP)/src/gallium/drivers/svga \
+        -I$(TOP)/src/gallium/drivers/svga/include \
+-       $(shell pkg-config libdrm --cflags-only-I)
++       `$(PKG_CONFIG) libdrm --cflags-only-I`
+ 
+ LIBRARY_DEFINES = \
+        -std=gnu99 -fvisibility=hidden \
+        -DHAVE_STDINT_H -D_FILE_OFFSET_BITS=64 \
+-       $(shell pkg-config libdrm --cflags-only-other)
++       `$(PKG_CONFIG) libdrm --cflags-only-other`
+ 
+ include ../../../Makefile.template
+diff -Naur Mesa-7.9-old/src/mesa/drivers/dri/i915/Makefile Mesa-7.9-new/src/mesa/drivers/dri/i915/Makefile
+--- Mesa-7.9-old/src/mesa/drivers/dri/i915/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/mesa/drivers/dri/i915/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -57,8 +57,8 @@
+ ASM_SOURCES = 
+ 
+ DRIVER_DEFINES = -I../intel -DI915 \
+-	$(shell pkg-config libdrm --atleast-version=2.3.1 \
+-				&& echo "-DDRM_VBLANK_FLIP=DRM_VBLANK_FLIP")
++	`$(PKG_CONFIG) libdrm --atleast-version=2.3.1 \
++				&& echo "-DDRM_VBLANK_FLIP=DRM_VBLANK_FLIP"`
+ 
+ INCLUDES += $(INTEL_CFLAGS)
+ DRI_LIB_DEPS += $(INTEL_LIBS)
+diff -Naur Mesa-7.9-old/src/mesa/drivers/dri/nouveau/Makefile Mesa-7.9-new/src/mesa/drivers/dri/nouveau/Makefile
+--- Mesa-7.9-old/src/mesa/drivers/dri/nouveau/Makefile	2010-10-01 15:51:28.000000000 -0700
++++ Mesa-7.9-new/src/mesa/drivers/dri/nouveau/Makefile	2010-10-31 05:48:47.000000000 -0700
+@@ -3,8 +3,8 @@
+ TOP = ../../../../..
+ include $(TOP)/configs/current
+ 
+-CFLAGS += $(shell pkg-config libdrm libdrm_nouveau --cflags)
+-DRI_LIB_DEPS += $(shell pkg-config libdrm_nouveau --libs)
++CFLAGS += `$(PKG_CONFIG) libdrm libdrm_nouveau --cflags`
++DRI_LIB_DEPS += `$(PKG_CONFIG) libdrm_nouveau --libs`
+ 
+ LIBNAME = nouveau_vieux_dri.so
+ 

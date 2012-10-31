@@ -1,0 +1,14 @@
+diff -Naur lirc-77c9429-old/daemons/Makefile.am lirc-77c9429-new/daemons/Makefile.am
+--- lirc-77c9429-old/daemons/Makefile.am	2011-01-23 20:58:14.000000000 -0800
++++ lirc-77c9429-new/daemons/Makefile.am	2011-01-23 20:59:26.000000000 -0800
+@@ -142,8 +142,8 @@
+ 	-$(RM) $(DESTDIR)$(varrundir)/$(PACKAGE)/lircd
+ 	-$(RM) $(DESTDIR)$(varrundir)/$(PACKAGE)/lircm
+ 
+-input_map.inc:
+-	$(srcdir)/input_map.sh >$@
++input_map.inc: $(srcdir)/input_map.sh @GAR_DESTDIR@@GAR_includedir@/linux/input.h
++	$(srcdir)/input_map.sh @GAR_DESTDIR@@GAR_includedir@/linux/input.h >$@
+ 
+ DISTCLEANFILES = input_map.inc
+ EXTRA_DIST = input_map.inc input_map.sh

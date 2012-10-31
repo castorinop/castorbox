@@ -1,0 +1,50 @@
+=== modified file 'plugins/feature/audio/lyrics_fetch.cpp'
+--- old/plugins/feature/audio/lyrics_fetch.cpp	2008-08-13 00:48:06 +0000
++++ new/plugins/feature/audio/lyrics_fetch.cpp	2008-08-13 14:16:02 +0000
+@@ -80,16 +80,17 @@
+ 
+ bool LyricsFetch::parse_text(const string& text, string nsec)
+ {
+-  string::size_type cur_pos, next_pos, start_pos;
++  string::size_type cur_pos, next_pos, nsec_length;
+   
+   vecLyric.clear();
+ 
+   string buff;
+   cur_pos = 0;
+-  cur_pos = 0;
+ 
+   next_pos = text.find(nsec);
+   if (next_pos == std::string::npos) {
++    if (nsec == "\r\n")
++      return parse_text(text, "\n");
+     if (nsec == "\n")
+       return parse_text(text, "\xD");
+     else 
+@@ -97,9 +98,9 @@
+   }
+ 
+   while (cur_pos != std::string::npos) {
+-    start_pos = (cur_pos == 0 ? cur_pos : cur_pos + 1);
+-    next_pos = text.find(nsec, start_pos);
+-    buff = text.substr(start_pos , next_pos - cur_pos);
++    nsec_length = (cur_pos == 0 ? 0 : nsec.size());
++    next_pos = text.find(nsec, cur_pos + nsec_length);
++    buff = text.substr(cur_pos + nsec_length, next_pos - cur_pos - nsec_length);
+     addLine(buff);
+     cur_pos = next_pos;
+   }
+
+=== modified file 'plugins/feature/audio/lyrics_fetch.hpp'
+--- old/plugins/feature/audio/lyrics_fetch.hpp	2008-08-04 21:34:07 +0000
++++ new/plugins/feature/audio/lyrics_fetch.hpp	2008-08-13 14:16:02 +0000
+@@ -36,7 +36,7 @@
+ 
+   Config *conf;
+ 
+-  bool parse_text(const std::string& text, std::string nsec = "\n");
++  bool parse_text(const std::string& text, std::string nsec = "\r\n");
+   void addLine(const std::string& line);
+ 
+   virtual void run();
+

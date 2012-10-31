@@ -1,0 +1,43 @@
+=== modified file 'plugins/feature/media-rss/media_rss.cpp'
+--- old/plugins/feature/media-rss/media_rss.cpp	2008-08-11 17:45:42 +0000
++++ new/plugins/feature/media-rss/media_rss.cpp	2008-08-12 00:56:24 +0000
+@@ -52,10 +52,12 @@
+    */
+ 
+   /* we fork */
+-
+-  if ((pid = fork()) < 0){
++  pid = fork();
++  if (pid == -1) {
+     /* got error */
+     fprintf(stderr, OBJOUTPUT("Could not fork()\n"));
++    close (filedesc[1]);
++    close (filedesc[0]);
+     return -1;
+   }
+ 
+@@ -85,6 +87,7 @@
+   int fd = set_command(command);
+   if (fd  == -1){ /* wget failed, exit */
+     fprintf(stderr, OBJOUTPUT("command failed\n"));
++    close(fd);
+     return false;
+   }
+   
+@@ -109,6 +112,7 @@
+ 	break;
+       else if (ferror(stream)){
+ 	fprintf(stderr, OBJOUTPUT("Read error: %s \n"), s_strerror(errno).c_str());
++        close(fd);
+ 	fclose(stream);
+ 	return false;
+       }
+@@ -116,6 +120,7 @@
+   }
+   close(fd);
+   fclose(stream);
++  fprintf(stderr, "%s%s\n", OBJOUTPUT("end call good "), command.c_str());
+   return true;
+ }
+ 
+

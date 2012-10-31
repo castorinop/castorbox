@@ -1,0 +1,11 @@
+--- old/sapi/apache2handler/config.m4	2005-09-01 16:33:47.000000000 +0200
++++ new/sapi/apache2handler/config.m4.oden	2007-06-20 13:06:20.000000000 +0200
+@@ -65,7 +65,7 @@
+   fi
+ 
+   APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
+-  if test -z `$APXS -q SYSCONFDIR`; then
++  if true; then
+     INSTALL_IT="\$(mkinstalldirs) '$APXS_LIBEXECDIR' && \
+                  $APXS -S LIBEXECDIR='$APXS_LIBEXECDIR' \
+                        -i -n php5"

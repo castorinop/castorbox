@@ -1,0 +1,15 @@
+diff -Naur xine-lib-11577-old/src/video_out/xxmc.h xine-lib-11577-new/src/video_out/xxmc.h
+--- xine-lib-11577-old/src/video_out/xxmc.h	2010-08-06 22:18:15.000000000 -0700
++++ xine-lib-11577-new/src/video_out/xxmc.h	2010-08-11 10:36:32.000000000 -0700
+@@ -77,10 +77,10 @@
+ #include <X11/extensions/XShm.h>
+ #include <X11/extensions/Xv.h>
+ #include <X11/extensions/Xvlib.h>
++#include <X11/extensions/XvMClib.h>
+ #ifdef HAVE_VLDXVMC
+   #include <X11/extensions/vldXvMC.h>
+ #else
+-  #include <X11/extensions/XvMClib.h>
+   #include <X11/extensions/XvMC.h>
+ #endif
+ 

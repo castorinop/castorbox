@@ -1,0 +1,21 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/alsaplayer-0.99.80/input/flac/FlacPlugin.cpp new-alsaplayer-0.99.80/input/flac/FlacPlugin.cpp
+--- tmp/alsaplayer-0.99.80/input/flac/FlacPlugin.cpp	2007-10-29 18:00:16.000000000 -0300
++++ new-alsaplayer-0.99.80/input/flac/FlacPlugin.cpp	2009-08-05 21:26:49.000000000 -0300
+@@ -239,7 +239,7 @@
+     else
+     {
+ 	// use stream name
+-	char * fname = strrchr (f->name ().c_str (), '/');
++	char * fname = (char *)strrchr (f->name ().c_str (), '/');
+ 	if (fname)
+ 	{
+ 	    fname++;
+@@ -270,7 +270,7 @@
+ 	if (strncmp(name, "http://", 7) == 0) {
+ 		return 0.0;
+ 	}
+-	char *ext = strrchr(name, '.');
++	char *ext = (char *)strrchr(name, '.');
+ 	if (!ext)
+ 		return 0.0;
+ 	ext++;

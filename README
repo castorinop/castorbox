@@ -1,0 +1,77 @@
+--------------------------------------------------------------------------------
+Introduction
+
+This is GAR MiniMyth. It uses a variant of the GAR build system
+<http://www.lnx-bbc.org> to build a variant of MiniMyth <http://www.linpvr.org>.
+MiniMyth is a Linux distribution that turns a diskless Via EPIA series computer
+(as well as some select other computers) into a Myth <http://www.mythtv.org>
+frontend.
+
+--------------------------------------------------------------------------------
+Prerequisites
+
+The build system assumes that you are building on either an i386 or an x86_64
+architecture computer that is running Linux, although I have not tested it on an
+x86_64 architecture computer. In addition, the build system assumes that you
+have a basic set of binaries and libraries installed, including:
+	binutils,
+	bison,
+	bzip2,
+	coreutils,
+	cvs,
+	diffutils,
+	findutils,
+	flex,
+	gawk,
+	gcc,
+	glibc (including static libraries),
+	grep,
+	gzip,
+	util-linux,
+	make,
+	patch,
+	perl,
+	sed,
+	subversion (also known as svn),
+	tar, and
+	wget.
+The build system does its best to check for the presense of the needed binaries.
+
+The build system assumes that you have at least 7 GBs of free disk space.
+
+The build system assumes that you have time. The build system has three stages:
+  (1) build the native environment,
+  (2) build the cross environment and
+  (3) build MiniMyth.
+In addition, some of the packages needed for MiniMyth such as MySQL and QT need
+to build native versions in order to build the cross versions. All this takes
+time. For me, on a 2.4GHz Pentium 4, it takes approximately 6 hours.
+--------------------------------------------------------------------------------
+Installation
+
+Configure the build system with your settings in
+  $(HOME)/.minimyth/minimyth.conf.mk
+These settings override the default settings in
+  script/minimyth.conf.mk
+
+Clean the entire build by doing the following:
+  make clean
+
+Download the distribution files by doing the following:
+  make garchive
+The downloaded distribution files will be stored in the directory 'source'.
+
+Build MiniMyth by doing the following:
+  cd script/meta/minimyth
+  make build
+
+Build and install MiniMyth by doing the following:
+  cd script/meta/minimyth
+  make install
+
+Everything, with the exception of the install, can and should be done using
+a non-root account. The install process needs to perform the following
+operations as root:
+  (1) If mm_INSTALL_TFTP_BOOT=yes, copy files to the TFTP directory.
+  (2) If mm_INSTALL_NFS_BOOT=yes, copy files to the NFS and TFTP directories.
+As a result, 'make install' may prompt you for the root password.

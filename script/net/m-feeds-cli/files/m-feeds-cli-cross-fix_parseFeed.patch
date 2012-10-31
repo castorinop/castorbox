@@ -1,0 +1,75 @@
+diff -ru m-feeds-cli-cross/m-feeds-cli.py m-feeds-cli-cbx2/m-feeds-cli.py
+--- m-feeds-cli-cross/src/m-feeds-cli.py	2012-02-27 13:12:27.471074400 -0300
++++ m-feeds-cli-cbx2/src/m-feeds-cli.py	2012-08-07 15:20:22.431177309 -0300
+@@ -29,8 +29,9 @@
+   def __init__(self):
+         self.files = []
+         self.done = []
++        self.times = 3600
+         
+         self.filename = os.path.expanduser( os.path.join('~', 'm-feeds-cli.json'))
+         self.loadFile()
+     
+   def saveFile(self):
+@@ -75,19 +76,17 @@
+         #global dest
+         from xml.etree.cElementTree import parse
+     
+-        while 1:
+-            try:
++        #while 1:
++        try:
+                 print "getting feed..." 
+                 tree = parse(urllib.urlopen(uri[0]))
+-            except:
++        except:
+                 print "error get feed"
+-            
+-                time.sleep(60)
+-                continue
++                return
+         
+         
+-            items = tree.findall('channel/item')
+-            for item in items:
++        items = tree.findall('channel/item')
++        for item in items:
+                 title = item.find('title').text
+                 link = item.find('link').text
+                 print title
+@@ -114,11 +113,12 @@
+                     DOWNLOAD.run()
+                     self.files.append( { 'added': time.time(), 'title': title, 'link': link, 'dest': path, 'down': DOWNLOAD, 'stat': 'downloading' } )
+                     
++                    
++  def download_list(self):
+             print "download list"
+             for i in self.files:
+                 print i['title']
+                 
+-            
+             while 1:
+                 for k, i in enumerate(self.files):
+                     if i['stat'] is 'done':
+@@ -148,7 +148,11 @@
+             
+                 self.saveFile()
+                 print "=========="
+-                time.sleep(5)
++                time.sleep(10)
++                self.times = self.times +1
++                if self.times > 90:
++                  self.parseFeed()
++                  self.times = 0
+      
+      
+   def startDownload(self, i):
+@@ -196,7 +200,7 @@
+     
+     mfc = mfeedscli();
+     #try: 
+-    mfc.parseFeed()
++    mfc.download_list()
+     #except:
+       #print "error!!!"
+       #pass

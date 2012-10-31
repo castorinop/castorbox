@@ -1,0 +1,5 @@
+libgomp: gcc link
+gettext version: patch 0.17 to 0.18
+findutils: careful update. dont build on main destdir
+php: ld not detected
+

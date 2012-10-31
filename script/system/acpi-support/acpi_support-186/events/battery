@@ -1,0 +1,5 @@
+# /etc/acpi/events/battery
+# Called when AC power goes away and we switch to battery
+
+event=battery
+action=/etc/acpi/power.sh

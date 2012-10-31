@@ -1,0 +1,34 @@
+diff -Naur curl-7.19.6-old/curl-config.in curl-7.19.6-new/curl-config.in
+--- curl-7.19.6-old/curl-config.in	2009-08-12 19:32:36.000000000 -0700
++++ curl-7.19.6-new/curl-config.in	2009-08-12 19:33:19.000000000 -0700
+@@ -122,19 +122,11 @@
+ 	;;
+ 
+     --cflags)
+-       	if test "X@includedir@" = "X/usr/include"; then
+-          echo ""
+-        else
+-          echo "-I@includedir@"
+-        fi
++        echo ""
+        	;;
+ 
+     --libs)
+-	if test "X@libdir@" != "X/usr/lib" -a "X@libdir@" != "X/usr/lib64"; then
+-	   CURLLIBDIR="-L@libdir@ "
+-	else
+-	   CURLLIBDIR=""
+-	fi
++	CURLLIBDIR=""
+ 	if test "X@REQUIRE_LIB_DEPS@" = "Xyes"; then
+ 	  echo ${CURLLIBDIR}-lcurl @LDFLAGS@ @LIBCURL_LIBS@ @LIBS@
+ 	else
+@@ -143,7 +135,7 @@
+ 	;;
+ 
+     --static-libs)
+-	echo @libdir@/libcurl.@libext@ @LDFLAGS@ @LIBCURL_LIBS@ @LIBS@
++	echo @GAR_DESTDIR@@libdir@/libcurl.@libext@ @LDFLAGS@ @LIBCURL_LIBS@ @LIBS@
+ 	;;
+ 
+     *)

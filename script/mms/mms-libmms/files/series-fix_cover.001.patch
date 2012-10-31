@@ -1,0 +1,47 @@
+=== modified file 'plugins/feature/movie/series.cpp'
+--- old/plugins/feature/movie/series.cpp	2010-03-02 13:53:21 +0000
++++ new/plugins/feature/movie/series.cpp	2010-03-09 15:16:10 +0000
+@@ -962,28 +962,24 @@
+     name += "/"; */
+ 
+   string_format::format_to_size(name, list_font, conf->p_h_res()-75-155, true);
+-  int w = 64, h = 88;
++  int lvl= 3, img_x = 80, w = 80, h = list_font_height * 2;
+ 
+   if (r == position) {
+     render->current.add(new PFObj(themes->general_marked_large, 60, y+2,
+ 				  conf->p_h_res()-2*60, list_font_height * 2, 2, true));
+-      w = 120; h = 168;
+-
+-/*    if (conf->p_v_res() < 600) {
+-      w = 72;
+-      h = 100;
+-    } */
+-
+-    if (file_exists(cover_path(r.name))) {
+-      render->create_scaled_image_wrapper_upscaled(cover_path(r.name), w, h);
+-      render->current.add(new PFObj(cover_path(r.name), conf->p_h_res() - w - 80, y + list_font_height - h/5, w, h, false, 4));
+-    }
+-  } else 
+-    if (file_exists(cover_path(r.name))) {
+-      render->create_scaled_image_wrapper_upscaled(cover_path(r.name), w, h);
+-      render->current.add(new PFObj(cover_path(r.name), conf->p_h_res() - w - 90, y + list_font_height - h/5, w, h, false, 3));
+-    }
+-//  std::ostringstream out; out << r.filenames.size();
++
++      lvl++;
++      img_x = 95;
++      w = 120;
++      h = list_font_height * 3;
++
++
++  }
++
++  if (file_exists(cover_path(r.name))) {
++    render->create_scaled_image_wrapper_upscaled(cover_path(r.name), w, h);
++    render->current.add(new PFObj(cover_path(r.name), conf->p_h_res() - 140 - w/2, y + list_font_height - h/2, w, h, false, lvl));
++  }
+ 
+   render->current.add(new TObj(name, list_font, 75, y,
+ 			       themes->movie_font1, themes->movie_font2,
+

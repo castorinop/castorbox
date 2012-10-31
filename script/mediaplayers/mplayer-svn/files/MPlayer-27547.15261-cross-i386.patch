@@ -1,0 +1,17 @@
+diff -Naur MPlayer-27547.15261-old/configure MPlayer-27547.15261-new/configure
+--- MPlayer-27547.15261-old/configure	2008-09-16 21:11:38.000000000 -0700
++++ MPlayer-27547.15261-new/configure	2008-09-16 21:13:17.000000000 -0700
+@@ -2971,12 +2971,7 @@
+ 
+ echocheck "word size"
+ _mp_wordsize="#undef MP_WORDSIZE"
+-cat > $TMPC << EOF
+-#include <stdio.h>
+-#include <sys/types.h>
+-int main(void) { printf("%d\n", sizeof(size_t)*8); return 0; }
+-EOF
+-cc_check && _wordsize=`$TMPEXE` && _mp_wordsize="#define MP_WORDSIZE $_wordsize"
++_wordsize=32 && _mp_wordsize="#define MP_WORDSIZE $_wordsize"
+ echores "$_wordsize"
+ 
+ 

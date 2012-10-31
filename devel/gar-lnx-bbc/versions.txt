@@ -1,0 +1,56 @@
+Version Skew, Version Lock, and The Reason For HEAD and STABLE
+
+GNU libc has recently had a major change in the way symbols are
+exposed to programs.  There are numerous sources where you can learn
+the details of what's changed, but for purposes of this rant, this is
+all you need to know:
+
+ * The dynamic linker from GNU libc 2.2.x cannot load libc.so from GNU
+libc 2.3.x
+ * The dynamic linker from GNU libc 2.3.x cannot load libc.so from GNU
+libc 2.2.x
+
+GNU libc 2.2.x vs. 2.3.x is the only pair of library version we've
+encountered that causes trouble, but the problem is a general one.  We
+refer to this sort of mismatch as *version skew*.  If the version skew
+between your build host and the libraries you are building is too
+much, then your build /will/ fail.
+
+As a result, the LNX-BBC source tree has to build a version of GNU
+libc which matches the version installed on the build host.  This is
+*version lock*, and there is no known workaround.
+
+Many systems still use GNU libc 2.2.x, including gargoyle.lnx-bbc.org,
+which is where our nightly builds take place.  However, a growing
+number of platforms have switched to GNU libc 2.3.x, including Debian
+testing, which many of the LNX-BBC developers use.  Because of this,
+the LNX-BBC source was branched on March 29th.  CVS checkouts from
+HEAD will build an LNX-BBC which uses libc 2.3.1, which means that
+HEAD can only be built on systems running libc 2.3.x.  The new branch,
+STABLE, will build an LNX-BBC with libc 2.2.5 on systems running libc
+2.2.x.
+
+To complicate matters, recent versions of GNU libc and GCC have a
+codependent relationship.  GCC 2.95.x cannot build GNU libc 2.3.x, and
+GCC 3.2.x cannot build GNU libc 2.2.x.  HEAD and STABLE therefore also
+build different versions of GCC.
+
+If you are trying to build from HEAD on a system with GNU libc 2.2.x,
+stop.  If you are trying to build from STABLE on a system with GNU
+libc 2.3.x, stop.  Fixing this is a long-term goal.  *long-term*.  I
+can't stress this fact enough...
+
+----8<----
+ _     ___  _   _  ____     _____ _____ ____  __  __ 
+| |   / _ \| \ | |/ ___|   |_   _| ____|  _ \|  \/  |
+| |  | | | |  \| | |  _ _____| | |  _| | |_) | |\/| |
+| |__| |_| | |\  | |_| |_____| | | |___|  _ <| |  | |
+|_____\___/|_| \_|\____|     |_| |_____|_| \_\_|  |_|
+                                                     
+----8<----
+
+If you want to attempt to solve the version skew problem, understand
+that you are undertaking a task which pushes the limits of operating
+systems research.  If you try it at all, do it in an office... at
+university... with grant money in your pocket.  Do not try this at
+home.  

@@ -1,0 +1,8 @@
+#!/bin/bash
+# /etc/cron.d/php: crontab fragment for php
+# This purges session files older than X, where X is defined in seconds
+# as the largest value of session.gc_maxlifetime from all your php.ini
+# files, or 24 minutes if not defined.  See /usr/lib/php/maxlifetime
+
+# Look for and purge old sessions every 30 minutes
+09,39 * * * *  root [ -d /var/lib/php ] && find /var/lib/php/ -type f -mmin +$(/usr/lib/php/maxlifetime) -print0 | xargs -r -0 rm

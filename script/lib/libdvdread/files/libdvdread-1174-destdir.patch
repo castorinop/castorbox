@@ -1,0 +1,15 @@
+diff -Naur libdvdread-1174-old/misc/dvdread-config.in libdvdread-1174-new/misc/dvdread-config.in
+--- libdvdread-1174-old/misc/dvdread-config.in	2009-06-11 03:02:16.000000000 -0700
++++ libdvdread-1174-new/misc/dvdread-config.in	2009-06-11 03:03:31.000000000 -0700
+@@ -72,9 +72,9 @@
+ fi
+ 
+ if test "$echo_cflags" = "yes"; then
+-      echo -I@includedir@
++      echo -I$DESTDIR@includedir@
+ fi
+ 
+ if test "$echo_libs" = "yes"; then
+-      echo -L@libdir@ -ldvdread
++      echo -L$DESTDIR@libdir@ -ldvdread
+ fi

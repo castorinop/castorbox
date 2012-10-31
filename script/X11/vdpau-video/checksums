@@ -1,0 +1,4 @@
+18870e007ecdc50a528861fa55556364  download/vdpau-video-0.7.3.tar.gz
+3606c7f59d4a8f7d6920111cf335f5cb  download/vdpau-video-0.7.3-remove_sds_checks.patch
+f5b49dcd0e130bd31b03c6549fe06f5c  download/vdpau-video-0.7.3-utils_glx_h.patch
+7b561739ac3add2ea66601c533074f5f  download/vdpau-video-0.7.3-install.patch

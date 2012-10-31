@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org - MiniMyth - Downloads</title>
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">MiniMyth from <a href="http://linpvr.org">LinPVR.org</a></div>
+        <div class="menu">
+          <span class="menuItemFirst"><a href="../index.shtml">Home</a></span>
+          <span class="menuItem"     ><a href="index.shtml"   >MiniMyth</a></span>
+          <span class="menuItem"     >Downloads</span>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">Downloads</div>
+        <div id="version" class="section">
+          <div class="heading">Versions</div>
+          <p>
+            There are multiple MiniMyth distribution versions available for download.
+            In order to decide which one to download, it helps to understand the MiniMyth distribution's version.
+          </p>
+          <p>
+            The version consists of three parts separated by hyphens (-).
+            The first part is the MythTV version number.
+            The second part is MiniMyth build system version number.
+            The third part, which may or may not be present, is an extra version.
+            For example, the version 0.19-18 means that this MiniMyth distribution contains MythTV 0.19 and was built using MiniMyth version 18.
+          </p>
+          <p>
+            You may have noticed that the MythTV version number and the MiniMyth build system version number are independent.
+            This is done because the MiniMyth build system can build multiple versions of MythTV,
+            depending on the MiniMyth build system configuration settings.
+            For example, The MiniMyth distributions with the versions 0.19-18 and 0.20-18 would contain different versions of MythTV,
+            but would have been built using the same MiniMyth build system.
+          </p>
+          <p>
+            Typically, the extra version is used to indicate that the MiniMyth distribution was built
+            using one or more non-default MiniMyth build system configuration settings.
+            Usually, this is done only when providing test builds for troubleshooting.
+            As a result, stable MiniMyth distribution versions rarely have an extra version.
+          </p>
+        </div>
+        <div id="directory" class="section">
+          <div class="heading">Directories</div>
+          <dl>
+            <dt id="stable-latest"><a href="http://linpvr.org/minimyth/download/stable/latest/">Latest stable MiniMyth release</a>
+              (<strong> <!--#include file="download/stable/latest/version"--></strong>)
+            </dt>
+            <dd>
+              A directory containing the latest stable MiniMyth release.
+              The latest stable MiniMyth release is usually the latest stable version of MiniMyth with the latest stable version of MythTV.
+              For the latest stable MiniMyth release with an older stable MythTV release
+              visit the <a href="http://linpvr.org/minimyth/download/stable/old/">old stable MiniMyth releases</a> directory.
+            </dd>
+            <dt id="test-latest">
+              <a href="http://linpvr.org/minimyth/download/test/latest/">Latest test MiniMyth release</a>
+              (<strong> <!--#include file="download/test/latest/version"--></strong>)
+            </dt>
+            <dd>
+              A directory containing the latest test MiniMyth release.
+              There is not always a test MiniMyth release.
+              As result, this directory is sometimes empty.
+            </dd>
+            <dt id="stable">
+              <a href="http://linpvr.org/minimyth/download/stable/">All stable MiniMyth releases</a>
+            </dt>
+            <dd>
+              A directory containing "all" stable MiniMyth releases.
+              In order to preserve server space,
+              not every stable MiniMyth release is kept indefinitely.
+            </dd>
+            <dt id="test">
+              <a href="http://linpvr.org/minimyth/download/test/">All test MiniMyth releases</a>
+            </dt>
+            <dd>
+              A directory containing all test MiniMyth releases.
+              When a new stable or test MiniMyth release is added, old test MiniMyth releases are usually deleted.
+              Therefore, there is usually only one test MiniMyth release.
+              However, at times there are multiple test MiniMyth releases because we are testing multiple things
+              (e.g., MiniMyth with different versions of MythTV).
+            </dd>
+            <dt id="before-gar">
+              <a href="http://linpvr.org/minimyth/download/before-gar/">All MiniMyth releases created before the GAR build system</a>
+            </dt>
+            <dd>
+              A directory containing all MiniMyth releases created before MiniMyth was built using the GAR build system.
+            </dd>
+            <dt id="garchive">
+              <a href="http://linpvr.org/minimyth/download/garchive/">MiniMyth's GAR build system's source files archive</a>
+            </dt>
+            <dd>
+              A directory mirroring some of the source code used by MiniMyth's GAR build system.
+              This is done to minimize the impact caused by the scheduled and unscheduled outages of servers (e.g. sourceforge.net).
+              As a result, only source code hosted on servers where outages have been a problem is mirrored here.
+            </dd>
+            <dt id="all">
+              <a href="http://linpvr.org/minimyth/download/">MiniMyth download directory</a>
+            </dt>
+            <dd>
+              The directory containing all the MiniMyth download directories.
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-10-07 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

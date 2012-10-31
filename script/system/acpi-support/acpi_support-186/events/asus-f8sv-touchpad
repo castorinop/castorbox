@@ -1,0 +1,6 @@
+# /etc/acpi/events/asus-f8sv-touchpad
+# This is called when the user presses the touchpad button on the ASUS F8SV
+# and calls /etc/acpi/asus-touchpad.sh for further processing.
+
+event=hotkey ATKD 0000008a
+action=/etc/acpi/asus-touchpad.sh

@@ -1,0 +1,11 @@
+index 50b8265..8df86eb 100644 (file)
+--- a/drivers/lirc_serial/lirc_serial.c
++++ b/drivers/lirc_serial/lirc_serial.c
+@@ -1288,6 +1288,7 @@ static int __init lirc_serial_init_module(void)
+ 	result = init_port();
+ 	if (result < 0)
+ 		goto exit_serial_exit;
++	driver.dev = &lirc_serial_dev->dev;
+ 	driver.features = hardware[type].features;
+ 	driver.minor = lirc_register_driver(&driver);
+ 	if (driver.minor < 0) {

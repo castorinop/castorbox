@@ -1,0 +1,8 @@
+--- old-mms-1.1.0-1775/themes/standard/theme.conf	2009-10-07 23:41:57.000000000 -0300
++++ new-mms-1.1.0-1775/themes/standard/theme.conf	2009-10-07 19:46:52.000000000 -0300
+@@ -1,4 +1,4 @@
+-version = 36
++version = 39
+ 
+ show_header = yes
+ 

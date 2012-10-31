@@ -1,0 +1,18 @@
+diff -Naur xine-ui-0.99.5-old/src/xitk/xine-toolkit/window.c xine-ui-0.99.5-new/src/xitk/xine-toolkit/window.c
+--- xine-ui-0.99.5-old/src/xitk/xine-toolkit/window.c	2007-05-05 08:48:48.000000000 -0700
++++ xine-ui-0.99.5-new/src/xitk/xine-toolkit/window.c	2007-05-05 08:50:06.000000000 -0700
+@@ -266,11 +266,13 @@
+   hint.width           = width;
+   hint.base_width      = width;
+   hint.min_width       = width;
++  hint.max_width       = width;
+   hint.height          = height;
+   hint.base_height     = height;
+   hint.min_height      = height;
++  hint.max_height      = height;
+   hint.win_gravity     = NorthWestGravity;
+-  hint.flags           = PWinGravity | PBaseSize | PMinSize | USSize | USPosition;
++  hint.flags           = PWinGravity | PBaseSize | PMinSize | PMaxSize | USSize | USPosition;
+   
+   XLOCK(im->x.disp);
+   XAllocNamedColor(im->x.disp, Imlib_get_colormap(im), "black", &black, &dummy);

@@ -1,0 +1,11 @@
+--- old/ext/xmlrpc/config.m4	2009-06-11 22:04:26.000000000 +0200
++++ new/ext/xmlrpc/config.m4.oden	2009-06-11 22:17:31.000000000 +0200
+@@ -116,7 +116,7 @@
+   fi
+ 
+   PHP_ADD_INCLUDE($XMLRPC_DIR)
+-  PHP_ADD_LIBRARY_WITH_PATH(xmlrpc,,XMLRPC_SHARED_LIBADD)
++  PHP_ADD_LIBRARY_WITH_PATH(xmlrpc-epi,,XMLRPC_SHARED_LIBADD)
+   PHP_NEW_EXTENSION(xmlrpc,xmlrpc-epi-php.c, $ext_shared)
+   PHP_SUBST(XMLRPC_SHARED_LIBADD)
+   XMLRPC_MODULE_TYPE=external

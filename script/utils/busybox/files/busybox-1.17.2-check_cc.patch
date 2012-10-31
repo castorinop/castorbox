@@ -1,0 +1,12 @@
+diff -Naur busybox-1.17.2-old/scripts/trylink busybox-1.17.2-new/scripts/trylink
+--- busybox-1.17.2-old/scripts/trylink	2010-08-22 01:21:38.000000000 -0700
++++ busybox-1.17.2-new/scripts/trylink	2010-08-23 07:33:46.000000000 -0700
+@@ -49,7 +49,7 @@
+     local tempname="/tmp/temp.$$.$RANDOM"
+     # Can use "-o /dev/null", but older gcc tend to *unlink it* on failure! :(
+     # "-xc": C language. "/dev/null" is an empty source file.
+-    if $CC $1 -shared -xc /dev/null -o "$tempname".o >/dev/null 2>&1; then
++    if $CC $CFLAGS $LDFLAGS $1 -shared -xc /dev/null -o "$tempname".o >/dev/null 2>&1; then
+ 	echo "$1";
+     else
+ 	echo "$2";

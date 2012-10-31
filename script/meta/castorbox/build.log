@@ -1,0 +1,598 @@
+[===== NOW BUILDING:	castorbox-v2-r983MP	=====]
+	[fetch] complete for castorbox.
+	[checksum] complete for castorbox.
+	[extract] complete for castorbox.
+	[patch] complete for castorbox.
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/meta/castorbox'
+ ==> Building meta/core as a dependency
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/meta/core'
+[===== NOW BUILDING:	core-v2-r983MP	=====]
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/meta/core'
+[===== NOW BUILDING:	core-v2-r983MP	=====]
+	[fetch] complete for core.
+	[checksum] complete for core.
+	[extract] complete for core.
+	[patch] complete for core.
+	[configure] complete for core.
+	[build] complete for core.
+checking ...
+  build system binaries ...
+    'ar' (from package 'binutils')
+    'as' (from package 'binutils')
+    'ld' (from package 'binutils')
+    'nm' (from package 'binutils')
+    'ranlib' (from package 'binutils')
+    'bison' (from package 'bison')
+    'bzip2' (from package 'bzip2')
+    'basename' (from package 'coreutils')
+    'cat' (from package 'coreutils')
+    'chmod' (from package 'coreutils')
+    'chown' (from package 'coreutils')
+    'comm' (from package 'coreutils')
+    'cp' (from package 'coreutils')
+    'cut' (from package 'coreutils')
+    'date' (from package 'coreutils')
+    'dirname' (from package 'coreutils')
+    'echo' (from package 'coreutils')
+    'env' (from package 'coreutils')
+    'expr' (from package 'coreutils')
+    'false' (from package 'coreutils')
+    'head' (from package 'coreutils')
+    'id' (from package 'coreutils')
+    'install' (from package 'coreutils')
+    'ln' (from package 'coreutils')
+    'ls' (from package 'coreutils')
+    'md5sum' (from package 'coreutils')
+    'mkdir' (from package 'coreutils')
+    'mv' (from package 'coreutils')
+    'od' (from package 'coreutils')
+    'rm' (from package 'coreutils')
+    'rmdir' (from package 'coreutils')
+    'sleep' (from package 'coreutils')
+    'sort' (from package 'coreutils')
+    'split' (from package 'coreutils')
+    'su' (from package 'coreutils')
+    'tail' (from package 'coreutils')
+    'test' (from package 'coreutils')
+    'touch' (from package 'coreutils')
+    'tr' (from package 'coreutils')
+    'true' (from package 'coreutils')
+    'uname' (from package 'coreutils')
+    'uniq' (from package 'coreutils')
+    'wc' (from package 'coreutils')
+    'cvs' (from package 'cvs')
+    'cmp' (from package 'diffutils')
+    'diff' (from package 'diffutils')
+    'file' (from package 'file')
+    'find' (from package 'findutils')
+    'flex' (from package 'flex')
+    'awk' (from package 'gawk')
+    'gawk' (from package 'gawk')
+    'cpp' (from package 'gcc')
+    'gcc' (from package 'gcc')
+    'git' (from package 'git')
+    'getconf' (from package 'glibc')
+    'iconv' (from package 'glibc')
+    'ldconfig' (from package 'glibc')
+    'egrep' (from package 'grep')
+    'fgrep' (from package 'grep')
+    'grep' (from package 'grep')
+    'gunzip' (from package 'gzip')
+    'gzip' (from package 'gzip')
+    'm4' (from package 'm4')
+    'make' (from package 'make')
+    'hg' (from package 'mercurial')
+    'patch' (from package 'patch')
+    'sed' (from package 'sed')
+    'svn' (from package 'subversion')
+    'svnversion' (from package 'subversion')
+    'tar' (from package 'tar')
+    'makeinfo' (from package 'texinfo')
+    'wget' (from package 'wget')
+  build user uid and gid
+  / and /usr directory access
+  build system binaries ... done
+  obsolete parameters and parameter values ...
+    mm_CHIPSETS
+    mm_INSTALL_TFTP_BOOT
+    mm_INSTALL_CRAMFS
+    mm_INSTALL_NFS
+    mm_XORG_VERSION='old'
+    mm_XORG_VERSION='new'
+  obsolete parameters and parameter values ... done
+  build parameters ...
+    HOME
+    mm_GARCH
+    mm_HOME
+    mm_DEBUG
+    mm_DEBUG_BUILD
+    mm_GRAPHICS
+    mm_KERNEL_HEADERS_VERSION
+    mm_KERNEL_VERSION
+    mm_KERNEL_VERSION >= mm_KERNEL_HEADERS_VERSION
+/bin/sh: line 0: [: 3.0: integer expression expected
+    mm_MMS_VERSION
+    mm_NVIDIA_VERSION
+    mm_XORG_VERSION
+  build parameters ... done
+  build system parameters ...
+  distribution parameters ... done
+checking ... done
+	[all] complete for core.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core'
+	[fetch] complete for core.
+	[checksum] complete for core.
+	[extract] complete for core.
+	[patch] complete for core.
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/meta/core'
+make[3]: `../../system/acpid/cookies/main.d/install' is up to date.
+make[3]: `../../utils/alsa-utils/cookies/main.d/install' is up to date.
+make[3]: `../../utils/busybox/cookies/main.d/install' is up to date.
+make[3]: `../../net/ifplugd/cookies/main.d/install' is up to date.
+make[3]: `../../net/resolvconf/cookies/main.d/install' is up to date.
+make[3]: `../../utils/loader/cookies/main.d/install' is up to date.
+make[3]: `../../utils/ethtool/cookies/main.d/install' is up to date.
+make[3]: `../../devel/fakeroot/cookies/main.d/install' is up to date.
+make[3]: `../../kernel/kernel/cookies/main.d/install' is up to date.
+make[3]: `../../fonts/liberation-fonts/cookies/main.d/install' is up to date.
+make[3]: `../../system/lirc/cookies/main.d/install' is up to date.
+make[3]: `../../utils/lm_sensors/cookies/main.d/install' is up to date.
+make[3]: `../../system/powernowd/cookies/main.d/install' is up to date.
+make[3]: `../../X11/ratpoison/cookies/main.d/install' is up to date.
+make[3]: `../../utils/regionset/cookies/main.d/install' is up to date.
+make[3]: `../../system/splashutils/cookies/main.d/install' is up to date.
+make[3]: `../../net/syslinux/cookies/main.d/install' is up to date.
+make[3]: `../../utils/squashfs/cookies/main.d/install' is up to date.
+make[3]: `../../system/udev/cookies/main.d/install' is up to date.
+make[3]: `../../system/avahi/cookies/main.d/install' is up to date.
+make[3]: `../../system/zoneinfo/cookies/main.d/install' is up to date.
+make[3]: `../../utils/usbutils/cookies/main.d/install' is up to date.
+make[3]: `../../utils/util-linux/cookies/main.d/install' is up to date.
+make[3]: `../../X11/vdpau-video/cookies/main.d/install' is up to date.
+make[3]: `../../X11/vdpauinfo/cookies/main.d/install' is up to date.
+make[3]: `../../X11/x11vnc/cookies/main.d/install' is up to date.
+make[3]: `../../X11/xmacro/cookies/main.d/install' is up to date.
+make[3]: `../../X11/unclutter/cookies/main.d/install' is up to date.
+make[3]: `../../X11/xvattr/cookies/main.d/install' is up to date.
+make[3]: `../../xorg/xorg/cookies/main.d/install' is up to date.
+make[3]: `../../nvidia/nvidia-275.21/cookies/main.d/install' is up to date.
+make[3]: `../../utils/mixerosd/cookies/main.d/install' is up to date.
+make[3]: `../../utils/inotify-tools/cookies/main.d/install' is up to date.
+make[3]: `../../utils/module-init-tools/cookies/main.d/install' is up to date.
+make[3]: `../../utils/pmount/cookies/main.d/install' is up to date.
+make[3]: `../../utils/unzip/cookies/main.d/install' is up to date.
+make[3]: `../../utils/gzip/cookies/main.d/install' is up to date.
+make[3]: `../../utils/unzip/cookies/main.d/install' is up to date.
+make[3]: `../../utils/mp3gain/cookies/main.d/install' is up to date.
+make[3]: `../../utils/util-linux/cookies/main.d/install' is up to date.
+make[3]: `../../utils/coreutils/cookies/main.d/install' is up to date.
+make[3]: `../../utils/findutils/cookies/main.d/install' is up to date.
+make[3]: `../../utils/rsync/cookies/main.d/install' is up to date.
+make[3]: `../../net/firefly/cookies/main.d/install' is up to date.
+make[3]: `../../net/openssh/cookies/main.d/install' is up to date.
+make[3]: `../../net/lighttpd/cookies/main.d/install' is up to date.
+make[3]: `../../net/miniupnpc/cookies/main.d/install' is up to date.
+make[3]: `../../net/dyndns/cookies/main.d/install' is up to date.
+make[3]: `../../net/syslinux/cookies/main.d/install' is up to date.
+make[3]: `../../net/xbnbt/cookies/main.d/install' is up to date.
+make[3]: `../../lang/php/cookies/main.d/install' is up to date.
+make[3]: `../../lib/nss_mdns/cookies/main.d/install' is up to date.
+make[3]: `../../extras/libdvdcss/cookies/main.d/install' is up to date.
+make[3]: `../../net/transmission/cookies/main.d/install' is up to date.
+make[3]: `../../net/amule/cookies/main.d/install' is up to date.
+ ==> Building xbmc/xbmc-extreme as a dependency
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme'
+[===== NOW BUILDING:	xbmc-extreme	=====]
+	[fetch] complete for xbmc.
+	[checksum] complete for xbmc.
+	[extract] complete for xbmc.
+	[patch] complete for xbmc.
+	[configure] complete for xbmc.
+	[build] complete for xbmc.
+ ==> Running make install in work/main.d/xbmc-extreme
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+Copying XBMC binary to /home/pablo/gar-castorbox/images/main/usr/lib/xbmc/xbmc.bin
+You can run XBMC with the command 'xbmc'
+ -- libid3tag-i486-linux.so                                                     -- libsidplay2-i486-linux.so                                                   -- SNESAPU-i486-linux.so                                                       -- stsoundlibrary-i486-linux.so                                                -- timidity-i486-linux.so                                                      -- nosefart-i486-linux.so                                                      -- adpcm-i486-linux.so                                                         -- vgmstream-i486-linux.so                                                     -- libdvdcss-i486-linux.so                                                     -- libdvdnav-i486-linux.so                                                     -- libexif-i486-linux.so                                                       -- hdhomerun-i486-linux.so                                                     -- libcpluff-i486-linux.so                                                     -- ImageLib-i486-linux.so                                                      -- libcmyth-i486-linux.so                                                      -- Solarwinds.xbs                                                              -- Euphoria.xbs                                                                -- Plasma.xbs                                                                  -- projectM.vis                                                                -- Waveform.vis                                                                -- opengl_spectrum.vis                                                        Copying support and legal files...
+Done!
+Copying system files to /home/pablo/gar-castorbox/images/main/usr/share/xbmc
+ -- hdtrailers.xml                                                              -- addon.xml                                                                   -- index.html                                                                  -- addon.xml                                                                   -- jquery-1.4.2.js                                                             -- testinvoker.js                                                              -- favicon.ico                                                                 -- icon.png                                                                    -- addon.xml                                                                   -- pluginsource.xsd                                                            -- addon.xml                                                                   -- script.xsd                                                                  -- close-button.png                                                            -- DefaultVideo.png                                                            -- ajax-loader.gif                                                             -- DefaultAlbumCover.png                                                       -- index.html                                                                  -- icon.png                                                                    -- addon.xml                                                                   -- core.css                                                                    -- ipad.css                                                                    -- iscroll-min.js                                                              -- MediaLibrary.js                                                             -- jquery.lazyload.js                                                          -- Core.js                                                                     -- jquery-1.5.2.js                                                             -- NowPlayingManager.js                                                        -- Launcher.js                                                                 -- jquery-1.5.2.min.js                                                         -- favicon.ico                                                                 -- changelog.txt                                                               -- tvdb.xml                                                                    -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- icon.png                                                                    -- addon.xml                                                                   -- icon.png                                                                    -- addon.xml                                                                   -- lastfm.xml                                                                  -- addon.xml                                                                   -- addon.xml                                                                   -- addon.xml                                                                   -- allmusic.xml                                                                -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- icon.png                                                                    -- addon.xml                                                                   -- tmdb.xml                                                                    -- changelog.txt                                                               -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- addon.xml                                                                   -- htbackdrops.xml                                                             -- addon.xml                                                                   -- allmusic.xml                                                                -- addon.xml                                                                   -- icon.png                                                                    -- addon.xml                                                                   -- changelog.txt                                                               -- imdb.xml                                                                    -- addon.xml                                                                   -- addon.xml                                                                   -- scraper.xsd                                                                 -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- addon.xml                                                                   -- metadata.xsd                                                                -- addon.xml                                                                   -- repository.xsd                                                              -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- presets.zip                                                                 -- settings.xml                                                                -- skin.xsd                                                                    -- addon.xml                                                                   -- icon.png                                                                    -- addon.xml                                                                   -- mtv.xml                                                                     -- icon.png                                                                    -- addon.xml                                                                   -- addon.xml                                                                   -- __init__.py                                                                 -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- Winamp-presets(436).zip                                                     -- WA51-presets(265).zip                                                       -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- tmdb.xml                                                                    -- addon.xml                                                                   -- allmusic.xml                                                                -- icon.png                                                                    -- addon.xml                                                                   -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- settings.xml                                                                -- icon.png                                                                    -- addon.xml                                                                   -- changelog.txt                                                               -- DejaVuSans.ttf                                                              -- DejaVuSans-Bold-Caps.ttf                                                    -- DefaultCaps.ttf                                                             -- DejaVuSans-Bold.ttf                                                         -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- strings.xml                                                                 -- icon.png                                                                    -- out.wav                                                                     -- sounds.xml                                                                  -- notify.wav                                                                  -- back.wav                                                                    -- cursor.wav                                                                  -- click.wav                                                                   -- shutter.wav                                                                 -- defaults.xml                                                                -- addon.xml                                                                   -- scroll-up-2.png                                                             -- scroll-down-2.png                                                           -- DefaultAddonArtistInfo.png                                                  -- OSDPlaylistFO.png                                                           -- ShutdownButtonFocus.png                                                     -- KeyboardCornerTopNF.png                                                     -- DefaultAddonProgram.png                                                     -- icon-mute.png                                                               -- OverlayWatched.png                                                          -- MediaBladeSub.png                                                           -- OSDRandomOffNF.png                                                          -- OSDRecordFO.png                                                             -- seekslider2.png                                                             -- OSDSeekForward.png                                                          -- DefaultIconWarning.png                                                      -- OSDPrevTrackFO.png                                                          -- OSDPreFO.png                                                                -- DialogContextBottom.png                                                     -- osd_slider_nib.png                                                          -- pointer-nofocus.png                                                         -- home-power-FO.png                                                           -- HomeIcon.png                                                                -- icon-weather.png                                                            -- scroll-left-focus.png                                                       -- OSDDvdNF.png                                                                -- DefaultMusicAlbums.png                                                      -- scroll-down.png                                                             -- OSDPresetSettingsFO.png                                                     -- HasSub.png                                                                  -- diffuse_mirror3.png                                                         -- OSDForwardNF.png                                                            -- OSD2x.png                                                                   -- OSDRepeatOneFO.png                                                          -- DialogContextTop.png                                                        -- GlassTitleBar.png                                                           -- DefaultAddonLyrics.png                                                      -- OSDStopFO.png                                                               -- DefaultCDDA.png                                                             -- osd_slider_bg.png                                                           -- OSDRewindNF.png                                                             -- DefaultVideoPlaylists.png                                                   -- OverlayRAR.png                                                              -- OSDProgressMid.png                                                          -- OSDBookmarksFO.png                                                          -- ContentPanel.png                                                            -- DefaultRecentlyAddedMusicVideos.png                                         -- DefaultAddonWebSkin.png                                                     -- ThumbBG.png                                                                 -- xbmc-logo.png                                                               -- OSDVideoFO.png                                                              -- KeyboardCornerBottom.png                                                    -- scroll-left.png                                                             -- OSDStopNF.png                                                               -- unknown-user.png                                                            -- Makefile                                                                    -- header.png                                                                  -- scroll-up-focus-2.png                                                       -- scroll-down-focus.png                                                       -- radiobutton-nofocus.png                                                     -- DefaultAddonSkin.png                                                        -- MenuItemNF.png                                                              -- Confluence_Logo.png                                                         -- DefaultAddonTvInfo.png                                                      -- ThumbShadow.png                                                             -- OSDRecordOff.png                                                            -- DefaultAddonWeather.png                                                     -- floor.png                                                                   -- osd_slider_nibNF.png                                                        -- DefaultAddonVisualization.png                                               -- InfoMessagePanel.png                                                        -- DefaultAddonPicture.png                                                     -- OSDPlayNF.png                                                               -- OSDRandomOnNF.png                                                           -- HomeSubEnd.png                                                              -- DefaultVideoCover.png                                                       -- diffuse_mirror2.png                                                         -- DefaultMusicCompilations.png                                                -- ScrollBarNib.png                                                            -- home-favourites.png                                                         -- DialogContextMiddle.png                                                     -- DefaultIconError.png                                                        -- OSDPause.png                                                                -- OSDPreNF.png                                                                -- OSDLyricsFO.png                                                             -- OSDRewindFO.png                                                             -- DefaultMusicPlaylists.png                                                   -- OSDSeekRewind.png                                                           -- separator_vertical.png                                                      -- OSDSubtitlesFO.png                                                          -- OSDAudioNF.png                                                              -- DefaultAddonMusicVideoInfo.png                                              -- OSDSubtitlesNF.png                                                          -- OSDNextTrackFO.png                                                          -- DefaultAddSource.png                                                        -- CalibrateSubtitles.png                                                      -- DefaultDVDRom.png                                                           -- DefaultAddonVideo.png                                                       -- HomeSubFO.png                                                               -- RecentAddedBack.png                                                         -- DialogCloseButton.png                                                       -- OSD32x.png                                                                  -- OSDForwardFO.png                                                            -- DefaultAddonNone.png                                                        -- KeyboardKey.png                                                             -- DefaultVideo.png                                                            -- OSDPresetSettingsNF.png                                                     -- MediaItemDetailBG.png                                                       -- DefaultFile.png                                                             -- MenuItemFO.png                                                              -- 1080.png                                                                    -- 480.png                                                                     -- 540.png                                                                     -- 576.png                                                                     -- 720.png                                                                     -- blank.png                                                                   -- 1.78.png                                                                    -- 1.33.png                                                                    -- 1.66.png                                                                    -- 2.35.png                                                                    -- 1.85.png                                                                    -- 2.20.png                                                                    -- mpeg1video.png                                                              -- bluray.png                                                                  -- tv.png                                                                      -- xvid.png                                                                    -- 1080.png                                                                    -- dvd.png                                                                     -- 480.png                                                                     -- 540.png                                                                     -- 576.png                                                                     -- 720.png                                                                     -- h264.png                                                                    -- vhs.png                                                                     -- wvc1.png                                                                    -- hddvd.png                                                                   -- vc-1.png                                                                    -- mpeg2video.png                                                              -- divx.png                                                                    -- avc1.png                                                                    -- flv.png                                                                     -- mpaa_notrated.png                                                           -- mpaa_pg.png                                                                 -- mpaa_pg13.png                                                               -- mpaa_nc17.png                                                               -- mpaa_general.png                                                            -- mpaa_restricted.png                                                         -- dts.png                                                                     -- 8.png                                                                       -- flac.png                                                                    -- mp2.png                                                                     -- cdda.png                                                                    -- dtshd_hra.png                                                               -- ac3.png                                                                     -- wmav2.png                                                                   -- ogg.png                                                                     -- 0.png                                                                       -- 2.png                                                                       -- pcm_bluray.png                                                              -- truehd.png                                                                  -- 4.png                                                                       -- eac3.png                                                                    -- aiff.png                                                                    -- dtshd_ma.png                                                                -- ape.png                                                                     -- wav.png                                                                     -- dca.png                                                                     -- mp1.png                                                                     -- wavpack.png                                                                 -- aif.png                                                                     -- 1.png                                                                       -- 7.png                                                                       -- avc.png                                                                     -- 5.png                                                                       -- 6.png                                                                       -- aac.png                                                                     -- mp3.png                                                                     -- aifc.png                                                                    -- 3.png                                                                       -- wmapro.png                                                                  -- wma.png                                                                     -- 10.png                                                                      -- OSDVideoNF.png                                                              -- OSDRandomOffFO.png                                                          -- OSD16x.png                                                                  -- OSDRepeatOneNF.png                                                          -- HomeOverlay1.png                                                            -- separator.png                                                               -- OSDRecordNF.png                                                             -- OSDPlay.png                                                                 -- OSDPlayFO.png                                                               -- KeyboardKeyNF.png                                                           -- OSDProgressBack.png                                                         -- OSDRepeatAllFO.png                                                          -- ArrowUp.png                                                                 -- home-favourites-FO.png                                                      -- separator2.png                                                              -- DefaultMusicArtists.png                                                     -- DefaultRecentlyAddedMovies.png                                              -- ContentPanelMirror.png                                                      -- DefaultAddonRepository.png                                                  -- NowPlayingIcon.png                                                          -- DefaultAddonAlbumInfo.png                                                   -- KeyboardCornerTop.png                                                       -- StackFO.png                                                                 -- StackNF.png                                                                 -- DefaultRecentlyAddedEpisodes.png                                            -- DefaultAddonSubtitles.png                                                   -- scroll-right-focus.png                                                      -- lastfm-love-focus.png                                                       -- scroll-down-focus-2.png                                                     -- CalibrateBottomRight.png                                                    -- button-nofocus.png                                                          -- DefaultVideoPlugins.png                                                     -- KeyboardCornerBottomNF.png                                                  -- rating2.png                                                                 -- rating0.png                                                                 -- rating5.png                                                                 -- rating1.png                                                                 -- rating3.png                                                                 -- rating4.png                                                                 -- DefaultMusicYears.png                                                       -- CalibratePixelRatio.png                                                     -- DefaultAddonScreensaver.png                                                 -- ScrollBarV.png                                                              -- DefaultMusicTop100.png                                                      -- osd_slider_bg_2.png                                                         -- lastfm-love-nofocus.png                                                     -- OSD8x.png                                                                   -- DefaultAddonMovieInfo.png                                                   -- DefaultMusicGenres.png                                                      -- OSDBookmarksNF.png                                                          -- OSDDvdFO.png                                                                -- pointer-focus.png                                                           -- DefaultDVDEmpty.png                                                         -- DefaultFolderBack.png                                                       -- HomeButtonsBack.png                                                         -- DefaultMusicRecentlyAdded.png                                               -- busy.png                                                                    -- ScrollBarH_bar.png                                                          -- DefaultMusicVideos.png                                                      -- DefaultPicture.png                                                          -- DefaultPlaylist.png                                                         -- button-focus2.png                                                           -- DefaultAddon.png                                                            -- black-back2.png                                                             -- GoFullscreen.png                                                            -- home-power.png                                                              -- OSDProgressMidLight.png                                                     -- OSDVizFO.png                                                                -- radiobutton-focus.png                                                       -- defaultDVDFull.png                                                          -- OSDLyricsNF.png                                                             -- OSDVizNF.png                                                                -- OSDRandomOnFO.png                                                           -- DialogBack2.png                                                             -- rating2.png                                                                 -- rating0.png                                                                 -- rating5.png                                                                 -- rating1.png                                                                 -- rating3.png                                                                 -- rating4.png                                                                 -- DefaultFolder.png                                                           -- DefaultAddonService.png                                                     -- scroll-up-focus.png                                                         -- pointer-focus-click.png                                                     -- icon-video.png                                                              -- DefaultAddonMusic.png                                                       -- VolumeIcon-Mute.png                                                         -- HomeBladeSub.png                                                            -- DialogBack.png                                                              -- HomeSeperator.png                                                           -- HomeSubNF.png                                                               -- ScrollBarH.png                                                              -- DefaultIconInfo.png                                                         -- OSDPauseFO.png                                                              -- lastfm-hate-focus.png                                                       -- VolumeIcon.png                                                              -- OSDPrevTrackNF.png                                                          -- DefaultMovies.png                                                           -- OSDAudioFO.png                                                              -- seekslider.png                                                              -- DefaultArtist.png                                                           -- scroll-up.png                                                               -- DefaultNetwork.png                                                          -- scroll-right.png                                                            -- lastfm-hate-nofocus.png                                                     -- DefaultAudio.png                                                            -- SideFade.png                                                                -- OSDRecord2.png                                                              -- DefaultActor.png                                                            -- HomeBack.png                                                                -- DefaultProgram.png                                                          -- Fanart_Fallback_Small.jpg                                                   -- OSDNextTrackNF.png                                                          -- DefaultAlbumCover.png                                                       -- dialogheader.png                                                            -- OSDRepeatFO.png                                                             -- ScrollBarV_bar_focus.png                                                    -- ShutdownButtonNoFocus.png                                                   -- button-focus.png                                                            -- GlassOverlay.png                                                            -- CalibrateTopLeft.png                                                        -- OSDPlaylistNF.png                                                           -- HomeIcon-Focus.png                                                          -- DefaultTVShows.png                                                          -- icon-rss.png                                                                -- OverlayHD.png                                                               -- ScrollBarV_bar.png                                                          -- DefaultMusicSongs.png                                                       -- black-back.png                                                              -- Fanart_Fallback_Music_Small.jpg                                             -- OSD4x.png                                                                   -- pointer-focus-drag.png                                                      -- DefaultMusicRecentlyPlayed.png                                              -- OverlayLocked.png                                                           -- HomeNowPlayingBack.png                                                      -- OSDSeekFrame.png                                                            -- folder-focus.png                                                            -- KeyboardEditArea.png                                                        -- OSDPauseNF.png                                                              -- ScrollBarH_bar_focus.png                                                    -- OSDRepeatNF.png                                                             -- OverlayDialogBackground.png                                                 -- DefaultHardDisk.png                                                         -- DialogCloseButton-focus.png                                                 -- ArrowDown.png                                                               -- ThumbBorder.png                                                             -- Makefile.in                                                                 -- OSDRepeatAllNF.png                                                          -- DefaultMusicPlugins.png                                                     -- DialogOK.xml                                                                -- PlayerControls.xml                                                          -- DialogAlbumInfo.xml                                                         -- DialogKeyboard.xml                                                          -- SettingsCategory.xml                                                        -- SmartPlaylistRule.xml                                                       -- ViewsAddonBrowser.xml                                                       -- DialogNetworkSetup.xml                                                      -- ViewsVideoLibrary.xml                                                       -- FileManager.xml                                                             -- MyPics.xml                                                                  -- SettingsProfile.xml                                                         -- SettingsSystemInfo.xml                                                      -- DialogVideoScan.xml                                                         -- DialogFavourites.xml                                                        -- DialogProgress.xml                                                          -- MyWeather.xml                                                               -- Startup.xml                                                                 -- VideoFullScreen.xml                                                         -- VisualisationPresetList.xml                                                 -- SettingsScreenCalibration.xml                                               -- MyVideoPlaylist.xml                                                         -- MyMusicPlaylistEditor.xml                                                   -- DialogContentSettings.xml                                                   -- ViewsPictures.xml                                                           -- DialogSlider.xml                                                            -- IncludesCodecFlagging.xml                                                   -- defaults.xml                                                                -- IncludesHomeRecentlyAdded.xml                                               -- DialogKaraokeSongSelector.xml                                               -- MyMusicNav.xml                                                              -- Settings.xml                                                                -- LoginScreen.xml                                                             -- DialogTextViewer.xml                                                        -- script-RSS_Editor-setEditor.xml                                             -- LockSettings.xml                                                            -- VideoOSDBookmarks.xml                                                       -- SmartPlaylistEditor.xml                                                     -- DialogButtonMenu.xml                                                        -- SlideShow.xml                                                               -- DialogFileStacking.xml                                                      -- DialogGamepad.xml                                                           -- MusicVisualisation.xml                                                      -- DialogVideoInfo.xml                                                         -- MusicOverlay.xml                                                            -- DialogAddonInfo.xml                                                         -- DialogContextMenu.xml                                                       -- ProfileSettings.xml                                                         -- custom_SkinSetting_1111.xml                                                 -- DialogSongInfo.xml                                                          -- MyMusicPlaylist.xml                                                         -- MusicOSD.xml                                                                -- Home.xml                                                                    -- MusicKaraokeLyrics.xml                                                      -- MyPrograms.xml                                                              -- DialogMediaSource.xml                                                       -- Font.xml                                                                    -- AddonBrowser.xml                                                            -- DialogKaiToast.xml                                                          -- ViewsMusicLibrary.xml                                                       -- DialogVolumeBar.xml                                                         -- ViewsLiveTV.xml                                                             -- includes.xml                                                                -- VideoOverlay.xml                                                            -- MyMusicSongs.xml                                                            -- HourlyForecast.xml                                                          -- 10DayForecast.xml                                                           -- 36HourForecast.xml                                                          -- WeekendForecast.xml                                                         -- MapsVideo.xml                                                               -- DialogAddonSettings.xml                                                     -- script-XBMC_Lyrics-main.xml                                                 -- VideoOSDSettings.xml                                                        -- DialogKaraokeSongSelectorLarge.xml                                          -- DialogMusicScan.xml                                                         -- DialogNumeric.xml                                                           -- DialogMuteBug.xml                                                           -- DialogSeekBar.xml                                                           -- Pointer.xml                                                                 -- DialogSelect.xml                                                            -- ViewsFileMode.xml                                                           -- IncludesBackgroundBuilding.xml                                              -- DialogYesNo.xml                                                             -- script-RSS_Editor-rssEditor.xml                                             -- MyVideoNav.xml                                                              -- VideoOSD.xml                                                                -- IncludesHomeMenuItems.xml                                                   -- DialogPictureInfo.xml                                                       -- DialogBusy.xml                                                              -- FileBrowser.xml                                                             -- weather.jpg                                                                 -- settings.jpg                                                                -- system.jpg                                                                  -- network.jpg                                                                 -- skinsetting.jpg                                                             -- playdisc.jpg                                                                -- videos.jpg                                                                  -- addons.jpg                                                                  -- programs.jpg                                                                -- appearance.jpg                                                              -- media-overlay.png                                                           -- pictures.jpg                                                                -- music.jpg                                                                   -- build.bat                                                                   -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- keyboardmap.xml                                                             -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- langinfo.xml                                                                -- strings.xml                                                                 -- xbmc.icns                                                                   -- Splash.png                                                                  -- weather.zip                                                                 -- icon32x32.png                                                               -- icon.png                                                                    -- teletext.ttf                                                                -- arial.ttf                                                                   -- sounds.xml                                                                  -- nav.wav                                                                     -- LCD.xml                                                                     -- ModeLines_template.xml                                                      -- RssFeeds.xml                                                                -- Readme.txt                                                                  -- picon.xml                                                                   -- tuxbox.png                                                                  -- X10-Lola-IRSSmap.xml                                                        -- fonts.dtd                                                                   -- fonts.conf                                                                  -- 65-fonts-persian.conf                                                       -- 20-unhint-small-vera.conf                                                   -- 90-synthetic.conf                                                           -- 80-delicious.conf                                                           -- 69-unifont.conf                                                             -- 20-lohit-gujarati.conf                                                      -- 40-generic.conf                                                             -- 65-nonlatin.conf                                                            -- 49-sansserif.conf                                                           -- 51-local.conf                                                               -- 30-amt-aliases.conf                                                         -- 30-urw-aliases.conf                                                         -- 20-fix-globaladvance.conf                                                   -- 50-user.conf                                                                -- 60-latin.conf                                                               -- 10-sub-pixel-vrgb.conf                                                      -- 65-fonts-persian.conf                                                       -- 20-unhint-small-vera.conf                                                   -- 90-synthetic.conf                                                           -- 80-delicious.conf                                                           -- 69-unifont.conf                                                             -- 10-sub-pixel-bgr.conf                                                       -- 20-lohit-gujarati.conf                                                      -- 40-generic.conf                                                             -- 65-nonlatin.conf                                                            -- 49-sansserif.conf                                                           -- 51-local.conf                                                               -- 30-amt-aliases.conf                                                         -- 10-sub-pixel-rgb.conf                                                       -- 10-sub-pixel-vbgr.conf                                                      -- README                                                                      -- 10-unhinted.conf                                                            -- 70-no-bitmaps.conf                                                          -- 10-autohint.conf                                                            -- 30-urw-aliases.conf                                                         -- 20-fix-globaladvance.conf                                                   -- 50-user.conf                                                                -- 10-no-sub-pixel.conf                                                        -- 60-latin.conf                                                               -- 70-yes-bitmaps.conf                                                         -- colors.xml                                                                  -- remote.xml                                                                  -- joystick.PS3.Remote.Keyboard.xml                                            -- joystick.Alienware.Dual.Compatible.Controller.xml                           -- mouse.xml                                                                   -- joystick.AppleRemote.xml                                                    -- joystick.Interact.AxisPad.xml                                               -- gamepad.xml                                                                 -- joystick.Harmony.xml                                                        -- appcommand.xml                                                              -- joystick.Sony.PLAYSTATION(R)3.Controller.xml                                -- keyboard.xml                                                                -- joystick.WiiRemote.xml                                                      -- joystick.Logitech.RumblePad.2.xml                                           -- joystick.Microsoft.Xbox.Controller.S.xml                                    -- joystick.Microsoft.Xbox.360.Controller.xml                                  -- keyboard.nyxboard.xml                                                       -- Lircmap.xml                                                                 -- readme.txt                                                                  -- asound.conf                                                                 -- testshader.fx                                                               -- yuv2rgb_basic_rect_UYVY.arb                                                 -- yuv2rgb_basic_gles.glsl                                                     -- guishader_frag_multi.glsl                                                   -- convolution-6x6.glsl                                                        -- convolution-4x4_d3d.fx                                                      -- yuv2rgb_d3d.fx                                                              -- guishader_vert.glsl                                                         -- yuv2rgb_vertex.glsl                                                         -- stretch.glsl                                                                -- convolution-4x4.glsl                                                        -- guishader_frag_texture.glsl                                                 -- convolution-6x6_d3d.fx                                                      -- yuv2rgb_basic_rect.arb                                                      -- guishader_frag_rgba.glsl                                                    -- yuv2rgb_bob_gles.glsl                                                       -- yuv2rgb_basic_rect_YUY2.arb                                                 -- yuv2rgb_basic_2d_YUY2.arb                                                   -- yuv2rgb_vertex_gles.glsl                                                    -- guishader_frag_multi_blendcolor.glsl                                        -- yuv2rgb_bob.glsl                                                            -- guishader_frag_default.glsl                                                 -- yuv2rgb_basic_2d_UYVY.arb                                                   -- guishader_frag_rgba_blendcolor.glsl                                         -- guishader_frag_fonts.glsl                                                   -- yuv2rgb_basic.glsl                                                          -- yuv2rgb_basic_2d.arb                                                        -- guishader_frag_texture_noblend.glsl                                         -- deviceidmappings.xml                                                        -- IRSSmap.xml                                                                 -- playercorefactory.xml                                                      make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+echo " ==> Installing GPL2 license text"
+ ==> Installing GPL2 license text
+install -d /home/pablo/gar-castorbox/images/main/usr/licenses/xbmc/
+install -m 644 ../../licenses/GPL2.txt /home/pablo/gar-castorbox/images/main/usr/licenses/xbmc/
+mkdir -p cookies/main.d/. && date >> cookies/main.d/install-license-GPL2
+	[install] complete for xbmc.
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core'
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/meta/core'
+[===== NOW BUILDING:	core-v2-r983MP	=====]
+	[fetch] complete for core.
+	[checksum] complete for core.
+	[extract] complete for core.
+	[patch] complete for core.
+	[configure] complete for core.
+	[build] complete for core.
+svn: //home/pablo/gar-castorbox/images/build/usr/lib/libxml2.so.2: no version information available (required by /usr/lib64/libneon.so.27)
+svn: //home/pablo/gar-castorbox/images/build/usr/lib/libxml2.so.2: no version information available (required by /usr/lib64/libneon.so.27)
+svn: //home/pablo/gar-castorbox/images/build/usr/lib/libxml2.so.2: no version information available (required by /usr/lib64/libneon.so.27)
+svn: //home/pablo/gar-castorbox/images/build/usr/lib/libxml2.so.2: no version information available (required by /usr/lib64/libneon.so.27)
+	[all] complete for core.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core'
+	[configure] complete for core.
+ ==> Running make in work/main.d/core-v2-r983MP
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/source'
+making version file
+copying kernel file
+making scripts directory
+making the checksum file for [...]/build/stage/version
+making the checksum file for [...]/build/stage/kernel
+installing busybox
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/utils/busybox'
+[===== NOW BUILDING:	busybox-1.17.2	=====]
+	[fetch] complete for busybox.
+	[checksum] complete for busybox.
+	[extract] complete for busybox.
+	[patch] complete for busybox.
+	[configure] complete for busybox.
+	[build] complete for busybox.
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/sbin
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/libexec
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/etc
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/var
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/lib
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/lib
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/info
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/emacs/site-lisp
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/include
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man1
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man2
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man3
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man4
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man5
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man6
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man7
+install -d /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/share/man/man8
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2'
+rm -f .kernelrelease
+echo 1.17.2 > .kernelrelease
+/home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2/scripts/gen_build_files.sh /home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2 /home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2
+/bin/sh /home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2/applets/busybox.mkll /home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2/include/autoconf.h include/applets.h >busybox.links
+make -f scripts/Makefile.build obj=scripts/basic
+make -f scripts/Makefile.build obj=applets
+make -f scripts/Makefile.build obj=scripts
+make -f scripts/Makefile.build obj=.
+make -f scripts/Makefile.build obj=applets
+make -f scripts/Makefile.build obj=archival
+make -f scripts/Makefile.build obj=archival/libunarchive
+make -f scripts/Makefile.build obj=console-tools
+make -f scripts/Makefile.build obj=coreutils
+make -f scripts/Makefile.build obj=coreutils/libcoreutils
+make -f scripts/Makefile.build obj=debianutils
+make -f scripts/Makefile.build obj=e2fsprogs
+make -f scripts/Makefile.build obj=editors
+make -f scripts/Makefile.build obj=findutils
+make -f scripts/Makefile.build obj=init
+make -f scripts/Makefile.build obj=libbb
+make -f scripts/Makefile.build obj=libpwdgrp
+make -f scripts/Makefile.build obj=loginutils
+make -f scripts/Makefile.build obj=mailutils
+make -f scripts/Makefile.build obj=miscutils
+make -f scripts/Makefile.build obj=modutils
+make -f scripts/Makefile.build obj=networking
+make -f scripts/Makefile.build obj=networking/libiproute
+make -f scripts/Makefile.build obj=networking/udhcp
+make -f scripts/Makefile.build obj=printutils
+make -f scripts/Makefile.build obj=procps
+make -f scripts/Makefile.build obj=runit
+make -f scripts/Makefile.build obj=selinux
+make -f scripts/Makefile.build obj=shell
+make -f scripts/Makefile.build obj=sysklogd
+make -f scripts/Makefile.build obj=util-linux
+make -f scripts/Makefile.build obj=util-linux/volume_id
+rm -f .old_version
+DO_INSTALL_LIBS="" \
+		/bin/sh /home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2/applets/install.sh /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~ --symlinks
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/ash -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/cat -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/chgrp -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/chmod -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/chown -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/cp -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/date -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/dd -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/df -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/dmesg -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/dnsdomainname -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/echo -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/egrep -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/false -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/fgrep -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/grep -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/hostname -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/ip -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/kill -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/ln -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/login -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/ls -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/mkdir -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/mknod -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/mktemp -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/more -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/mv -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/netstat -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/nice -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/pidof -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/ping -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/ps -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/pwd -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/rm -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/rmdir -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/run-parts -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/sed -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/sh -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/sleep -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/stat -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/su -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/sync -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/tar -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/touch -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/true -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/uname -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/vi -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/bin/watch -> busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/halt -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/hwclock -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/ifconfig -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/ifdown -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/ifup -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/init -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/klogd -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/losetup -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/mkswap -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/pivot_root -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/poweroff -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/reboot -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/route -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/syslogd -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/udhcpc -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/sbin/vconfig -> ../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/[ -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/[[ -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/ar -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/awk -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/basename -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/chvt -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/clear -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/cmp -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/crontab -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/cut -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/dirname -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/du -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/env -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/free -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/head -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/id -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/killall -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/killall5 -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/less -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/logger -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/md5sum -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/nc -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/nohup -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/nslookup -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/passwd -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/readahead -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/readlink -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/renice -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/reset -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/sort -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/tail -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/telnet -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/test -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/top -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/tr -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/tty -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/uniq -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/uptime -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/wc -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/bin/which -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/sbin/chroot -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/sbin/crond -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/sbin/fbset -> ../../bin/busybox
+  /home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/build/image/core~/usr/sbin/telnetd -> ../../bin/busybox
+
+
+--------------------------------------------------
+You will probably need to make your busybox binary
+setuid root to ensure all configured applets will
+work properly.
+--------------------------------------------------
+
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/utils/busybox/work/main.d/busybox-1.17.2'
+	[install] complete for busybox.
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/utils/busybox'
+copying binaries
+copying binaries: warning: binary "VBox*" not found.
+copying binaries: warning: binary "alsaplayer" not found.
+copying binaries: warning: binary "cvlc" not found.
+copying binaries: warning: binary "e2label" not found.
+copying binaries: warning: binary "fsck" not found.
+copying binaries: warning: binary "fsck.ext3" not found.
+copying binaries: warning: binary "lspci" not found.
+copying binaries: warning: binary "mms" not found.
+copying binaries: warning: binary "mms-mediarss-thumb" not found.
+copying binaries: warning: binary "mplayer*" not found.
+copying binaries: warning: binary "s2ram" not found.
+copying binaries: warning: binary "setserial" not found.
+copying binaries: warning: binary "sysctl" not found.
+copying binaries: warning: binary "vlc" not found.
+copying binaries: warning: binary "wget" not found.
+copying etcs
+copying etcs: warning: etc "hal/" not found.
+copying etcs: warning: etc "mms-1.1.0/" not found.
+copying etcs: warning: etc "udev/rules.d/90-hal.rules" not found.
+copying libraries
+copying libraries: warning: library "alsaplayer/" not found.
+copying libraries: warning: library "imlib2/*/*so" not found.
+copying libraries: warning: library "libproxy/" not found.
+copying libraries: warning: library "lighttpd/" not found.
+copying libraries: warning: library "mms/" not found.
+copying libraries: warning: library "modules/*/kernel/arch/*/kernel/cpu/cpufreq/longhaul.ko" not found.
+copying libraries: warning: library "modules/*/kernel/arch/*/kernel/cpu/cpufreq/p4-clockmod.ko" not found.
+copying libraries: warning: library "modules/*/kernel/arch/*/kernel/cpu/cpufreq/powernow-k8.ko" not found.
+copying libraries: warning: library "modules/*/kernel/drivers/serial/8250.ko" not found.
+copying libraries: warning: library "modules/*/kernel/drivers/serial/8250_pci.ko" not found.
+copying libraries: warning: library "modules/*/kernel/drivers/serial/8250_pnp.ko" not found.
+copying libraries: warning: library "modules/*/kernel/sound/pci/hda/snd-hda-codec-atihdmi.ko" not found.
+copying libraries: warning: library "modules/*/kernel/sound/pci/hda/snd-hda-codec-intelhdmi.ko" not found.
+copying libraries: warning: library "modules/*/kernel/sound/pci/hda/snd-hda-codec-nvhdmi.ko" not found.
+copying libraries: warning: library "modules/*/misc/imon_vfd/imon_vfd.ko" not found.
+copying libraries: warning: library "modules/*/misc/lirc/lirc_it87.ko" not found.
+copying libraries: warning: library "modules/*/misc/lirc/lirc_ite8709.ko" not found.
+copying libraries: warning: library "modules/*/misc/lirc/lirc_mceusb.ko" not found.
+copying libraries: warning: library "modules/*/misc/lirc/lirc_streamzap.ko" not found.
+copying libraries: warning: library "udev/lircd_helper" not found.
+copying libraries: warning: library "udev/wakeup_enable" not found.
+copying libraries: warning: library "vlc/" not found.
+copying libraries: warning: library "xorg/modules/drivers/ch7017.so" not found.
+copying libraries: warning: library "xorg/modules/drivers/ch7xxx.so" not found.
+copying libraries: warning: library "xorg/modules/drivers/ivch.so" not found.
+copying libraries: warning: library "xorg/modules/drivers/radeonhd_drv.so" not found.
+copying libraries: warning: library "xorg/modules/drivers/sil164.so" not found.
+copying libraries: warning: library "xorg/modules/drivers/tfp410.so" not found.
+copying shares
+copying shares: warning: share "X11/XKeysymDB" not found.
+copying shares: warning: share "imlib2/" not found.
+copying shares: warning: share "locale/es/LC_MESSAGES/mms*.mo" not found.
+copying shares: warning: share "mms/" not found.
+copying shares: warning: share "pci.ids" not found.
+copying shares: warning: share "php/" not found.
+copying shares: warning: share "vlc/" not found.
+copying vars
+removing unneeded perl files
+removing unwanted files
+copying dependent libraries
+copying dependent libraries: pass 1 found 120 libraries to copy
+copying dependent libraries: pass 2 found 12 libraries to copy
+copying dependent libraries: pass 3 found 2 libraries to copy
+copying dependent libraries: pass 4 found 0 libraries to copy
+copying dependent kernel modules
+removing unwanted files
+stripping binaries and shared libraries
+making core image directory
+making core image directory fakeroot configuration file
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/utils/loader'
+make[5]: warning: jobserver unavailable: using -j1.  Add `+' to parent make rule.
+[===== NOW BUILDING:	loader-0.1	=====]
+	[fetch] complete for loader.
+	[checksum] complete for loader.
+	[extract] complete for loader.
+	[patch] complete for loader.
+	[configure] complete for loader.
+`/home/pablo/gar-castorbox/images/main/lib/modules/3.0.0/kernel/drivers/block/loop.ko' -> `work/main.d/image/lib/loop.ko'
+`/home/pablo/gar-castorbox/images/main/lib/modules/3.0.0/kernel/fs/unionfs/unionfs.ko' -> `work/main.d/image/lib/unionfs.ko'
+making the squashfs version of the core image
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/utils/loader/work/main.d/busybox-1.17.2'
+rm -f .kernelrelease
+echo 1.17.2 > .kernelrelease
+/home/pablo/gar-castorbox/script/utils/loader/work/main.d/busybox-1.17.2/scripts/gen_build_files.sh /home/pablo/gar-castorbox/script/utils/loader/work/main.d/busybox-1.17.2 /home/pablo/gar-castorbox/script/utils/loader/work/main.d/busybox-1.17.2
+make -f scripts/Makefile.build obj=scripts/basic
+make -f scripts/Makefile.build obj=applets
+make -f scripts/Makefile.build obj=.
+make -f scripts/Makefile.build obj=scripts
+make -f scripts/Makefile.build obj=applets
+make -f scripts/Makefile.build obj=archival
+make -f scripts/Makefile.build obj=archival/libunarchive
+make -f scripts/Makefile.build obj=console-tools
+make -f scripts/Makefile.build obj=coreutils
+make -f scripts/Makefile.build obj=coreutils/libcoreutils
+make -f scripts/Makefile.build obj=debianutils
+make -f scripts/Makefile.build obj=e2fsprogs
+make -f scripts/Makefile.build obj=editors
+make -f scripts/Makefile.build obj=findutils
+make -f scripts/Makefile.build obj=init
+make -f scripts/Makefile.build obj=libbb
+make -f scripts/Makefile.build obj=libpwdgrp
+make -f scripts/Makefile.build obj=loginutils
+make -f scripts/Makefile.build obj=mailutils
+make -f scripts/Makefile.build obj=miscutils
+make -f scripts/Makefile.build obj=modutils
+make -f scripts/Makefile.build obj=networking
+make -f scripts/Makefile.build obj=networking/libiproute
+make -f scripts/Makefile.build obj=networking/udhcp
+make -f scripts/Makefile.build obj=printutils
+make -f scripts/Makefile.build obj=procps
+make -f scripts/Makefile.build obj=runit
+make -f scripts/Makefile.build obj=selinux
+make -f scripts/Makefile.build obj=shell
+make -f scripts/Makefile.build obj=sysklogd
+make -f scripts/Makefile.build obj=util-linux
+make -f scripts/Makefile.build obj=util-linux/volume_id
+rm -f .old_version
+DO_INSTALL_LIBS="" \
+		/bin/sh /home/pablo/gar-castorbox/script/utils/loader/work/main.d/busybox-1.17.2/applets/install.sh ../../../work/main.d/image --symlinks
+  ../../../work/main.d/image/bin/[ -> busybox
+  ../../../work/main.d/image/bin/[[ -> busybox
+  ../../../work/main.d/image/bin/ash -> busybox
+  ../../../work/main.d/image/bin/cat -> busybox
+  ../../../work/main.d/image/bin/dmesg -> busybox
+  ../../../work/main.d/image/bin/echo -> busybox
+  ../../../work/main.d/image/bin/env -> busybox
+  ../../../work/main.d/image/bin/false -> busybox
+  ../../../work/main.d/image/bin/grep -> busybox
+  ../../../work/main.d/image/bin/ls -> busybox
+  ../../../work/main.d/image/bin/mkdir -> busybox
+  ../../../work/main.d/image/bin/mount -> busybox
+  ../../../work/main.d/image/bin/mv -> busybox
+  ../../../work/main.d/image/bin/rm -> busybox
+  ../../../work/main.d/image/bin/sh -> busybox
+  ../../../work/main.d/image/bin/sleep -> busybox
+  ../../../work/main.d/image/bin/test -> busybox
+  ../../../work/main.d/image/bin/umount -> busybox
+  ../../../work/main.d/image/bin/volname -> busybox
+  ../../../work/main.d/image/sbin/chroot -> ../bin/busybox
+  ../../../work/main.d/image/sbin/fbset -> ../bin/busybox
+  ../../../work/main.d/image/sbin/halt -> ../bin/busybox
+  ../../../work/main.d/image/sbin/insmod -> ../bin/busybox
+  ../../../work/main.d/image/sbin/losetup -> ../bin/busybox
+  ../../../work/main.d/image/sbin/lsmod -> ../bin/busybox
+  ../../../work/main.d/image/sbin/mdev -> ../bin/busybox
+  ../../../work/main.d/image/sbin/modprobe -> ../bin/busybox
+  ../../../work/main.d/image/sbin/pivot_root -> ../bin/busybox
+  ../../../work/main.d/image/sbin/poweroff -> ../bin/busybox
+  ../../../work/main.d/image/sbin/reboot -> ../bin/busybox
+  ../../../work/main.d/image/sbin/rmmod -> ../bin/busybox
+  ../../../work/main.d/image/sbin/switch_root -> ../bin/busybox
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/utils/loader/work/main.d/busybox-1.17.2'
+	[build] complete for loader.
+	[install] complete for loader.
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/utils/loader'
+making initrd image directory fakeroot configuration file
+making the squashfs version of the initrd image
+making the checksum file for [...]/build/stage/initrd.sfs
+making the checksum file for [...]/build/stage/castorbox-core.sfs
+made share distribution
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/source'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP'
+	[build] complete for core.
+ ==> Running make install in work/main.d/core-v2-r983MP
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/source'
+make[4]: Nothing to be done for `build'.
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/source'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/source'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP/source'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core/work/main.d/core-v2-r983MP'
+	[install] complete for core.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core'
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/meta/castorbox'
+	[configure] complete for castorbox.
+	[build] complete for castorbox.
+	[all] complete for castorbox.

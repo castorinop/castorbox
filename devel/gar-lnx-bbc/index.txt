@@ -1,0 +1,41 @@
+LNX-BBC
+
+                    -| <labelslug.png> |-
+
+        1. Insert into CD-ROM drive
+        2. Reboot computer
+        3. Use as GNU/Linux system until removed
+
+== Welcome to the LNX-BBC project. ==
+
+The LNX-BBC is a mini Linux-distribution, small enough to fit on a
+CD-ROM that has been cut, pressed, or molded to the size and shape of
+a business card.
+
+LNX-BBCs can be used to rescue ailing machines, perform intrusion
+post-mortems, act as a temporary workstation, and perform many other tasks
+that we haven't yet imagined.  
+
+For more information about the LNX-BBC, check out our <faq.html FAQ>,
+or consult our many <lists.html mailing lists>.
+
+If you are interested in contributing to the LNX-BBC project, or if
+you just like to tinker, there is more information on the <README.html
+GAR README page>.
+
+If you're just looking to download ISO images, have a look at our
+<download.html download page>.  
+
+== Testing Needed ==
+
+We are now in release candidate status and approaching LNX-BBC 2.1.
+Please give us your best effort to bang on this.  We need to know 
+right away about anything that affects booting, crashes systems,
+or has other drastic effects.  It's in our <testing.html beta area>.
+
+Our <http://www.lnx-bbc.org/builds/ automated builds> are also operational.
+ISO images from builds at this point should be functional, however...
+
+If you do find a problem, please see the "How do I file a bug against
+a GAR package?" entry in the <faq.html FAQ>.
+

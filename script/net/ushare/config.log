@@ -1,0 +1,139 @@
+# work/main.d/ushare-1.1a/configure 
+BASH=/bin/sh
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_LINENO=([0]="0")
+BASH_SOURCE=([0]="work/main.d/ushare-1.1a/configure")
+BASH_VERSINFO=([0]="3" [1]="2" [2]="19" [3]="2" [4]="release" [5]="x86_64-mandriva-linux-gnu")
+BASH_VERSION='3.2.19(2)-release'
+BROWSER=/usr/bin/www-browser
+COMPOSITING_WM_START=yes
+CONFIGFILE=config.mak
+CONFIG_H=config.h
+DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-oFUAoe9crs,guid=f8895e1976fc827189e5b8fe491dfbb8
+DESKTOP_AUTOSTART_ID=10ee0af8d3bdf594de122670175624366200000073790004
+DESKTOP_SESSION=02GNOME
+DIRSTACK=()
+DISPLAY=:0.0
+EUID=500
+GCONF_TMPDIR=/tmp
+GDMSESSION=02GNOME
+GDM_XSERVER_LOCATION=local
+GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+GNOME_KEYRING_PID='7832
+'
+GNOME_KEYRING_SOCKET=/home/pablo/tmp/keyring-ksGdtP/socket
+GROUPS=()
+GTK_MODULES=canberra-gtk-module
+GTK_RC_FILES=/etc/gtk/gtkrc:/home/pablo/.gtkrc-1.2-gnome2
+G_FILENAME_ENCODING=@locale
+HISTCONTROL=ignoredups
+HISTSIZE=1000
+HOME=/home/pablo
+HOSTNAME=castor-laptop
+HOSTTYPE=x86_64
+IFS=' 	
+'
+INPUTRC=/etc/inputrc
+INSTALL='/usr/bin/install -c'
+LANG=es_AR.UTF-8
+LANGUAGE=es_AR.UTF-8:es
+LC_ADDRESS=es_AR.UTF-8
+LC_COLLATE=es_AR.UTF-8
+LC_CTYPE=es_AR.UTF-8
+LC_IDENTIFICATION=es_AR.UTF-8
+LC_MEASUREMENT=es_AR.UTF-8
+LC_MESSAGES=es_AR.UTF-8
+LC_MONETARY=es_AR.UTF-8
+LC_NAME=es_AR.UTF-8
+LC_NUMERIC=es_AR.UTF-8
+LC_PAPER=es_AR.UTF-8
+LC_SOURCED=1
+LC_TELEPHONE=es_AR.UTF-8
+LC_TIME=es_AR.UTF-8
+LESS=-MM
+LESSCHARSET=utf-8
+LESSKEY=/etc/.less
+LESSOPEN='|/usr/bin/lesspipe.sh %s'
+LOGNAME=pablo
+LS_COLORS='rs=0:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.cmd=01;32:*.exe=01;32:*.com=01;32:*.btm=01;32:*.bat=01;32:*.sh=01;32:*.csh=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz2=01;31:*.tz=01;31:*.lzma=01;31:*.tlz=01;31:*.deb=01;31:*.rpm=01;31:*.cpio=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.iso=01;31:*.jpg=01;35:*.jpeg=01;35:*.JPG=01;35:*.JPEG=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.divx=01;35:*.xvid=01;35:*.asf=01;35:*.wmv=01;35:*.mp4=01;35:*.3gp=01;35:*.flv=01;35:*.ico=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.mp2=00;36:*.mod=00;36:*.xm=00;36:*.s3m=00;36:*.it=00;36:*.wma=00;36:*~=47;30:*.bak=47;30:*.swp=47;30:*.bck=47;30:*.bk=47;30:*.old=47;30:*.tmp=47;30:*.save=47;30:*.rpmsave=47;30:*.rpmnew=47;30:'
+MACHTYPE=x86_64-mandriva-linux-gnu
+MAIL=/var/spool/mail/pablo
+MDV_MENU_STYLE=mandriva
+META_CLASS=download
+NLSPATH=/usr/share/locale/%l/%N
+OPTERR=1
+OPTIND=1
+ORBIT_SOCKETDIR=/home/pablo/tmp/orbit-pablo
+OSTYPE=linux-gnu
+PATH=/usr/share/colorgcc:/usr/share/colorgcc:/usr/share/colorgcc:/bin:/usr/bin:/usr/local/bin:/usr/games:/usr/lib/qt4/bin:/home/pablo/bin
+PIPESTATUS=([0]="0")
+POSIXLY_CORRECT=y
+PPID=30303
+PREFIX=/usr/local
+PS4='+ '
+PWD=/home/pablo/gar-castorbox/script/net/ushare
+PYTHONPATH=/usr/lib64/ooo-3.0_64/basis-link/program:/usr/lib64/ooo-3.0_64/basis-link/program:/usr/lib64/ooo-3.0_64/basis-link/program
+PYTHONSTARTUP=/etc/pythonrc.py
+QT4DOCDIR=/usr/share/doc/qt4/doc
+QTDIR=/usr/lib/qt3/
+QTINC=
+QTLIB=
+RANDOM=17696
+SCREENDIR=/home/pablo/tmp
+SECURE_LEVEL=2
+SESSION_MANAGER=local/castor-laptop:@/tmp/.ICE-unix/7379,unix/castor-laptop:/tmp/.ICE-unix/7379
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:hashall:interactive-comments:posix
+SHLVL=3
+SSH_AGENT_PID=7472
+SSH_ASKPASS=/usr/lib64/ssh/ssh-askpass
+SSH_AUTH_SOCK=/home/pablo/tmp/keyring-ksGdtP/ssh
+TERM=xterm
+TMP=/home/pablo/tmp
+TMPC=/home/pablo/tmp/ushare-16865-8300-21670.c
+TMPDIR=/home/pablo/tmp
+TMPDIR1=/home/pablo/tmp
+TMPE=/home/pablo/tmp/ushare-22092-8300-20138
+TMPO=/home/pablo/tmp/ushare-13259-8300-3276.o
+TMPS=/home/pablo/tmp/ushare-25067-8300-17696.S
+UID=500
+USER=pablo
+VERSION=1.1a
+WINDOWPATH=7
+WINDOW_MANAGER=/usr/bin/compositing-wm-start
+XAUTHORITY=/home/pablo/.Xauthority
+XDG_CONFIG_DIRS=/etc/xdg:/etc/xdg/gnome
+XDG_DATA_DIRS=/usr/local/share/:/usr/share/:/usr/share/gdm/
+XDG_SESSION_COOKIE=4f0e2fea1b2d6e56395eb07a49026868-1226701751.249612-711650729
+XMODIFIERS=@im=none
+_='# work/main.d/ushare-1.1a/configure '
+bindir='${PREFIX}/bin'
+canon_arch=x86_64
+cc=gcc
+cpu=x86_64
+cross_compile=no
+debug=no
+dlna=no
+dostrip=yes
+extralibs=
+installstrip=-s
+localedir='${PREFIX}/share/locale'
+logfile=config.log
+logging=yes
+make=make
+nls=yes
+optimize=yes
+strip=strip
+sysconfdir='${PREFIX}/etc'
+system_name=Linux
+Checking for compiler available...
+check_ld
+check_cc
+BEGIN /home/pablo/tmp/ushare-16865-8300-21670.c
+     1	int main(){
+     2	    return 0;
+     3	}
+END /home/pablo/tmp/ushare-16865-8300-21670.c
+gcc -c -o /home/pablo/tmp/ushare-13259-8300-3276.o /home/pablo/tmp/ushare-16865-8300-21670.c
+gcc -o /home/pablo/tmp/ushare-22092-8300-20138 /home/pablo/tmp/ushare-13259-8300-3276.o

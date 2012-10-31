@@ -1,0 +1,47 @@
+=== modified file 'plugins/feature/dbus/dbus.cpp'
+--- old/plugins/feature/dbus/dbus.cpp	2009-08-01 16:09:05 +0000
++++ new/plugins/feature/dbus/dbus.cpp	2009-08-29 19:04:01 +0000
+@@ -3,12 +3,20 @@
+ #include <dbus-cxx.h>
+ #include <iostream>
+ 
+-MMS_Dbus::MMS_Dbus()
++MMS_Dbus::MMS_Dbus() : connected(false)
+ {}
+ 
+ void MMS_Dbus::startup_updater() 
+ {
+-
++  S_BackgroundUpdater::get_instance()->run_once(boost::bind(&MMS_Dbus::connect, this));
++}
++
++void MMS_Dbus::connect() 
++{
++
++  if (connected)
++	return;
++  
+   DBus::init();
+   DBus::Connection::pointer conn = dispatcher.create_connection(DBus::BUS_SYSTEM);
+ 
+=== modified file 'plugins/feature/dbus/dbus.hpp'
+--- old/plugins/feature/dbus/dbus.hpp	2009-06-23 02:58:53 +0000
++++ new/plugins/feature/dbus/dbus.hpp	2009-08-29 19:04:09 +0000
+@@ -17,6 +17,8 @@
+ {
+ private:
+ 
++  bool connected;
++
+   DBus::Dispatcher dispatcher;
+   DBus::HandlerResult print( DBus::SignalMessage::const_pointer );
+ 
+@@ -33,6 +39,7 @@
+   }
+ 
+   void startup_updater();
++  void connect();
+ 
+   std::string mainloop()
+   {
+

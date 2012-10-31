@@ -1,0 +1,53 @@
+diff --speed-large-files --minimal -Nru tmp/CriticalMass-1.0.0/configure.in work/main.d/CriticalMass-1.0.0/configure.in
+--- CriticalMass-1.0.0/configure.in	2005-12-31 04:27:02.000000000 -0300
++++ CriticalMass-1.0.0/configure.in	2007-07-14 23:19:59.000000000 -0300
+@@ -115,8 +99,6 @@
+ AC_CHECK_LIB(m, sin,, 
+     AC_MSG_ERROR(libm is needed))
+ 
+-AC_CONFIG_SUBDIRS(curl)
+-
+ AC_OUTPUT(Makefile utils/Makefile utilssdl/Makefile utilsgl/Makefile game/Makefile tools/Makefile data/Makefile data/music/Makefile tinyxml/Makefile)
+ 
+ echo "Configuration:
+diff --speed-large-files --minimal -Nru tmp/CriticalMass-1.0.0/Makefile.am work/main.d/CriticalMass-1.0.0/Makefile.am
+--- CriticalMass-1.0.0/Makefile.am	2005-07-15 01:33:04.000000000 -0300
++++ CriticalMass-1.0.0/Makefile.am	2007-07-15 14:57:44.000000000 -0300
+@@ -4,7 +4,7 @@
+ AUTOMAKE_OPTIONS = 1.4
+ 
+ ## Any directories that you want built and installed should go here.
+-SUBDIRS = curl tinyxml utils utilssdl utilsgl tools data game
++SUBDIRS = tinyxml utils utilssdl utilsgl tools data game
+ 
+ ## Any directories you want a part of the distribution should be listed
+ ## here, as well as have a Makefile generated at the end of configure.in
+diff --speed-large-files --minimal -Nru tmp/CriticalMass-1.0.0/game/Makefile.am work/main.d/CriticalMass-1.0.0/game/Makefile.am
+--- CriticalMass-1.0.0/game/Makefile.am	2005-12-30 21:37:26.000000000 -0300
++++ CriticalMass-1.0.0/game/Makefile.am	2007-07-16 12:23:20.000000000 -0300
+@@ -41,21 +41,21 @@
+         main.cpp
+ 
+ LDADD = \
+-	../curl/lib/libcurl.a \
++	-lcurl \
+ 	../utils/libutils.a \
+ 	../utilssdl/libutilssdl.a \
+ 	../utilsgl/libutilsgl.a \
+ 	../tinyxml/libtinyxml.a
+ 
+ if WIN32
+-INCLUDES = -I../curl/include -I../tinyxml -I../utils -I../utilssdl -I../utilsgl -DDATA_DIR=\"./\"
++INCLUDES =  -I../tinyxml -I../utils -I../utilssdl -I../utilsgl -DDATA_DIR=\"./\"
+ LDADD += critter.res
+ else
+ 
+ if APPLE
+-INCLUDES = -I../curl/include -I../tinyxml -I../utils -I../utilssdl -I../utilsgl -DDATA_DIR=\"/Contents/Resources/\"
++INCLUDES =  -I../tinyxml -I../utils -I../utilssdl -I../utilsgl -DDATA_DIR=\"/Contents/Resources/\"
+ else
+-INCLUDES = -I../curl/include -I../tinyxml -I../utils -I../utilssdl -I../utilsgl -DDATA_DIR=\"$(pkgdatadir)/\"
++INCLUDES =  -I../tinyxml -I../utils -I../utilssdl -I../utilsgl -DDATA_DIR=\"$(pkgdatadir)/\"
+ endif
+ 
+ endif

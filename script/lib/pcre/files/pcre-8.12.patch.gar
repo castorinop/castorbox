@@ -1,0 +1,37 @@
+diff -Naur pcre-8.12-old/pcre-config.in pcre-8.12-new/pcre-config.in
+--- pcre-8.12-old/pcre-config.in	2010-03-02 03:08:45.000000000 -0800
++++ pcre-8.12-new/pcre-config.in	2011-01-15 13:15:03.000000000 -0800
+@@ -18,10 +18,10 @@
+ libR=
+ case `uname -s` in
+   *SunOS*)
+-  libR=" -R@libdir@"
++  libR=" -R@GAR_DESTDIR@@libdir@"
+   ;;
+   *BSD*)
+-  libR=" -Wl,-R@libdir@"
++  libR=" -Wl,-R@GAR_DESTDIR@@libdir@"
+   ;;
+ esac
+ 
+@@ -52,16 +52,16 @@
+       echo @PACKAGE_VERSION@
+       ;;
+     --cflags | --cflags-posix)
+-      if test @includedir@ != /usr/include ; then
+-        includes=-I@includedir@
++      if test @GAR_DESTDIR@@includedir@ != @GAR_DESTDIR@/usr/include ; then
++        includes=-I@GAR_DESTDIR@@includedir@
+       fi
+       echo $includes @PCRE_STATIC_CFLAG@
+       ;;
+     --libs-posix)
+-      echo -L@libdir@$libR -lpcreposix -lpcre
++      echo -L@GAR_DESTDIR@@libdir@$libR -lpcreposix -lpcre
+       ;;
+     --libs)
+-      echo -L@libdir@$libR -lpcre
++      echo -L@GAR_DESTDIR@@libdir@$libR -lpcre
+       ;;
+     --libs-cpp)
+       if test @enable_cpp@ = yes ; then

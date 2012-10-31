@@ -1,0 +1,1746 @@
+diff -Naur MPlayer-27979.15908-old/codec-cfg.c MPlayer-27979.15908-new/codec-cfg.c
+--- MPlayer-27979.15908-old/codec-cfg.c	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/codec-cfg.c	2008-11-22 12:10:38.000000000 -0800
+@@ -182,6 +182,16 @@
+ 		{"IDCT_MPEG2",IMGFMT_XVMC_IDCT_MPEG2},
+ 		{"MOCO_MPEG2",IMGFMT_XVMC_MOCO_MPEG2},
+ 
++		{"VDPAU_MPEG1",IMGFMT_VDPAU_MPEG1},
++		{"VDPAU_MPEG2_SIMPLE",IMGFMT_VDPAU_MPEG2_SIMPLE},
++		{"VDPAU_MPEG2_MAIN",IMGFMT_VDPAU_MPEG2_MAIN},
++		{"VDPAU_H264_BASELINE",IMGFMT_VDPAU_H264_BASELINE},
++		{"VDPAU_H264_MAIN",IMGFMT_VDPAU_H264_MAIN},
++		{"VDPAU_H264_HIGH",IMGFMT_VDPAU_H264_HIGH},
++		{"VDPAU_VC1_SIMPLE",IMGFMT_VDPAU_VC1_SIMPLE},
++		{"VDPAU_VC1_MAIN",IMGFMT_VDPAU_VC1_MAIN},
++		{"VDPAU_VC1_ADVANCED",IMGFMT_VDPAU_VC1_ADVANCED},
++
+ 		{NULL,    0}
+ 	};
+ 
+diff -Naur MPlayer-27979.15908-old/configure MPlayer-27979.15908-new/configure
+--- MPlayer-27979.15908-old/configure	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/configure	2008-11-22 12:10:38.000000000 -0800
+@@ -381,6 +381,7 @@
+   --enable-xmga            enable mga_vid X11 video output [autodetect]
+   --enable-xv              enable Xv video output [autodetect]
+   --enable-xvmc            enable XvMC acceleration [disable]
++  --enable-vdpau           enable VDPAU acceleration [disable]
+   --enable-vm              enable XF86VidMode support [autodetect]
+   --enable-xinerama        enable Xinerama support [autodetect]
+   --enable-x11             enable X11 video output [autodetect]
+@@ -547,6 +548,7 @@
+ _dga2=auto
+ _xv=auto
+ _xvmc=no  #auto when complete
++_vdpau=auto
+ _sdl=auto
+ _direct3d=auto
+ _directx=auto
+@@ -867,6 +869,8 @@
+   --disable-xv)		_xv=no		;;
+   --enable-xvmc)        _xvmc=yes       ;;
+   --disable-xvmc)       _xvmc=no        ;;
++  --enable-vdpau)       _vdpau=yes      ;;
++  --disable-vdpau)      _vdpau=no       ;;
+   --enable-sdl)		_sdl=yes	;;
+   --disable-sdl)	_sdl=no		;;
+   --enable-direct3d)    _direct3d=yes   ;;
+@@ -3998,7 +4002,7 @@
+   _novomodules="x11 $_novomodules"
+   _res_comment="check if the dev(el) packages are installed"
+   # disable stuff that depends on X
+-  _xv=no ; _xvmc=no ; _xinerama=no ; _vm=no ; _xf86keysym=no
++  _xv=no ; _xvmc=no ; _xinerama=no ; _vm=no ; _xf86keysym=no ; _vdpau=no
+ fi
+ echores "$_x11"
+ 
+@@ -4111,6 +4115,31 @@
+ echores "$_xvmc"
+ 
+ 
++echocheck "VDPAU"
++if test "$_vdpau" = auto ; then
++  cat > $TMPC <<EOF
++#include <vdpau/vdpau_x11.h>
++int main(void) {
++  (void)vdp_device_create_x11(0, 0, 0, 0);
++  return 0; }
++EOF
++  _vdpau=no
++  cc_check -lvdpau && _vdpau=yes
++fi
++
++if test "$_vdpau" = yes ; then
++  _def_vdpau='#define HAVE_VDPAU 1'
++  _libs_mplayer="$_libs_mplayer -lvdpau"
++  _vosrc="$_vosrc vo_vdpau.c"
++  _vomodules="vdpau $_vomodules"
++else
++  _def_vdpau='#undef HAVE_VDPAU'
++  _novomodules="vdpau $_novomodules"
++  _libavdecoders=`echo $_libavdecoders | sed -e s/MPEG_VDPAU_DECODER// `
++fi
++echores "$_vdpau"
++
++
+ echocheck "Xinerama"
+ if test "$_xinerama" = auto ; then
+   cat > $TMPC <<EOF
+@@ -8460,6 +8489,7 @@
+ $_def_xss
+ $_def_xv
+ $_def_xvmc
++$_def_vdpau
+ $_def_xvr100
+ $_def_yuv4mpeg
+ $_def_zr
+diff -Naur MPlayer-27979.15908-old/etc/codecs.conf MPlayer-27979.15908-new/etc/codecs.conf
+--- MPlayer-27979.15908-old/etc/codecs.conf	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/etc/codecs.conf	2008-11-22 12:10:38.000000000 -0800
+@@ -254,6 +254,34 @@
+   out IDCT_MPEG2
+   out MOCO_MPEG2
+ 
++videocodec ffmpeg12vdpau
++  info "FFmpeg MPEG-1/2 (VDPAU)"
++  status working
++  format 0x10000001  ; MPEG-1
++  format 0x10000002  ; MPEG-2
++  fourcc mpg1,mpg2,MPG2
++  fourcc "DVR "
++  fourcc hdv1
++  fourcc hdv2
++  fourcc PIM1        ; Pinnacle hardware-MPEG-1
++  fourcc VCR2
++  fourcc MPEG
++  fourcc hdv3        ; HDV 1080i50
++  fourcc hdv5        ; HDV  720p25
++  fourcc mx5p        ; MPEG IMX 625/50 (50 Mb/s)
++  fourcc MMES,mmes   ; matrox mpeg2 in avi
++  fourcc hdv6,hdv7,hdv8
++  fourcc xdv1,xdv2,xdv3
++  fourcc xdv4,xdv5,xdv6
++  fourcc xdv7,xdv8,xdv9
++  fourcc xdva,xdvb,xdvc
++  fourcc xdvd,xdve,xdvf
++  driver ffmpeg
++  dll "mpegvideo_vdpau"
++  out VDPAU_MPEG1
++  out VDPAU_MPEG2_SIMPLE
++  out VDPAU_MPEG2_MAIN
++
+ ; we have only native open source codecs for these:
+ 
+ videocodec ffnuv
+@@ -741,6 +769,15 @@
+   dll wmv3
+   out YV12,I420,IYUV
+ 
++videocodec ffwmv3vdpau
++  info "FFmpeg WMV3/WMV9 (VDPAU)"
++  status buggy
++  fourcc WMV3,wmv3
++  driver ffmpeg
++  dll wmv3_vdpau
++  out VDPAU_VC1_SIMPLE
++  out VDPAU_VC1_MAIN
++  
+ videocodec ffvc1
+   info "FFmpeg WVC1"
+   status buggy
+@@ -750,6 +787,14 @@
+   dll vc1
+   out YV12,I420,IYUV
+ 
++videocodec ffvc1vdpau
++  info "FFmpeg WVC1 (VDPAU)"
++  status buggy
++  fourcc WVC1,wvc1
++  driver ffmpeg
++  dll vc1_vdpau
++  out VDPAU_VC1_ADVANCED
++
+ videocodec ffh264
+   info "FFmpeg H.264"
+   status working
+@@ -762,6 +807,20 @@
+   dll h264
+   out YV12,I420,IYUV
+ 
++videocodec ffh264vdpau
++  info "FFmpeg H.264 (VDPAU)"
++  status working
++  fourcc H264,h264
++  fourcc X264,x264
++  fourcc avc1,AVC1
++  fourcc davc,DAVC
++  format 0x10000005
++  driver ffmpeg
++  dll h264_vdpau
++  out VDPAU_H264_BASELINE
++  out VDPAU_H264_MAIN
++  out VDPAU_H264_HIGH
++
+ videocodec ffsvq3
+   info "FFmpeg Sorenson Video v3 (SVQ3)"
+   status working
+diff -Naur MPlayer-27979.15908-old/help/help_mp-en.h MPlayer-27979.15908-new/help/help_mp-en.h
+--- MPlayer-27979.15908-old/help/help_mp-en.h	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/help/help_mp-en.h	2008-11-22 12:10:38.000000000 -0800
+@@ -1654,15 +1654,18 @@
+ 
+ // libmpcodecs/vd_ffmpeg.c
+ #define MSGTR_MPCODECS_XVMCAcceleratedCodec "[VD_FFMPEG] XVMC accelerated codec.\n"
++#define MSGTR_MPCODECS_VDPAUAcceleratedCodec "[VD_FFMPEG] VDPAU accelerated codec.\n"
+ #define MSGTR_MPCODECS_ArithmeticMeanOfQP "[VD_FFMPEG] Arithmetic mean of QP: %2.4f, Harmonic mean of QP: %2.4f\n"
+ #define MSGTR_MPCODECS_DRIFailure "[VD_FFMPEG] DRI failure.\n"
+ #define MSGTR_MPCODECS_CouldntAllocateImageForCodec "[VD_FFMPEG] Couldn't allocate image for codec.\n"
+ #define MSGTR_MPCODECS_XVMCAcceleratedMPEG2 "[VD_FFMPEG] XVMC-accelerated MPEG-2.\n"
+ #define MSGTR_MPCODECS_TryingPixfmt "[VD_FFMPEG] Trying pixfmt=%d.\n"
+ #define MSGTR_MPCODECS_McGetBufferShouldWorkOnlyWithXVMC "[VD_FFMPEG] The mc_get_buffer should work only with XVMC acceleration!!"
++#define MSGTR_MPCODECS_VDPAUGetBufferShouldWorkOnlyWithVDPAU "[VD_FFMPEG] The mc_get_buffer should work only with VDPAU acceleration!!"
+ #define MSGTR_MPCODECS_UnexpectedInitVoError "[VD_FFMPEG] Unexpected init_vo error.\n"
+ #define MSGTR_MPCODECS_UnrecoverableErrorRenderBuffersNotTaken "[VD_FFMPEG] Unrecoverable error, render buffers not taken.\n"
+ #define MSGTR_MPCODECS_OnlyBuffersAllocatedByVoXvmcAllowed "[VD_FFMPEG] Only buffers allocated by vo_xvmc allowed.\n"
++#define MSGTR_MPCODECS_OnlyBuffersAllocatedByVoVdpauAllowed "[VD_FFMPEG] Only buffers allocated by vo_vdpau allowed.\n"
+ 
+ // libmpcodecs/ve_lavc.c
+ #define MSGTR_MPCODECS_HighQualityEncodingSelected "[VE_LAVC] High quality encoding selected (non-realtime)!\n"
+diff -Naur MPlayer-27979.15908-old/libmpcodecs/img_format.c MPlayer-27979.15908-new/libmpcodecs/img_format.c
+--- MPlayer-27979.15908-old/libmpcodecs/img_format.c	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/libmpcodecs/img_format.c	2008-11-22 12:10:38.000000000 -0800
+@@ -67,6 +67,15 @@
+ 	case IMGFMT_ZRMJPEGIB: return "Zoran MJPEG bottom field first";
+ 	case IMGFMT_XVMC_MOCO_MPEG2: return "MPEG1/2 Motion Compensation";
+ 	case IMGFMT_XVMC_IDCT_MPEG2: return "MPEG1/2 Motion Compensation and IDCT";
++	case IMGFMT_VDPAU_MPEG1: return "MPEG1 VDPAU acceleration";
++	case IMGFMT_VDPAU_MPEG2_SIMPLE: return "MPEG2 SIMPLE VDPAU acceleration";
++	case IMGFMT_VDPAU_MPEG2_MAIN: return "MPEG2 MAIN VDPAU acceleration";
++	case IMGFMT_VDPAU_H264_BASELINE: return "H.264 BASELINE VDPAU acceleration";
++	case IMGFMT_VDPAU_H264_MAIN: return "H.264 MAIN VDPAU acceleration";
++	case IMGFMT_VDPAU_H264_HIGH: return "H.264 HIGH VDPAU acceleration";
++	case IMGFMT_VDPAU_VC1_SIMPLE: return "VC1 SIMPLE VDPAU acceleration";
++	case IMGFMT_VDPAU_VC1_MAIN: return "VC1 MAIN VDPAU acceleration";
++	case IMGFMT_VDPAU_VC1_ADVANCED: return "VC1 ADVANCED VDPAU acceleration";
+     }
+     snprintf(unknown_format,20,"Unknown 0x%04x",format);
+     return unknown_format;
+diff -Naur MPlayer-27979.15908-old/libmpcodecs/img_format.h MPlayer-27979.15908-new/libmpcodecs/img_format.h
+--- MPlayer-27979.15908-old/libmpcodecs/img_format.h	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/libmpcodecs/img_format.h	2008-11-22 12:10:38.000000000 -0800
+@@ -107,6 +107,20 @@
+ #define IMGFMT_XVMC_MOCO_MPEG2 (IMGFMT_XVMC|0x02)
+ #define IMGFMT_XVMC_IDCT_MPEG2 (IMGFMT_XVMC|0x82)
+ 
++// VDPAU specific format.
++#define IMGFMT_VDPAU               0x1DC80000
++#define IMGFMT_VDPAU_MASK          0xFFFF0000
++#define IMGFMT_IS_VDPAU(fmt)       (((fmt)&IMGFMT_VDPAU_MASK)==IMGFMT_VDPAU)
++#define IMGFMT_VDPAU_MPEG1         (IMGFMT_VDPAU|0x01)
++#define IMGFMT_VDPAU_MPEG2_SIMPLE  (IMGFMT_VDPAU|0x02)
++#define IMGFMT_VDPAU_MPEG2_MAIN    (IMGFMT_VDPAU|0x03)
++#define IMGFMT_VDPAU_H264_BASELINE (IMGFMT_VDPAU|0x04)
++#define IMGFMT_VDPAU_H264_MAIN     (IMGFMT_VDPAU|0x05)
++#define IMGFMT_VDPAU_H264_HIGH     (IMGFMT_VDPAU|0x06)
++#define IMGFMT_VDPAU_VC1_SIMPLE    (IMGFMT_VDPAU|0x07)
++#define IMGFMT_VDPAU_VC1_MAIN      (IMGFMT_VDPAU|0x08)
++#define IMGFMT_VDPAU_VC1_ADVANCED  (IMGFMT_VDPAU|0x09)
++
+ typedef struct {
+     void* data;
+     int size;
+diff -Naur MPlayer-27979.15908-old/libmpcodecs/mp_image.h MPlayer-27979.15908-new/libmpcodecs/mp_image.h
+--- MPlayer-27979.15908-old/libmpcodecs/mp_image.h	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/libmpcodecs/mp_image.h	2008-11-22 12:10:38.000000000 -0800
+@@ -113,6 +113,10 @@
+ 	mpi->bpp=0;
+ 	return;
+     }
++    if(IMGFMT_IS_VDPAU(out_fmt)){
++        mpi->bpp=0;
++        return;
++    }
+     if(IMGFMT_IS_XVMC(out_fmt)){
+ 	mpi->bpp=0;
+ 	return;
+diff -Naur MPlayer-27979.15908-old/libmpcodecs/vd_ffmpeg.c MPlayer-27979.15908-new/libmpcodecs/vd_ffmpeg.c
+--- MPlayer-27979.15908-old/libmpcodecs/vd_ffmpeg.c	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/libmpcodecs/vd_ffmpeg.c	2008-11-22 12:10:38.000000000 -0800
+@@ -30,6 +30,10 @@
+ #include "xvmc_render.h"
+ #endif
+ 
++#ifdef HAVE_VDPAU
++#include "vdpau_render.h"
++#endif
++
+ int avcodec_initialized=0;
+ 
+ typedef struct {
+@@ -69,6 +73,16 @@
+                 	int y, int type, int height);
+ #endif
+ 
++#ifdef HAVE_VDPAU
++static enum PixelFormat vdpau_get_format(struct AVCodecContext * avctx,
++                                   const enum PixelFormat * pix_fmt);
++static int vdpau_get_buffer(AVCodecContext *avctx, AVFrame *pic);
++static void vdpau_release_buffer(AVCodecContext *avctx, AVFrame *pic);
++static void vdpau_render_frame(struct AVCodecContext *s,
++                        AVFrame *src, int offset[4],
++                        int y, int type, int height);
++#endif
++
+ static int lavc_param_workaround_bugs= FF_BUG_AUTODETECT;
+ static int lavc_param_error_resilience=2;
+ static int lavc_param_error_concealment=3;
+@@ -147,6 +161,36 @@
+         case IMGFMT_XVMC_IDCT_MPEG2:
+         case IMGFMT_XVMC_MOCO_MPEG2:
+             if(avctx->pix_fmt==PIX_FMT_XVMC_MPEG2_IDCT) return CONTROL_TRUE;
++	    break;
++#endif
++#ifdef HAVE_VDPAU
++        case IMGFMT_VDPAU_MPEG1:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_MPEG1) return CONTROL_TRUE;
++	    break;
++        case IMGFMT_VDPAU_MPEG2_SIMPLE:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_MPEG2_SIMPLE) return CONTROL_TRUE;
++	    break;
++        case IMGFMT_VDPAU_MPEG2_MAIN:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_MPEG2_MAIN) return CONTROL_TRUE;
++	    break;
++        case IMGFMT_VDPAU_H264_BASELINE:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_H264_BASELINE) return CONTROL_TRUE;
++	    break;
++        case IMGFMT_VDPAU_H264_MAIN:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_H264_MAIN) return CONTROL_TRUE;
++	    break;
++        case IMGFMT_VDPAU_H264_HIGH:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_H264_HIGH) return CONTROL_TRUE;
++	    break;
++        case IMGFMT_VDPAU_VC1_SIMPLE:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_VC1_SIMPLE) return CONTROL_TRUE;
++            break;
++        case IMGFMT_VDPAU_VC1_MAIN:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_VC1_MAIN) return CONTROL_TRUE;
++            break;
++        case IMGFMT_VDPAU_VC1_ADVANCED:
++            if(avctx->pix_fmt==PIX_FMT_VDPAU_VC1_ADVANCED) return CONTROL_TRUE;
++            break;
+ #endif
+ 	}
+         return CONTROL_FALSE;
+@@ -250,6 +294,18 @@
+     ctx->avctx = avcodec_alloc_context();
+     avctx = ctx->avctx;
+ 
++#ifdef HAVE_VDPAU
++    if(lavc_codec->capabilities & CODEC_CAP_HWACCEL_VDPAU){
++        mp_msg(MSGT_DECVIDEO, MSGL_INFO, MSGTR_MPCODECS_VDPAUAcceleratedCodec);
++        assert(ctx->do_dr1);
++        avctx->get_format= vdpau_get_format;
++        avctx->get_buffer= vdpau_get_buffer;
++        avctx->release_buffer= vdpau_release_buffer;
++        avctx->draw_horiz_band = vdpau_render_frame;
++        avctx->slice_flags=SLICE_FLAG_CODED_ORDER|SLICE_FLAG_ALLOW_FIELD;
++    } else
++#endif /* HAVE_VDPAU */
++
+ #ifdef HAVE_XVMC
+ 
+ #ifdef CODEC_CAP_HWACCEL
+@@ -537,6 +593,17 @@
+         case PIX_FMT_XVMC_MPEG2_MC:ctx->best_csp=IMGFMT_XVMC_MOCO_MPEG2;break;
+         case PIX_FMT_XVMC_MPEG2_IDCT:ctx->best_csp=IMGFMT_XVMC_IDCT_MPEG2;break;
+ #endif
++#ifdef HAVE_VDPAU
++        case PIX_FMT_VDPAU_MPEG1: ctx->best_csp=IMGFMT_VDPAU_MPEG1;break;
++        case PIX_FMT_VDPAU_MPEG2_SIMPLE: ctx->best_csp=IMGFMT_VDPAU_MPEG2_SIMPLE;break;
++        case PIX_FMT_VDPAU_MPEG2_MAIN: ctx->best_csp=IMGFMT_VDPAU_MPEG2_MAIN;break;
++        case PIX_FMT_VDPAU_H264_BASELINE: ctx->best_csp=IMGFMT_VDPAU_H264_BASELINE;break;
++        case PIX_FMT_VDPAU_H264_MAIN: ctx->best_csp=IMGFMT_VDPAU_H264_MAIN;break;
++        case PIX_FMT_VDPAU_H264_HIGH: ctx->best_csp=IMGFMT_VDPAU_H264_HIGH;break;
++        case PIX_FMT_VDPAU_VC1_SIMPLE: ctx->best_csp=IMGFMT_VDPAU_VC1_SIMPLE;break;
++        case PIX_FMT_VDPAU_VC1_MAIN: ctx->best_csp=IMGFMT_VDPAU_VC1_MAIN;break;
++        case PIX_FMT_VDPAU_VC1_ADVANCED: ctx->best_csp=IMGFMT_VDPAU_VC1_ADVANCED;break;
++#endif
+ 	default:
+ 	    ctx->best_csp=0;
+ 	}
+@@ -1071,3 +1138,152 @@
+ }
+ 
+ #endif // HAVE_XVMC
++
++#ifdef HAVE_VDPAU
++
++static enum PixelFormat vdpau_get_format(struct AVCodecContext * avctx,
++                                    const enum PixelFormat * fmt){
++    sh_video_t * sh = avctx->opaque;
++    int i;
++
++    if(avctx->vdpau_acceleration){
++        vd_ffmpeg_ctx *ctx = sh->context;
++        avctx->get_buffer= vdpau_get_buffer;
++        avctx->release_buffer= vdpau_release_buffer;
++        avctx->draw_horiz_band = vdpau_render_frame;
++        assert(ctx->do_dr1);
++        avctx->slice_flags=SLICE_FLAG_CODED_ORDER|SLICE_FLAG_ALLOW_FIELD;
++    }
++    for(i=0;fmt[i]!=-1;i++){
++        mp_msg(MSGT_DECVIDEO, MSGL_INFO, MSGTR_MPCODECS_TryingPixfmt,i);
++        if( init_vo(sh,fmt[i]) >= 0)
++            return fmt[i];
++    }
++    return fmt[0];
++}
++
++static int vdpau_get_buffer(AVCodecContext *avctx, AVFrame *pic){
++    sh_video_t * sh = avctx->opaque;
++    vd_ffmpeg_ctx *ctx = sh->context;
++    mp_image_t* mpi=NULL;
++    vdpau_render_state_t * render;
++    int flags= MP_IMGFLAG_ACCEPT_STRIDE | MP_IMGFLAG_PREFER_ALIGNED_STRIDE|
++               MP_IMGFLAG_DRAW_CALLBACK;
++
++    if(!avctx->vdpau_acceleration){
++        mp_msg(MSGT_DECVIDEO, MSGL_INFO, MSGTR_MPCODECS_VDPAUGetBufferShouldWorkOnlyWithVDPAU);
++        assert(0);
++        exit(1);
++    }
++
++    assert(avctx->draw_horiz_band == vdpau_render_frame);
++    assert(avctx->release_buffer == vdpau_release_buffer);
++    if( mp_msg_test(MSGT_DECVIDEO,MSGL_DBG5) )
++        mp_msg(MSGT_DECVIDEO, MSGL_DBG5, "vd_ffmpeg::vdpau_get_buffer\n");
++
++    if(init_vo(sh,avctx->pix_fmt) < 0){
++        mp_msg(MSGT_DECVIDEO, MSGL_WARN, MSGTR_MPCODECS_UnexpectedInitVoError);
++        exit(1);
++    }
++
++    if(!pic->reference){
++        ctx->b_count++;
++    }else{
++        ctx->ip_count++;
++        flags|= MP_IMGFLAG_PRESERVE|MP_IMGFLAG_READABLE;
++    }
++
++    mpi= mpcodecs_get_image(sh, MP_IMGTYPE_IPB,flags ,
++                            avctx->width, avctx->height);
++
++    if(mpi==NULL){
++        mp_msg(MSGT_DECVIDEO, MSGL_ERR, MSGTR_MPCODECS_UnrecoverableErrorRenderBuffersNotTaken);
++        assert(0);
++        exit(1);
++    };
++
++    if( (mpi->flags & MP_IMGFLAG_DIRECT) == 0){
++        mp_msg(MSGT_DECVIDEO, MSGL_ERR, MSGTR_MPCODECS_OnlyBuffersAllocatedByVoVdpauAllowed);
++        assert(0);
++        exit(1);
++    }
++
++    pic->data[0]= mpi->planes[0];
++    pic->data[1]= mpi->planes[1];
++    pic->data[2]= mpi->planes[2];
++ 
++    /* Note, some (many) codecs in libavcodec must have stride1==stride2 && no changes between frames
++     * lavc will check that and die with an error message, if its not true
++     */
++    pic->linesize[0]= mpi->stride[0];
++    pic->linesize[1]= mpi->stride[1];
++    pic->linesize[2]= mpi->stride[2];
++
++    pic->opaque = mpi;
++
++    if(pic->reference){
++        //I or P frame
++        pic->age= ctx->ip_age[0];
++
++        ctx->ip_age[0]= ctx->ip_age[1]+1;
++        ctx->ip_age[1]= 1;
++        ctx->b_age++;
++    }else{
++        //B frame
++        pic->age= ctx->b_age;
++
++        ctx->ip_age[0]++;
++        ctx->ip_age[1]++;
++        ctx->b_age=1;
++    }
++
++    pic->type= FF_BUFFER_TYPE_USER;
++
++    render=(vdpau_render_state_t*)mpi->planes[2];
++    if( mp_msg_test(MSGT_DECVIDEO,MSGL_DBG5) )
++        mp_msg(MSGT_DECVIDEO, MSGL_DBG5, "vd_ffmpeg::vdpau_get_buffer (render=%p)\n",render);
++    assert(render != 0);
++    render->state |= MP_VDPAU_STATE_USED_FOR_REFERENCE;
++   return 0;
++}
++
++static void vdpau_release_buffer(AVCodecContext *avctx, AVFrame *pic){
++    mp_image_t* mpi= pic->opaque;
++    sh_video_t * sh = avctx->opaque;
++    vd_ffmpeg_ctx *ctx = sh->context;
++    vdpau_render_state_t * render;
++    int i;
++
++    if(ctx->ip_count <= 2 && ctx->b_count<=1){
++        if(mpi->flags&MP_IMGFLAG_PRESERVE)
++            ctx->ip_count--;
++        else
++            ctx->b_count--;
++    }
++
++    // Mark the surface as not required for prediction
++    render=(vdpau_render_state_t*)pic->data[2];
++    if( mp_msg_test(MSGT_DECVIDEO,MSGL_DBG5) )
++        mp_msg(MSGT_DECVIDEO, MSGL_DBG5, "vd_ffmpeg::vdpau_release_buffer (render=%p)\n",render);
++    assert(render!=NULL);
++    render->state &= ~MP_VDPAU_STATE_USED_FOR_REFERENCE;
++    for(i=0; i<4; i++){
++        pic->data[i]= NULL;
++    }
++}
++
++static void vdpau_render_frame(struct AVCodecContext *s,
++                        AVFrame *src, int offset[4],
++                        int y, int type, int height){
++    int width= s->width;
++    sh_video_t * sh = s->opaque;
++    uint8_t *source[3]= {src->data[0], src->data[1], src->data[2]};
++
++    assert(src->linesize[0]==0 && src->linesize[1]==0 && src->linesize[2]==0);
++    assert(offset[0]==0 && offset[1]==0 && offset[2]==0);
++
++    mpcodecs_draw_slice (sh, source, src->linesize, width, height, 0, y);
++}
++
++#endif
++
+diff -Naur MPlayer-27979.15908-old/libvo/video_out.c MPlayer-27979.15908-new/libvo/video_out.c
+--- MPlayer-27979.15908-old/libvo/video_out.c	2008-11-22 12:01:30.000000000 -0800
++++ MPlayer-27979.15908-new/libvo/video_out.c	2008-11-22 12:10:38.000000000 -0800
+@@ -71,6 +71,7 @@
+ extern vo_functions_t video_out_x11;
+ extern vo_functions_t video_out_xover;
+ extern vo_functions_t video_out_xvmc;
++extern vo_functions_t video_out_vdpau;
+ extern vo_functions_t video_out_xv;
+ extern vo_functions_t video_out_gl;
+ extern vo_functions_t video_out_gl2;
+@@ -153,6 +154,9 @@
+ #ifdef CONFIG_3DFX
+         &video_out_3dfx,
+ #endif
++#ifdef HAVE_VDPAU
++        &video_out_vdpau,
++#endif
+ #ifdef CONFIG_XV
+         &video_out_xv,
+ #endif
+diff -Naur MPlayer-27979.15908-old/libvo/vo_vdpau.c MPlayer-27979.15908-new/libvo/vo_vdpau.c
+--- MPlayer-27979.15908-old/libvo/vo_vdpau.c	1969-12-31 16:00:00.000000000 -0800
++++ MPlayer-27979.15908-new/libvo/vo_vdpau.c	2008-11-22 12:10:38.000000000 -0800
+@@ -0,0 +1,1163 @@
++/* vo_vdpau.c, vdpau with X11 interface */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "config.h"
++#include "mp_msg.h"
++#include "help_mp.h"
++#include "video_out.h"
++#include "video_out_internal.h"
++
++
++#include <X11/Xlib.h>
++#include <X11/Xutil.h>
++#include <errno.h>
++
++#include "x11_common.h"
++
++#include "vdpau_render.h"
++
++#include "fastmemcpy.h"
++#include "sub.h"
++#include "aspect.h"
++
++#include "subopt-helper.h"
++
++#include "input/input.h"
++
++#ifdef HAVE_NEW_GUI
++#include "gui/interface.h"
++#endif
++
++#include "libavutil/common.h"
++#include <assert.h>
++
++#define TRACE_SURFACES 0
++
++static vo_info_t info = {
++    "VDPAU with X11",
++    "vdpau", 
++    "Rajib Mahapatra <rmahapatra@nvidia.com> and others", 
++    ""
++};
++
++LIBVO_EXTERN(vdpau)
++
++#define ARSIZE(x) (sizeof(x) / sizeof((x)[0]))
++
++/* MACRO for error check */
++#define CHECK_ST \
++  if (vdp_st != VDP_STATUS_OK) { \
++      printf("Error at %s:%d\n", __FILE__, __LINE__); \
++      exit(1); \
++  }
++
++/* Numbers of video and ouput Surfaces */
++#define NUM_OUTPUT_SURFACES                2
++#define NUM_VIDEO_SURFACES_MPEG2           3  // (1 frame being decoded, 2 reference)
++#define NUM_VIDEO_SURFACES_H264            17 // (1 frame being decoded, up to 16 references) 
++#define NUM_VIDEO_SURFACES_VC1             3  // (same as MPEG-2)
++#define NUM_VIDEO_SURFACES_NON_ACCEL_YUV   1  //  surfaces for YV12 etc. 
++#define NUM_VIDEO_SURFACES_NON_ACCEL_RGB   0 // surfaces for RGB or YUV4:4:4
++
++/* Declaration for  all varialbles of win_x11_init_vdpau_procs() and 
++ * win_x11_init_vdpau_flip_queue() function. 
++ */
++VdpDevice           vdp_device;
++VdpGetProcAddress * vdp_get_proc_address;
++
++VdpPresentationQueueTarget vdp_flip_target;
++VdpPresentationQueue       vdp_flip_queue;
++
++VdpDeviceDestroy * vdp_device_destroy;
++VdpVideoSurfaceCreate * vdp_video_surface_create;
++VdpVideoSurfaceDestroy * vdp_video_surface_destroy;
++
++/* May be used in  software filtering/postprocessing options
++ * in MPlayer(./mplayer -vf ..) if we want copy video_surface data to 
++ * sytem memory.
++ */
++VdpVideoSurfacePutBitsYCbCr * vdp_video_surface_put_bits_y_cb_cr;
++VdpVideoSurfacePutBitsYCbCr * vdp_video_surface_get_bits_y_cb_cr;
++
++VdpOutputSurfacePutBitsYCbCr * vdp_output_surface_put_bits_y_cb_cr;
++VdpOutputSurfacePutBitsNative * vdp_output_surface_put_bits_native;
++
++VdpOutputSurfaceCreate * vdp_output_surface_create;
++VdpOutputSurfaceDestroy * vdp_output_surface_destroy;
++
++/* videoMixer puts videoSurface data to displayble ouputSurface. */
++VdpVideoMixerCreate * vdp_video_mixer_create;
++VdpVideoMixerSetFeatureEnables * vdp_video_mixer_set_feature_enables;
++VdpVideoMixerDestroy * vdp_video_mixer_destroy;
++VdpVideoMixerRender * vdp_video_mixer_render;
++
++VdpPresentationQueueTargetDestroy * vdp_presentation_queue_target_destroy;
++VdpPresentationQueueCreate * vdp_presentation_queue_create;
++VdpPresentationQueueDestroy * vdp_presentation_queue_destroy;
++VdpPresentationQueueDisplay * vdp_presentation_queue_display;
++VdpPresentationQueueBlockUntilSurfaceIdle * vdp_presentation_queue_block_until_surface_idle;
++VdpPresentationQueueTargetCreateX11 * vdp_presentation_queue_target_create_x11;
++VdpPresentationQueueQuerySurfaceStatus * vdp_presentation_queue_query_surface_status;
++
++VdpDecoderCreate * vdp_decoder_create;
++VdpDecoderDestroy * vdp_decoder_destroy;
++VdpDecoderRender * vdp_decoder_render;
++
++static VdpVideoSurface *videoSurfaces;
++static VdpOutputSurface outputSurfaces[NUM_OUTPUT_SURFACES];
++static VdpVideoSurface videoSurface;
++static VdpOutputSurface outputSurface;
++
++static VdpDecoder decoder;
++static VdpVideoMixer videoMixer;
++
++static VdpRect outRect;
++static VdpRect outRectVid;
++
++static vdpau_render_state_t * surface_render;
++int surfaceNum;
++static uint32_t vid_width, vid_height;
++static uint32_t image_format;
++static uint32_t num_video_surfaces;
++extern uint32_t num_reference_surfaces;
++
++/* X11 specific */
++static int visible_buf = -1;    // -1 means: no buffer was drawn yet
++
++static int flip_flag;
++
++static int int_pause;
++
++static Window mRoot;
++static uint32_t drwX, drwY, drwBorderWidth, drwDepth;
++static uint32_t max_width = 0, max_height = 0; // zero means: not set
++
++static void calc_drwXY_dWH(uint32_t *drwX, uint32_t *drwY, uint32_t *d_wh, uint32_t *d_ht) {
++  *drwX = *drwY = 0;
++  if (!vo_fs && (*d_wh > vo_screenwidth || *d_ht > vo_screenheight)) {
++    aspect(d_wh, d_ht, A_ZOOM);
++    *d_wh = FFMIN(*d_wh, vo_screenwidth);
++    *d_ht = FFMIN(*d_ht, vo_screenheight);
++    // this case, window is created at (0,0) position.
++    vo_dx = 0; //(vo_screenwidth - *d_wh) / 2;
++    vo_dy = 0; //(vo_screenheight - *d_ht) / 2;
++    *drwX = vo_dx;
++    *drwY = vo_dy;
++    mp_msg(MSGT_VO, MSGL_V, "[vdpau - when (w x h) > (sw x sh)] dx: %d dy: %d dw: %d dh: %d\n",
++           *drwX, *drwY, *d_wh, *d_ht);
++    return ;
++  }
++  if (vo_fs) {
++    aspect(&vo_dwidth, &vo_dheight, A_ZOOM);
++    vo_dwidth = FFMIN(vo_dwidth, vo_screenwidth);
++    vo_dheight = FFMIN(vo_dheight, vo_screenheight);
++    *drwX = (vo_screenwidth - vo_dwidth) / 2;
++    *drwY = (vo_screenheight - vo_dheight) / 2;
++    mp_msg(MSGT_VO, MSGL_V, "[vdpau-fs] dx: %d dy: %d dw: %d dh: %d\n",
++           *drwX, *drwY, vo_dwidth, vo_dheight);
++  } else if (WinID == 0) {
++    *drwX = vo_dx;
++    *drwY = vo_dy;
++  }
++}
++
++/* Initialize Get Proc Address, called from config() */
++static void win_x11_init_vdpau_procs(void)
++{
++    VdpStatus vdp_st;
++
++    // Create Device
++    vdp_st = vdp_device_create_x11(
++        mDisplay, //x_display,
++        mScreen, //x_screen,
++        &vdp_device,
++        &vdp_get_proc_address
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_DEVICE_DESTROY,
++        (void *)&vdp_device_destroy
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_SURFACE_CREATE,
++        (void *)&vdp_video_surface_create
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_SURFACE_DESTROY,
++        (void *)&vdp_video_surface_destroy
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_SURFACE_PUT_BITS_Y_CB_CR,
++        (void *)&vdp_video_surface_put_bits_y_cb_cr
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_SURFACE_GET_BITS_Y_CB_CR,
++        (void *)&vdp_video_surface_get_bits_y_cb_cr
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_Y_CB_CR,
++        (void *)&vdp_output_surface_put_bits_y_cb_cr
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_NATIVE,
++        (void *)&vdp_output_surface_put_bits_native
++    );
++    CHECK_ST
++
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_OUTPUT_SURFACE_CREATE,
++        (void *)&vdp_output_surface_create
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_OUTPUT_SURFACE_DESTROY,
++        (void *)&vdp_output_surface_destroy
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_MIXER_CREATE,
++        (void *)&vdp_video_mixer_create
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_MIXER_SET_FEATURE_ENABLES,
++        (void *)&vdp_video_mixer_set_feature_enables
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_MIXER_DESTROY,
++        (void *)&vdp_video_mixer_destroy
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_VIDEO_MIXER_RENDER,
++        (void *)&vdp_video_mixer_render
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_PRESENTATION_QUEUE_TARGET_DESTROY,
++        (void *)&vdp_presentation_queue_target_destroy
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_PRESENTATION_QUEUE_CREATE,
++        (void *)&vdp_presentation_queue_create
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_PRESENTATION_QUEUE_DESTROY,
++        (void *)&vdp_presentation_queue_destroy
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_PRESENTATION_QUEUE_DISPLAY,
++        (void *)&vdp_presentation_queue_display
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_PRESENTATION_QUEUE_BLOCK_UNTIL_SURFACE_IDLE,
++        (void *)&vdp_presentation_queue_block_until_surface_idle
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_PRESENTATION_QUEUE_TARGET_CREATE_X11,
++        (void *)&vdp_presentation_queue_target_create_x11
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_DECODER_CREATE,
++        (void *)&vdp_decoder_create
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_DECODER_DESTROY,
++        (void *)&vdp_decoder_destroy
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_DECODER_RENDER,
++        (void *)&vdp_decoder_render
++    );
++    CHECK_ST
++
++    vdp_st = vdp_get_proc_address(
++        vdp_device,
++        VDP_FUNC_ID_PRESENTATION_QUEUE_QUERY_SURFACE_STATUS,
++        (void *)&vdp_presentation_queue_query_surface_status
++    );
++    CHECK_ST
++}
++
++/* Destroy vdpau procs, called from uninit() */
++static VdpStatus win_x11_fini_vdpau_procs(void)
++{
++    VdpStatus vdp_st;
++
++    vdp_st = vdp_device_destroy(
++        vdp_device
++    );
++    CHECK_ST
++
++    return VDP_STATUS_OK;
++}
++
++/* Initialize vdpau_flip_queue, called from config() */
++static void win_x11_init_vdpau_flip_queue(void)
++{   
++    VdpStatus vdp_st;
++
++    vdp_st = vdp_presentation_queue_target_create_x11(
++        vdp_device,
++        vo_window, //x_window,
++        &vdp_flip_target
++    );
++    CHECK_ST
++
++    vdp_st = vdp_presentation_queue_create(
++        vdp_device,
++        vdp_flip_target,
++        &vdp_flip_queue
++    );
++    CHECK_ST
++
++}
++
++/* Destroy vdpau_flip_queue, called from uninit() */
++static VdpStatus win_x11_fini_vdpau_flip_queue(void)
++{  
++    VdpStatus vdp_st;
++    
++    vdp_st = vdp_presentation_queue_destroy(
++        vdp_flip_queue
++    );
++    CHECK_ST
++         
++    vdp_st = vdp_presentation_queue_target_destroy(
++        vdp_flip_target
++    );
++    CHECK_ST
++
++    return VDP_STATUS_OK;
++}
++
++/*
++ * connect to X server, create and map window, Initialize all
++ * VDPAU objects, create differnt surfaces etc.
++ */
++static int config(uint32_t width, uint32_t height, uint32_t d_width,
++                       uint32_t d_height, uint32_t flags, char *title,
++                       uint32_t format)
++{
++    XVisualInfo vinfo;
++    XSetWindowAttributes xswa;
++    XWindowAttributes attribs;
++    unsigned long xswamask;
++    int depth;
++    VdpStatus vdp_st;
++    int i;
++    VdpDecoderProfile vdp_decoder_profile;
++    VdpChromaType vdp_chroma_type;
++
++#ifdef HAVE_XF86VM
++    int vm = 0;
++    unsigned int modeline_width, modeline_height;
++    static uint32_t vm_width;
++    static uint32_t vm_height;
++#endif
++
++    if (vo_config_count)
++    {
++        // FIXME: We should really check for matching parameters here,
++        // and uninit/re-config if they have changed? 
++        return 0;
++    }
++
++    image_format = format;
++
++    // FIXME: Are higher profiles able to decode all lower profile streams?
++    switch (format) {
++    case IMGFMT_VDPAU_MPEG1:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_MPEG1;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        num_video_surfaces = NUM_VIDEO_SURFACES_MPEG2;
++        break;
++    case IMGFMT_VDPAU_MPEG2_SIMPLE:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_MPEG2_SIMPLE;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        num_video_surfaces = NUM_VIDEO_SURFACES_MPEG2;
++        break;
++    case IMGFMT_VDPAU_MPEG2_MAIN:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_MPEG2_MAIN;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        num_video_surfaces = NUM_VIDEO_SURFACES_MPEG2;
++        break;
++    case IMGFMT_VDPAU_H264_BASELINE:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_H264_BASELINE;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        // Theoretically, "num_reference_surfaces+1" is correct.
++        // However, to work around invalid/corrupt streams,
++        // and/or ffmpeg DPB management issues,
++        // we allocate more than we should need to allow problematic
++        // streams to play.
++        //num_video_surfaces = num_reference_surfaces + 1;
++        num_video_surfaces = NUM_VIDEO_SURFACES_H264;
++        break;
++    case IMGFMT_VDPAU_H264_MAIN:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_H264_MAIN;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        // Theoretically, "num_reference_surfaces+1" is correct.
++        // However, to work around invalid/corrupt streams,
++        // and/or ffmpeg DPB management issues,
++        // we allocate more than we should need to allow problematic
++        // streams to play.
++        //num_video_surfaces = num_reference_surfaces + 1;
++        num_video_surfaces = NUM_VIDEO_SURFACES_H264;
++        break;
++    case IMGFMT_VDPAU_H264_HIGH:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_H264_HIGH;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        // Theoretically, "num_reference_surfaces+1" is correct.
++        // However, to work around invalid/corrupt streams,
++        // and/or ffmpeg DPB management issues,
++        // we allocate more than we should need to allow problematic
++        // streams to play.
++        //num_video_surfaces = num_reference_surfaces + 1;
++        num_video_surfaces = NUM_VIDEO_SURFACES_H264;
++        break;
++    case IMGFMT_VDPAU_VC1_SIMPLE:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_VC1_SIMPLE;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        num_video_surfaces = NUM_VIDEO_SURFACES_VC1;
++        break;
++    case IMGFMT_VDPAU_VC1_MAIN:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_VC1_MAIN;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        num_video_surfaces = NUM_VIDEO_SURFACES_VC1;
++        break;
++    case IMGFMT_VDPAU_VC1_ADVANCED:
++        vdp_decoder_profile = VDP_DECODER_PROFILE_VC1_ADVANCED;
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        num_video_surfaces = NUM_VIDEO_SURFACES_VC1;
++        break;
++
++    /* Non VDPAU specific formats.
++     * No HW acceleration. VdpDecoder will not be created and 
++     * there will be no call for VdpDecoderRender.
++     */
++    case IMGFMT_YV12:
++        vdp_chroma_type = VDP_CHROMA_TYPE_420;
++        num_video_surfaces = NUM_VIDEO_SURFACES_NON_ACCEL_YUV;
++        break;
++    case IMGFMT_BGRA:
++        // No need for videoSurfaces, directly renders to outputSurface.
++        num_video_surfaces = NUM_VIDEO_SURFACES_NON_ACCEL_RGB;
++        break;
++    default:
++        assert(0);
++        return 1;
++    }
++
++    vo_mouse_autohide = 1;
++    int_pause = 0;
++    visible_buf = -1;
++
++#ifdef HAVE_XF86VM
++    if (flags & VOFLAG_MODESWITCHING)
++        vm = 1;
++#endif
++
++    flip_flag = flags & VOFLAG_FLIPPING;
++
++    calc_drwXY_dWH(&drwX, &drwY, &d_width, &d_height);
++
++#ifdef HAVE_NEW_GUI
++    if (use_gui)
++        guiGetEvent(guiSetShVideo, 0);  // let the GUI to setup/resize our window
++    else
++#endif
++    {
++#ifdef HAVE_XF86VM
++        if (vm)
++        {
++            if ((d_width == 0) && (d_height == 0))
++            {
++                vm_width = width;
++                vm_height = height;
++            } else
++            {
++                vm_width = d_width;
++                vm_height = d_height;
++            }
++            vo_vm_switch(vm_width, vm_height, &modeline_width,
++                         &modeline_height);
++            aspect_save_screenres(modeline_width, modeline_height);
++        } else
++#endif
++        XGetWindowAttributes(mDisplay, DefaultRootWindow(mDisplay),
++                             &attribs);
++        depth = attribs.depth;
++        if (depth != 15 && depth != 16 && depth != 24 && depth != 32)
++            depth = 24;
++        XMatchVisualInfo(mDisplay, mScreen, depth, TrueColor, &vinfo);
++
++        xswa.background_pixel = 0;
++        xswa.border_pixel = 0;
++        xswamask = CWBackPixel | CWBorderPixel;
++
++        if (WinID >= 0)
++        {
++            vo_window = WinID ? ((Window) WinID) : mRootWin;
++            if (WinID)
++            {
++                XUnmapWindow(mDisplay, vo_window);
++                XChangeWindowAttributes(mDisplay, vo_window, xswamask,
++                                        &xswa);
++                vo_x11_selectinput_witherr(mDisplay, vo_window,
++                                           StructureNotifyMask |
++                                           KeyPressMask |
++                                           PropertyChangeMask |
++                                           PointerMotionMask |
++                                           ButtonPressMask |
++                                           ButtonReleaseMask |
++                                           ExposureMask);
++                XMapWindow(mDisplay, vo_window);
++                XGetGeometry(mDisplay, vo_window, &mRoot,
++                             &drwX, &drwY, &vo_dwidth, &vo_dheight,
++                             &drwBorderWidth, &drwDepth);
++                if (vo_dwidth <= 0) vo_dwidth = d_width;
++                if (vo_dheight <= 0) vo_dheight = d_height;
++                aspect_save_prescale(vo_dwidth, vo_dheight);
++            }
++        } else
++        {
++            vo_x11_create_vo_window(&vinfo, vo_dx, vo_dy, d_width, d_height,
++                   flags, CopyFromParent, "x11", title);
++            XChangeWindowAttributes(mDisplay, vo_window, xswamask, &xswa);
++        }
++
++        XSync(mDisplay, False);
++
++#ifdef HAVE_XF86VM
++        if (vm)
++        {
++            /* Grab the mouse pointer in our window */
++            if (vo_grabpointer)
++                XGrabPointer(mDisplay, vo_window, True, 0,
++                             GrabModeAsync, GrabModeAsync,
++                             vo_window, None, CurrentTime);
++            XSetInputFocus(mDisplay, vo_window, RevertToNone, CurrentTime);
++        }
++#endif
++    }
++
++    aspect(&vo_dwidth, &vo_dheight, A_NOZOOM);
++    if ((flags & VOFLAG_FULLSCREEN) && WinID <= 0) vo_fs = 1;
++
++    panscan_calc();
++
++    if (vo_ontop)
++        vo_x11_setlayer(mDisplay, vo_window, vo_ontop);
++  
++    /* -----VDPAU related code here -------- old/
++    if (num_video_surfaces) {
++        videoSurfaces = (VdpVideoSurface *)malloc(sizeof(VdpVideoSurface)*num_video_surfaces);
++    } else {
++        videoSurfaces = NULL;
++    }
++ 
++    /* get proc address */ 
++    win_x11_init_vdpau_procs();
++    win_x11_init_vdpau_flip_queue();
++
++    // video width and height 
++    vid_width = width;
++    vid_height = height;
++
++    if (IMGFMT_IS_VDPAU(image_format)) {
++        vdp_st = vdp_decoder_create(
++            vdp_device,
++            vdp_decoder_profile,
++            vid_width,
++            vid_height,
++            &decoder
++        );
++        CHECK_ST
++    }
++
++    // Creation of VideoSurfaces
++    for (i = 0; i < num_video_surfaces; i++) {
++        vdp_st = vdp_video_surface_create(
++            vdp_device,
++            vdp_chroma_type,
++            vid_width,
++            vid_height,
++            &videoSurfaces[i]
++        );
++        CHECK_ST
++#if TRACE_SURFACES
++        printf("VID CREATE: %u\n", videoSurfaces[i]);
++#endif
++    }
++
++    if (num_video_surfaces) {
++        surface_render = malloc(num_video_surfaces*sizeof(vdpau_render_state_t));
++        memset(surface_render,0,num_video_surfaces*sizeof(vdpau_render_state_t));
++
++        for (i = 0; i < num_video_surfaces; i++) {
++            surface_render[i].state = 0; // surfaces are free.
++            surface_render[i].surface = videoSurfaces[i];
++        }
++
++        // Creation of VideoMixer.
++        VdpVideoMixerParameter parameters[] = {
++            VDP_VIDEO_MIXER_PARAMETER_VIDEO_SURFACE_WIDTH,
++            VDP_VIDEO_MIXER_PARAMETER_VIDEO_SURFACE_HEIGHT,
++            VDP_VIDEO_MIXER_PARAMETER_CHROMA_TYPE
++        };
++
++        void const * parameter_values[] = {
++            &vid_width,
++            &vid_height,
++            &vdp_chroma_type
++        };
++
++        vdp_st = vdp_video_mixer_create(
++            vdp_device,
++            0,
++            0,
++            ARSIZE(parameters),
++            parameters,
++            parameter_values,
++            &videoMixer
++        );
++        CHECK_ST
++    } else {
++        surface_render = NULL;
++    }
++
++    // Creation of outputSurfaces
++    for (i = 0; i < NUM_OUTPUT_SURFACES; i++) {
++        vdp_st = vdp_output_surface_create(
++            vdp_device,
++            VDP_RGBA_FORMAT_B8G8R8A8,
++            max_width,
++            max_height,
++            &outputSurfaces[i]
++        );
++        CHECK_ST
++#if TRACE_SURFACES
++        printf("OUT CREATE: %u\n", outputSurfaces[i]);
++#endif
++    }
++
++    surfaceNum = 0;
++    vo_directrendering = 1;
++
++    return 0;
++}
++
++static void check_events(void)
++{
++    int e = vo_x11_check_events(mDisplay);
++
++    if (e & VO_EVENT_RESIZE)
++    {
++        XGetGeometry(mDisplay, vo_window, &mRoot, &drwX, &drwY, &vo_dwidth,
++                     &vo_dheight, &drwBorderWidth, &drwDepth);
++        mp_msg(MSGT_VO, MSGL_V, "[vdpau] dx: %d dy: %d dw: %d dh: %d\n", drwX,
++               drwY, vo_dwidth, vo_dheight);
++
++        calc_drwXY_dWH(&drwX, &drwY, &vo_dwidth, &vo_dheight);
++    }
++
++    if (e & VO_EVENT_EXPOSE || e & VO_EVENT_RESIZE)
++    {
++        outRectVid.x0 = drwX-(vo_panscan_x>>1); //clipX
++        outRectVid.y0 = drwY-(vo_panscan_y>>1); //clipY
++        outRectVid.x1 = vo_dwidth+vo_panscan_x+outRectVid.x0; //clip width
++        outRectVid.y1 = vo_dheight+vo_panscan_y+outRectVid.y0; //clip height
++
++        if (vo_fs) {
++            outRect.x0 = 0;
++            outRect.x1 = vo_screenwidth;
++            outRect.y0 = 0;
++            outRect.y1 = vo_screenheight;
++        } else {
++            outRect = outRectVid;
++        }
++    }
++
++    if ((e & VO_EVENT_EXPOSE || e & VO_EVENT_RESIZE) && int_pause)
++    {
++        /* did we already draw a buffer */
++        if ( visible_buf != -1 )
++        {
++          /* redraw the last visible buffer */
++          VdpStatus vdp_st;
++          vdp_st = vdp_presentation_queue_display(
++              vdp_flip_queue,
++              outputSurface, // outputSurfaces[0 / 1],
++              outRect.x1,
++              outRect.y1,
++              0
++          );
++          CHECK_ST
++        }
++     
++    }
++}
++
++static void draw_osd(void)
++{
++#if TRACE_SURFACES
++    printf("DRAW_OSD\n");
++#endif
++
++   // Not implemented
++}
++
++static void flip_page(void)
++{
++    VdpStatus vdp_st;
++#if TRACE_SURFACES
++    printf("\nFLIP_PAGE VID:%u -> OUT:%u\n", videoSurface, outputSurface);
++#endif
++
++    vdp_st = vdp_presentation_queue_display(
++        vdp_flip_queue,
++        outputSurface,
++        outRect.x1,
++        outRect.y1,
++        0
++    );
++    CHECK_ST
++
++    surfaceNum = surfaceNum ^ 1;
++    visible_buf = 1;
++    return;
++}
++
++static uint32_t start_slice(mp_image_t * mpi)
++{
++    if (!IMGFMT_IS_VDPAU(image_format))
++        mpi->flags &= ~MP_IMGFLAG_DRAW_CALLBACK;
++    return VO_TRUE;
++}
++
++static int draw_slice(uint8_t * image[], int stride[], int w, int h,
++                           int x, int y)
++{
++    VdpStatus vdp_st;
++    vdpau_render_state_t * rndr;
++
++    rndr = (vdpau_render_state_t*)image[2]; // this is a copy of private
++    assert( rndr != NULL );
++    if (rndr == NULL)
++        return VO_ERROR;
++
++#if TRACE_SURFACES
++    printf("\nDRAW_SLICE -> VID:%u\n", rndr->surface);
++#endif
++
++    /* VdpDecoderRender is called with decoding order. Decoded images are store in
++     * videoSurface like rndr->surface. VdpVideoMixerRender put this videoSurface
++     * to outputSurface which is displayable.
++     */
++    vdp_st = vdp_decoder_render(
++        decoder,
++        rndr->surface,
++        (void*)&(rndr->info),
++        1,
++        &(rndr->bitstreamBuffer)
++    );
++    CHECK_ST
++
++    return VO_TRUE;
++}
++
++static int draw_frame(uint8_t * src[])
++{
++#if TRACE_SURFACES
++    printf("DRAW_FRAME\n");
++#endif
++
++    mp_msg(MSGT_VO,MSGL_INFO, MSGTR_LIBVO_XV_DrawFrameCalled);
++    return -1;
++}
++
++static uint32_t draw_image(mp_image_t * mpi)
++{
++    vdpau_render_state_t * rndr;
++    VdpStatus vdp_st;
++    VdpTime dummy;
++    VdpYCbCrFormat vdp_ycbcr_format;
++    VdpRGBAFormat vdp_rgba_format;
++    void *destdata[3];
++
++    // check for VDPAU surface format 
++    if (IMGFMT_IS_VDPAU(image_format)) {   
++        rndr = (vdpau_render_state_t*)mpi->planes[2]; // this is a copy of private
++        assert( rndr != NULL );
++        if (rndr == NULL)
++            return VO_ERROR;
++
++        videoSurface = rndr->surface;
++    }
++
++    // check for non-VDPAU and non RGB/YUV4:4:4 surface formats.
++    switch (image_format) {
++    case IMGFMT_YV12:
++        assert(mpi->num_planes == 3);
++        vdp_ycbcr_format = VDP_YCBCR_FORMAT_YV12;
++        destdata[0] = mpi->planes[0];
++        destdata[1] = mpi->planes[2];
++        destdata[2] = mpi->planes[1];
++        videoSurface = videoSurfaces[0];
++
++        vdp_st = vdp_video_surface_put_bits_y_cb_cr(
++            videoSurface,
++            vdp_ycbcr_format, // YV12
++            destdata,
++            mpi->stride // pitch
++        );
++        CHECK_ST
++        break;
++    default:
++        break;
++    }
++
++    outputSurface = outputSurfaces[surfaceNum];
++    vdp_st = vdp_presentation_queue_block_until_surface_idle(
++        vdp_flip_queue,
++        outputSurface,
++        &dummy
++    );
++    CHECK_ST
++
++    if (!num_video_surfaces) { // RGB surface formats
++        switch (image_format) {
++        case IMGFMT_BGRA:
++            assert(mpi->num_planes == 1);
++            vdp_rgba_format = VDP_RGBA_FORMAT_B8G8R8A8;
++            destdata[0] = mpi->planes[0];
++            break;
++        default:
++            assert(0);
++            return VO_ERROR;
++        }
++        vdp_st = vdp_output_surface_put_bits_native(
++            outputSurface,
++            destdata,
++            mpi->stride, // pitch
++            NULL // or &outRectVid ?? Not sure.
++        );
++        CHECK_ST
++    } else {
++        vdp_st = vdp_video_mixer_render(
++            videoMixer,
++            VDP_INVALID_HANDLE,
++            0,
++            VDP_VIDEO_MIXER_PICTURE_STRUCTURE_FRAME,
++            0,
++            NULL,
++            videoSurface,
++            0,
++            NULL,
++            NULL,
++            outputSurface,
++            &outRect,
++            &outRectVid,
++            0,
++            NULL
++        );
++        CHECK_ST
++    }
++
++#if TRACE_SURFACES
++    printf("\DRAW IMG:%u\n", videoSurface);
++#endif
++
++    return VO_TRUE;
++}
++
++static vdpau_render_state_t * find_free_surface()
++{
++    int i;
++
++    for (i = 0 ; i < num_video_surfaces; i++)
++    {
++        if (surface_render[i].state != MP_VDPAU_STATE_USED_FOR_REFERENCE) {
++            return &surface_render[i];
++        }
++    }
++
++    return NULL;
++}
++
++static uint32_t get_image(mp_image_t * mpi)
++{
++   vdpau_render_state_t * rndr;
++
++    if (!IMGFMT_IS_VDPAU(image_format)) {
++        return VO_FALSE; // buffer in system memory instead of video memory.
++    }
++
++   rndr = find_free_surface();
++
++   if(rndr == NULL){
++      printf("vo_vdpau: get_image failed\n");
++      return VO_FALSE;
++   }
++
++   mpi->flags |= MP_IMGFLAG_DIRECT;
++   mpi->stride[0] = 0;
++   mpi->stride[1] = 0;
++   mpi->stride[2] = 0;
++
++   /* mpi->plane[0] anf mpi->plane[1] should be NULL.
++    * Presently, I have made it as non-NULL otherwise we have
++    * to check for assert in libavcode and libmpcodecs.
++    *
++    * mpi->plane[2] is used as callback function for ffmpeg and
++    * video renderer i.e vo_vdpau.c
++    */
++   mpi->planes[0] = (char*)rndr;
++   mpi->planes[1] = (char*)rndr;
++   mpi->planes[2] = (char*)rndr;
++
++   rndr->state = 0;
++
++#if TRACE_SURFACES
++    {
++        vdpau_render_state_t * rndr;
++
++        rndr = (vdpau_render_state_t*)mpi->planes[2]; // this is a copy of private
++        assert( rndr != NULL );
++        if (rndr == NULL)
++            return VO_ERROR;
++
++        printf("GET_IMAGE -> VID:%u\n", rndr->surface);
++    }
++#endif
++
++   return VO_TRUE;
++}
++
++static int query_format(uint32_t format)
++{
++    /* Following surface format is supported by VDPAU.
++     * vd.c: mpcodecs_config_vo() queries supported surface
++     * format for VDPAU.
++     * Return flag/value describes driver-capabilities.
++     * (VFCAP_CSP_SUPPORTED | VFCAP_CSP_SUPPORTED_BY_HW | VFCAP_HWSCALE_UP | VFCAP_HWSCALE_DOWN
++     * are basic driver capabilities.)
++     */
++
++    switch (format) {
++    // non-VDPAU specific format. used in non-accelerated video.
++    case IMGFMT_YV12:
++    case IMGFMT_BGRA:
++    // VDPAU specific format. used in accelerated video.
++    case IMGFMT_VDPAU_MPEG1:
++    case IMGFMT_VDPAU_MPEG2_SIMPLE:
++    case IMGFMT_VDPAU_MPEG2_MAIN:
++    case IMGFMT_VDPAU_H264_BASELINE:
++    case IMGFMT_VDPAU_H264_MAIN:
++    case IMGFMT_VDPAU_H264_HIGH:
++    case IMGFMT_VDPAU_VC1_SIMPLE:
++    case IMGFMT_VDPAU_VC1_MAIN:
++    case IMGFMT_VDPAU_VC1_ADVANCED:
++        return VFCAP_CSP_SUPPORTED | VFCAP_CSP_SUPPORTED_BY_HW | VFCAP_HWSCALE_UP | VFCAP_HWSCALE_DOWN;
++    }
++
++    return 0;
++}
++
++static void DestroyVdpauObjects()
++{
++    int i;
++    VdpStatus vdp_st;
++
++    vdp_st = win_x11_fini_vdpau_flip_queue();
++    CHECK_ST
++
++    if (num_video_surfaces) {
++        vdp_st = vdp_video_mixer_destroy(
++            videoMixer
++        );
++        CHECK_ST
++    }
++
++    if (IMGFMT_IS_VDPAU(image_format)) {
++        vdp_st = vdp_decoder_destroy(
++            decoder
++        );
++        CHECK_ST
++    }
++
++    for (i = 0; i < NUM_OUTPUT_SURFACES; i++) {
++        vdp_st = vdp_output_surface_destroy(
++            outputSurfaces[i]
++        );
++        CHECK_ST
++    }
++
++    for (i = 0; i < num_video_surfaces; i++) {
++        vdp_st = vdp_video_surface_destroy(
++            videoSurfaces[i]
++        );
++        CHECK_ST
++    }
++
++    vdp_st = win_x11_fini_vdpau_procs();
++    CHECK_ST
++}
++
++static void uninit(void)
++{
++    if (!vo_config_count)
++        return;
++    visible_buf = -1;
++
++    /* Destroy all vdpau objects */
++    DestroyVdpauObjects();    
++
++    if (videoSurfaces) {
++        free(videoSurfaces);
++        videoSurfaces = NULL;
++    }
++
++    if (surface_render) {
++        free(surface_render);
++        surface_render = NULL;
++    }
++
++#ifdef HAVE_XF86VM
++    vo_vm_close(mDisplay);
++#endif
++    mp_input_rm_event_fd(ConnectionNumber(mDisplay));
++    vo_x11_uninit();
++}
++
++static int preinit(const char *arg)
++{
++    if (arg)
++    {
++        mp_msg(MSGT_VO, MSGL_ERR, "vo_x11: Unknown subdevice: %s\n", arg);
++        return ENOSYS;
++    }
++
++    if (!vo_init())
++        return -1;              // Can't open X11
++
++    max_width = vo_screenwidth;
++    max_height = vo_screenheight;
++
++    return 0;
++}
++
++static int control(uint32_t request, void *data, ...)
++{
++    switch (request)
++    {
++    case VOCTRL_PAUSE:
++        return (int_pause = 1);
++    case VOCTRL_RESUME:
++        return (int_pause = 0);
++    case VOCTRL_QUERY_FORMAT:
++        return query_format(*((uint32_t *)data));
++    case VOCTRL_GET_IMAGE:
++        return get_image(data);
++    case VOCTRL_DRAW_IMAGE:
++        return draw_image(data);
++    case VOCTRL_START_SLICE:
++        return start_slice(data);
++    case VOCTRL_GUISUPPORT:
++        return VO_TRUE;
++    case VOCTRL_FULLSCREEN:
++        vo_x11_fullscreen();
++    case VOCTRL_SET_EQUALIZER:
++        { 
++            va_list ap;
++            int value;
++
++            va_start(ap, data);
++            value = va_arg(ap, int);
++
++            va_end(ap);
++            return vo_x11_set_equalizer(data, value);
++        }
++    case VOCTRL_GET_EQUALIZER:
++        {
++            va_list ap;
++            int *value;
++
++            va_start(ap, data);
++            value = va_arg(ap, int *);
++
++            va_end(ap);
++            return vo_x11_get_equalizer(data, value);
++        }
++    case VOCTRL_ONTOP:
++        vo_x11_ontop();
++        return VO_TRUE;
++    case VOCTRL_UPDATE_SCREENINFO:
++        update_xinerama_info();
++        return VO_TRUE;
++    }
++
++    return VO_NOTIMPL;
++}
+diff -Naur MPlayer-27979.15908-old/vdpau_render.h MPlayer-27979.15908-new/vdpau_render.h
+--- MPlayer-27979.15908-old/vdpau_render.h	1969-12-31 16:00:00.000000000 -0800
++++ MPlayer-27979.15908-new/vdpau_render.h	2008-11-22 12:10:38.000000000 -0800
+@@ -0,0 +1,30 @@
++#ifndef FFMPEG_VDPAU_RENDER_H
++#define FFMPEG_VDPAU_RENDER_H
++
++#include "vdpau/vdpau.h"
++#include "vdpau/vdpau_x11.h"
++
++//the surface is used for render.
++#define MP_VDPAU_STATE_USED_FOR_RENDER 1
++//the surface is needed for reference/prediction, codec manipulates this.
++#define MP_VDPAU_STATE_USED_FOR_REFERENCE 2
++
++#define MP_VDPAU_RENDER_MAGIC 0x1DC8E14B
++
++typedef struct {
++    int  magic;
++
++    VdpVideoSurface surface; //used as rendered surface, never changed.
++
++    int state; // Holds MP_VDPAU_STATE_* values
++
++    union _VdpPictureInfo {
++        VdpPictureInfoMPEG1Or2 mpeg;
++        VdpPictureInfoH264     h264;
++        VdpPictureInfoVC1       vc1;
++    } info;
++
++    VdpBitstreamBuffer bitstreamBuffer;
++} vdpau_render_state_t;
++
++#endif /* FFMPEG_VDPAU_RENDER_H */

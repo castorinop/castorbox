@@ -1,0 +1,126 @@
+diff -Naur ncurses-5.7-old/aclocal.m4 ncurses-5.7-new/aclocal.m4
+--- ncurses-5.7-old/aclocal.m4	2008-10-25 15:15:32.000000000 -0700
++++ ncurses-5.7-new/aclocal.m4	2009-09-18 05:24:26.000000000 -0700
+@@ -73,14 +73,14 @@
+ 	ACPPFLAGS="-I\${srcdir}/../../include $ACPPFLAGS"
+ fi
+ if test "$GCC" != yes; then
+-	ACPPFLAGS="$ACPPFLAGS -I\${includedir}"
++	ACPPFLAGS="$ACPPFLAGS -I\${DESTDIR}/\${includedir}"
+ elif test "$includedir" != "/usr/include"; then
+ 	if test "$includedir" = '${prefix}/include' ; then
+ 		if test $prefix != /usr ; then
+-			ACPPFLAGS="$ACPPFLAGS -I\${includedir}"
++			ACPPFLAGS="$ACPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 		fi
+ 	else
+-		ACPPFLAGS="$ACPPFLAGS -I\${includedir}"
++		ACPPFLAGS="$ACPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 	fi
+ fi
+ AC_SUBST(ACPPFLAGS)
+@@ -2039,14 +2039,14 @@
+ 	CPPFLAGS="-I\${srcdir}/../include $CPPFLAGS"
+ fi
+ if test "$GCC" != yes; then
+-	CPPFLAGS="$CPPFLAGS -I\${includedir}"
++	CPPFLAGS="$CPPFLAGS -I\${DESTDIR}/\${includedir}"
+ elif test "$includedir" != "/usr/include"; then
+ 	if test "$includedir" = '${prefix}/include' ; then
+ 		if test $prefix != /usr ; then
+-			CPPFLAGS="$CPPFLAGS -I\${includedir}"
++			CPPFLAGS="$CPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 		fi
+ 	else
+-		CPPFLAGS="$CPPFLAGS -I\${includedir}"
++		CPPFLAGS="$CPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 	fi
+ fi
+ AC_SUBST(CPPFLAGS)
+diff -Naur ncurses-5.7-old/configure ncurses-5.7-new/configure
+--- ncurses-5.7-old/configure	2008-10-25 17:04:38.000000000 -0700
++++ ncurses-5.7-new/configure	2009-09-18 05:24:26.000000000 -0700
+@@ -16198,14 +16198,14 @@
+ 	CPPFLAGS="-I\${srcdir}/../include $CPPFLAGS"
+ fi
+ if test "$GCC" != yes; then
+-	CPPFLAGS="$CPPFLAGS -I\${includedir}"
++	CPPFLAGS="$CPPFLAGS -I\${DESTDIR}/\${includedir}"
+ elif test "$includedir" != "/usr/include"; then
+ 	if test "$includedir" = '${prefix}/include' ; then
+ 		if test $prefix != /usr ; then
+-			CPPFLAGS="$CPPFLAGS -I\${includedir}"
++			CPPFLAGS="$CPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 		fi
+ 	else
+-		CPPFLAGS="$CPPFLAGS -I\${includedir}"
++		CPPFLAGS="$CPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 	fi
+ fi
+ 
+@@ -16214,14 +16214,14 @@
+ 	ACPPFLAGS="-I\${srcdir}/../../include $ACPPFLAGS"
+ fi
+ if test "$GCC" != yes; then
+-	ACPPFLAGS="$ACPPFLAGS -I\${includedir}"
++	ACPPFLAGS="$ACPPFLAGS -I\${DESTDIR}/\${includedir}"
+ elif test "$includedir" != "/usr/include"; then
+ 	if test "$includedir" = '${prefix}/include' ; then
+ 		if test $prefix != /usr ; then
+-			ACPPFLAGS="$ACPPFLAGS -I\${includedir}"
++			ACPPFLAGS="$ACPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 		fi
+ 	else
+-		ACPPFLAGS="$ACPPFLAGS -I\${includedir}"
++		ACPPFLAGS="$ACPPFLAGS -I\${DESTDIR}/\${includedir}"
+ 	fi
+ fi
+ 
+diff -Naur ncurses-5.7-old/misc/ncurses-config.in ncurses-5.7-new/misc/ncurses-config.in
+--- ncurses-5.7-old/misc/ncurses-config.in	2007-03-17 13:02:19.000000000 -0700
++++ ncurses-5.7-new/misc/ncurses-config.in	2009-09-18 05:25:50.000000000 -0700
+@@ -30,13 +30,14 @@
+ #
+ # Author: Thomas E. Dickey, 2006
+ 
+-prefix="@prefix@"
+-exec_prefix="@exec_prefix@"
++prefix="@DESTDIR@@prefix@"
++exec_prefix="@DESTDIR@@exec_prefix@"
+ 
+-bindir="@bindir@"
+-libdir="@libdir@"
+-datadir="@datadir@"
+-mandir="@mandir@"
++bindir="@DESTDIR@@bindir@"
++libdir="@DESTDIR@@libdir@"
++datadir="@DESTDIR@@datadir@"
++mandir="@DESTDIR@@mandir@"
++includedir="@DESTDIR@@includedir@"
+ 
+ THIS="ncurses@DFT_ARG_SUFFIX@"
+ 
+@@ -75,11 +75,11 @@
+ 	# compile/link
+ 	--cflags)
+ 		INCS=
+-		if test "${prefix}/include" != /usr/include ; then
+-			INCS="-I${prefix}/include"
++		if test "${includedir}" != @GAR_DESTDIR@@GAR_includedir@ ; then
++			INCS="-I${includedir}"
+ 		fi
+ 		if test "@WITH_OVERWRITE@" != no ; then
+-			INCS="$INCS -I${prefix}/include/${THIS}"
++			INCS="$INCS -I${includedir}/${THIS}"
+ 		fi
+ 		sed -e 's,^[ ]*,,' -e 's, [ ]*, ,g' -e 's,[ ]*$,,' <<-ENDECHO
+ 			$INCS
+@@ -87,7 +87,7 @@
+ 		;;
+ 	--libs)
+ 		sed -e 's,^[ ]*,,' -e 's, [ ]*, ,g' -e 's,[ ]*$,,' <<-ENDECHO
+-			-L${exec_prefix}/lib @EXTRA_LDFLAGS@ -l${THIS} @LIBS@
++			-L${libdir} @EXTRA_LDFLAGS@ -l${THIS} @LIBS@
+ ENDECHO
+ 		;;
+ 	# identification

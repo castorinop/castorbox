@@ -1,0 +1,11 @@
+--- ./src/js.c	2007-04-20 20:45:18.000000000 +0200
++++ ./src/js.c.oden	2008-12-21 15:19:55.000000000 +0100
+@@ -160,7 +160,7 @@ GetLine(JSContext *cx, char *bufp, FILE 
+ #endif
+     {
+         char line[256];
+-        fprintf(gOutFile, prompt);
++        fprintf(gOutFile, "%s", prompt);
+         fflush(gOutFile);
+         if (!fgets(line, sizeof line, file))
+             return JS_FALSE;

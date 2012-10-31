@@ -1,0 +1,12 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/m-feeds-cli-cross/celerity/celerity/amuleEC.py work/main.d/m-feeds-cli-cross/celerity/celerity/amuleEC.py
+--- tmp/m-feeds-cli-cross/celerity/celerity/amuleEC.py	2012-02-27 12:07:43.000000000 -0300
++++ new-m-feeds-cli-cross/celerity/celerity/amuleEC.py	2012-08-05 15:51:08.966553769 -0300
+@@ -20,7 +20,7 @@
+     self.ready = False
+     self.conected = False
+     
+-    self.filename = 'amule.json'
++    self.filename = os.path.expanduser( os.path.join('~', 'amule.json'))
+     
+     self.setDaemon(True)
+     

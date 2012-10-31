@@ -1,0 +1,14 @@
+33331=== modified file 'plugins/feature/audio/audio.hpp'
+--- old/plugins/feature/audio/audio.hpp	2009-12-18 16:13:41 +0000
++++ new/plugins/feature/audio/audio.hpp	2010-06-14 23:43:10 +0000
+@@ -2268,6 +2269,10 @@
+       if (ssaver_bool) 
+ 	ssaver_bool = false;
+ 
++      if (!audio_state->p->is_playing()) {
++	saverrunning = false;
++      }
++
+       if (!saverrunning && was_saverrunning) { /* screensaver was killed externally */
+ 	cleanup_audio_fullscreen();
+ 	saverrunning = false;

@@ -1,0 +1,29 @@
+--- work/main.d/gawk-3.1.8/confiure.ac	2011-07-28 00:57:00.848394365 -0300
++++ new-gawk-3.1.8/configure.ac		2010-05-06 14:55:35.000000000 -0300
+@@ -171,10 +171,10 @@
+ AC_TYPE_SIGNAL
+ AC_SIZE_T
+ AC_TYPE_GETGROUPS
+-gl_AC_TYPE_LONG_LONG
+-gl_AC_TYPE_UNSIGNED_LONG_LONG
+-gl_AC_TYPE_INTMAX_T
+-gl_AC_TYPE_UINTMAX_T
++#gl_AC_TYPE_LONG_LONG
++#gl_AC_TYPE_UNSIGNED_LONG_LONG
++#gl_AC_TYPE_INTMAX_T
++#gl_AC_TYPE_UINTMAX_T
+ AC_CHECK_TYPE(ssize_t, int)
+ AC_CHECK_SIZEOF(unsigned int)
+ AC_CHECK_SIZEOF(unsigned long)
+--- work/build.d/gawk-3.1.8/po/Makefile.in.in~	2011-07-28 01:01:23.768390001 -0300
++++ new-gawk-3.1.8/po/Makefile.in.in	2011-07-28 01:04:18.448389838 -0300
+
+@@ -9,7 +9,7 @@
+ # General Public License and is *not* in the public domain.
+ #
+ # Origin: gettext-0.17
+-GETTEXT_MACRO_VERSION = 0.17
++GETTEXT_MACRO_VERSION = 0.18
+ 
+ PACKAGE = @PACKAGE@
+ VERSION = @VERSION@

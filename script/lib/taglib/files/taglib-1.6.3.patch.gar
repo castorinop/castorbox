@@ -1,0 +1,18 @@
+diff -Naur taglib-1.6.3-old/taglib-config.in taglib-1.6.3-new/taglib-config.in
+--- taglib-1.6.3-old/taglib-config.in	2010-04-12 10:43:03.000000000 -0700
++++ taglib-1.6.3-new/taglib-config.in	2010-04-23 10:20:13.000000000 -0700
+@@ -14,10 +14,10 @@
+ 	exit 1;
+ }
+ 
+-prefix=@prefix@
+-exec_prefix=@exec_prefix@
+-libdir=@libdir@
+-includedir=@includedir@
++prefix=@GAR_DESTDIR@@prefix@
++exec_prefix=@GAR_DESTDIR@@exec_prefix@
++libdir=@GAR_DESTDIR@@libdir@
++includedir=@GAR_DESTDIR@@includedir@
+ 
+ flags=""
+ 

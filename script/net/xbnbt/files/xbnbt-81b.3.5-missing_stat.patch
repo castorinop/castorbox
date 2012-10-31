@@ -1,0 +1,18 @@
+--- old-xbnbt-81b.3.5/bnbt/src/tracker.cpp~	2005-09-26 00:47:32.000000000 -0300
++++ new/tracker.cpp	2010-08-16 17:54:36.511421324 -0300
+@@ -22,13 +22,14 @@
+ // =Xotic= Modified Source File
+ 
+ #if defined ( WIN32 )
+- #include <sys/stat.h>
+  #include <time.h>
+ #else
+  #include <dirent.h>
+  #include <fcntl.h>
+  #include <sys/time.h>
++ #include <sys/types.h>
+ #endif
++#include <sys/stat.h>
+ 
+ #include "bnbt.h"
+ #include "bnbt_mysql.h"

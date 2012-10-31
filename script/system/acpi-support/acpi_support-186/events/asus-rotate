@@ -1,0 +1,6 @@
+# /etc/acpi/events/asus-rotate
+# This is called when the user rotates the screen to/from tablet mode, or
+# when "rotate screen" button is pressed.
+
+event=hotkey (ATKD|HOTK) 0000009b
+action=/etc/acpi/rotatescreen.sh

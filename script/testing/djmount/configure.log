@@ -1,0 +1,238 @@
+[===== NOW BUILDING:	djmount-0.71	=====]
+install -d cookies/main.d
+install -d download
+install -d download/partial
+ ==> Grabbing download/djmount-0.71.tar.gz
+ 	==> Trying file//files/djmount-0.71.tar.gz
+make[1]: *** [file//files/djmount-0.71.tar.gz] Error 1
+ 	==> Trying file///home/pablo/gar-castorbox/source/djmount-0.71/djmount-0.71.tar.gz
+	[fetch] complete for djmount.
+ ==> Running checksum on djmount-0.71.tar.gz
+c922753e706c194bf82a8b6ca77e6a9a  download/djmount-0.71.tar.gz
+file djmount-0.71.tar.gz passes checksum test!
+	[checksum] complete for djmount.
+install -d work/main.d
+ ==> Extracting download/djmount-0.71.tar.gz
+	[extract] complete for djmount.
+	[patch] complete for djmount.
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/testing/djmount'
+make[1]: `../../lang/c/cookies/main.d/install' is up to date.
+make[1]: `../../lib/libupnp/cookies/main.d/install' is up to date.
+make[1]: `../../testing/fuse/cookies/main.d/install' is up to date.
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/testing/djmount'
+ ==> Running configure in work/main.d/djmount-0.71
+checking for a BSD-compatible install... //home/pablo/gar-castorbox/images/build/usr/bin/install -c
+checking whether build environment is sane... yes
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking for i586-castorbox-linux-gnu-strip... i586-castorbox-linux-gnu-strip
+checking for --enable-debug... yes
+checking for --enable-charset... yes
+checking for i586-castorbox-linux-gnu-gcc... i586-castorbox-linux-gnu-gcc
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+checking whether we are cross compiling... yes
+checking for suffix of executables... 
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether i586-castorbox-linux-gnu-gcc accepts -g... yes
+checking for i586-castorbox-linux-gnu-gcc option to accept ANSI C... none needed
+checking for style of include used by make... GNU
+checking dependency style of i586-castorbox-linux-gnu-gcc... gcc3
+checking for i586-castorbox-linux-gnu-ranlib... i586-castorbox-linux-gnu-ranlib
+checking build system type... x86_64-manbo-linux-gnu
+checking host system type... i586-castorbox-linux-gnu
+checking for a sed that does not truncate output... //home/pablo/gar-castorbox/images/build/usr/bin/sed
+checking for egrep... grep -E
+checking for ld used by i586-castorbox-linux-gnu-gcc... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking for i586-castorbox-linux-gnu-ld option to reload object files... -r
+checking for BSD-compatible nm... i586-castorbox-linux-gnu-nm
+checking whether ln -s works... yes
+checking how to recognise dependent libraries... pass_all
+checking how to run the C preprocessor... i586-castorbox-linux-gnu-cpp
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking dlfcn.h usability... yes
+checking dlfcn.h presence... yes
+checking for dlfcn.h... yes
+checking for i586-castorbox-linux-gnu-g++... i586-castorbox-linux-gnu-g++
+checking whether we are using the GNU C++ compiler... yes
+checking whether i586-castorbox-linux-gnu-g++ accepts -g... yes
+checking dependency style of i586-castorbox-linux-gnu-g++... gcc3
+checking how to run the C++ preprocessor... i586-castorbox-linux-gnu-g++ -E
+checking for i586-castorbox-linux-gnu-g77... no
+checking for i586-castorbox-linux-gnu-f77... no
+checking for i586-castorbox-linux-gnu-xlf... no
+checking for i586-castorbox-linux-gnu-frt... no
+checking for i586-castorbox-linux-gnu-pgf77... no
+checking for i586-castorbox-linux-gnu-fort77... no
+checking for i586-castorbox-linux-gnu-fl32... no
+checking for i586-castorbox-linux-gnu-af77... no
+checking for i586-castorbox-linux-gnu-f90... no
+checking for i586-castorbox-linux-gnu-xlf90... no
+checking for i586-castorbox-linux-gnu-pgf90... no
+checking for i586-castorbox-linux-gnu-epcf90... no
+checking for i586-castorbox-linux-gnu-f95... no
+checking for i586-castorbox-linux-gnu-fort... no
+checking for i586-castorbox-linux-gnu-xlf95... no
+checking for i586-castorbox-linux-gnu-ifc... no
+checking for i586-castorbox-linux-gnu-efc... no
+checking for i586-castorbox-linux-gnu-pgf95... no
+checking for i586-castorbox-linux-gnu-lf95... no
+checking for i586-castorbox-linux-gnu-gfortran... no
+checking for g77... no
+checking for f77... no
+checking for xlf... no
+checking for frt... no
+checking for pgf77... no
+checking for fort77... no
+checking for fl32... no
+checking for af77... no
+checking for f90... no
+checking for xlf90... no
+checking for pgf90... no
+checking for epcf90... no
+checking for f95... no
+checking for fort... no
+checking for xlf95... no
+checking for ifc... no
+checking for efc... no
+checking for pgf95... no
+checking for lf95... no
+checking for gfortran... no
+checking whether we are using the GNU Fortran 77 compiler... no
+checking whether  accepts -g... no
+checking the maximum length of command line arguments... 32768
+checking command to parse i586-castorbox-linux-gnu-nm output from i586-castorbox-linux-gnu-gcc object... ok
+checking for objdir... .libs
+checking for i586-castorbox-linux-gnu-ar... i586-castorbox-linux-gnu-ar
+checking for i586-castorbox-linux-gnu-ranlib... (cached) i586-castorbox-linux-gnu-ranlib
+checking for i586-castorbox-linux-gnu-strip... (cached) i586-castorbox-linux-gnu-strip
+checking if i586-castorbox-linux-gnu-gcc static flag  works... yes
+checking if i586-castorbox-linux-gnu-gcc supports -fno-rtti -fno-exceptions... no
+checking for i586-castorbox-linux-gnu-gcc option to produce PIC... -fPIC
+checking if i586-castorbox-linux-gnu-gcc PIC flag -fPIC works... yes
+checking if i586-castorbox-linux-gnu-gcc supports -c -o file.o... yes
+checking whether the i586-castorbox-linux-gnu-gcc linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... no
+configure: creating libtool
+appending configuration tag "CXX" to libtool
+checking for ld used by i586-castorbox-linux-gnu-g++... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking for i586-castorbox-linux-gnu-g++ option to produce PIC... -fPIC
+checking if i586-castorbox-linux-gnu-g++ PIC flag -fPIC works... yes
+checking if i586-castorbox-linux-gnu-g++ supports -c -o file.o... yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+appending configuration tag "F77" to libtool
+checking for a BSD-compatible install... //home/pablo/gar-castorbox/images/build/usr/bin/install -c
+checking whether make sets $(MAKE)... (cached) yes
+checking whether ln -s works... yes
+checking for perl... //home/pablo/gar-castorbox/images/build/usr/bin/perl
+checking CFLAGS for maximum warnings... -Wall
+checking for special C compiler options needed for large files... no
+checking for _FILE_OFFSET_BITS value needed for large files... 64
+checking for _LARGE_FILES value needed for large files... no
+checking for dirent.h that defines DIR... yes
+checking for library containing opendir... none required
+checking for ANSI C header files... (cached) yes
+checking for inttypes.h... (cached) yes
+checking stddef.h usability... yes
+checking stddef.h presence... yes
+checking for stddef.h... yes
+checking for stdint.h... (cached) yes
+checking stdarg.h usability... yes
+checking stdarg.h presence... yes
+checking for stdarg.h... yes
+checking locale.h usability... yes
+checking locale.h presence... yes
+checking for locale.h... yes
+checking langinfo.h usability... yes
+checking langinfo.h presence... yes
+checking for langinfo.h... yes
+checking for stdbool.h that conforms to C99... yes
+checking for _Bool... yes
+checking for an ANSI C-conforming const... yes
+checking for inline... inline
+checking for setxattr... yes
+checking for mktime... yes
+checking for setlocale... yes
+checking for _LARGEFILE_SOURCE value needed for large files... no
+checking for fseeko... yes
+checking for open_memstream... yes
+checking whether strerror_r is declared... yes
+checking for strerror_r... yes
+checking whether strerror_r returns char *... yes
+checking whether <limits.h> defines MIN and MAX... no
+checking whether <sys/param.h> defines MIN and MAX... yes
+checking for error_at_line... yes
+checking whether to use external talloc... yes
+checking for i586-castorbox-linux-gnu-pkg-config... no
+checking for pkg-config... //home/pablo/gar-castorbox/images/build/usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for TALLOC... Requested 'talloc >= 4.0' but version of talloc is 2.0.1
+You may find new versions of talloc at http://talloc.samba.org/
+checking TALLOC_CFLAGS... 
+checking TALLOC_LIBS... -ltalloc
+checking whether TALLOC_CFLAGS and TALLOC_LIBS work... yes
+checking for a readline compatible library... -ledit
+checking readline.h usability... no
+checking readline.h presence... no
+checking for readline.h... no
+checking readline/readline.h usability... yes
+checking readline/readline.h presence... yes
+checking for readline/readline.h... yes
+checking whether readline supports history... yes
+checking history.h usability... no
+checking history.h presence... no
+checking for history.h... no
+checking readline/history.h usability... yes
+checking readline/history.h presence... yes
+checking for readline/history.h... yes
+checking for ld used by GCC... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking for shared library run path origin... /bin/sh: libupnp/config.aux/config.rpath: No such file or directory
+done
+checking for iconv... yes
+checking for iconv declaration... 
+         extern size_t iconv (iconv_t cd, char * *inbuf, size_t *inbytesleft, char * *outbuf, size_t *outbytesleft);
+checking for nl_langinfo and CODESET... yes
+checking for the pthreads library -lpthreads... no
+checking whether pthreads work without any flags... no
+checking whether pthreads work with -Kthread... no
+checking whether pthreads work with -kthread... no
+checking for the pthreads library -llthread... no
+checking whether pthreads work with -pthread... yes
+checking for joinable pthread attribute... PTHREAD_CREATE_JOINABLE
+checking if more special flags are required for pthreads... no
+checking for cc_r... i586-castorbox-linux-gnu-gcc
+checking for FUSE... yes
+checking whether FUSE_CFLAGS and FUSE_LIBS work... yes
+checking whether to use external libupnp... yes
+checking for LIBUPNP... yes
+checking whether LIBUPNP_CFLAGS and LIBUPNP_LIBS work... yes
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating gl/Makefile
+config.status: creating djmount/Makefile
+config.status: creating config.h
+config.status: executing depfiles commands
+	[configure] complete for djmount.

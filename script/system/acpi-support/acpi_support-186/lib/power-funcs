@@ -1,0 +1,59 @@
+# a micro library of helper functions for the power scripts
+
+umask 022;
+
+PATH="$PATH:/usr/bin/X11"
+POWERSTATE="/var/lib/acpi-support/powerstate"
+
+getXuser() {
+        user=`finger| grep -m1 ":$displaynum " | awk '{print $1}'`
+	if [ x"$user" = x"" ]; then
+		user=`finger| grep -m1 ":$displaynum" | awk '{print $1}'`
+	fi
+	if [ x"$user" != x"" ]; then
+        	userhome=`getent passwd $user | cut -d: -f6`
+        	export XAUTHORITY=$userhome/.Xauthority
+	else
+		export XAUTHORITY=""
+	fi
+}
+
+getXconsole() {
+	console=`fgconsole`;
+	displaynum=`ps t tty$console | sed -n -re 's,.*/X .*:([0-9]+).*,\1,p'`
+	if [ x"$displaynum" != x"" ]; then
+		export DISPLAY=":$displaynum"
+		getXuser
+	fi
+}
+
+getState() {
+        /usr/bin/on_ac_power
+        if [ "$?" -eq 1 ]; then
+                STATE="BATTERY"
+        else
+                STATE="AC"
+        fi
+}
+        
+#check our state has actually changed
+checkStateChanged() {
+# do we have our state stashed?
+        if [ -f "$POWERSTATE" ]; then
+                OLDSTATE=$(<$POWERSTATE) 
+                if [ "$STATE" = "$OLDSTATE" ]; then
+                       exit 0
+                else
+#stash the new state
+                        echo "$STATE" > $POWERSTATE
+                fi
+        else
+#we need to stash the new state
+                echo "$STATE" > $POWERSTATE
+        fi
+}
+
+LAPTOP_MODE='/usr/sbin/laptop_mode'
+HDPARM='/sbin/hdparm -q'
+
+LIDSTATE='/var/lib/acpi-support/lidstate'

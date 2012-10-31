@@ -1,0 +1,11 @@
+--- imms-3.0.2/rules.mk~	2005-12-27 00:12:03.000000000 +0100
++++ imms-3.0.2/rules.mk	2007-02-27 10:20:25.000000000 +0100
+@@ -16,7 +16,7 @@
+ %.so:
+ 	$(CXX) $^ $($*-OBJ) $($*-LIBS) $(LIBS) \
+ 	    $(LDFLAGS) \
+-	    -shared -Wl,-z,defs,-soname,$@ -o $@
++	    -shared -Wl,-soname,$@ -o $@
+ 
+ # macros that expand to the object files in the given directories
+ objects=$(sort $(notdir $(foreach type,c cc,$(call objects_$(type),$1))))

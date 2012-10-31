@@ -1,0 +1,20 @@
+diff --speed-large-files --minimal -Nru tmp/imms-3.0.2/configure.ac work/main.d/imms-3.0.2/configure.ac
+--- tmp/imms-3.0.2/configure.ac	2005-12-26 20:12:03.000000000 -0300
++++ imms-3.0.2/configure.ac	2008-02-07 14:23:51.000000000 -0200
+@@ -70,14 +70,14 @@
+ 
+ AC_MSG_CHECKING([for usability of initstate_r])
+ 
+-AC_TRY_RUN([#include <stdlib.h>
++AC_RUN_IFELSE([#include <stdlib.h>
+ int main()
+ {
+   static struct random_data rand_data;
+   static char rand_state[256];
+   initstate_r(0, rand_state, sizeof(rand_state), &rand_data);
+   exit(0);
+-}], initstate_r_works=yes,, ])
++}], initstate_r_works=yes,,initstate_r_works=yes)
+ 
+ if test "$initstate_r_works" != "yes"; then
+     AC_MSG_RESULT([no])

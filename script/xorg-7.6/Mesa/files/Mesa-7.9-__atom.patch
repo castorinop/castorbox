@@ -1,0 +1,15 @@
+diff -Naur Mesa-7.9-old/src/mesa/drivers/dri/r200/r200_cmdbuf.c Mesa-7.9-new/src/mesa/drivers/dri/r200/r200_cmdbuf.c
+--- Mesa-7.9-old/src/mesa/drivers/dri/r200/r200_cmdbuf.c	2010-04-27 14:41:59.000000000 -0700
++++ Mesa-7.9-new/src/mesa/drivers/dri/r200/r200_cmdbuf.c	2010-10-30 15:32:50.000000000 -0700
+@@ -47,9 +47,8 @@
+  */
+ #define insert_at_tail_if(atom_list, atom) \
+    do { \
+-      struct radeon_state_atom* __atom = (atom); \
+-      if (__atom->check) \
+-	 insert_at_tail((atom_list), __atom); \
++      if ((atom)->check) \
++	 insert_at_tail((atom_list), (atom)); \
+    } while(0)
+ 
+ void r200SetUpAtomList( r200ContextPtr rmesa )

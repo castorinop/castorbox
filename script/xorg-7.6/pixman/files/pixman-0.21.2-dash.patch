@@ -1,0 +1,12 @@
+diff -Naur pixman-0.21.2-old/configure.ac pixman-0.21.2-new/configure.ac
+--- pixman-0.21.2-old/configure.ac	2010-11-16 13:43:01.000000000 -0800
++++ pixman-0.21.2-new/configure.ac	2010-11-17 06:00:08.000000000 -0800
+@@ -150,7 +150,7 @@
+ # if we're using Sun Studio and neither the user nor a config.site
+ # has set CFLAGS.
+ if test $SUNCC = yes &&			\
+-   test "$test_CFLAGS" == "" &&		\
++   test "$test_CFLAGS" = "" &&		\
+    test "$CFLAGS" = "-g"
+ then
+   CFLAGS="-O -g"

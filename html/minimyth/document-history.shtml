@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org - MiniMyth - Documents - History</title>
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">MiniMyth from <a href="http://linpvr.org">LinPVR.org</a></div>
+        <div class="menu">
+          <span class="menuItemFirst"><a href="../index.shtml">Home</a></span>
+          <span class="menuItem"     ><a href="index.shtml">MiniMyth</a></span>
+          <span class="menuItem"     ><a href="document.shtml">Documents</a></span>
+          <span class="menuItem"     >History</span>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">History</div>
+        <div class="section">
+          <div class="heading">Preamble</div>
+          <p>
+            I hate documenting the history of something, because I always get facts wrong and leave people out.
+            However, I hate even more that the MiniMyth history might be lost, so I am making an attempt to document it.
+            If the MiniMyth history needs corrections or additions, please contact
+            me (Paul Bender (<a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=203">Pablo</a>))
+            and let me know.
+          </p>
+          <div class="heading">History</div>
+          <p>
+            In 2003, Larry Matter (<a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=2">lmatter</a>)
+            created MiniMyth.
+            He wanted a small small Linux distribution that would allow him to turn a diskless VIA EPIA M motherboard into a MythTV frontend.
+            He brought to life and maintained MiniMyth, the LinPVR.org site, the forum, the version control system and the bug tracking system.
+            In addition, he wrote several articles and reviews that helped people with things related to MiniMyth.
+          </p>
+          <p>
+            Like so many other useful Open Source projects, MiniMyth gained a following.
+            Some of those followers began to help Larry with the MiniMyth effort.
+            <a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=3">BigA</a>
+            helped with the initial testing of MiniMyth 0.1.
+            Jason Barto helped with the LinPVR.org site.
+            <a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=3">BigA</a>
+            set up the
+            <a href="http://linpvr.org/forum/">forum</a>.
+            <a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=46">Dna</a>
+            helped with the MiniMyth build system.
+            Others, including
+            <a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=159">corwin</a>,
+            <a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=5">Hairlocks</a>,
+            <a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=157">mjhammel</a> and
+            Paul Bender (<a href="http://linpvr.org/forum/profile.php?mode=viewprofile&amp;u=203">Pablo</a>)
+            created their own MiniMyth versions and/or MiniMyth build systems.
+          </p>
+          <p>
+            In 2005, Larry and Paul began to work on Paul's GAR based MiniMyth build system together.
+            With MythTV 0.17, this GAR based MiniMyth build system became the default MiniMyth build system.
+          </p>
+          <p>
+            Over time, the demands of Larry's real life made it difficult for him to devote very much time to MiniMyth development.
+            As a result, at this time Paul is doing much of the MiniMyth development.
+            As always, the MiniMyth user community continues to contribute through ideas, testing and bug fixes.
+          </p>
+          <p>
+            Since its initial creation, MiniMyth evolved to include support for additional MythTV plugins,
+            <a href="document-hardware.shtml">computer hardware</a>
+            and
+            <a href="document-boot.shtml">boot methods</a>.
+            However, in this evolution it has tried to stay true to Larry's original vision of
+            a small Linux distribution for turning a diskless computer into a MythTV frontend.
+          </p>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-10-14 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

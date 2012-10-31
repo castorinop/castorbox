@@ -1,0 +1,114 @@
+diff -Naur Python-2.7-old/Lib/distutils/command/build_ext.py Python-2.7-new/Lib/distutils/command/build_ext.py
+--- Python-2.7-old/Lib/distutils/command/build_ext.py	2010-04-01 11:17:09.000000000 -0700
++++ Python-2.7-new/Lib/distutils/command/build_ext.py	2010-07-09 08:04:30.000000000 -0700
+@@ -184,7 +184,7 @@
+             # the 'libs' directory is for binary installs - we assume that
+             # must be the *native* platform.  But we don't really support
+             # cross-compiling via a binary install anyway, so we let it go.
+-            self.library_dirs.append(os.path.join(sys.exec_prefix, 'libs'))
++            self.library_dirs.append(os.path.join(get_config_var('prefix'), 'libs'))
+             if self.debug:
+                 self.build_temp = os.path.join(self.build_temp, "Debug")
+             else:
+@@ -192,7 +192,7 @@
+ 
+             # Append the source distribution include and library directories,
+             # this allows distutils on windows to work in the source tree
+-            self.include_dirs.append(os.path.join(sys.exec_prefix, 'PC'))
++            self.include_dirs.append(os.path.join(get_config_var('prefix'), 'PC'))
+             if MSVC_VERSION == 9:
+                 # Use the .lib files for the correct architecture
+                 if self.plat_name == 'win32':
+@@ -200,32 +200,32 @@
+                 else:
+                     # win-amd64 or win-ia64
+                     suffix = self.plat_name[4:]
+-                new_lib = os.path.join(sys.exec_prefix, 'PCbuild')
++                new_lib = os.path.join(get_config_var('prefix'), 'PCbuild')
+                 if suffix:
+                     new_lib = os.path.join(new_lib, suffix)
+                 self.library_dirs.append(new_lib)
+ 
+             elif MSVC_VERSION == 8:
+-                self.library_dirs.append(os.path.join(sys.exec_prefix,
++                self.library_dirs.append(os.path.join(get_config_var('prefix'),
+                                          'PC', 'VS8.0', 'win32release'))
+             elif MSVC_VERSION == 7:
+-                self.library_dirs.append(os.path.join(sys.exec_prefix,
++                self.library_dirs.append(os.path.join(get_config_var('prefix'),
+                                          'PC', 'VS7.1'))
+             else:
+-                self.library_dirs.append(os.path.join(sys.exec_prefix,
++                self.library_dirs.append(os.path.join(get_config_var('prefix'),
+                                          'PC', 'VC6'))
+ 
+         # OS/2 (EMX) doesn't support Debug vs Release builds, but has the
+         # import libraries in its "Config" subdirectory
+         if os.name == 'os2':
+-            self.library_dirs.append(os.path.join(sys.exec_prefix, 'Config'))
++            self.library_dirs.append(os.path.join(get_config_var('prefix'), 'Config'))
+ 
+         # for extensions under Cygwin and AtheOS Python's library directory must be
+         # appended to library_dirs
+         if sys.platform[:6] == 'cygwin' or sys.platform[:6] == 'atheos':
+             if sys.executable.startswith(os.path.join(sys.exec_prefix, "bin")):
+                 # building third party extensions
+-                self.library_dirs.append(os.path.join(sys.prefix, "lib",
++                self.library_dirs.append(os.path.join(get_config_var('exec_prefix'), "lib",
+                                                       "python" + get_python_version(),
+                                                       "config"))
+             else:
+diff -Naur Python-2.7-old/Lib/distutils/sysconfig.py Python-2.7-new/Lib/distutils/sysconfig.py
+--- Python-2.7-old/Lib/distutils/sysconfig.py	2010-05-05 12:09:31.000000000 -0700
++++ Python-2.7-new/Lib/distutils/sysconfig.py	2010-07-09 10:55:19.000000000 -0700
+@@ -19,8 +19,12 @@
+ from distutils.errors import DistutilsPlatformError
+ 
+ # These are needed in a couple of spots, so just compute them once.
+-PREFIX = os.path.normpath(sys.prefix)
+-EXEC_PREFIX = os.path.normpath(sys.exec_prefix)
++if os.environ.has_key('PYTHONXCPREFIX'):
++    PREFIX = os.environ['PYTHONXCPREFIX']
++    EXEC_PREFIX = PREFIX
++else:
++    PREFIX = os.path.normpath(sys.prefix)
++    EXEC_PREFIX = os.path.normpath(sys.exec_prefix)
+ 
+ # Path to the base directory of the project. On Windows the binary may
+ # live in project/PCBuild9.  If we're dealing with an x64 Windows build,
+@@ -509,12 +513,6 @@
+         else:
+             _config_vars = {}
+ 
+-        # Normalized versions of prefix and exec_prefix are handy to have;
+-        # in fact, these are the standard versions used most places in the
+-        # Distutils.
+-        _config_vars['prefix'] = PREFIX
+-        _config_vars['exec_prefix'] = EXEC_PREFIX
+-
+         if sys.platform == 'darwin':
+             kernel_version = os.uname()[2] # Kernel version (8.4.3)
+             major_version = int(kernel_version.split('.')[0])
+@@ -576,6 +574,22 @@
+                             flags = re.sub('-isysroot\s+\S+(\s|$)', ' ', flags)
+                             _config_vars[key] = flags
+ 
++        # Convert the non-cross prefix to the cross prefix.
++        if os.environ.has_key('PYTHONXCPREFIX'):
++            if _config_vars.has_key('prefix'):
++                host_prefix = os.path.normpath(_config_vars.get('prefix'));
++                for name in ('BINDIR', 'LIBDIR', 'MANDIR', 'INCLUDEDIR'):
++                    if _config_vars.has_key(name):
++                        dir = os.path.normpath(_config_vars.get(name))
++                        if dir.startswith(host_prefix + os.sep):
++                            _config_vars[name] = os.path.join(PREFIX, dir[len(host_prefix + os.sep):])
++
++        # Normalized versions of prefix and exec_prefix are handy to have;
++        # in fact, these are the standard versions used most places in the
++        # Distutils.
++        _config_vars['prefix'] = PREFIX
++        _config_vars['exec_prefix'] = EXEC_PREFIX
++
+     if args:
+         vals = []
+         for name in args:

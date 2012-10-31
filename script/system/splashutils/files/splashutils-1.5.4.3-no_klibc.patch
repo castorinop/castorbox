@@ -1,0 +1,188 @@
+diff -Naur splashutils-1.5.4.3-old/configure.ac splashutils-1.5.4.3-new/configure.ac
+--- splashutils-1.5.4.3-old/configure.ac	2010-08-28 06:31:58.000000000 -0700
++++ splashutils-1.5.4.3-new/configure.ac	2010-08-28 06:35:44.000000000 -0700
+@@ -63,19 +63,6 @@
+ )
+ AM_CONDITIONAL([CONFIG_DEBUG], [test "x${config_debug}" = "xyes"])
+ 
+-AC_ARG_ENABLE([klibc-shared],
+-  AS_HELP_STRING([--enable-klibc-shared], [link to shared klibc]),
+-  [
+-    AS_CASE(["${enableval}"],
+-        [yes], [config_klibc_shared="yes"],
+-        [no],  [config_klibc_shared="no"],
+-               [AC_MSG_ERROR([bad value '${enableval}' for --enable-klibc-shared])]
+-    )
+-  ],
+-  [config_klibc_shared="no"]
+-)
+-AM_CONDITIONAL([CONFIG_KLIBC_SHARED], [test "x${config_klibc_shared}" = "xyes"])
+-
+ AC_ARG_ENABLE([deprecated],
+   AC_HELP_STRING([--enable-deprecated], [include support for deprecated features]),
+   [
+@@ -229,75 +216,6 @@
+   [AC_DEFINE([CONFIG_TTF_KERNEL], [1], [Define to 1 to include support for truetype fonts in kernel helper.])]
+ )
+ 
+-AC_ARG_WITH([klibc-compiler],
+-  AS_HELP_STRING([--with-klibc-compiler], [compiler to use when building against klibc @<:@auto@:>@]),
+-  [KLCC="${withval}"],
+-  [
+-    AS_IF(
+-      [test "x${host_alias}" != "x${build_alias}"],
+-      [AC_CHECK_PROG([KLCC], [${host_alias}-klcc], [${host_alias}-klcc])],
+-      [AC_CHECK_PROG([KLCC], [klcc], [klcc])]
+-    )
+-    AS_IF(
+-      [test "x${KLCC}" = "x"],
+-      [AC_MSG_WARN([could not determine compiler to use when building against klibc.])]
+-    )
+-  ]
+-)
+-AC_SUBST([KLCC])
+-
+-AC_ARG_WITH([freetype2-src],
+-  AS_HELP_STRING([--with-freetype2-src=DIR], [freetype2 source to use when linking with klibc]),
+-  [
+-	AS_IF(
+-	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+-	  [LIBFREETYPE2_SOURCE="\$(abs_top_srcdir)/${withval}"],
+-	  [LIBFREETYPE2_SOURCE="${withval}"]
+-	)
+-  ],
+-  [LIBFREETYPE2_SOURCE="\$(abs_top_srcdir)/\$(LIBFREETYPE2_SOURCE_INTERNAL)"]
+-)
+-AC_SUBST([LIBFREETYPE2_SOURCE])
+-
+-AC_ARG_WITH([jpeg-src],
+-  AS_HELP_STRING([--with-jpeg-src=DIR], [jpeglib source to use when linking with klibc]),
+-  [
+-	AS_IF(
+-	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+-	  [LIBJPEG_SOURCE="\$(abs_top_srcdir)/${withval}"],
+-	  [LIBJPEG_SOURCE="${withval}"]
+-	)
+-  ],
+-  [LIBJPEG_SOURCE="\$(abs_top_srcdir)/\$(LIBJPEG_SOURCE_INTERNAL)"]
+-)
+-AC_SUBST([LIBJPEG_SOURCE])
+-
+-AC_ARG_WITH([lpng-src],
+-  AS_HELP_STRING([--with-lpng-src=DIR], [libpng source to use when linking with klibc]),
+-  [
+-	AS_IF(
+-	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+-	  [LIBPNG_SOURCE="\$(abs_top_srcdir)/${withval}"],
+-	  [LIBPNG_SOURCE="${withval}"]
+-	)
+-  ],
+-  [LIBPNG_SOURCE="\$(abs_top_srcdir)/\$(LIBPNG_SOURCE_INTERNAL)"]
+-)
+-AC_SUBST([LIBPNG_SOURCE])
+-
+-AC_ARG_WITH([zlib-src],
+-  AS_HELP_STRING([--with-zlib-src=DIR], [zlib source to use when linking with klibc]),
+-  [
+-	AS_IF(
+-	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+-	  [LIBZ_SOURCE="\$(abs_top_srcdir)/${withval}"],
+-	  [LIBZ_SOURCE="${withval}"]
+-	)
+-  ],
+-  [LIBZ_SOURCE="\$(abs_top_srcdir)/\$(LIBZ_SOURCE_INTERNAL)"]
+-)
+-AC_SUBST([LIBZ_SOURCE])
+-
+ AC_ARG_WITH([essential-prefix],
+   AS_HELP_STRING([--with-essential-prefix=ESPREFIX], [install essential files in ESPREFIX @<:@/@:>@]),
+   [essential_prefix=`AS_ECHO([${withval}]) | $SED -e 's#/$##')`],
+diff -Naur splashutils-1.5.4.3-old/Makefile.am splashutils-1.5.4.3-new/Makefile.am
+--- splashutils-1.5.4.3-old/Makefile.am	2008-11-13 11:54:19.000000000 -0800
++++ splashutils-1.5.4.3-new/Makefile.am	2010-08-28 06:35:44.000000000 -0700
+@@ -1,4 +1,4 @@
+-SUBDIRS = libs src docs misc scripts
++SUBDIRS = src docs misc scripts
+ ACLOCAL_AMFLAGS = -I m4
+ 
+ include common.mk
+diff -Naur splashutils-1.5.4.3-old/src/Makefile.am splashutils-1.5.4.3-new/src/Makefile.am
+--- splashutils-1.5.4.3-old/src/Makefile.am	2010-08-28 06:32:03.000000000 -0700
++++ splashutils-1.5.4.3-new/src/Makefile.am	2010-08-28 06:35:44.000000000 -0700
+@@ -221,62 +221,23 @@
+ 
+ fbcondecor_helper_SOURCES = \
+ 	kernel.c \
+-	libfbsplash.c \
+-	libfbsplashrender.c \
+-	fbcon_decor.c \
+-	common.c \
+-	parse.c \
+-	list.c \
+-	render.c \
+-	image.c \
+-	effects.c \
+ 	fbcon_decor.h \
+ 	../include/console_decor.h \
+ 	../include/fbcondecor.h \
+ 	common.h \
+-	render.h \
+ 	fbsplash.h
+ fbcondecor_helper_CPPFLAGS  = -DWITH_ERRLIST -DTARGET_KERNEL -DTT_CONFIG_OPTION_BYTECODE_INTERPRETER
+-fbcondecor_helper_CFLAGS    = -Os -w -ffunction-sections -fdata-sections -I.@am__isrc@
+-fbcondecor_helper_LDFLAGS   = 
+-fbcondecor_helper_LDADD     = 
+-fbcondecor_helper_CFLAGS   += -I$(abs_top_builddir)/libs/libjpeg -I$(LIBJPEG_SOURCE)
+-fbcondecor_helper_LDADD    += $(top_builddir)/libs/libjpeg.a
+-if CONFIG_PNG
+-fbcondecor_helper_CFLAGS   += -I$(LIBPNG_SOURCE)
+-fbcondecor_helper_LDADD    += $(top_builddir)/libs/libpng.a $(top_builddir)/libs/libz.a
+-endif
+-if CONFIG_TTF_KERNEL
+-fbcondecor_helper_SOURCES  += ttf.c ttf.h fbsplash.h
+-fbcondecor_helper_CFLAGS   += -I$(LIBFREETYPE2_SOURCE)/include -I$(LIBZ_SOURCE)
+-fbcondecor_helper_LDADD    += $(top_builddir)/libs/libfreetype.a
+-endif
+-if CONFIG_KLIBC_SHARED
+-fbcondecor_helper_LDFLAGS  += -shared
+-else
+-fbcondecor_helper_LDFLAGS  += -static
+-endif
+-
+-# Override automake's generation of target rules for building fbcondecor_helper.
+-fbcondecor_helper: $(fbcondecor_helper_LDADD) $(fbcondecor_helper_OBJECTS)
+-	@$(call infmsg,LD,$@)
+-	$(Q)$(MKDIR_P) $(@D)
+-	$(Q)$(KLCC) $(fbcondecor_helper_CFLAGS) $(fbcondecor_helper_LDFLAGS) $+ $(fbcondecor_helper_LDADD) -o $@
+-	$(Q)$(STRIP) $@
+-
+-# Override automake's generation of target rules for building fbcondecor_helper object files.
+-fbcondecor_helper-kernel.o:
+-fbcondecor_helper-libfbsplash.o:
+-fbcondecor_helper-libfbsplashrender.o:
+-fbcondecor_helper-fbcon_decor.o:
+-fbcondecor_helper-common.o:
+-fbcondecor_helper-parse.o:
+-fbcondecor_helper-list.o:
+-fbcondecor_helper-render.o:
+-fbcondecor_helper-image.o:
+-fbcondecor_helper-effects.o:
+-fbcondecor_helper-ttf.o:
+-fbcondecor_helper-%.o: %.c
+-	@$(call infmsg,CC,$@)
+-	$(Q)$(MKDIR_P) $(@D)
+-	$(Q)$(KLCC) $(fbcondecor_helper_CPPFLAGS) $(fbcondecor_helper_CFLAGS) $(INCLUDES) -c $< -o $@
++#fbcondecor_helper_CFLAGS    = $(JPEG_CFLAGS)
++fbcondecor_helper_LDFLAGS   = $(AM_LDFLAGS)
++fbcondecor_helper_LDADD     = libfbsplashrender.la libfbsplash.la
++#fbcondecor_helper_CFLAGS   += $(JPEG_CFLAGS)
++#fbcondecor_helper_LDADD    += $(JPEG_LIBS)
++#if CONFIG_PNG
++#fbcondecor_helper_CFLAGS   += $(PNG_CFLAGS)
++#fbcondecor_helper_LDADD    += $(PNG_LIBS)
++#endif
++#if CONFIG_TTF_KERNEL
++#fbcondecor_helper_SOURCES  += ttf.c ttf.h fbsplash.h
++#fbcondecor_helper_CFLAGS   += $(FREETYPE2_CFLAGS) $(M_CFLAGS)
++#fbcondecor_helper_LDADD    += $(FREETYPE2_LIBS)   $(M_LIBS)
++#endif

@@ -1,0 +1,87 @@
+diff --speed-large-files --minimal -Nru old/Jambase new/Jambase
+--- old/Jambase	2003-04-23 01:45:49.000000000 -0300
++++ new/Jambase	2007-01-11 21:37:48.000000000 -0300
+@@ -541,7 +541,7 @@
+ 	CRELIB		?= ;
+ 	DOT		?= . ;
+ 	DOTDOT		?= .. ;
+-	EXEMODE		?= 711 ;
++	EXEMODE		?= 755 ;
+ 	FILEMODE	?= 644 ;
+ 	FORTRAN		?= f77 ;
+ 	FORTRANFLAGS	?= ;
+@@ -1129,7 +1129,7 @@
+ 
+ rule Setuid
+ {
+-	MODE on [ FAppendSuffix $(<) : $(SUFEXE) ] = 4711 ;
++	MODE on [ FAppendSuffix $(<) : $(SUFEXE) ] = 4755 ;
+ }
+ 
+ rule Shell
+diff --speed-large-files --minimal -Nru old/jambase.c new/jambase.c
+--- old/jambase.c	2004-08-19 15:19:35.000000000 -0300
++++ new/jambase.c	2007-01-11 21:37:48.000000000 -0300
+@@ -333,7 +333,7 @@
+ "CRELIB		?= ;\n",
+ "DOT		?= . ;\n",
+ "DOTDOT		?= .. ;\n",
+-"EXEMODE		?= 711 ;\n",
++"EXEMODE		?= 755 ;\n",
+ "FILEMODE	?= 644 ;\n",
+ "FORTRAN		?= f77 ;\n",
+ "FORTRANFLAGS	?= ;\n",
+@@ -702,7 +702,7 @@
+ "}\n",
+ "rule Setuid\n",
+ "{\n",
+-"MODE on [ FAppendSuffix $(<) : $(SUFEXE) ] = 4711 ;\n",
++"MODE on [ FAppendSuffix $(<) : $(SUFEXE) ] = 4755 ;\n",
+ "}\n",
+ "rule Shell\n",
+ "{\n",
+diff --speed-large-files --minimal -Nru old/Jamfile new/Jamfile
+--- old/Jamfile	2004-08-19 15:19:29.000000000 -0300
++++ new/Jamfile	2007-01-11 21:37:48.000000000 -0300
+@@ -62,7 +62,7 @@
+ 
+ if $(YACC) && $(SUFEXE) = ""
+ {
+-	GenFile jamgram.y jamgramtab.h : yyacc jamgram.yy ;
++	GenFile jamgram.y jamgramtab.h : ./yyacc jamgram.yy ;
+ }
+ 
+ #
+diff --speed-large-files --minimal -Nru old/Jamfile.html new/Jamfile.html
+--- old/Jamfile.html	2003-04-23 01:45:50.000000000 -0300
++++ new/Jamfile.html	2007-01-11 21:37:48.000000000 -0300
+@@ -290,7 +290,7 @@
+               for automatic customizing with autoconf(GNU).
+ <P>
+ 	<LI> 	Optionally, set an environment variable pointing
+-		to the root directory of the srouce tree. The
++		to the root directory of the source tree. The
+ 		variable's name is left up to you, but in these
+ 		examples, we use TOP.
+ </OL>
+diff --speed-large-files --minimal -Nru old/Jam.html new/Jam.html
+--- old/Jam.html	2003-04-23 01:45:49.000000000 -0300
++++ new/Jam.html	2007-01-11 21:37:48.000000000 -0300
+@@ -851,7 +851,7 @@
+ 
+ 	<DD> Builds a direct dependency: makes each of <I>targets1</I>
+ 	depend on each of <I>targets2</I>.  Generally, <I>targets1</I>
+-	will be rebuilt if <I>targets2</I> are themselves rebuilt are
++	will be rebuilt if <I>targets2</I> are themselves rebuilt
+ 	or are newer than <I>targets1</I>.
+ 
+ 	<P><DT><CODE>
+@@ -1069,7 +1069,7 @@
+ 
+ 	<P>
+ 
+-	These two variable control header file scanning.  $(HDRSCAN) is
++	These two variables control header file scanning.  $(HDRSCAN) is
+ 	an <b>egrep</b>(1) pattern, with ()'s surrounding the file name,
+ 	used to find file inclusion statements in source files.  Jambase
+ 	uses $(HDRPATTERN) as the pattern for $(HDRSCAN).  $(HDRRULE)

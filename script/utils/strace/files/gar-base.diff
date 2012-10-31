@@ -1,0 +1,12 @@
+diff -Nru tmp/strace-4.4/Makefile.in work/strace-4.4/Makefile.in
+--- strace-4.4/Makefile.in	Fri Feb 16 14:07:01 2001
++++ strace-4.4/Makefile.in	Fri Jun 21 22:23:01 2002
+@@ -91,7 +91,7 @@
+ maintainer-clean-local: distclean-local
+ 
+ .c.o:
+-	$(CC) $(WARNFLAGS) $(DEFS) $(EXTRA_DEFS) $(CPPFLAGS) $(INCLUDES) $(CFLAGS) -c $<
++	$(CC) $(INCLUDES) $(WARNFLAGS) $(DEFS) $(EXTRA_DEFS) $(CPPFLAGS) $(CFLAGS) -c $<
+ 
+ desc.o: desc.c defs.h config.h
+ file.o: file.c defs.h config.h

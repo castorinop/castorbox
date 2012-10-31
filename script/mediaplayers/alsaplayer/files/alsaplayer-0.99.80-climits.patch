@@ -1,0 +1,11 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/alsaplayer-0.99.80/app/ControlSocket.cpp new-alsaplayer-0.99.80/app/ControlSocket.cpp
+--- tmp/alsaplayer-0.99.80/app/ControlSocket.cpp	2007-07-08 11:27:31.000000000 -0300
++++ new-alsaplayer-0.99.80/app/ControlSocket.cpp	2009-04-29 21:27:40.000000000 -0300
+@@ -20,6 +20,7 @@
+ #include "AlsaPlayer.h"
+ #include <cstdio>
+ #include <cstdlib>
++#include <climits>
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>

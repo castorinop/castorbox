@@ -1,0 +1,29 @@
+--- old/Makefile	2010-12-30 00:00:12.000000000 -0300
++++ new/Makefile	2012-06-09 15:39:23.650667000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = python-BeautifulSoup
+-GARVERSION = 3.0.8.1
++GARVERSION = 3.2.0
+ CATEGORIES = python
+ MASTER_SITES = http://www.crummy.com/software/BeautifulSoup/download/3.x/
+ DISTFILES = $(patsubst python-%,%,$(GARNAME))-$(GARVERSION).tar.gz
+diff -ruP -x '.*' -x '*~' ./files/BeautifulSoup-3.2.0-setuptools.patch new/files/BeautifulSoup-3.2.0-setuptools.patch
+--- old/files/BeautifulSoup-3.2.0-setuptools.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/BeautifulSoup-3.2.0-setuptools.patch	2012-06-09 15:39:23.600666998 -0300
+@@ -0,0 +1,9 @@
++diff -Naur BeautifulSoup-3.2.0-old/setup.py BeautifulSoup-3.2.0-new/setup.py
++--- BeautifulSoup-3.2.0-old/setup.py	2010-11-21 05:15:26.000000000 -0800
+++++ BeautifulSoup-3.2.0-new/setup.py	2012-02-10 10:50:01.000000000 -0800
++@@ -1,4 +1,4 @@
++-from distutils.core import setup
+++from setuptools import setup
++ import unittest
++ import warnings
++ warnings.filterwarnings("ignore", "Unknown distribution option")
+--- old/checksums	2010-07-16 17:02:07.000000000 -0300
++++ new/checksums	2012-06-09 15:39:23.650667000 -0300
+@@ -1,2 +1,2 @@
+-d2f7b6b25bd26cd15e8b8a60ecc49c90  download/BeautifulSoup-3.0.8.1.tar.gz
+-e3e949be72465db4927ed1d306124ae0  download/BeautifulSoup-3.0.8.1-setuptools.patch
++ef1e78f7689ea61314f7bddebcfde88c  download/BeautifulSoup-3.2.0.tar.gz
++5e13bc8a46867fe5860a6be04a5b4cba  download/BeautifulSoup-3.2.0-setuptools.patch

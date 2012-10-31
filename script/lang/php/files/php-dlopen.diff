@@ -1,0 +1,17 @@
+--- old/Zend/zend.h	2007-04-26 21:08:58.000000000 +0200
++++ new/Zend/zend.h.oden	2007-06-20 13:12:39.000000000 +0200
+@@ -102,11 +102,11 @@
+ # endif
+ 
+ # if defined(RTLD_GROUP) && defined(RTLD_WORLD) && defined(RTLD_PARENT)
+-#  define DL_LOAD(libname)			dlopen(libname, RTLD_LAZY | RTLD_GLOBAL | RTLD_GROUP | RTLD_WORLD | RTLD_PARENT)
++#  define DL_LOAD(libname)			dlopen(libname, RTLD_NOW | RTLD_GLOBAL | RTLD_GROUP | RTLD_WORLD | RTLD_PARENT)
+ # elif defined(RTLD_DEEPBIND)
+-#  define DL_LOAD(libname)			dlopen(libname, RTLD_LAZY | RTLD_GLOBAL | RTLD_DEEPBIND)
++#  define DL_LOAD(libname)			dlopen(libname, RTLD_NOW | RTLD_GLOBAL | RTLD_DEEPBIND)
+ # else
+-#  define DL_LOAD(libname)			dlopen(libname, RTLD_LAZY | RTLD_GLOBAL)
++#  define DL_LOAD(libname)			dlopen(libname, RTLD_NOW | RTLD_GLOBAL)
+ # endif
+ # define DL_UNLOAD					dlclose
+ # if defined(DLSYM_NEEDS_UNDERSCORE)

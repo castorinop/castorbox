@@ -1,0 +1,12 @@
+diff -Naur perl-5.12.2-old/dist/XSLoader/XSLoader_pm.PL perl-5.12.2-new/dist/XSLoader/XSLoader_pm.PL
+--- perl-5.12.2-old/dist/XSLoader/XSLoader_pm.PL	2010-09-15 10:37:44.000000000 -0700
++++ perl-5.12.2-new/dist/XSLoader/XSLoader_pm.PL	2010-09-15 10:41:37.000000000 -0700
+@@ -47,7 +47,7 @@
+     my $boots = "$module\::bootstrap";
+     goto &$boots if defined &$boots;
+ 
+-    goto retry unless $module and defined &dl_load_file;
++    goto retry;
+ 
+     my @modparts = split(/::/,$module);
+     my $modfname = $modparts[-1];

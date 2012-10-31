@@ -1,0 +1,60 @@
+=== modified file 'audio-library/audio-library.cpp'
+--- audio-library/audio-library.cpp	2008-05-03 23:41:09 +0000
++++ audio-library/audio-library.cpp	2008-06-08 14:54:17 +0000
+@@ -563,6 +563,10 @@
+ 
+   string homedir = "", var_data = "";
+ 
++  // if env MMS_HOME is defined
++  if (!(homedir = s_getenv("MMS_HOME")).empty())
++    set_config(conf, homedir);
++
+ #ifdef use_nls
+   // gettext
+   setlocale(LC_ALL, ""); /* set from the environment variables */
+
+=== modified file 'mms.cpp'
+--- mms.cpp	2008-06-08 14:31:27 +0000
++++ mms.cpp	2008-06-08 14:54:02 +0000
+@@ -396,6 +396,10 @@
+   string replay_read = "", replay_write = "", outdev = "", indev = "", user = "";
+   bool resetenv = false, dumpenv = false;
+ 
++  // if env MMS_HOME is defined
++  if (!(homedir = s_getenv("MMS_HOME")).empty())
++    set_config(conf, homedir);
++  
+ #ifdef use_nls
+   // gettext
+   setlocale(LC_ALL, ""); /* set from the environment variables */
+
+=== modified file 'movie-library/movie-library.cpp'
+--- movie-library/movie-library.cpp	2008-05-25 09:00:52 +0000
++++ movie-library/movie-library.cpp	2008-06-08 14:53:54 +0000
+@@ -503,6 +503,10 @@
+ 
+   string homedir = "", var_data = "";
+ 
++  // if env MMS_HOME is defined
++  if (!(homedir = s_getenv("MMS_HOME")).empty())
++    set_config(conf, homedir);
++  
+ #ifdef use_nls
+   // gettext
+   setlocale(LC_ALL, ""); /* set from the environment variables */
+
+=== modified file 'pic-library/pic-library.cpp'
+--- pic-library/pic-library.cpp	2008-05-24 23:54:27 +0000
++++ pic-library/pic-library.cpp	2008-06-08 14:53:48 +0000
+@@ -397,6 +397,10 @@
+ 
+   string homedir = "", var_data = "";
+ 
++  // if env MMS_HOME is defined
++  if (!(homedir = s_getenv("MMS_HOME")).empty())
++    set_config(conf, homedir);
++
+ #ifdef use_nls
+   // gettext
+   setlocale(LC_ALL, ""); /* set from the environment variables */
+

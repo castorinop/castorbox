@@ -1,0 +1,42 @@
+diff -Naur MPlayer-27979.15908-old/configure MPlayer-27979.15908-new/configure
+--- MPlayer-27979.15908-old/configure	2008-11-22 12:11:14.000000000 -0800
++++ MPlayer-27979.15908-new/configure	2008-11-22 12:13:25.000000000 -0800
+@@ -3954,23 +3954,23 @@
+ echocheck "X11 headers presence"
+   _x11_headers="no"
+   _res_comment="check if the dev(el) packages are installed"
+-  for I in `echo $_inc_extra | sed s/-I//g` /usr/include ; do
+-    if test -f "$I/X11/Xlib.h" ; then
++#  for I in `echo $_inc_extra | sed s/-I//g` /usr/include ; do
++#    if test -f "$I/X11/Xlib.h" ; then
+       _x11_headers="yes"
+       _res_comment=""
+-      break
+-    fi
+-  done
+-  if test $_cross_compile = no; then
+-    for I in /usr/X11/include /usr/X11R6/include /usr/include/X11R6 /usr/openwin/include ; do
+-      if test -f "$I/X11/Xlib.h" ; then
+-        _inc_extra="$_inc_extra -I$I"
+-        _x11_headers="yes"
+-        _res_comment="using $I"
+-        break
+-      fi
+-    done
+-  fi
++#      break
++#    fi
++#  done
++#  if test $_cross_compile = no; then
++#    for I in /usr/X11/include /usr/X11R6/include /usr/include/X11R6 /usr/openwin/include ; do
++#      if test -f "$I/X11/Xlib.h" ; then
++#        _inc_extra="$_inc_extra -I$I"
++#        _x11_headers="yes"
++#        _res_comment="using $I"
++#        break
++#      fi
++#    done
++#  fi
+ echores "$_x11_headers"
+ 
+ 

@@ -1,0 +1,11 @@
+diff -Naur Mesa-7.11-rc2-old/src/glsl/Makefile Mesa-7.11-rc2-new/src/glsl/Makefile
+--- Mesa-7.11-rc2-old/src/glsl/Makefile	2011-07-14 10:42:59.000000000 -0700
++++ Mesa-7.11-rc2-new/src/glsl/Makefile	2011-07-21 11:04:13.000000000 -0700
+@@ -208,6 +208,6 @@
+ 
+ builtin_function.cpp: builtins/profiles/* builtins/ir/* builtins/tools/generate_builtins.py builtins/tools/texture_builtins.py builtin_compiler
+ 	@echo Regenerating builtin_function.cpp...
+-	$(PYTHON2) $(PYTHON_FLAGS) builtins/tools/generate_builtins.py ./builtin_compiler > builtin_function.cpp || rm -f builtin_function.cpp
++	$(PYTHON2) $(PYTHON_FLAGS) builtins/tools/generate_builtins.py mesa-builtin_compiler > builtin_function.cpp || rm -f builtin_function.cpp
+ 
+ -include depend

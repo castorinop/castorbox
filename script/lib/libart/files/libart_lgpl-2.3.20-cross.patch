@@ -1,0 +1,24 @@
+diff -Naur libart_lgpl-2.3.20-old/Makefile.am libart_lgpl-2.3.20-new/Makefile.am
+--- libart_lgpl-2.3.20-old/Makefile.am	2008-04-12 09:59:14.000000000 -0700
++++ libart_lgpl-2.3.20-new/Makefile.am	2008-04-12 10:00:05.000000000 -0700
+@@ -6,7 +6,7 @@
+ BUILT_SOURCES = art_config.h
+ 
+ art_config.h:	gen_art_config$(EXEEXT)
+-	./gen_art_config > art_config.h
++	libart-gen_art_config > art_config.h
+ 
+ EXTRA_DIST = 			\
+ 	libart.def		\
+diff -Naur libart_lgpl-2.3.20-old/Makefile.in libart_lgpl-2.3.20-new/Makefile.in
+--- libart_lgpl-2.3.20-old/Makefile.in	2008-04-12 09:59:14.000000000 -0700
++++ libart_lgpl-2.3.20-new/Makefile.in	2008-04-12 10:00:05.000000000 -0700
+@@ -916,7 +916,7 @@
+ 
+ 
+ art_config.h:	gen_art_config$(EXEEXT)
+-	./gen_art_config > art_config.h
++	libart-gen_art_config > art_config.h
+ 
+ @OS_WIN32_TRUE@install-libtool-import-lib:
+ @OS_WIN32_TRUE@	$(INSTALL) .libs/libart_lgpl_2.dll.a $(DESTDIR)$(libdir)

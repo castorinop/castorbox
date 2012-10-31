@@ -1,0 +1,181 @@
+[===== NOW BUILDING:	mms-1.1.0-1741	=====]
+	[fetch] complete for mms.
+	[checksum] complete for mms.
+	[extract] complete for mms.
+	[patch] complete for mms.
+	[configure] complete for mms.
+	[build] complete for mms.
+ ==> Running make install in work/main.d/mms-1.1.0-1741
+DESTDIR="/home/pablo/gar-castorbox/images/main" prefix="/usr" exec_prefix="/usr" bindir="/usr/bin" sbindir="/usr/sbin" libexecdir="/usr/libexec" datadir="/usr/share" sysconfdir="/etc" sharedstatedir="/usr/share" localstatedir="/var" libdir="/usr/lib" infodir="/usr/info" lispdir="/usr/share/emacs/site-lisp" includedir="/usr/include" oldincludedir="/usr/include" mandir="/usr/share/man" docdir="/usr/share/doc" sourcedir="/usr/src" CPPFLAGS="" CFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32" LDFLAGS="-Wl,--as-needed" CXXFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32" CC="i586-castorbox-linux-gnu-gcc" CXX="i586-castorbox-linux-gnu-g++" LD="i586-castorbox-linux-gnu-ld" CPP="i586-castorbox-linux-gnu-cpp" AR="i586-castorbox-linux-gnu-ar" AS="i586-castorbox-linux-gnu-as" NM="i586-castorbox-linux-gnu-nm" RANLIB="i586-castorbox-linux-gnu-ranlib" STRIP="i586-castorbox-linux-gnu-strip" OBJCOPY="i586-castorbox-linux-gnu-objcopy" OBJDUMP="i586-castorbox-linux-gnu-objdump" make DESTDIR=/home/pablo/gar-castorbox/images/main  -C work/main.d/mms-1.1.0-1741 BUILD_DIR="" AR="i586-castorbox-linux-gnu-ar mru" C="i586-castorbox-linux-gnu-gcc" CC="i586-castorbox-linux-gnu-gcc" CXX="i586-castorbox-linux-gnu-g++" LDFLAGS="" LD="i586-castorbox-linux-gnu-ld" DESTDIR="/home/pablo/gar-castorbox/images/main" OPTIMIZATION="" STDFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32 -funroll-loops -fomit-frame-pointer -pthread -I. -I/home/pablo/gar-castorbox/images/main/usr/include -DSUPERUSER" LIBTOOL="/bin/sh "/home/pablo/gar-castorbox/script/mms/mms-1.1.0/../../mms/mms-1.1.0/work/main.d/mms-1.1.0-1741"/libtool" PKGCONFIG="pkg-config" IMLIB2CONFIG="/home/pablo/gar-castorbox/images/main/usr/bin/imlib2-config" SDLCONFIG="/home/pablo/gar-castorbox/images/main/usr/bin/sdl-config"  install
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741'
+make install -C po;
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/po'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/po'
+make install -C man;
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/man'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/man'
+if test ! -d /home/pablo/gar-castorbox/images/main/usr/bin ; then mkdir -p /home/pablo/gar-castorbox/images/main/usr/bin ; fi
+install -m 755 -s mms /home/pablo/gar-castorbox/images/main/usr/bin/mms
+make -C plugins install;
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins'
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio'
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/po'
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/players'
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/players/alsaplayer'
+install lib_feature_audio_player_alsaplayer.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_audio_player_alsaplayer.so
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/players/alsaplayer'
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/players/gstreamer'
+install lib_feature_audio_player_gst.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_audio_player_gst.so
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/players/gstreamer'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/players'
+install lib_feature_audio.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_audio.so
+make -C po install
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio/po'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/audio'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie'
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/po'
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players'
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/mplayer'
+install lib_feature_movie_player_mplayer.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_movie_player_mplayer.so
+make -C po install
+make[7]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/mplayer/po'
+make[7]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/mplayer/po'
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/mplayer'
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/xine'
+install lib_feature_movie_player_xine.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_movie_player_xine.so
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/xine'
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/genericplayer'
+install lib_feature_movie_player_genericplayer.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_movie_player_genericplayer.so
+make -C po install
+make[7]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/genericplayer/po'
+make[7]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/genericplayer/po'
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players/genericplayer'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/players'
+install lib_feature_movie.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/
+install lib_feature_movie_collection.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/
+make -C po install
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie/po'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/movie'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/picture'
+install lib_feature_pictures.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_pictures.so
+make -C po install
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/picture/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/picture/po'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/picture'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/clock'
+install lib_feature_clock.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_feature_clock.so
+make -C po install
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/clock/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/clock/po'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/clock'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/media-rss'
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/media-rss/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/media-rss/po'
+install lib_feature_media_rss.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/
+make -C po install
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/media-rss/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/media-rss/po'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/media-rss'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature'
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output/sdl'
+install lib_output_sdl.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_output_sdl.so
+make -C po install
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output/sdl/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output/sdl/po'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output/sdl'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output/opengl'
+install lib_output_opengl.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_output_opengl.so
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output/opengl'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/output'
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/keyboard'
+install lib_ainput_keyboard.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_ainput_keyboard.so
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/keyboard'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/replay'
+install lib_ainput_replay.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_ainput_replay.so
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/replay'
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/lirc'
+install lib_ainput_lirc.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/lib_ainput_lirc.so
+make -C po install
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/lirc/po'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/lirc/po'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input/lirc'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/input'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins'
+make -C audio-library install;
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/audio-library'
+make install -C man;
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/audio-library/man'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/audio-library/man'
+install -m 755 -s mms-audio-library /home/pablo/gar-castorbox/images/main/usr/bin/mms-audio-library
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/audio-library'
+make -C movie-library install;
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/movie-library'
+make install -C man;
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/movie-library/man'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/movie-library/man'
+install -m 755 -s mms-movie-library /home/pablo/gar-castorbox/images/main/usr/bin/mms-movie-library
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/movie-library'
+make -C pic-library install;
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/pic-library'
+make install -C man;
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/pic-library/man'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/pic-library/man'
+install -m 755 -s mms-pic-library /home/pablo/gar-castorbox/images/main/usr/bin/mms-pic-library
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/pic-library'
+#if test ! -d /home/pablo/gar-castorbox/images/main/var/cache/mms ; then mkdir -m 777 -p /home/pablo/gar-castorbox/images/main/var/cache/mms ; fi
+ Installation complete!
+
+ have fun :)
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741'
+ ==> Running make install in work/main.d/mms-1.1.0-1741/plugins/feature/weather-com
+DESTDIR="/home/pablo/gar-castorbox/images/main" prefix="/usr" exec_prefix="/usr" bindir="/usr/bin" sbindir="/usr/sbin" libexecdir="/usr/libexec" datadir="/usr/share" sysconfdir="/etc" sharedstatedir="/usr/share" localstatedir="/var" libdir="/usr/lib" infodir="/usr/info" lispdir="/usr/share/emacs/site-lisp" includedir="/usr/include" oldincludedir="/usr/include" mandir="/usr/share/man" docdir="/usr/share/doc" sourcedir="/usr/src" CPPFLAGS="" CFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32" LDFLAGS="-Wl,--as-needed" CXXFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32" CC="i586-castorbox-linux-gnu-gcc" CXX="i586-castorbox-linux-gnu-g++" LD="i586-castorbox-linux-gnu-ld" CPP="i586-castorbox-linux-gnu-cpp" AR="i586-castorbox-linux-gnu-ar" AS="i586-castorbox-linux-gnu-as" NM="i586-castorbox-linux-gnu-nm" RANLIB="i586-castorbox-linux-gnu-ranlib" STRIP="i586-castorbox-linux-gnu-strip" OBJCOPY="i586-castorbox-linux-gnu-objcopy" OBJDUMP="i586-castorbox-linux-gnu-objdump" make DESTDIR=/home/pablo/gar-castorbox/images/main  -C work/main.d/mms-1.1.0-1741/plugins/feature/weather-com BUILD_DIR="" AR="i586-castorbox-linux-gnu-ar mru" C="i586-castorbox-linux-gnu-gcc" CC="i586-castorbox-linux-gnu-gcc" CXX="i586-castorbox-linux-gnu-g++" LDFLAGS="" LD="i586-castorbox-linux-gnu-ld" DESTDIR="/home/pablo/gar-castorbox/images/main" OPTIMIZATION="" STDFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32 -funroll-loops -fomit-frame-pointer -pthread -I. -I/home/pablo/gar-castorbox/images/main/usr/include -DSUPERUSER" LIBTOOL="/bin/sh "/home/pablo/gar-castorbox/script/mms/mms-1.1.0/../../mms/mms-1.1.0/work/main.d/mms-1.1.0-1741"/libtool" PKGCONFIG="pkg-config" IMLIB2CONFIG="/home/pablo/gar-castorbox/images/main/usr/bin/imlib2-config" SDLCONFIG="/home/pablo/gar-castorbox/images/main/usr/bin/sdl-config"  install
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com'
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+da:
+de:
+cs:
+pt:
+sv:
+fr:
+ru:
+es:
+fi:
+pl:
+it:
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+make -C po
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+da:
+de:
+cs:
+pt:
+sv:
+fr:
+ru:
+es:
+fi:
+pl:
+it:
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+i586-castorbox-linux-gnu-g++ -pipe -march=pentium-mmx -mtune=generic -Os -m32 -funroll-loops -fomit-frame-pointer -pthread -I. -I/home/pablo/gar-castorbox/images/main/usr/include -DSUPERUSER -isystem/usr/include/ -I../ -I../../ -I../../../ -I../../output/ -I../tinyxml -I../../input/ -fPIC -shared \
+	-Wl,-nostdlib -o lib_feature_weather_com.so weather_com_config.o weather_com.o weather_com_opts.o weather_com_plugin.o -pthread -lccext2 -lz -lccgnu2 -ldl -lrt -lpcrecpp 
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+install lib_feature_weather_com.so /home/pablo/gar-castorbox/images/main/usr/lib/mms/plugins/
+make -C po install
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com/po'
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/mms/mms-1.1.0/work/main.d/mms-1.1.0-1741/plugins/feature/weather-com'
+echo " ==> Installing GPL2 license text"
+ ==> Installing GPL2 license text
+install -d /home/pablo/gar-castorbox/images/main/usr/licenses/mms/
+install -m 644 ../../licenses/GPL2.txt /home/pablo/gar-castorbox/images/main/usr/licenses/mms/
+mkdir -p cookies/main.d/. && date >> cookies/main.d/install-license-GPL2
+	[install] complete for mms.

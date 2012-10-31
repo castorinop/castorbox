@@ -1,0 +1,11 @@
+--- src/Makefile
++++ src/Makefile
+@@ -3,7 +3,7 @@
+ BUILD = 71
+ PLUGIN = libcdr-${VERSION}.${BUILD}.so
+ CFG = cfgCdr
+-CFLAGS = -fPIC -Wall -O2 -fomit-frame-pointer -D_REENTRANT
++CFLAGS = -fPIC -Wall $(OPT_FLAGS) -fomit-frame-pointer -D_REENTRANT
+ OBJECTS = cdr.o
+ CFGOBJS = conf.o interface.o support.o
+ LIBS = -lpthread

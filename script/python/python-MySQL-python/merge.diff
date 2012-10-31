@@ -1,0 +1,12 @@
+--- old/Makefile	2011-07-26 21:24:30.933700999 -0300
++++ new/Makefile	2012-06-09 15:39:23.420666998 -0300
+@@ -34,6 +34,9 @@
+ GAR_EXTRA_CONF += python/python/package-api.mk
+ include ../../gar.mk
+ 
++CFLAGS  := $(CFLAGS)  -fPIC
++LDFLAGS := $(LDFLAGS) -fPIC
++
+ CFLAGS  += -I$(DESTDIR)$(PYTHON_includedir)
+ CFLAGS  += -L$(DESTDIR)$(libdir)
+ LDFLAGS += -I$(DESTDIR)$(PYTHON_includedir)

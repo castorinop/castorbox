@@ -1,0 +1,260 @@
+BBC Tools and Information
+
+While GAR is a useful tool to automate builds, there are many other
+systems involved in building the BBC.  This document aims to explain
+some of the mechanisms behind the BBC, and how we get from a bunch of
+software to an actual bootable CD-ROM.
+
+= Singularity, El-Torito, and the LNX-BBC's Compression =
+
+== ISO 9660 and bbc.iso ==
+
+Standard CD-ROMs use a filesystem layout given the ISO9660
+designation.  The format is limited to filenames in the old DOS 8.3
+(eight letters, a dot, and a three-letter extension) format unless you
+use one of three or four extensions to the standard (Rockridge for
+Unix, Joliet for Microsoft, another for Macintosh, etc).  They all
+have the same net effect, which is long filenames.
+
+When we talk of "ISOs" or "ISO images", we mean files that contain the
+same set of bits that a CD-ROM would.  These ISO image files (typically
+named "bbc-foo.iso", where foo is a version number or release code)
+can be burned directly to a CD-R or CD-RW, typically using DAO (Disk
+At Once) burn techniques.  See your manual for details.
+
+== The lnx.img El-Torito image ==
+
+There are many extensions to the ISO9660 standard to make it possible
+to boot from a CD-ROM.  The oldest and most widely supported is the
+El-Torito standard.  This basically involves the creation of a boot
+diskette image that is placed on the ISO9660 filesystem.  The BBC
+calls its el-torito disk image "lnx.img".  The BIOS boots the
+El-Torito image as though it were actually a floppy, by loading the
+first 512 bytes into memory and running it.
+
+The lnx.img file contains an MS-DOS filesystem, and in that
+filesystem, there is a Linux kernel, an initial ramdisk, and the
+syslinux bootloader.  Syslinux loads the kernel into memory and gives
+it a number of parameters, including one that tells the kernel to load
+root.bin as an initial ramdisk (initrd).
+
+== The root.bin Inital Ramdisk ==
+
+Linux's initial ramdisk (initrd) feature allows a system to perform
+some special initialization that the kernel can't normally do by
+itself.  The kernel begins by mounting a filesystem image (specified
+by the bootloader using the "initrd" parameter) as root.  It then runs
+a script in that filesystem called /linuxrc.  When linuxrc finishes,
+the kernel unmounts the initrd and proceeds as usual, mounting the
+real root filesystem and running init.
+
+The initrd on the BBC is called root.bin and resides inside the
+lnx.img El Torito image.  It contains a copy of busybox that and a
+linuxrc script which attempts to mount each CD-ROM drive in turn,
+until it finds one containing a file called "singularity".  Once it
+has done this, it inserts the kernel module which can read the
+singularity file and exits, at which point the kernel mounts the
+filesystem contained in the singularity file as root.
+
+== Singularity ==
+
+Business card-sized CD-ROMs typically only hold about 50 megabytes of
+data, so we need to pull some tricks to fit everything the BBC holds.
+What the LNX-BBC does is to use a module called cloop.o to access a
+compressed loopback block device.  This is basically a gzipped file
+that's pretending to be a hard drive.  The file contains a romfs image
+that holds all of the software on the BBC.
+
+Once the Singularity is mounted, the kernel executes
+/sbin/singularity-init, which mounts a tmpfs filesystem and then hands
+control of the system to /sbin/init.
+
+== tmpfs ==
+
+Since CD-ROMs are read-only, we need a sort of RAMdisk to store files
+and configuration information.  Since RAMdisks in Linux are static and
+unwieldy, we use tmpfs.  tmpfs uses swap when available and is
+dynamically resizeable as needs change.  We mount a tmpfs volume on
+/mnt/rw and use a set of symlinks to make sure that /home, /etc, and
+/tmp are writable.
+
+= User Accounts on the BBC =
+
+The BBC now supports the inclusion of user accounts on a CD.  When the
+CD boots, part of the system initialization process involves looking
+for user tarballs, unpacking them in /home, and performing various
+operations on their contents.
+
+== User tarballs ==
+
+A user tarball contains three things which, combined together,
+completely describe a user account.  Using the username "beeb" as an
+example, the tarball beeb.tar.gz should contain these:
+
+ * a file called beeb.passwd containing the line from /etc/passwd for
+   the user "beeb"
+ * a file called beeb.group containing the line from /etc/group for
+   the user "beeb"
+ * a directory called beeb which will be beeb's home directory, in
+   /home, when the BBC boots
+
+A user tarball may also contain a file called .bootstrap in the user's
+home directory with execute permission.  This file will be executed
+with the user's uid at boot time as the last step in initialized the
+account.
+
+== Building a BBC containing user tarballs ==
+
+First, create a directory containing all of the things you would like
+to have in the home directory on the BBC.
+
+Then, after you've gotten a copy of GAR and before you begin building your
+LNX-BBC ISO, run the command "make -C special/accounts adduser" and
+answer its questions.  It will create your user tarball automatically
+and include it in the next ISO you build.
+
+== Including user tarballs from within another package ==
+
+A package can also build a user account on a BBC.  To do so, it is
+necessary to manually create appropriate .passwd, .group, and
+.bootstrap files and put them in the files/ directory of the package.
+Be sure to prepend the username to /all three/ files
+($(username).bootstrap will later be copied to $(username)/.bootstrap
+in the work/ directory).  In the Makefile, add the files to your
+DISTFILES variable and enumerate the users that your package will
+build using the GARUSERS variable (see net/openssh for an example of a
+package which does this).
+
+If you need to put things into the user's home directory that will
+appear there at runtime, simply install them to
+$(WORKDIR)/$(username)/.
+
+= Minit =
+
+LNX-BBC 2.0 uses an initscript system called minit.  Minit scripts
+reside in /etc/init.d and function like the initscripts of other
+GNU/Linux distributions with some notable differences.
+
+== Using minit scripts ==
+
+A minit script in /etc/init.d honors the standard initscript
+parameters start, stop, restart, and reload.  Minit also supports
+enable, disable, and status parameters.
+
+Disable and enable make it possible to prevent a script from starting
+and allow a script to start again, respectively.  A script which has
+been disabled will reject any attempt to start it until it has been
+enabled again.  By default, a script is enabled.
+
+The status parameter will show whether a script is currently running,
+enabled, or neither.
+
+== Writing minit scripts ==
+
+Minit scripts are written in GNU Make.  Every minit script starts with
+this line:
+
+----8<----
+#!/bin/make -sSf
+----8<----
+
+If you are debugging a minit script, you can make it more verbose by
+shortening it to this:
+
+----8<----
+#!/bin/make -f
+----8<----
+
+In general a minit script starts by setting variables and then
+includes the minit library, which is contained in the file
+/etc/init.d/init.mk.  If the script needs custom targets, they should
+go last.
+
+=== Required and Common variables ===
+
+The required variables are INITNAME, START_SCRIPTS, and one of either
+NOSTOP or STOP_SCRIPTS.  INITNAME should be set to the name of the
+script as it will appear in /etc/init.d.  START_SCRIPTS and
+STOP_SCRIPTS provide a list of "scripts" that minit will use to start
+and stop the service.  Scripts for some common tasks are provided by
+minit and controlled using additional variables.  If a script is not
+stoppable, then it should set the variable NOSTOP.  Any value is
+sufficient.
+
+To declare dependencies, use the NEEDS and WANTS variables.  A "needs"
+dependency is one that is required in order for the script or its
+service to function, and a "wants" dependency is one that is customarily
+used in conjunction with the script, but is not strictly necessary.
+For example, the script for a service which requires certain device
+nodes which are only available when devfsd is running should list
+"devfsd" in the value of the NEEDS variable.  However, a network
+server is generally used in conjunction with networking, but may not
+strictly require it, in which case it should list another script which
+starts the network in its WANTS variable.
+
+If a service is capable of "reloading" such as a daemon which can
+reread its configuration file when issued a particular signal, the
+minit script should set the RELOAD_SCRIPTS variable.  In the case of
+daemons that react to a signal, simply specify the required signal,
+such as SIGUSR1 or SIGHUP.  If a other processing is necessary, the
+RELOAD_SCRIPTS value may include arbitrary tokens, to which minit will
+prepend "reload-", and will search for a make target by the resulting
+name to perform the processing.
+
+=== Scripts for daemons ===
+
+The minit library provides scripts capable of starting and stopping
+most daemons.
+
+Most daemons detach from their controlling terminal either
+automatically or when invoked with a particular command line option
+and create a pid file which contains the PID of the daemon.  The
+"daemon" script is capable of starting this type of daemon.  It will
+attempt to start the program specified by the DAEMON variable, which
+defaults to the value of INITNAME, giving it the parameters specified
+by the DAEMON_OPTIONS variable, which is empty by default.
+
+For daemons which do not detach from their controlling terminal or
+create pid files, there is the "nohup" script.  It will forcibly
+detach the daemon from the controlling terminal and create a pid file
+for it, specified by the PIDFILE variable, which defaults to
+/var/run/$(INITNAME).pid.  The DAEMON and DAEMON_OPTIONS control nohup
+script the same way as they do the daemon script.
+
+Most daemons stop when they are issued a particular signal, which when
+trapped, causes the daemon to go through a shutdown sequence and exit
+cleanly.  Minit provides a generalized mechanism for sending any
+signal to the daemon, provided that there is a pid file.  To use this
+mechanism, specify the signal which will shutdown the daemon, like
+SIGTERM or SIGHUP.  The SIG% script expects to find the PID of the
+daemon in the file specified by the PIDFILE variable.
+
+=== Scripts with custom targets ===
+
+The START_SCRIPTS and STOP_SCRIPTS variables can specify any arbitrary
+"script" for starting and stopping the service.  For minit scripts
+which must perform some custom processing to start a service, the
+targets which define those "scripts" must appear in the minit script.
+Minit will prepend "start-" to each of the entries in the
+START_SCRIPTS variable and attempt to execute the gmake target by the
+resulting name.  Similarly, it will prepend "stop-" to each of the
+tokens in STOP_SCRIPTS and look for the resulting names as make
+targets.
+
+= Setuid Programs =
+
+The romfs filesystem used in the singularity lacks some permission
+bits, including the setuid bit.  LNX-BBC works around this by encoding
+the information into the directory structure as the contents of the
+singularity file are built.  Binaries which would ordinarily have the
+setuid bit set are moved from their installed path to one prefixed
+with "/setuid".  A symlink is created in its place which is directed
+to a path that will exist at runtime.  Part of the boot process
+involves copying a wrapper script into a filesystem that supports the
+setuid bit and establishing symlinks so that the ones created at build
+time lead to the wrapper script, which gains root permissions from its
+own setuid bit and then executes the appropriate binary in /setuid.
+
+To install binaries into this system, set the SETUID_PROGRAMS varible
+in the GAR Makefile.  The value should be a list of the absolute paths
+of your setuid binaries as they would normally appear at runtime.

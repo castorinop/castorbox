@@ -1,0 +1,5 @@
+2b999b2fb7798e1737d1fff8fac602ef  download/boost_1_33_1.tar.bz2
+010527e13688171fbeb8c89780907b20  download/boost_1_33_1-fix-include.patch
+a962b8467b0f9db80b9b9201b465b2c0  download/boost_1_33_1-libname.patch
+b2a2843cc0518582867e86180c83e405  download/boost_1_33_1-soname.patch
+55f8582cd0d55bf71bf724621eb07c6a  download/boost_1_33_1-ssize_t.patch

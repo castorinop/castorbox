@@ -1,0 +1,302 @@
+diff -Naur bluez-4.57-old/input/fakehid.c bluez-4.57-new/input/fakehid.c
+--- bluez-4.57-old/input/fakehid.c	2009-10-31 13:47:58.000000000 -0700
++++ bluez-4.57-new/input/fakehid.c	2009-10-31 13:48:37.000000000 -0700
+@@ -31,11 +31,13 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <sys/types.h>
++#include <sys/stat.h>
+ 
+ #include <bluetooth/bluetooth.h>
+ #include <bluetooth/l2cap.h>
+ #include <bluetooth/hidp.h>
+ #include <bluetooth/sdp.h>
++#include <bluetooth/hci.h>
+ 
+ #include <glib.h>
+ #include <dbus/dbus.h>
+@@ -94,11 +96,11 @@
+ 
+ static unsigned int ps3remote_keymap[] = {
+ 	[0x16] = KEY_EJECTCD,
+-	[0x64] = KEY_AUDIO,
+-	[0x65] = KEY_ANGLE,
+-	[0x63] = KEY_SUBTITLE,
+-	[0x0f] = KEY_CLEAR,
+-	[0x28] = KEY_TIME,
++	[0x64] = KEY_A,			/* audio */
++	[0x65] = KEY_Z,			/* angle */
++	[0x63] = KEY_T,			/* subtitle */
++	[0x0f] = KEY_DELETE,		/* clear */
++	[0x28] = KEY_END,		/* timer */
+ 	[0x00] = KEY_1,
+ 	[0x01] = KEY_2,
+ 	[0x02] = KEY_3,
+@@ -109,41 +111,41 @@
+ 	[0x07] = KEY_8,
+ 	[0x08] = KEY_9,
+ 	[0x09] = KEY_0,
+-	[0x81] = KEY_RED,
+-	[0x82] = KEY_GREEN,
+-	[0x80] = KEY_BLUE,
+-	[0x83] = KEY_YELLOW,
+-	[0x70] = KEY_INFO,		/* display */
++	[0x81] = KEY_F7,		/* red */
++	[0x82] = KEY_F8,		/* green */
++	[0x83] = KEY_F9,		/* yellow */
++	[0x80] = KEY_F10,		/* blue */
++	[0x70] = KEY_D,			/* display */
+ 	[0x1a] = KEY_MENU,		/* top menu */
+-	[0x40] = KEY_CONTEXT_MENU,	/* pop up/menu */
++	[0x40] = KEY_F11,		/* pop up/menu */
+ 	[0x0e] = KEY_ESC,		/* return */
+-	[0x5c] = KEY_OPTION,		/* options/triangle */
++	[0x5c] = KEY_F12,		/* options/triangle */
+ 	[0x5d] = KEY_BACK,		/* back/circle */
+-	[0x5f] = KEY_SCREEN,		/* view/square */
+-	[0x5e] = BTN_0,			/* cross */
++	[0x5f] = KEY_V,			/* view/square */
++	[0x5e] = KEY_X,			/* cross */
+ 	[0x54] = KEY_UP,
+ 	[0x56] = KEY_DOWN,
+ 	[0x57] = KEY_LEFT,
+ 	[0x55] = KEY_RIGHT,
+ 	[0x0b] = KEY_ENTER,
+-	[0x5a] = BTN_TL,		/* L1 */
+-	[0x58] = BTN_TL2,		/* L2 */
+-	[0x51] = BTN_THUMBL,		/* L3 */
+-	[0x5b] = BTN_TR,		/* R1 */
+-	[0x59] = BTN_TR2,		/* R2 */
+-	[0x52] = BTN_THUMBR,		/* R3 */
++	[0x5a] = KEY_F1,		/* L1 */
++	[0x58] = KEY_F2,		/* L2 */
++	[0x51] = KEY_F3,		/* L3 */
++	[0x5b] = KEY_F4,		/* R1 */
++	[0x59] = KEY_F5,		/* R2 */
++	[0x52] = KEY_F6,		/* R3 */
+ 	[0x43] = KEY_HOMEPAGE,		/* PS button */
+-	[0x50] = KEY_SELECT,
+-	[0x53] = BTN_START,
+-	[0x33] = KEY_REWIND,		/* scan back */
++	[0x50] = KEY_INSERT,		/* select */
++	[0x53] = KEY_HOME,		/* start */
++	[0x33] = KEY_R,			/* scan back */
+ 	[0x32] = KEY_PLAY,
+-	[0x34] = KEY_FORWARD,		/* scan forward */
+-	[0x30] = KEY_PREVIOUS,
+-	[0x38] = KEY_STOP,
+-	[0x31] = KEY_NEXT,
+-	[0x60] = KEY_FRAMEBACK,		/* slow/step back */
+-	[0x39] = KEY_PAUSE,
+-	[0x61] = KEY_FRAMEFORWARD,	/* slow/step forward */
++	[0x34] = KEY_F,			/* scan forward */
++	[0x30] = KEY_PAGEUP,		/* next */
++	[0x38] = KEY_STOP,		/* stop */
++	[0x31] = KEY_PAGEDOWN,		/* previous */
++	[0x60] = KEY_COMMA,		/* slow/step back */
++	[0x39] = KEY_PAUSE,		/* pause */
++	[0x61] = KEY_DOT,		/* slow/step forward */
+ 	[0xff] = KEY_MAX,
+ };
+ 
+@@ -167,7 +169,7 @@
+ 	for (i = 0; i < 24; i++) {
+ 		if ((lastmask & (1 << i)) == (mask & (1 << i)))
+ 			continue;
+-		if (ps3remote_bits[i] == 0)
++	if (ps3remote_bits[i] == 0)
+ 			goto error;
+ 		retval = ps3remote_keymap[ps3remote_bits[i]];
+ 		if (mask & (1 << i))
+@@ -208,18 +210,67 @@
+ 						lastmask & 0xff, lastkey);
+ 	return -1;
+ }
++static gboolean ps3remote_sendkey(int uinput, unsigned int key, 
++				  unsigned int value)
++{
++	struct uinput_event event;
++	memset(&event, 0, sizeof(event));
++	gettimeofday(&event.time, NULL);
++	event.type = EV_KEY;
++	event.code = key;
++	event.value = value;
++	if (write(uinput, &event, sizeof(event)) != sizeof(event)) {
++		error("Error writing to uinput device");
++		return FALSE;
++	}
+ 
++	memset(&event, 0, sizeof(event));
++	gettimeofday(&event.time, NULL);
++	event.type = EV_SYN;
++	event.code = SYN_REPORT;
++	if (write(uinput, &event, sizeof(event)) != sizeof(event)) {
++		error("Error writing to uinput device");
++		return FALSE;
++	}
++	return TRUE;
++}
++static gboolean ps3remote_out(GIOChannel *chan, GIOCondition cond,
++                                gpointer data)
++{
++	struct fake_input *fake = data;
++	const struct input_device *idev = ((struct fake_hid *)fake->priv)->idev;
++	gulong ms;
++	uint16_t to = (((struct fake_hid *)fake->priv)->timeout < 5) ? 
++				300 : ((struct fake_hid *)fake->priv)->timeout;
++
++	if(g_timer_elapsed(((struct fake_hid *)fake->priv)->timer,&ms) > to ) {
++		DBG("idle timeout, disconnecting BT channel");
++		device_request_disconnect(idev->device, NULL);
++		return FALSE;
++	} else
++		usleep(1000);
++	return TRUE;
++}
+ static gboolean ps3remote_event(GIOChannel *chan, GIOCondition cond,
+ 				gpointer data)
+ {
++	static unsigned int lastkey = 0;
++	static unsigned int lastval = 0;
+ 	struct fake_input *fake = data;
+-	struct uinput_event event;
+ 	unsigned int key, value = 0;
+ 	gsize size;
+ 	char buff[50];
+ 
+-	if (cond & G_IO_NVAL)
+-		return FALSE;
++	g_timer_start(((struct fake_hid *)fake->priv)->timer);
++	if (cond & G_IO_NVAL) {
++		if(lastkey == KEY_HOMEPAGE && lastval == 1) {
++			DBG("Remote turned off");
++			goto failed;
++		} else {
++			DBG("Remote unpaired [%u:%u]", lastkey, lastval);
++			goto failed;
++		}
++	}
+ 
+ 	if (cond & (G_IO_HUP | G_IO_ERR)) {
+ 		error("Hangup or error on rfcomm server socket");
+@@ -233,50 +284,51 @@
+ 		error("IO Channel read error");
+ 		goto failed;
+ 	}
+-
+ 	key = ps3remote_decode(buff, size, &value);
+ 	if (key == KEY_RESERVED) {
+ 		error("Got invalid key from decode");
+ 		goto failed;
+ 	} else if (key == KEY_MAX)
+ 		return TRUE;
+-
+-	memset(&event, 0, sizeof(event));
+-	gettimeofday(&event.time, NULL);
+-	event.type = EV_KEY;
+-	event.code = key;
+-	event.value = value;
+-	if (write(fake->uinput, &event, sizeof(event)) != sizeof(event)) {
+-		error("Error writing to uinput device");
++	/* Delaying key till release, assuming possible turn-off */
++	if(key == KEY_HOMEPAGE) {
++		if(value == 0 && lastkey == KEY_HOMEPAGE && lastval == 1) {
++			ps3remote_sendkey(fake->uinput, key, 1);
++			ps3remote_sendkey(fake->uinput, key, 0);
++		} else
++			DBG("Delayed: %u:%u (%u:%u)", key, value, lastkey, lastval);
++	} else if(!ps3remote_sendkey(fake->uinput, key, value))
+ 		goto failed;
+-	}
+-
+-	memset(&event, 0, sizeof(event));
+-	gettimeofday(&event.time, NULL);
+-	event.type = EV_SYN;
+-	event.code = SYN_REPORT;
+-	if (write(fake->uinput, &event, sizeof(event)) != sizeof(event)) {
+-		error("Error writing to uinput device");
+-		goto failed;
+-	}
+-
++	lastkey = key;
++	lastval = value;
++	DBG("Passed key %u:%u", key, value);
+ 	return TRUE;
+ 
+-failed:
++failed: /*
+ 	ioctl(fake->uinput, UI_DEV_DESTROY);
+ 	close(fake->uinput);
+-	fake->uinput = -1;
++	fake->uinput = -1;*/
++	g_timer_stop(((struct fake_hid *)fake->priv)->timer);
+ 	g_io_channel_unref(fake->io);
+-
++	DBG("Event failed");
+ 	return FALSE;
+ }
+-
+ static int ps3remote_setup_uinput(struct fake_input *fake,
+ 				  struct fake_hid *fake_hid)
+ {
+ 	struct uinput_dev dev;
++	struct stat sbuf;
+ 	int i;
+ 
++	if(fake->uinput > 0) {
++		if(!(i=fstat(fake->uinput, &sbuf))) {
++			DBG("input %d is opened", fake->uinput);
++			return 0;
++		} else {
++			DBG("fstat(%d): error[%d]: %s", fake->uinput, i, strerror(errno));
++		}
++	}
++
+ 	fake->uinput = open("/dev/input/uinput", O_RDWR);
+ 	if (fake->uinput < 0) {
+ 		fake->uinput = open("/dev/uinput", O_RDWR);
+@@ -348,6 +400,8 @@
+ 		.disconnect	= fake_hid_common_disconnect,
+ 		.event		= ps3remote_event,
+ 		.setup_uinput	= ps3remote_setup_uinput,
++		.fake		= NULL,
++		.timeout	= 15,
+ 	},
+ 
+ 	{ },
+@@ -373,6 +427,13 @@
+ int fake_hid_connadd(struct fake_input *fake, GIOChannel *intr_io,
+ 						struct fake_hid *fake_hid)
+ {
++	if(fake_hid->fake == NULL) {
++		fake_hid->fake = fake;
++		fake_hid->timer = g_timer_new();
++	} else {
++		g_free(fake);
++		fake = fake_hid->fake;
++	}
+ 	if (fake_hid->setup_uinput(fake, fake_hid)) {
+ 		error("Error setting up uinput");
+ 		return ENOMEM;
+@@ -382,6 +443,6 @@
+ 	g_io_channel_set_close_on_unref(fake->io, TRUE);
+ 	g_io_add_watch(fake->io, G_IO_IN | G_IO_ERR | G_IO_HUP | G_IO_NVAL,
+ 					(GIOFunc) fake_hid->event, fake);
+-
++	g_io_add_watch(fake->io, G_IO_OUT, (GIOFunc) ps3remote_out, fake);
+ 	return 0;
+ }
+diff -Naur bluez-4.57-old/input/fakehid.h bluez-4.57-new/input/fakehid.h
+--- bluez-4.57-old/input/fakehid.h	2009-10-31 13:47:58.000000000 -0700
++++ bluez-4.57-new/input/fakehid.h	2009-10-31 13:48:37.000000000 -0700
+@@ -31,6 +31,10 @@
+ 	int (*disconnect) (struct fake_input *fake_input);
+ 	gboolean (*event) (GIOChannel *chan, GIOCondition cond, gpointer data);
+ 	int (*setup_uinput) (struct fake_input *fake, struct fake_hid *fake_hid);
++	struct fake_input *fake;
++	const struct input_device *idev;
++	GTimer *timer;
++	uint16_t timeout;
+ };
+ 
+ struct fake_hid *get_fake_hid(uint16_t vendor, uint16_t product);

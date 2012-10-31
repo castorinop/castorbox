@@ -1,0 +1,16 @@
+diff -Naur WWW-Curl-4.12-old/Makefile.PL WWW-Curl-4.12-new/Makefile.PL
+--- WWW-Curl-4.12-old/Makefile.PL	2010-07-04 13:22:53.000000000 -0700
++++ WWW-Curl-4.12-new/Makefile.PL	2010-07-05 13:54:58.000000000 -0700
+@@ -47,11 +47,7 @@
+ 
+ if ($^O ne 'MSWin32') {
+ 	push @includes, qw(
+-		/usr/include
+-		/usr/local/curl/include
+-		/usr/local/include/curl
+-		../../include
+-		../curl/include
++		@GAR_DESTDIR@@GAR_includedir@
+ 	);
+ }
+ 

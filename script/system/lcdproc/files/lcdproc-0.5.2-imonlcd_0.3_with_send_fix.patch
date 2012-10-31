@@ -1,0 +1,1488 @@
+diff -Naur lcdproc-0.5.2-old/acinclude.m4 lcdproc-0.5.2-new/acinclude.m4
+--- lcdproc-0.5.2-old/acinclude.m4	2007-04-14 07:39:28.000000000 -0700
++++ lcdproc-0.5.2-new/acinclude.m4	2007-10-17 12:54:09.000000000 -0700
+@@ -6,7 +6,7 @@
+ 	[                  which is a comma-separated list of drivers.]
+ 	[                  Possible drivers are:]
+ 	[                    bayrad,CFontz,CFontz633,CFontzPacket,curses,CwLnx,ea65,]
+-	[                    EyeboxOne,g15,glcdlib,glk,hd44780,icp_a106,imon,IOWarrior,]
++	[                    EyeboxOne,g15,glcdlib,glk,hd44780,icp_a106,imon,imonlcd,IOWarrior,]
+ 	[                    irman,joy,lb216,lcdm001,lcterm,lirc,MD8800,ms6931,]
+ 	[                    mtc_s16209x,MtxOrb,NoritakeVFD,picolcd,pyramid,sed1330]
+ 	[                    sed1520,serialPOS,serialVFD,sli,stv5730,svga,t6963,text,]
+@@ -16,7 +16,7 @@
+ 	drivers="$enableval",
+ 	drivers=[bayrad,CFontz,CFontz633,curses,CwLnx,glk,lb216,lcdm001,MtxOrb,pyramid,text])
+ 
+-allDrivers=[bayrad,CFontz,CFontz633,CFontzPacket,curses,CwLnx,ea65,EyeboxOne,g15,glcdlib,glk,hd44780,icp_a106,imon,IOWarrior,irman,joy,lb216,lcdm001,lcterm,lirc,MD8800,ms6931,mtc_s16209x,MtxOrb,NoritakeVFD,picolcd,pyramid,sed1330,sed1520,serialPOS,serialVFD,sli,stv5730,svga,t6963,text,tyan,ula200,xosd]
++allDrivers=[bayrad,CFontz,CFontz633,CFontzPacket,curses,CwLnx,ea65,EyeboxOne,g15,glcdlib,glk,hd44780,icp_a106,imon,imonlcd,IOWarrior,irman,joy,lb216,lcdm001,lcterm,lirc,MD8800,ms6931,mtc_s16209x,MtxOrb,NoritakeVFD,picolcd,pyramid,sed1330,sed1520,serialPOS,serialVFD,sli,stv5730,svga,t6963,text,tyan,ula200,xosd]
+ 
+ drivers=`echo $drivers | sed -e 's/,/ /g'`
+ 
+@@ -207,6 +207,10 @@
+ 			DRIVERS="$DRIVERS imon${SO}"
+ 			actdrivers=["$actdrivers imon"]
+ 			;;
++		imonlcd)
++			DRIVERS="$DRIVERS imonlcd${SO}"
++			actdrivers=["$actdrivers imonlcd"]
++			;;
+ 		IOWarrior)
+ 			if test "$enable_libusb" = yes ; then
+ 				DRIVERS="$DRIVERS IOWarrior${SO}"
+diff -Naur lcdproc-0.5.2-old/server/drivers/imonlcd.c lcdproc-0.5.2-new/server/drivers/imonlcd.c
+--- lcdproc-0.5.2-old/server/drivers/imonlcd.c	1969-12-31 16:00:00.000000000 -0800
++++ lcdproc-0.5.2-new/server/drivers/imonlcd.c	2007-10-17 12:50:45.000000000 -0700
+@@ -0,0 +1,1371 @@
++/**
++ * Driver for SoundGraph iMON OEM (and others) LCD Module
++ *
++ * In order to be able to use it, you have to install the lirc_imonlcd
++ * kernel module for LIRC (http://www.lirc.org) -- until that module is
++ * available in the main LIRC branch, you can get a patch for it from
++ * the same place you got this patch.
++ *
++ * Copyright (c) 2007, Dean Harding <dean@codeka.com>, but (heavily :p)
++ * on the work of Venky Raju.
++ * Vastly (hopefully) improved by Christian Leuschen <christian.leuschenATgmx.de>.
++ *
++ * This source code is being released under the GPL.
++ * Please see the file COPYING in this package for details.
++ *
++ */
++
++#include <stdlib.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <termios.h>
++#include <fcntl.h>
++#include <string.h>
++#include <errno.h>
++#include <time.h>
++#include <stdint.h>
++#include <math.h>
++
++#ifdef HAVE_CONFIG_H
++# include "config.h"
++#endif
++
++#include "lcd.h"
++#include "lcd_lib.h"
++#include "shared/debug.h"
++//#define DEBUG
++#include "report.h"
++
++
++#include "imonlcd.h"
++
++#define DEFAULT_DEVICE    "/dev/lcd0"
++#define DEFAULT_SIZE      "96x16"        // This is the size in "pixels"...
++#define DEFAULT_CONTRAST  "625"
++#define DEFAULT_BACKLIGHT "1"            // default: turn backlight on
++#define DEFAULT_DISCMODE  "0"            // default: spin the "slim" disc
++
++#define LCD_DEFAULT_CELL_WIDTH    6
++#define LCD_DEFAULT_CELL_HEIGHT   8
++
++#define ON_EXIT_SHOWMSG      0    // Do nothing -- just leave the "shutdown" message there
++#define ON_EXIT_SHOWCLOCK    1    // Show the big clock
++#define ON_EXIT_BLANKSCREEN  2    // Blank the device completely
++
++#define DEFAULT_ON_EXIT        "1"
++
++// Vars for the server core
++MODULE_EXPORT char *api_version = API_VERSION;
++MODULE_EXPORT int stay_in_foreground = 0;
++MODULE_EXPORT int supports_multiple = 0;
++MODULE_EXPORT char *symbol_prefix = "imonlcd_";
++
++// Our private data
++typedef struct {
++    char info[255];
++    char imon_filename[256];
++    int imon_fd;
++    unsigned char *framebuf;
++    int height;
++    int width;
++    int cellwidth;
++    int cellheight;
++    int on_exit;
++    int contrast;      // 0 = lowest contrast, 1000 = highest
++    int backlightOn;   // stores the backlight state
++    int discMode;      // 0 = two disc-segments spinning as default,
++                       // 1 = their complement spinning
++
++    /*
++     * Here we record the last "state" of the CD icon so that we can "animate" it.
++     */
++    int last_cd_state;
++    time_t last_cd_state_change;
++    uint64_t last_icon_state;
++    int lastPrivateIconState; // remind the last state for setting the icons
++} PrivateData;
++
++/**
++ * Just for convenience and to have the commands at one place.
++ */
++#define COMMANDS_SET_ICONS      (uint64_t) 0x0100000000000000
++#define COMMANDS_SET_CONTRAST   (uint64_t) 0x0300000000000000
++#define COMMANDS_DISPLAY        (uint64_t) 0x5000000000000000
++#define COMMANDS_SHUTDOWN       (uint64_t) 0x5000000000000008
++#define COMMANDS_DISPLAY_ON     (uint64_t) 0x5000000000000040
++#define COMMANDS_CLEAR_ALARM    (uint64_t) 0x5100000000000000
++#define COMMANDS_SET_LINES0     (uint64_t) 0x1000000000000000
++#define COMMANDS_SET_LINES1     (uint64_t) 0x1100000000000000
++#define COMMANDS_SET_LINES2     (uint64_t) 0x1200000000000000
++
++/*
++ * These are used with the imon_output function to determine which icons to turn on/off. Because we
++ * only get a 32-bit integer to play, some of the icons are grouped into "sets" from which you can
++ * only select to turn one on at a time.
++ */
++#define IMON_OUTPUT_CD_MASK         0x00000001
++#define IMON_OUTPUT_TOPROW_MASK     0x0000000E
++#define IMON_OUTPUT_SPEAKER_MASK    0x00000030
++#define IMON_OUTPUT_SPDIF_MASK      0x00000040
++#define IMON_OUTPUT_SRC_MASK        0x00000080
++#define IMON_OUTPUT_FIT_MASK        0x00000100
++#define IMON_OUTPUT_TV_MASK         0x00000200
++#define IMON_OUTPUT_HDTV_MASK       0x00000400
++#define IMON_OUTPUT_SCR1_MASK       0x00000800
++#define IMON_OUTPUT_SCR2_MASK       0x00001000
++#define IMON_OUTPUT_BRICONS_MASK    0x0000E000
++#define IMON_OUTPUT_BMICONS_MASK    0x00070000
++#define IMON_OUTPUT_BLICONS_MASK    0x00380000
++#define IMON_OUTPUT_VOL_MASK        0x00400000
++#define IMON_OUTPUT_TIME_MASK       0x00800000
++#define IMON_OUTPUT_ALARM_MASK      0x01000000
++#define IMON_OUTPUT_REC_MASK        0x02000000
++#define IMON_OUTPUT_REP_MASK        0x04000000
++#define IMON_OUTPUT_SFL_MASK        0x08000000
++
++#define IMON_OUTPUT_PBARS_MASK      0x10000000
++#define IMON_OUTPUT_DISK_IN_MASK    0x20000000
++
++
++#define IMON_ICON_ALL      (uint64_t) 0x00FFFFFFFFFFFFFF
++//Byte 6
++#define IMON_ICON_DISK_OFF (uint64_t) 0x7F7000FFFFFFFFFF
++#define IMON_ICON_DISK_ON  (uint64_t) 0x0080FF0000000000
++
++#define IMON_ICON_DISK_IN  (uint64_t) 0x0080000000000000
++#define IMON_ICON_CD_IN    (uint64_t) 0x00806B0000000000
++#define IMON_ICON_DVD_IN   (uint64_t) 0x0080550000000000
++
++// Byte 5
++#define IMON_ICON_WMA2    ((uint64_t) 0x1 << 39)
++#define IMON_ICON_WAV     ((uint64_t) 0x1 << 38)
++#define IMON_ICON_REP     ((uint64_t) 0x1 << 37)
++#define IMON_ICON_SFL     ((uint64_t) 0x1 << 36)
++#define IMON_ICON_ALARM   ((uint64_t) 0x1 << 35)
++#define IMON_ICON_REC     ((uint64_t) 0x1 << 34)
++#define IMON_ICON_VOL     ((uint64_t) 0x1 << 33)
++#define IMON_ICON_TIME    ((uint64_t) 0x1 << 32)
++// Byte 4
++#define IMON_ICON_XVID    ((uint64_t) 0x1 << 31)
++#define IMON_ICON_WMV     ((uint64_t) 0x1 << 30)
++#define IMON_ICON_MPG2    ((uint64_t) 0x1 << 29)
++#define IMON_ICON_AC3     ((uint64_t) 0x1 << 28)
++#define IMON_ICON_DTS     ((uint64_t) 0x1 << 27)
++#define IMON_ICON_WMA     ((uint64_t) 0x1 << 26)
++#define IMON_ICON_MP3     ((uint64_t) 0x1 << 25)
++#define IMON_ICON_OGG     ((uint64_t) 0x1 << 24)
++
++//Byte 3
++#define IMON_ICON_SRC     ((uint64_t) 0x1 << 23)
++#define IMON_ICON_FIT     ((uint64_t) 0x1 << 22)
++#define IMON_ICON_TV_2    ((uint64_t) 0x1 << 21)
++#define IMON_ICON_HDTV    ((uint64_t) 0x1 << 20)
++#define IMON_ICON_SCR1    ((uint64_t) 0x1 << 19)
++#define IMON_ICON_SCR2    ((uint64_t) 0x1 << 18)
++#define IMON_ICON_MPG     ((uint64_t) 0x1 << 17)
++#define IMON_ICON_DIVX    ((uint64_t) 0x1 << 16)
++// Byte 2
++#define IMON_SPKR_FC      ((uint64_t) 0x1 << 15)
++#define IMON_SPKR_FR      ((uint64_t) 0x1 << 14)
++#define IMON_SPKR_SL      ((uint64_t) 0x1 << 13)
++#define IMON_SPKR_LFE     ((uint64_t) 0x1 << 12)
++#define IMON_SPKR_SR      ((uint64_t) 0x1 << 11)
++#define IMON_SPKR_RL      ((uint64_t) 0x1 << 10)
++#define IMON_SPKR_SPDIF   ((uint64_t) 0x1 << 9)
++#define IMON_SPKR_RR      ((uint64_t) 0x1 << 8)
++// Byte 1
++#define IMON_ICON_MUSIC   ((uint64_t) 0x1 << 7)
++#define IMON_ICON_MOVIE   ((uint64_t) 0x1 << 6)
++#define IMON_ICON_PHOTO   ((uint64_t) 0x1 << 5)
++#define IMON_ICON_CD_DVD  ((uint64_t) 0x1 << 4)
++#define IMON_ICON_TV      ((uint64_t) 0x1 << 3)
++#define IMON_ICON_WEBCAST ((uint64_t) 0x1 << 2)
++#define IMON_ICON_NEWS    ((uint64_t) 0x1 << 1)
++#define IMON_SPKR_FL      ((uint64_t) 0x1)
++
++/*
++ * The iMON LCD doesn't have a "text mode" -- everthing is pixel-based. So we need to define
++ * our own font, basically. This structure holds the definition of that font. The characters
++ * we define here are 6x8 pixels in size, each byte in the 'pixels' array represents one column
++ * of pixels. The most significant bit is the top row, the least significant bit is the bottom
++ * row.
++ */
++typedef struct {
++    int ch;
++    char pixels[6];
++} imon_font;
++
++static imon_font font[] = {
++        { ' ', { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 } },
++        { '!', { 0x0, 0x0, 0x0, 0xF6, 0x0, 0x0 } },
++        { '"', { 0x0, 0x0, 0xE0, 0x0, 0xE0, 0x0 } },
++        { '#', { 0x0, 0x28, 0xFE, 0x28, 0xFE, 0x28 } },
++        { '$', { 0x0, 0x0, 0xE0, 0x20, 0x78, 0x0 } },
++        { '%', { 0x0, 0xC4, 0xC8, 0x10, 0x26, 0x46 } },
++        { '&', { 0x0, 0x6C, 0x92, 0x6A, 0x4, 0xA } },
++        { '\'', { 0x0, 0x0, 0x0, 0xE0, 0x0, 0x0 } },
++        { '(', { 0x0, 0x0, 0x38, 0x44, 0x82, 0x0 } },
++        { ')', { 0x0, 0x0, 0x82, 0x44, 0x38, 0x0 } },
++        { '*', { 0x0, 0x28, 0x10, 0x7C, 0x10, 0x28 } },
++        { '+', { 0x0, 0x10, 0x10, 0x7C, 0x10, 0x10 } },
++        { ',', { 0x0, 0x0, 0xA, 0xC, 0x0, 0x0 } },
++        { '-', { 0x0, 0x10, 0x10, 0x10, 0x10, 0x10 } },
++        { '.', { 0x0, 0x0, 0x6, 0x6, 0x0, 0x0 } },
++        { '/', { 0x0, 0x4, 0x8, 0x10, 0x20, 0x40 } },
++        { '0', { 0x0, 0x7C, 0x8A, 0x92, 0xA2, 0x7C } },
++        { '1', { 0x0, 0x0, 0x42, 0xFE, 0x2, 0x0 } },
++        { '2', { 0x0, 0x42, 0x86, 0x8A, 0x92, 0x62 } },
++        { '3', { 0x0, 0x84, 0x82, 0xA2, 0xD2, 0x8C } },
++        { '4', { 0x0, 0x18, 0x28, 0x48, 0xFE, 0x8 } },
++        { '5', { 0x0, 0xE4, 0xA2, 0xA2, 0xA2, 0x9C } },
++        { '6', { 0x0, 0x3C, 0x52, 0x92, 0x92, 0xC } },
++        { '7', { 0x0, 0x80, 0x8E, 0x90, 0xA0, 0xC0 } },
++        { '8', { 0x0, 0x6C, 0x92, 0x92, 0x92, 0x6C } },
++        { '9', { 0x0, 0x60, 0x92, 0x92, 0x94, 0x78 } },
++        { ':', { 0x0, 0x0, 0x6C, 0x6C, 0x0, 0x0 } },
++        { ';', { 0x0, 0x0, 0x6A, 0x6C, 0x0, 0x0 } },
++        { '<', { 0x0, 0x10, 0x28, 0x44, 0x82, 0x0 } },
++        { '=', { 0x0, 0x28, 0x28, 0x28, 0x28, 0x28 } },
++        { '>', { 0x0, 0x0, 0x82, 0x44, 0x28, 0x10 } },
++        { '?', { 0x0, 0x40, 0x80, 0x8A, 0x90, 0x60 } },
++        { '@', { 0x0, 0x7C, 0x82, 0xBA, 0x92, 0x72 } },
++        { 'A', { 0x0, 0x7E, 0x90, 0x90, 0x90, 0x7E } },
++        { 'B', { 0x0, 0xFE, 0x92, 0x92, 0x92, 0x6C } },
++        { 'C', { 0x0, 0x7C, 0x82, 0x82, 0x82, 0x44 } },
++        { 'D', { 0x0, 0xFE, 0x82, 0x82, 0x82, 0x7C } },
++        { 'E', { 0x0, 0xFE, 0x92, 0x92, 0x92, 0x82 } },
++        { 'F', { 0x0, 0xFE, 0x90, 0x90, 0x90, 0x80 } },
++        { 'G', { 0x0, 0x7C, 0x82, 0x92, 0x92, 0x5E } },
++        { 'H', { 0x0, 0xFE, 0x10, 0x10, 0x10, 0xFE } },
++        { 'I', { 0x0, 0x0, 0x82, 0xFE, 0x82, 0x0 } },
++        { 'J', { 0x0, 0x4, 0x2, 0x82, 0xFC, 0x80 } },
++        { 'K', { 0x0, 0xFE, 0x10, 0x28, 0x44, 0x82 } },
++        { 'L', { 0x0, 0xFE, 0x2, 0x2, 0x2, 0x2 } },
++        { 'M', { 0x0, 0xFE, 0x40, 0x30, 0x40, 0xFE } },
++        { 'N', { 0x0, 0xFE, 0x20, 0x10, 0x8, 0xFE } },
++        { 'O', { 0x0, 0x7C, 0x82, 0x82, 0x82, 0x7C } },
++        { 'P', { 0x0, 0xFE, 0x90, 0x90, 0x90, 0x60 } },
++        { 'Q', { 0x0, 0x7C, 0x82, 0x8A, 0x84, 0x7A } },
++        { 'R', { 0x0, 0xFE, 0x90, 0x98, 0x94, 0x62 } },
++        { 'S', { 0x0, 0x62, 0x92, 0x92, 0x92, 0x8C } },
++        { 'T', { 0x0, 0x80, 0x80, 0xFE, 0x80, 0x80 } },
++        { 'U', { 0x0, 0xFC, 0x2, 0x2, 0x2, 0xFC } },
++        { 'V', { 0x0, 0xF0, 0xC, 0x2, 0xC, 0xF0 } },
++        { 'W', { 0x0, 0xFC, 0x2, 0xC, 0x2, 0xFC } },
++        { 'X', { 0x0, 0xC6, 0x28, 0x10, 0x28, 0xC6 } },
++        { 'Y', { 0x0, 0xE0, 0x10, 0xE, 0x10, 0xE0 } },
++        { 'Z', { 0x0, 0x86, 0x8A, 0x92, 0xA2, 0xC2 } },
++        { '[', { 0x0, 0x0, 0xFE, 0x82, 0x0, 0x0 } },
++        { '\\', { 0x0, 0x40, 0x20, 0x10, 0x8, 0x4 } },
++        { ']', { 0x0, 0x0, 0x82, 0xFE, 0x0, 0x0 } },
++        { '^', { 0x0, 0x20, 0x40, 0x80, 0x40, 0x20 } },
++        { '_', { 0x0, 0x2, 0x2, 0x2, 0x2, 0x2 } },
++        { '`', { 0x0, 0x0, 0x0, 0xC0, 0x20, 0x0 } },
++        { 'a', { 0x0, 0x4, 0x2A, 0x2A, 0x2A, 0x1E } },
++        { 'b', { 0x0, 0xFE, 0x12, 0x22, 0x22, 0x1C } },
++        { 'c', { 0x0, 0x1C, 0x22, 0x22, 0x22, 0x4 } },
++        { 'd', { 0x0, 0x1C, 0x22, 0x22, 0x12, 0xFE } },
++        { 'e', { 0x0, 0x1C, 0x2A, 0x2A, 0x2A, 0x18 } },
++        { 'f', { 0x0, 0x10, 0x7E, 0x90, 0x80, 0x40 } },
++        { 'g', { 0x0, 0x30, 0x4A, 0x4A, 0x4A, 0x7C } },
++        { 'h', { 0x0, 0xFE, 0x10, 0x20, 0x20, 0x1E } },
++        { 'i', { 0x0, 0x0, 0x22, 0xBE, 0x2, 0x0 } },
++        { 'j', { 0x0, 0x4, 0x2, 0x22, 0xBC, 0x0 } },
++        { 'k', { 0x0, 0x0, 0xFE, 0x8, 0x14, 0x22 } },
++        { 'l', { 0x0, 0x0, 0x82, 0xFE, 0x2, 0x0 } },
++        { 'm', { 0x0, 0x3E, 0x20, 0x18, 0x20, 0x1E } },
++        { 'n', { 0x0, 0x3E, 0x10, 0x20, 0x20, 0x1E } },
++        { 'o', { 0x0, 0x1C, 0x22, 0x22, 0x22, 0x1C } },
++        { 'p', { 0x0, 0x3E, 0x28, 0x28, 0x28, 0x10 } },
++        { 'q', { 0x0, 0x10, 0x28, 0x28, 0x18, 0x3E } },
++        { 'r', { 0x0, 0x3E, 0x10, 0x20, 0x20, 0x10 } },
++        { 's', { 0x0, 0x12, 0x2A, 0x2A, 0x2A, 0x4 } },
++        { 't', { 0x0, 0x20, 0xFC, 0x22, 0x2, 0x4 } },
++        { 'u', { 0x0, 0x3C, 0x2, 0x2, 0x4, 0x3E } },
++        { 'v', { 0x0, 0x38, 0x4, 0x2, 0x4, 0x38 } },
++        { 'w', { 0x0, 0x3C, 0x2, 0xC, 0x2, 0x3C } },
++        { 'x', { 0x0, 0x22, 0x14, 0x8, 0x14, 0x22 } },
++        { 'y', { 0x0, 0x30, 0xA, 0xA, 0xA, 0x3C } },
++        { 'z', { 0x0, 0x22, 0x26, 0x2A, 0x32, 0x22 } },
++        { '{', { 0x0, 0x0, 0x10, 0x6C, 0x82, 0x82 } },
++        { '|', { 0x0, 0x0, 0x0, 0xFE, 0x0, 0x0 } },
++        { '}', { 0x0, 0x82, 0x82, 0x6C, 0x10, 0x0 } },
++        { '~', { 0x0, 0x20, 0x40, 0x20, 0x10, 0x20 } },
++/*
++        { 'Ö', { 0x0, 0x1C, 0xA2, 0x22, 0xA2, 0x1C } },
++        { 'Ä', { 0x0, 0x04, 0xAA, 0x2A, 0xAA, 0x1E } },
++        { 'Ü', { 0x0, 0x3C, 0x82, 0x02, 0x84, 0x3E } },
++        { 'ö', { 0x0, 0x1C, 0xA2, 0x22, 0xA2, 0x1C } },
++        { 'ä', { 0x0, 0x04, 0xAA, 0x2A, 0xAA, 0x1E } },
++        { 'ü', { 0x0, 0x3C, 0x82, 0x02, 0x84, 0x3E } },
++        { 'ß', { 0x0, 0x7E, 0x80, 0xA8, 0xA8, 0x50 } },
++*/
++        /* TODO
++         * Add more characters here. The 'ch' member is an int so theoretically, you could
++         * specify UTF-32 code points as the ch. But then you'd have to translate the UTF-8
++         * (or whatever) input to imonlcd_string to UTF-32, which doesn't sound like much fun...
++         */
++
++        /* Marks the end of the array, but also serves as the character that
++         * unknown inputs are mapped to (essentially, a "space")
++         */
++        { '\0' }
++};
++
++/**
++ * This is the definition for a "big" font, which is a font that simply takes up twice as many pixels
++ * as the normal font. We only use it for drawing numbers.
++ */
++typedef struct {
++    int ch;
++    unsigned short pixels[12];
++} imon_bigfont;
++
++/* TODO
++ * Some of these characters need a bit of tweaking...
++ */
++static imon_bigfont bigfont[] = {
++        { '0', { 0x0000, 0x07E0, 0x1FF8, 0x3FFC, 0x7FFE, 0x4002, 0x4002, 0x4002, 0x3FFC, 0x3FFC, 0x1FF8, 0x07E0 } },
++        { '1', { 0x0000, 0x0000, 0x0000, 0x4002, 0x7FFE, 0x7FFE, 0x7FFE, 0x7FFE, 0x0002, 0x0000, 0x0000, 0x0000 } },
++        { '2', { 0x0000, 0x1806, 0x3C2C, 0x7C7C, 0x5C5C, 0x40DE, 0x7F9E, 0x7F8E, 0x3F0E, 0x1E0C, 0x0018, 0x0000 } },
++        { '3', { 0x0000, 0x001C, 0x3C3C, 0x7C3E, 0x7C1A, 0x0080, 0x4182, 0x7FFE, 0x7FFE, 0x3E7C, 0x1C38, 0x0000 } },
++        { '4', { 0x0000, 0x0030, 0x0050, 0x0190, 0x0610, 0x0002, 0x1FFE, 0x3FFE, 0x7FFE, 0x7FFE, 0x0012, 0x0002 } },
++        { '5', { 0x0000, 0x0018, 0x7FBC, 0x793E, 0x3B1A, 0x3800, 0x3B02, 0x3BFE, 0x31FE, 0x61FC, 0x00F8, 0x0000 } },
++        { '6', { 0x0000, 0x07E0, 0x1FF8, 0x3FFC, 0x7FFE, 0x4002, 0x0180, 0x5982, 0x7DFE, 0x3DFC, 0x18FC, 0x0078 } },
++        { '7', { 0x0000, 0x0800, 0x7000, 0x3000, 0x703C, 0x787E, 0x79FE, 0x7BFC, 0x3E00, 0x3000, 0x6000, 0x0000 } },
++        { '8', { 0x0000, 0x1C3C, 0x3E7E, 0x7FFE, 0x7FFE, 0x4182, 0x4182, 0x7FFE, 0x7FFE, 0x3E7E, 0x1C3C, 0x0000 } },
++        { '9', { 0x0000, 0x1E18, 0x3F3C, 0x7FBE, 0x7F9A, 0x0180, 0x4002, 0x7FFE, 0x3FFC, 0x1FF8, 0x07E0, 0x0000 } },
++        { ':', { 0x0000, 0x030C, 0x079E, 0x079E, 0x030C, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 } },
++
++        /* Marks the end of the array, but also serves as the character that
++         * unknown inputs are mapped to (essentially, a "space")
++         */
++        { '\0' }
++};
++
++static void send_data(Driver *drvthis, uint64_t value);
++static void send_byte_data(Driver *drvthis, unsigned char data[]);
++static void set_screen(Driver *drvthis, unsigned char *columns);
++static void draw_char(Driver *drvthis, imon_font *font, char ch, int x, int y, unsigned char *columns);
++static void draw_bigchar(Driver *drvthis, imon_bigfont *font, int ch, int x, int y, unsigned char *columns);
++static void draw_string(Driver *drvthis, imon_font *font, char *string);
++static void setLineLength(Driver *drvthis, int topLine, int botLine, int topProgress, int botProgress);
++static void setBuiltinProgressBars(Driver *drvthis, int topLine, int botLine,
++        int topProgress, int botProgress);
++static int lengthToPixels(Driver *drvthis, int length );
++static void send_command_data(Driver *drvthis, uint64_t commandData);
++
++/**
++ * Initialize the driver.
++ * \param drvthis  Pointer to driver structure.
++ * \return  Information of success (1) or failure (< 0).
++ */
++MODULE_EXPORT int imonlcd_init (Driver *drvthis)
++{
++    PrivateData *p = NULL;
++
++    // Allocate, initialize and store private p
++    p = (PrivateData *) calloc(1, sizeof(PrivateData));
++    if (p == NULL) {
++        debug(RPT_ERR, "%s: failed to allocate private data", drvthis->name);
++        return -1;
++    }
++
++    if (drvthis->store_private_ptr(drvthis, p)) {
++        debug(RPT_ERR, "%s: failed to store private data pointer", drvthis->name);
++        return -1;
++    }
++
++   char buf[256];
++    p->imon_fd = -1;
++    p->width = 0;
++    p->height = 0;
++    p->cellwidth = LCD_DEFAULT_CELL_WIDTH;
++    p->cellheight = LCD_DEFAULT_CELL_HEIGHT;
++    p->last_cd_state = 0;
++    p->last_icon_state = 0x0;       // no icons turned on at startup
++    p->lastPrivateIconState = 0x0;  // no icons turned on at startup
++    p->discMode = 0;
++
++
++    /* Get settings from config file*/
++
++    /* Get device */
++    strncpy(p->imon_filename, drvthis->config_get_string(drvthis->name, "Device", 0, DEFAULT_DEVICE), 256);
++    p->imon_filename[255] = '\0';
++    report(RPT_INFO, "%s: using Device %s", drvthis->name, p->imon_filename);
++
++    /* Open device for writing */
++    if ((p->imon_fd = open(p->imon_filename, O_WRONLY)) < 0) {
++        report(RPT_ERR, "%s: ERROR opening %s (%s).", drvthis->name, p->imon_filename, strerror(errno));
++        report(RPT_ERR, "%s: Did you load the iMON VFD kernel module?", drvthis->name);
++        report(RPT_ERR, "%s: More info in lcdproc/docs/README.imon", drvthis->name);
++        return -1;
++    }
++
++    /* Get size settings*/
++    strncpy(buf, drvthis->config_get_string(drvthis->name, "Size", 0, DEFAULT_SIZE), sizeof(buf));
++    buf[sizeof(buf)-1] = '\0';
++    if ((sscanf(buf , "%dx%d", &p->width, &p->height) != 2)
++            || (p->width <= 0) || (p->width > LCD_MAX_WIDTH)
++            || (p->height <= 0) || (p->height > LCD_MAX_HEIGHT)) {
++        report(RPT_WARNING, "%s: cannot read Size: %s; using default %s",
++                drvthis->name, buf, DEFAULT_SIZE);
++        sscanf(DEFAULT_SIZE , "%dx%d", &p->width, &p->height);
++    }
++
++    /* Get the "on exit" setting so we know what to do when we shut the device down */
++    strncpy(buf, drvthis->config_get_string(drvthis->name, "OnExit", 0, DEFAULT_ON_EXIT), sizeof(buf));
++    buf[sizeof(buf)-1] = '\0';
++    if ((sscanf(buf, "%d", &p->on_exit) != 1)) {
++        report(RPT_WARNING, "%s: cannot read OnExit: %s, using default %d",
++                drvthis->name, buf, DEFAULT_ON_EXIT);
++        sscanf(DEFAULT_ON_EXIT, "%d", &p->on_exit);
++    }
++
++    /* Get the "contrast" setting */
++    strncpy(buf, drvthis->config_get_string(drvthis->name, "Contrast", 0, DEFAULT_CONTRAST), sizeof(buf));
++    buf[sizeof(buf)-1] = '\0';
++    if ((sscanf(buf, "%d", &p->contrast) != 1)) {
++        report(RPT_WARNING, "%s: cannot read Contrast: %s, using default %d",
++                drvthis->name, buf, DEFAULT_CONTRAST);
++        sscanf(DEFAULT_CONTRAST, "%d", &p->contrast);
++    }
++    /* Get the "backlight" setting */
++    strncpy(buf, drvthis->config_get_string(drvthis->name, "Backlight", 0, DEFAULT_BACKLIGHT), sizeof(buf));
++    buf[sizeof(buf)-1] = '\0';
++    if ((sscanf(buf, "%d", &p->backlightOn) != 1)) {
++        report(RPT_WARNING, "%s: cannot read Backlight: %s, using default %d",
++                drvthis->name, buf, DEFAULT_BACKLIGHT);
++        sscanf(DEFAULT_BACKLIGHT, "%d", &p->backlightOn);
++    }
++    /* Get the "disc-mode" setting */
++        strncpy(buf, drvthis->config_get_string(drvthis->name, "DiscMode", 0, DEFAULT_DISCMODE), sizeof(buf));
++        buf[sizeof(buf)-1] = '\0';
++        if ((sscanf(buf, "%d", &p->discMode) != 1)) {
++            report(RPT_WARNING, "%s: cannot read DiscMode: %s, using default %d",
++                    drvthis->name, buf, DEFAULT_DISCMODE);
++            sscanf(DEFAULT_DISCMODE, "%d", &p->discMode);
++        }
++    /* Make sure the frame buffer is there... */
++    report(RPT_INFO, "%s: allocating %d bytes for framebuffer.", drvthis->name, p->width * (p->height / p->cellheight));
++    p->framebuf = (unsigned char *) malloc(p->width * (p->height / p->cellheight));
++    if (p->framebuf == NULL) {
++        report(RPT_ERR, "%s: unable to allocate framebuffer", drvthis->name);
++        return -1;
++    }
++    memset(p->framebuf, 0x00, p->width * (p->height / p->cellheight));
++
++    /* Send the "initialize" commands to the screen */
++    /* TODO
++     * I still need to figure out what most of these do, and what should be "configurable"...
++     */
++    if ( p->backlightOn )
++        send_command_data(drvthis, COMMANDS_DISPLAY_ON);
++    else
++        send_command_data(drvthis, COMMANDS_SHUTDOWN);
++    send_command_data(drvthis, COMMANDS_CLEAR_ALARM);
++    imonlcd_set_contrast(drvthis, p->contrast );
++    send_command_data(drvthis, 0x0200000000000000);  // unknown
++    send_command_data(drvthis, COMMANDS_SET_ICONS);
++    send_command_data(drvthis, COMMANDS_SET_LINES0); // clear the progress-bars
++    send_command_data(drvthis, COMMANDS_SET_LINES1); // on top and bottom of the
++    send_command_data(drvthis, COMMANDS_SET_LINES2); // display
++
++    report(RPT_DEBUG, "%s: init() done", drvthis->name);
++
++    return 1;
++}
++
++/**
++ * Close the driver (do necessary clean-up).
++ * \param drvthis  Pointer to driver structure.
++ */
++MODULE_EXPORT void imonlcd_close (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    if (p != NULL) {
++        if (p->imon_fd >= 0) {
++            if (p->on_exit == ON_EXIT_SHOWMSG) {
++                // "show message" means "do nothing" -- the message is there already
++                report(RPT_INFO, "%s: closing, leaving \"goodbye\" message.", drvthis->name);
++            } else if (p->on_exit == ON_EXIT_BLANKSCREEN) {
++                // turning backlight off (confirmed for my Silverstone LCD)
++                // (as "cybrmage" at mediaportal pointed out, his LCD is an Antec built-in one
++                // and turns completely off with this command)
++                // TODO: Why does the backlight turn on again at reboot and/or shutdown
++                //       just when the computer turns it's power off / reboots.
++                // Is it just my bios sending a reset to all USB-devices, is it
++                // the USB-kernel-code that's sending the reset?!
++                // Maybe gets solved with setting the alarm!?
++                report(RPT_INFO, "%s: closing, turning backlight off.", drvthis->name);
++                send_command_data(drvthis, COMMANDS_SHUTDOWN);
++                send_command_data(drvthis, COMMANDS_CLEAR_ALARM);
++            } else {
++                // by default, show the big clock. We need to set it to the current
++                // time, then it just keeps counting automatically.
++                report(RPT_INFO, "%s: closing, showing clock.", drvthis->name);
++
++                time_t tt = time(NULL);
++                struct tm *t = localtime(&tt);
++                uint64_t data;
++
++                data = ((uint64_t)0x50 << 56);
++                data += ((uint64_t)t->tm_sec << 48);
++                data += ((uint64_t)t->tm_min << 40);
++                data += ((uint64_t)t->tm_hour << 32);
++                data += ((uint64_t)t->tm_mday << 24);
++                data += ((uint64_t)t->tm_mon << 16);
++                data += (((uint64_t)t->tm_year) << 8);
++                data += 0x80;
++                send_command_data(drvthis, data);
++                send_command_data(drvthis, COMMANDS_CLEAR_ALARM);
++            }
++
++            close(p->imon_fd);
++        }
++
++        if (p->framebuf != NULL)
++            free(p->framebuf);
++        p->framebuf = NULL;
++
++        free(p);
++    }
++    drvthis->store_private_ptr(drvthis, NULL);
++}
++
++
++/**
++ * Provide some information about this driver.
++ * \param drvthis  Pointer to driver structure.
++ * \return  Constant string with information.
++ */
++MODULE_EXPORT const char * imonlcd_get_info (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    strcpy(p->info, "SoundGraph iMON OEM (and others) LCD driver");
++    return p->info;
++}
++
++
++/**
++ * Clear the screen.
++ * \param drvthis  Pointer to driver structure.
++ */
++MODULE_EXPORT void imonlcd_clear (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    memset(p->framebuf, 0, p->width * (p->height / 8));
++}
++
++
++/**
++ * Flush data on screen to the LCD.
++ * \param drvthis  Pointer to driver structure.
++ */
++MODULE_EXPORT void imonlcd_flush (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    set_screen(drvthis, p->framebuf);
++}
++
++
++/**
++ * Print a string on the screen at position (x,y).
++ * The upper-left corner is (1,1), the lower-right corner is (p->width, p->height).
++ * \param drvthis  Pointer to driver structure.
++ * \param x        Horizontal character position (column).
++ * \param y        Vertical character position (row).
++ * \param string   String that gets written.
++ */
++MODULE_EXPORT void imonlcd_string (Driver *drvthis, int x, int y, const char string[])
++{
++    int i;
++
++    for (i = 0; string[i] != '\0'; i++)
++        imonlcd_chr(drvthis, x+i, y, string[i]);
++}
++
++
++/**
++ * Print a character on the screen at position (x,y).
++ * The upper-left corner is (1,1), the lower-right corner is (p->width/p->cellwidth, p->height/p->cellheight).
++ * \param drvthis  Pointer to driver structure.
++ * \param x        Horizontal character position (column).
++ * \param y        Vertical character position (row).
++ * \param c        Character that gets written.
++ */
++MODULE_EXPORT void imonlcd_chr (Driver *drvthis, int x, int y, char ch)
++{
++    PrivateData *p = drvthis->private_data;
++
++    y--; x--;
++
++    if ((x < 0) || (y < 0) || (x >= (p->width / p->cellwidth)) || (y >= (p->height / p->cellheight)))
++        return;
++
++    draw_char(drvthis, font, ch, x * p->cellwidth, y * p->cellheight, p->framebuf);
++}
++
++/**
++ * Draw a vertical bar bottom-up.
++ * \param drvthis  Pointer to driver structure.
++ * \param x        Horizontal character position (column) of the starting point.
++ * \param y        Vertical character position (row) of the starting point.
++ * \param len      Number of characters that the bar is high at 100%
++ * \param promille Current height level of the bar in promille.
++ * \param options  Options (currently unused).
++ */
++MODULE_EXPORT void imonlcd_vbar (Driver *drvthis, int x, int y, int len, int promille, int options)
++{
++    PrivateData *p = drvthis->private_data;
++
++    if ((x < 0) || (y < 0) || (y > (p->width / p->cellwidth)))
++        return;
++
++    // Pixels is the number of pixels we need to draw, vertically, based on the passed-in promille.
++    int pixels = (int) ( (double)( ( 2 * len * p->cellheight ) * ( (double)promille / 2000 ) ) );
++
++    x--; y--;    
++    x *= p->cellwidth;
++
++    int j, k;
++    unsigned char barChar;
++
++    for ( j=0; j<len; j++ )
++    {
++        k = 0;
++        barChar = 0;
++        for ( ; pixels >0 && k < 8; pixels-- )
++        {
++            barChar = barChar | (1 << k);
++            k++;
++        }
++        p->framebuf[x+1 + ((y-j) * 96)] = barChar;
++        p->framebuf[x+2 + ((y-j) * 96)] = barChar;
++        p->framebuf[x+3 + ((y-j) * 96)] = barChar;
++        p->framebuf[x+4 + ((y-j) * 96)] = barChar;
++        p->framebuf[x+5 + ((y-j) * 96)] = barChar;
++
++    }
++}
++
++
++/**
++ * Draw a horizontal bar to the right.
++ * \param drvthis  Pointer to driver structure.
++ * \param x        Horizontal character position (column) of the starting point.
++ * \param y        Vertical character position (row) of the starting point.
++ * \param len      Number of characters that the bar is long at 100%
++ * \param promille Current length level of the bar in promille (i.e. from 0 to 1000).
++ * \param options  Options (currently unused).
++ */
++MODULE_EXPORT void imonlcd_hbar (Driver *drvthis, int x, int y, int len, int promille, int options)
++{
++    PrivateData *p = drvthis->private_data;
++
++    if ((x < 0) || (y < 0) || (y > (p->height / p->cellheight)))
++        return;
++
++    // Pixels is the number of pixels we need to draw, horizontally, based on the passed-in promille.
++    int pixels = (int) ( (double)( ( 2 * len * p->cellwidth ) * ( (double)promille / 2000 ) ) );
++
++    x--; y--;
++    x *= p->cellwidth;
++
++    for (; pixels >= 0; pixels--) {
++
++        if (x > (p->width * p->cellwidth))
++            return;
++
++        p->framebuf[x + (y * 96)] = 0x3C;
++        x++;
++    }
++}
++
++/**
++ * Draws a "big" number at the specified x-coordinate.
++ *
++ * Normally, the number that is displayed is "meant" to be 3x4 characters, but because we have a bit
++ * more flexibility, I've drawn the numbers as just being 12x16 pixels. That means that while the
++ * client will pass x-values between 0 and 16, we need to scale it and make sure the numbers remain
++ * centered.
++ *
++ * \param drvthis A point of the the Driver structure.
++ * \param the x-coordinate to display the character at.
++ * \num The number to display ("10" is the colon)
++ */
++MODULE_EXPORT void imonlcd_num (Driver *drvthis, int x, int num)
++{
++    PrivateData *p = drvthis->private_data;
++
++    // This isn't that great, and really it only works when your screen is 96 pixels wide and
++    // even then, it makes assumptions about the coordinates the client passes to us. However,
++    // it works for MythTV... and looks pretty cool, too :-)
++    // TODO: Check the number flashing with the colon with "lcdproc K". Done! Please anyone recheck with mythtv
++    if(num < 10)
++        x = 12 + (int)(((x - 1) * p->cellwidth) * 0.75);
++    else
++        x = 12 + (int)(((x - 1) * p->cellwidth) * 0.72);
++
++    draw_bigchar(drvthis, bigfont, (num >= 10 ? ':' : (num + '0')), x, 0, p->framebuf);
++}
++
++/**
++ * Sets the "output state" for the device. We use this to control the icons around the outside the
++ * display. The bits in \c state correspond to the icons as follows:
++ *
++ * bit 0       : disc icon (0=off, 1='spin') , if Toprow==4, use CD-animation, else use "HDD-recording-animation"
++ * bit 1,2,3   : top row (0=none, 1=music, 2=movie, 3=photo, 4=CD/DVD, 5=TV, 6=Web, 7=News/Weather)
++ * bit 4,5     : 'speaker' icons (0=off, 1=L+R, 2=5.1ch, 3=7.1ch)
++ * bit 6       : S/PDIF icon
++ * bit 7       : 'SRC'
++ * bit 8       : 'FIT'
++ * bit 9       : 'TV'
++ * bit 10      : 'HDTV'
++ * bit 11      : 'SRC1'
++ * bit 12      : 'SRC2'
++ * bit 13,14,15: bottom-right icons (0=off, 1=MP3, 2=OGG, 3=WMA, 4=WAV)
++ * bit 16,17,18: bottom-middle icons (0=off, 1=MPG, 2=AC3, 3=DTS, 4=WMA)
++ * bit 19,20,21: bottom-left icons (0=off, 1=MPG, 2=DIVX, 3=XVID, 4=WMV)
++ * bit 22      : 'VOL' (volume)
++ * bit 23      : 'TIME'
++ * bit 24      : 'ALARM'
++ * bit 25      : 'REC' (recording)
++ * bit 26      : 'REP' (repeat)
++ * bit 27      : 'SFL' (shuffle)
++ * bit 28      : Abuse this for progress bars (if set to 1), lower bits represent
++ *               the length (6 bits each: P|6xTP|6xTL|6xBL|6xBP with P = bit 28,
++ *               TP=Top Progress, TL = Top Line, BL = Bottom Line, BP = Bottom Progress).
++ *               If bit 28 is set to 1, lower bits are interpreted as
++ *               lengths; otherwise setting the symbols as usual.
++ *               0 <= length <= 32, bars extend from left to right.
++ *               length > 32, bars extend from right to left, length is counted
++ *               from 32 up (i.e. 35 means a length of 3).
++ *                       
++ *     Remember: There are two kinds of calls!
++ *               With bit 28 set to 1: Set all bars (leaving the symbols as is),
++ *               with bit 28 set to 0: Set the symbols (leaving the bars as is).
++ *     Beware:   TODO: May become a race condition, if both calls are executed
++ *                     before the display gets updated. Keep this in mind in your
++ *                     client-code.
++ * bit 29      : 'disc-in icon' - half ellipsoid under the disc symbols (0=off, 1=on)
++ */
++
++MODULE_EXPORT void imonlcd_output (Driver *drvthis, int state)
++{
++
++    PrivateData *p = drvthis->private_data;
++    uint64_t icon = 0x0;
++    
++    if ( state == -1 ) // the value for "on" in the lcdproc-protocol
++    {
++        icon = (uint64_t)IMON_ICON_ALL;
++        send_command_data(drvthis, COMMANDS_SET_ICONS | icon);
++        p->lastPrivateIconState = state;
++        setLineLength(drvthis, 32, 32, 32, 32);
++        
++        return;
++    }
++    else if ( state == 0x0 ) // the value for "off" in the lcdproc-protocol
++    {
++        icon = (uint64_t)0x0;;
++        send_command_data(drvthis, COMMANDS_SET_ICONS | icon);
++        p->lastPrivateIconState = state;
++        setLineLength(drvthis, 0, 0, 0, 0);
++        return;
++    }
++    // bit 28 : Abuse this for progress bars. See above for usage.
++    else if ( ( state & IMON_OUTPUT_PBARS_MASK ) != 0 && state > 0 )
++    {
++        int topProgress  = ( state & 63 );           // extract the bar-values
++        int topLine      = ( state & (63<<6) ) >> 6; // for each bar separately
++        int botProgress  = ( state & (63<<12) ) >> 12;
++        int botLine      = ( state & (63<<18) ) >> 18;
++
++        botProgress = botProgress > 32 ? -( botProgress - 32 ) : botProgress;
++        topProgress = topProgress > 32 ? -( topProgress - 32 ) : topProgress;
++        botLine     = botLine > 32 ? -( botLine - 32 ) : botLine;
++        topLine     = topLine > 32 ? -( topLine - 32 ) : topLine;
++
++        setLineLength(drvthis, topLine, botLine, topProgress, botProgress);
++
++        state = p->lastPrivateIconState; // continue and set all other icons as before
++    }
++
++    // bit 0       : disc icon (0=off, 1='spin')
++    if ( ( state & IMON_OUTPUT_CD_MASK ) != 0 )
++    {
++        switch( p->last_cd_state ) {
++        case 0:
++            p->last_cd_state = 1;
++            if ( p->discMode == 1 )
++                icon |= ( (uint64_t)(255 - 128 - 8) << 40); // all on except top & bottom
++            else
++                icon |= ( (uint64_t)(128 | 8) << 40); // top & bottom on
++            break;
++        case 1:
++            p->last_cd_state = 2;
++            if ( p->discMode == 1 )
++                icon |= ( (uint64_t)(255 - 16 - 1) << 40); //all on except top-right & bottom-left
++            else
++                icon |= ( (uint64_t)(1 | 16) << 40); // top-right & bottom-left on
++            break;
++        case 2:
++            p->last_cd_state = 3;
++            if ( p->discMode == 1 )
++                icon |= ( (uint64_t)(255 - 32 - 2) << 40); // all on except right & left
++            else
++                icon |= ( (uint64_t)(32 | 2) << 40); // right & left on
++            break;
++        default:
++            p->last_cd_state = 0;
++            if ( p->discMode == 1 )
++                icon |= ( (uint64_t)(255 - 64 - 4) << 40); // all on except top-left & bottom-right
++            else
++                icon |= ( (uint64_t)(4 | 64) << 40); // top-left & bottom-right on
++            break;
++        }
++    }
++
++    // bit 1,2,3   : top row (0=none, 1=music, 2=movie, 3=photo, 4=CD/DVD, 5=TV, 6=Web, 7=News/Weather)
++    if ( ( ( state & IMON_OUTPUT_TOPROW_MASK ) != 0) )
++    {
++        switch( ( ( state & IMON_OUTPUT_TOPROW_MASK ) >> 1 ) )
++        {
++        case 1:
++            icon |= IMON_ICON_MUSIC;
++            break;
++        case 2:
++            icon |= IMON_ICON_MOVIE;
++            break;
++        case 3:
++            icon |= IMON_ICON_PHOTO;
++            break;
++        case 4:
++            icon |= IMON_ICON_CD_DVD;
++            break;
++        case 5:
++            icon |= IMON_ICON_TV;
++            break;
++        case 6:
++            icon |= IMON_ICON_WEBCAST;
++            break;
++        case 7:
++            icon |= IMON_ICON_NEWS;
++            break;
++        default:
++            break;
++        }
++    }
++    // bit 4,5     : 'speaker' icons (0=off, 1=L+R, 2=5.1ch, 3=7.1ch)
++    if ( ( ( state & IMON_OUTPUT_SPEAKER_MASK ) != 0) )
++    {
++        switch( ( ( state & IMON_OUTPUT_SPEAKER_MASK ) >> 4 ) )
++        {
++        case 1:
++            icon |= IMON_SPKR_FL | IMON_SPKR_FR;
++            break;
++        case 2:
++            icon |= IMON_SPKR_FL | IMON_SPKR_FC | IMON_SPKR_FR | IMON_SPKR_RL | IMON_SPKR_RR;
++            break;
++        case 3:
++            icon |= IMON_SPKR_FL | IMON_SPKR_FC | IMON_SPKR_FR | IMON_SPKR_RL | IMON_SPKR_RR | IMON_SPKR_SL | IMON_SPKR_SR;
++            break;
++        default:
++            break;
++        }
++    }
++    // bit 6       : S/PDIF icon
++    icon = ( ( state & IMON_OUTPUT_SPDIF_MASK ) != 0 ) ? (icon | IMON_SPKR_SPDIF) : (icon & ~IMON_SPKR_SPDIF);    
++    // bit 7       : 'SRC'
++    icon = ( ( state & IMON_OUTPUT_SRC_MASK ) != 0 ) ? (icon | IMON_ICON_SRC) : (icon & ~IMON_ICON_SRC);
++    // bit 8       : 'FIT'
++    icon = ( ( state & IMON_OUTPUT_FIT_MASK ) != 0 ) ? (icon | IMON_ICON_FIT) : (icon & ~IMON_ICON_FIT);
++    // bit 9       : 'TV'
++    icon = ( ( state & IMON_OUTPUT_TV_MASK ) != 0 ) ? (icon | IMON_ICON_TV_2) : (icon & ~IMON_ICON_TV_2);
++    // bit 10      : 'HDTV'
++    icon = ( ( state & IMON_OUTPUT_HDTV_MASK ) != 0 ) ? (icon | IMON_ICON_HDTV) : (icon & ~IMON_ICON_HDTV);
++    // bit 11      : 'SRC1'
++    icon = ( ( state & IMON_OUTPUT_SCR1_MASK ) != 0 ) ? (icon | IMON_ICON_SCR1) : (icon & ~IMON_ICON_SCR1);
++    // bit 12      : 'SRC2'
++    icon = ( ( state & IMON_OUTPUT_SCR2_MASK ) != 0 ) ? (icon | IMON_ICON_SCR2) : (icon & ~IMON_ICON_SCR2);
++    // bit 13,14,15: bottom-right icons (0=off, 1=MP3, 2=OGG, 3=WMA, 4=WAV)
++    if ( ( ( state & IMON_OUTPUT_BRICONS_MASK ) != 0) )
++    {
++        switch( ( ( state & IMON_OUTPUT_BRICONS_MASK ) >> 13 ) )
++        {
++        case 1:
++            icon |= IMON_ICON_MP3;
++            break;
++        case 2:
++            icon |= IMON_ICON_OGG;
++            break;
++        case 3:
++            icon |= IMON_ICON_WMA;
++            break;
++        case 4:
++            icon |= IMON_ICON_WAV;
++            break;
++        default:
++            break;
++        }
++    }
++    // bit 16,17,18: bottom-middle icons (0=off, 1=MPG, 2=AC3, 3=DTS, 4=WMA)
++    if ( ( ( state & IMON_OUTPUT_BMICONS_MASK ) != 0) )
++    {
++        switch( ( ( state & IMON_OUTPUT_BMICONS_MASK ) >> 16 ) )
++        {
++        case 1:
++            icon |= IMON_ICON_MPG;
++            break;
++        case 2:
++            icon |= IMON_ICON_AC3;
++            break;
++        case 3:
++            icon |= IMON_ICON_DTS;
++            break;
++        case 4:
++            icon |= IMON_ICON_WMA;
++            break;
++        default:
++            break;
++        }
++    }
++    // bit 19,20,21: bottom-left icons (0=off, 1=MPG, 2=DIVX, 3=XVID, 4=WMV)
++    if ( ( ( state & IMON_OUTPUT_BLICONS_MASK ) != 0) )
++    {
++        switch( ( ( state & IMON_OUTPUT_BLICONS_MASK ) >> 19 ) )
++        {
++        case 1:
++            icon |= IMON_ICON_MPG;
++            break;
++        case 2:
++            icon |= IMON_ICON_DIVX;
++            break;
++        case 3:
++            icon |= IMON_ICON_XVID;
++            break;
++        case 4:
++            icon |= IMON_ICON_WMV;
++            break;
++        default:
++            break;
++        }
++    }
++    // bit 22      : 'VOL' (volume)
++    icon = ( ( state & IMON_OUTPUT_VOL_MASK ) != 0 ) ? (icon | IMON_ICON_VOL) : (icon & ~IMON_ICON_VOL);
++    // bit 23      : 'TIME'
++    icon = ( ( state & IMON_OUTPUT_TIME_MASK ) != 0 ) ? (icon | IMON_ICON_TIME) : (icon & ~IMON_ICON_TIME);
++    // bit 24      : 'ALARM'
++    icon = ( ( state & IMON_OUTPUT_ALARM_MASK ) != 0 ) ? (icon | IMON_ICON_ALARM) : (icon & ~IMON_ICON_ALARM);
++    // bit 25      : 'REC' (recording)
++    icon = ( ( state & IMON_OUTPUT_REC_MASK ) != 0 ) ? (icon | IMON_ICON_REC) : (icon & ~IMON_ICON_REC);
++    // bit 26      : 'REP' (repeat)
++    icon = ( ( state & IMON_OUTPUT_REP_MASK ) != 0 ) ? (icon | IMON_ICON_REP) : (icon & ~IMON_ICON_REP);
++    // bit 27      : 'SFL' (shuffle)
++    icon = ( ( state & IMON_OUTPUT_SFL_MASK ) != 0 ) ? (icon | IMON_ICON_SFL) : (icon & ~IMON_ICON_SFL);
++    // bit 29      : 'disc-in'
++    icon = ( ( state & IMON_OUTPUT_DISK_IN_MASK ) != 0 ) ? (icon | IMON_ICON_DISK_IN) : (icon & ~IMON_ICON_DISK_IN);
++
++    p->last_icon_state = (uint64_t)icon;
++    p->lastPrivateIconState = state;
++    send_command_data(drvthis, COMMANDS_SET_ICONS | p->last_icon_state);
++}
++
++/**
++ * Return the display width in characters.
++ * \param drvthis  Pointer to driver structure.
++ * \return  Number of characters the display is wide.
++ */
++MODULE_EXPORT int imonlcd_width (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    return p->width/p->cellwidth;
++}
++
++
++/**
++ * Return the display height in characters.
++ * \param drvthis  Pointer to driver structure.
++ * \return  Number of characters the display is high.
++ */
++MODULE_EXPORT int  imonlcd_height (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    return p->height/p->cellheight;
++}
++
++
++/**
++ * Return the width of a character in pixels.
++ * \param drvthis  Pointer to driver structure.
++ * \return  Number of pixel columns a character cell is wide.
++ */
++MODULE_EXPORT int imonlcd_cellwidth (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    return p->cellwidth;
++}
++
++
++/**
++ * Return the height of a character in pixels.
++ * \param drvthis  Pointer to driver structure.
++ * \return  Number of pixel lines a character cell is high.
++ */
++MODULE_EXPORT int  imonlcd_cellheight (Driver *drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    return p->cellheight;
++}
++
++/**
++ * Sends data to the screen. The kernel module expects data to be
++ * sent in 8 byte chunks, so for simplicity, we allow you to define
++ * the data as a 64-bit integer.
++ *
++ * \param value The data to send. Must be in a format that is recognized
++ *              by the device. The kernel module doesn't actually do
++ *              validation.
++ * \param p A pointer to the driver's PrivateData structure
++ */
++static void send_data(Driver *drvthis, uint64_t value)
++{
++    /* TODO
++     * In order to make big- and little-endian issues more clear, we should probably
++     * drop this method in favour of the send_byte_data method...
++     */
++
++    // Note: We do it like this so that we can be sure we work on big- and little-
++    // endian machines the same way.
++    unsigned char data[8];
++    data[0] = (value & 0xFF00000000000000) >> (7 * 8);
++    data[1] = (value & 0x00FF000000000000) >> (6 * 8);
++    data[2] = (value & 0x0000FF0000000000) >> (5 * 8);
++    data[3] = (value & 0x000000FF00000000) >> (4 * 8);
++    data[4] = (value & 0x00000000FF000000) >> (3 * 8);
++    data[5] = (value & 0x0000000000FF0000) >> (2 * 8);
++    data[6] = (value & 0x000000000000FF00) >> (1 * 8);
++    data[7] = (value & 0x00000000000000FF);
++
++    send_byte_data(drvthis, data);
++}
++
++/**
++ * TODO: Check why exactly this has to be done ;-) and if this also works for
++ *       64-bit OSs.
++ * Sends data to the screen. The kernel module expects data to be
++ * sent in 8 byte chunks, so for simplicity, we allow you to define
++ * the data as a 64-bit integer.
++ * The bytes are reversed because all commands seem to need this to work!
++ *
++ * \param value The data to send. Must be in a format that is recognized
++ *              by the device. The kernel module doesn't actually do
++ *              validation.
++ * \param p A pointer to the driver's PrivateData structure
++ */
++static void send_command_data(Driver *drvthis, uint64_t commandData)
++{
++    if ((commandData & 0xFF00000000000000L) == 0x5000000000000000L) {
++	    printf("%s: sending command: %lX\n", "imonlcd", commandData);
++    }
++
++    unsigned char data[8];
++    data[7] = (unsigned char)((commandData >> 56) & 0xFF);
++    data[6] = (unsigned char)((commandData >> 48) & 0xFF);
++    data[5] = (unsigned char)((commandData >> 40) & 0xFF);
++    data[4] = (unsigned char)((commandData >> 32) & 0xFF);
++    data[3] = (unsigned char)((commandData >> 24) & 0xFF);
++    data[2] = (unsigned char)((commandData >> 16) & 0xFF);
++    data[1] = (unsigned char)((commandData >> 8) & 0xFF);
++    data[0] = (unsigned char)(commandData & 0xFF);
++
++    send_byte_data(drvthis, data);
++
++}
++
++/**
++ * Sends data to the screen.
++ *
++ * \param data The 8 byte packet to send to the screen.
++ * \param p A pointer to the driver's PrivateData structure
++ */
++static void send_byte_data(Driver *drvthis, unsigned char data[])
++{
++	PrivateData *p = drvthis->private_data;
++
++	int ret = write(p->imon_fd, data, 8);
++	if (ret < 0) {
++		// If we get an error, we'll try to re-open the device...
++		report(RPT_ERR, "imonlcd: device has reported an error, attempting to re-open: %s (errno: %d %s)", p->imon_filename, errno, strerror(errno));
++		close(p->imon_fd);
++
++		if ((p->imon_fd = open(p->imon_filename, O_WRONLY)) < 0) {
++			report(RPT_ERR, "imonlcd: Error re-opening: %s (%s).", p->imon_filename, strerror(errno));
++			return;
++		}
++
++		// Now, try to write to the file again..!
++		ret = write(p->imon_fd, data, 8);
++		if (ret < 0) {
++			report(RPT_ERR, "imonlcd: Device still failing...! %s", strerror(errno));
++
++			// Note: if it still fails, we'll end up trying again soon, but hopefully that'll be enough
++			// time for the device to sort itself out :-)
++		}
++	}
++}
++
++/**
++ * Sets the contrast of the display.
++ *
++ * \param drvthis Pointer to driver structure.
++ * \param promille The value the contrast is set to in promille
++ *                 (0 = lowest contrast; 1000 = highest contrast).
++ * \return 0 on failure, >0 on success.
++ */
++MODULE_EXPORT int imonlcd_set_contrast(Driver *drvthis, int promille)
++{
++    PrivateData *p = drvthis->private_data;
++
++    if ( promille < 0) {
++        promille = 0;
++    } else if ( promille > 1000 ) {
++        promille = 1000;
++    }
++
++    p->contrast = promille;
++
++    // send contrast normalized to the hardware-understandable-value (0 to 40)
++    // 0 is the lowest (and usually the best, in my opinion) and 40 is the highest. TODO: @Dean: really 0=best?!
++    send_command_data(drvthis, 0x03FFFFFF00580A00L + (uint64_t)( p->contrast/25 ));
++    return 1;
++}
++
++/**
++ * Gets the current contrast of the display.
++ *
++ * \param drvthis Pointer to driver structure.
++ * \return The current contrast in promille (0 = lowest contrast;
++ *         1000 = highest contrast).
++ */
++MODULE_EXPORT int imonlcd_get_contrast( Driver *drvthis )
++{
++    PrivateData *p = drvthis->private_data;
++    return p->contrast;
++}
++
++/**
++ * Sets the backlight state of the display.
++ *
++ * \param drvthis Pointer to driver structure.
++ * \param on The backlight state boolean-like: 0 = off; >0 = on.
++ */
++MODULE_EXPORT void imonlcd_backlight(Driver *drvthis, int on)
++{
++    PrivateData *p = drvthis->private_data;
++
++    /*
++     * TODO: For some reason, lcdproc keeps calling this and flipping the
++     * 'on' so you end up flashing the backlight for no particular reason
++     * (and on my Antec, turning the backlight off, turns the whole thing
++     * off, so it's really bad...)
++     */
++    return;
++
++    // To prevent superfluous (and erroneous) communication
++    if ( p->backlightOn == on )
++        return;
++    else
++        p->backlightOn = on;
++
++    if ( on )
++    {
++        send_command_data(drvthis, COMMANDS_DISPLAY_ON);
++    }
++    else
++    {
++        send_command_data(drvthis, COMMANDS_SHUTDOWN);
++    }
++}
++
++/**
++ * Sets the pixels on the screen, using the specified "columns".
++ * Each column is eight pixels high (and represented by one byte)
++ * and the columns are filled from left to right. When the end
++ * of the screen is hit, the columns wrap to the next line. Each
++ * line is 96 pixels wide, so you need to pass an array of 192
++ * bytes.
++ *
++ * \param columns The data for each column.
++ * \param p A pointer to the driver's PrivateData structure
++ */
++static void set_screen(Driver *drvthis, unsigned char *columns)
++{
++    /* TODO
++     * This could be implemented as a single call to write() with all the data,
++     * but that would require corresponding changes to the lirc kernel module.
++     */
++    int i;
++    uint64_t msb;
++    uint64_t data;
++    int byteno;
++
++    i = 0;
++    for (msb = 0x20; msb <= 0x3b; msb++) {
++        data = 0;
++        for (byteno = 1; byteno < 8; byteno ++) {
++            data |= columns[i];
++            data <<= 8;
++            i++;
++        }
++        data |= msb;
++        send_data(drvthis, data);
++    }
++}
++
++/**
++ * Draws a "big" character -- that is, one that's twice as big as a normal character -- at
++ * the specified position on the screen.
++ */
++static void draw_bigchar(Driver *drvthis, imon_bigfont *font, int ch, int x, int y, unsigned char *columns)
++{
++    imon_bigfont *defn = font;
++    int i;
++
++    while (defn->ch != ch && defn->ch != '\0') {
++        defn++;
++    }
++
++    int colBorder = 12; // correction for the number flashing with the colon running "lcdproc K"
++    if ( ch == ':' )    // TODO: Please check anybody with mythtv
++        colBorder = 6;
++    for(i = 0; i < colBorder; i++) {
++        columns[x + i + (y * colBorder)] = (defn->pixels[i] & 0xFF00) >> 8;
++    }
++    for(i = 0; i < colBorder; i++) {
++        columns[x + i + (y * colBorder) + 96] = (defn->pixels[i] & 0x00FF);
++    }
++}
++
++/**
++ * Draws a single character at the specified (x,y) coordinates of the given screen data.
++ */
++static void draw_char(Driver *drvthis, imon_font *font, char ch, int x, int y, unsigned char *columns)
++{
++    imon_font *defn = font;
++    int i;
++
++    while (defn->ch != ch && defn->ch != '\0') {
++        defn++;
++    }
++
++    for(i = 0; i < 6; i++) {
++        columns[x + i + (y * 12)] = defn->pixels[i];
++    }
++}
++
++/**
++ * Sets the length of the built-in progress-bars and lines.
++ * Values from -32 to 32 are allowed. Positive values indicate that bars extend
++ * from left to right, negative values indicate that the run from right to left.
++ * Conventient method to simplify setting the bars with "human understandable
++ * values".
++ * 
++ * \see setBuiltinProgressBars, lengthToPixels
++ * 
++ * \param topLine
++ * \param botLine
++ * \param topProgress
++ * \param botProgress
++ * \param p A pointer to the driver's PrivateData structure
++ */
++static void setLineLength(Driver *drvthis, int topLine, int botLine, int topProgress, int botProgress)
++{
++    setBuiltinProgressBars( drvthis,
++	    lengthToPixels(drvthis, topLine),
++            lengthToPixels(drvthis, botLine),
++            lengthToPixels(drvthis, topProgress),
++            lengthToPixels(drvthis, botProgress)
++    );
++}
++
++/**
++ * Sets the length of the built-in progress-bars and lines.
++ * Values from -32 to 32 are allowed. Positive values indicate that bars extend
++ * from left to right, negative values indicate that the run from right to left.
++ *   
++ * \param topLine
++ * \param botLine
++ * \param topProgress
++ * \param botProgress
++ * \param p A pointer to the driver's PrivateData structure
++ */
++static void setBuiltinProgressBars(Driver *drvthis, int topLine, int botLine,
++        int topProgress, int botProgress)
++{
++    // Least sig. bit is on the right
++    uint64_t data;
++
++    data = ( (uint64_t) topProgress ) << 8 * 4;
++    data |= (uint64_t) topLine & 0x00000000FFFFFFFF;
++    data &= 0x00FFFFFFFFFFFFFF;
++    send_command_data(drvthis, COMMANDS_SET_LINES0 | data);
++
++    data = ( ( (uint64_t) topProgress ) >> 8 * 3 ) & 0x00000000000000FF;
++    data |= ( ( (uint64_t) botProgress ) << 8 )    & 0x000000FFFFFFFF00;
++    data |= ( ( (uint64_t) botLine ) << 8 * 5 )    & 0x00FFFF0000000000;
++    send_command_data(drvthis, COMMANDS_SET_LINES1 | data);
++
++    data = ( (uint64_t) botLine ) >> 8 * 2;
++    send_command_data(drvthis, COMMANDS_SET_LINES2 | data);
++}
++
++/**
++ * Maps values to corresponding pixmaps for the built-in progress bars.
++ * Values from -32 to 32 are allowed. Positive values indicate that bars extend
++ * from left to right, negative values indicate that they run from right to left.
++ * 
++ * \param length The length of the bar.
++ * \return The pixmap that represents the given length. 
++ * 
++ */ 
++static int lengthToPixels(Driver *drvthis, int length)
++{           
++    int pixLen[] =
++    {           
++            0x00, 0x00000080, 0x000000c0, 0x000000e0, 0x000000f0,
++            0x000000f8, 0x000000fc, 0x000000fe, 0x000000ff,
++            0x000080ff, 0x0000c0ff, 0x0000e0ff, 0x0000f0ff,
++            0x0000f8ff, 0x0000fcff, 0x0000feff, 0x0000ffff,
++            0x0080ffff, 0x00c0ffff, 0x00e0ffff, 0x00f0ffff,
++            0x00f8ffff, 0x00fcffff, 0x00feffff, 0x00ffffff,
++            0x80ffffff, 0xc0ffffff, 0xe0ffffff, 0xf0ffffff,
++            0xf8ffffff, 0xfcffffff, 0xfeffffff, 0xffffffff
++    };
++
++    if ( abs( length ) > 32 )
++    {
++        return (0);
++    }
++    if ( length >= 0 )
++    {
++        return pixLen[ length ];
++    }
++    else
++    {
++        return ( pixLen[ 32 + length ] ^ 0xffffffff );
++    }
++}
++
++// EOF
++
+diff -Naur lcdproc-0.5.2-old/server/drivers/imonlcd.h lcdproc-0.5.2-new/server/drivers/imonlcd.h
+--- lcdproc-0.5.2-old/server/drivers/imonlcd.h	1969-12-31 16:00:00.000000000 -0800
++++ lcdproc-0.5.2-new/server/drivers/imonlcd.h	2007-10-17 12:54:09.000000000 -0700
+@@ -0,0 +1,49 @@
++/**
++ * Driver for SoundGraph iMON OEM (and others) LCD Module
++ *
++ * In order to be able to use it, you have to install the lirc_imonlcd
++ * kernel module for LIRC (http://www.lirc.org) -- until that module is
++ * available in the main LIRC branch, you can get a patch for it from
++ * the same place you got this patch.
++ *
++ * Copyright (c) 2007, Dean Harding <dean@codeka.com>, but (heavily :p)
++ * on the work of Venky Raju.
++ *
++ * This source code is being released under the GPL.
++ * Please see the file COPYING in this package for details.
++ *
++ */
++
++#ifndef IMONLCD_H
++#define IMONLCD_H
++
++#include "lcd.h"
++
++MODULE_EXPORT int  imonlcd_init (Driver *drvthis);
++MODULE_EXPORT void imonlcd_close (Driver *drvthis);
++MODULE_EXPORT int  imonlcd_width (Driver *drvthis);
++MODULE_EXPORT int  imonlcd_height (Driver *drvthis);
++MODULE_EXPORT int  imonlcd_cellwidth (Driver *drvthis);
++MODULE_EXPORT int  imonlcd_cellheight (Driver *drvthis);
++MODULE_EXPORT void imonlcd_clear (Driver *drvthis);
++MODULE_EXPORT void imonlcd_flush (Driver *drvthis);
++MODULE_EXPORT void imonlcd_string (Driver *drvthis, int x, int y, const char string[]);
++MODULE_EXPORT void imonlcd_chr (Driver *drvthis, int x, int y, char c);
++MODULE_EXPORT const char *imonlcd_get_info (Driver *drvthis);
++MODULE_EXPORT void imonlcd_vbar (Driver *drvthis, int x, int y, int len, int promille, int options);
++MODULE_EXPORT void imonlcd_hbar (Driver *drvthis, int x, int y, int len, int promille, int options);
++MODULE_EXPORT void imonlcd_num (Driver *drvthis, int x, int num);
++MODULE_EXPORT void imonlcd_output (Driver *drvthis, int state);
++MODULE_EXPORT int  imonlcd_set_contrast (Driver *drvthis, int promille);
++MODULE_EXPORT int  imonlcd_get_contrast (Driver *drvthis);
++MODULE_EXPORT void imonlcd_backlight(Driver *drvthis, int on);
++
++/**
++ * These are not supported by the iMON LCD module
++ */
++//MODULE_EXPORT int  imonlcd_get_free_chars (Driver *drvthis);
++//MODULE_EXPORT void imonlcd_set_char (Driver *drvthis, int n, char *dat);
++//MODULE_EXPORT int  imonlcd_icon (Driver *drvthis, int x, int y, int icon);
++
++#endif
++
+diff -Naur lcdproc-0.5.2-old/server/drivers/Makefile.am lcdproc-0.5.2-new/server/drivers/Makefile.am
+--- lcdproc-0.5.2-old/server/drivers/Makefile.am	2007-04-14 07:39:53.000000000 -0700
++++ lcdproc-0.5.2-new/server/drivers/Makefile.am	2007-10-17 12:54:09.000000000 -0700
+@@ -19,7 +19,7 @@
+ #LIBS =
+ 
+ pkglib_PROGRAMS = @DRIVERS@
+-EXTRA_PROGRAMS = bayrad CFontz CFontz633 CFontzPacket curses CwLnx ea65 EyeboxOne g15 glcdlib glk hd44780 icp_a106 imon IOWarrior irman joy lb216 lcdm001 lcterm lirc MD8800 ms6931 mtc_s16209x MtxOrb NoritakeVFD picolcd pyramid sed1330 sed1520 serialPOS serialVFD stv5730 svga t6963 text tyan sli ula200 xosd
++EXTRA_PROGRAMS = bayrad CFontz CFontz633 CFontzPacket curses CwLnx ea65 EyeboxOne g15 glcdlib glk hd44780 icp_a106 imon imonlcd IOWarrior irman joy lb216 lcdm001 lcterm lirc MD8800 ms6931 mtc_s16209x MtxOrb NoritakeVFD picolcd pyramid sed1330 sed1520 serialPOS serialVFD stv5730 svga t6963 text tyan sli ula200 xosd
+ noinst_LIBRARIES = libLCD.a libbignum.a
+ 
+ IOWarrior_CFLAGS =   @libusb_cflags@ $(AM_CFLAGS)
+@@ -37,6 +37,7 @@
+ hd44780_DEPENDENCIES = @HD44780_DRIVERS@
+ icp_a106_LDADD =     libLCD.a
+ imon_LDADD =         libLCD.a
++imonlcd_LDADD =      libLCD.a
+ IOWarrior_LDADD =    @libusb_libs@ libLCD.a libbignum.a
+ irman_LDADD =        @LIBIRMAN@
+ lcterm_LDADD =       libLCD.a
+@@ -75,6 +76,7 @@
+ 
+ icp_a106_SOURCES =   lcd.h lcd_lib.h icp_a106.c icp_a106.h report.h
+ imon_SOURCES =       lcd.h lcd_lib.h imon.h imon.c report.h
++imonlcd_SOURCES =    lcd.h lcd_lib.h imonlcd.h imonlcd.c report.h
+ IOWarrior_SOURCES =  lcd.h lcd_lib.h hd44780-charmap.h IOWarrior.c IOWarrior.h report.h adv_bignum.h
+ irman_SOURCES =      lcd.h irmanin.c irmanin.h report.h
+ joy_SOURCES =        lcd.h joy.c joy.h port.h report.h

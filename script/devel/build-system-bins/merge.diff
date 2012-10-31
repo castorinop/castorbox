@@ -1,0 +1,12 @@
+--- old/package-api.mk	2011-07-30 18:21:15.070362798 -0300
++++ new/package-api.mk	2010-08-13 23:24:28.000000000 -0300
+@@ -152,8 +152,7 @@
+ 	sed
+ 
+ build_system_bins_subversion = \
+-	svn \
+-	svnversion
++	svn
+ 
+ # Overridden by binaries from package utils/tar.
+ build_system_bins_tar = \

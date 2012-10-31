@@ -1,0 +1,27 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1789/plugins/feature/movie/series_helper_tvdbcom.cpp work/main.d/mms-1.1.0-1789/plugins/feature/movie/series_helper_tvdbcom.cpp
+--- tmp/mms-1.1.0-1789/plugins/feature/movie/series_helper_tvdbcom.cpp	2010-05-26 21:35:56.000000000 -0300
++++ new-mms-1.1.0-1789/plugins/feature/movie/series_helper_tvdbcom.cpp	2010-07-16 14:36:21.000000000 -0300
+@@ -363,6 +363,7 @@
+ 
+ void tvdbcom::helper::getBanner(const Serie& sr, const std::string path, bool force)
+ {
++	if (sr.name.size() == 0) return;
+ 	string filename =  string_format::lowercase_utf(path + "/" + sr.name + "_banner.jpg");
+ 	string url = getMirror() + "/banners/" + sr.banner;
+ 	download (url, filename, force);
+@@ -370,6 +371,7 @@
+ 
+ void tvdbcom::helper::getFanart(const Serie& sr, const std::string path, bool force)
+ {
++	if (sr.name.size() == 0) return;
+ 	string filename =  string_format::lowercase_utf(path + "/" + sr.name + "_fanart.jpg");
+ 	string url = getMirror() + "/banners/" + sr.fanart;
+ 	download (url, filename, force);
+@@ -378,6 +380,7 @@
+ 
+ void tvdbcom::helper::getCover(const Episode& sr, const std::string path, bool force)
+ {
++	if (sr.name.size() == 0) return; 	
+ 	string filename =  string_format::lowercase_utf(path + "/" + sr.name + "_cover.jpg");
+ 	string url = getMirror() + "/banners/" + sr.cover;
+ 	download (url, filename, force);

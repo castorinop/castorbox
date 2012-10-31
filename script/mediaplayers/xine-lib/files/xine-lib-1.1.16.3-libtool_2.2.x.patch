@@ -1,0 +1,11 @@
+diff -Naur xine-lib-1.1.16.3-old/configure.ac xine-lib-1.1.16.3-new/configure.ac
+--- xine-lib-1.1.16.3-old/configure.ac	2009-04-27 18:45:49.000000000 -0700
++++ xine-lib-1.1.16.3-new/configure.ac	2009-04-27 18:46:54.000000000 -0700
+@@ -119,6 +119,7 @@
+ dnl ---------------------------------------------
+ 
+ AC_PROG_CC
++AC_PROG_CXX
+ AM_PROG_AS
+ 
+ case "$host_os" in

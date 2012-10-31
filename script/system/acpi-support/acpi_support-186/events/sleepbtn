@@ -1,0 +1,10 @@
+# /etc/acpi/events/sleepbtn
+# Called when the user presses the sleep button
+
+# Note that this script is part of the SUSPEND part of acpi-support. This is
+# not a key translation event, it is intended to perform a suspend if no
+# power management daemon is running.
+
+event=button[ /]sleep
+action=/etc/acpi/sleep.sh
+

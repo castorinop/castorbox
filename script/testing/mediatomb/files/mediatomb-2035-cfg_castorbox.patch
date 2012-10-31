@@ -1,0 +1,41 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mediatomb-2035/config/sqlite3.sql work/main.d/mediatomb-2035/config/sqlite3.sql
+--- tmp/mediatomb-2035/config/sqlite3.sql	2009-12-23 09:05:14.000000000 -0300
++++ new-mediatomb-2035/config/sqlite3.sql	2009-12-31 12:56:32.000000000 -0300
+@@ -21,7 +21,7 @@
+ );
+ INSERT INTO "mt_cds_object" VALUES(-1, NULL, -1, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, 9, NULL, NULL);
+ INSERT INTO "mt_cds_object" VALUES(0, NULL, -1, 1, 'object.container', 'Root', NULL, NULL, NULL, NULL, NULL, 0, NULL, 9, NULL, NULL);
+-INSERT INTO "mt_cds_object" VALUES(1, NULL, 0, 1, 'object.container', 'PC Directory', NULL, NULL, NULL, NULL, NULL, 0, NULL, 9, NULL, NULL);
++INSERT INTO "mt_cds_object" VALUES(1, NULL, 0, 1, 'object.container', 'shared', NULL, NULL, NULL, NULL, NULL, 0, NULL, 9, NULL, NULL);
+ CREATE TABLE "mt_cds_active_item" (
+   "id" integer primary key,
+   "action" varchar(255) NOT NULL,
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mediatomb-2035/src/config_manager.cc work/main.d/mediatomb-2035/src/config_manager.cc
+--- tmp/mediatomb-2035/src/config_manager.cc	2009-12-23 09:05:02.000000000 -0300
++++ new-mediatomb-2035/src/config_manager.cc	2009-12-31 12:57:08.000000000 -0300
+@@ -395,7 +395,7 @@
+     ui->appendElementChild(accounts);
+     
+     server->appendElementChild(ui);
+-    server->appendTextChild(_("name"), _(PACKAGE_NAME));
++    server->appendTextChild(_("name"), _("CastorBOX"));
+     
+     Ref<Element> udn(new Element(_("udn")));
+     server->appendElementChild(udn);
+@@ -621,6 +621,16 @@
+     mappings->appendElementChild(mtcontent);
+     import->appendElementChild(mappings);
+ 
++    Ref<Element> autoscan(new Element(_("autoscan")));
++    autoscan->setAttribute(_("use-inotify"), _("yes"));
++    Ref<Element> directory(new Element(_("directory")));
++    directory->setAttribute(_("location"), _("/media"));
++    directory->setAttribute(_("mode"), _("inotify"));
++    directory->setAttribute(_("recursive"), _("yes"));
++    directory->setAttribute(_("hidden-files"), _("no"));
++    autoscan->appendElementChild(directory);
++    import->appendElementChild(autoscan);
++
+ #ifdef ONLINE_SERVICES
+     import->appendElementChild(renderOnlineSection());
+ #endif

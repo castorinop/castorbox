@@ -1,0 +1,9 @@
+ae5aef506088e521e4b1cc4f668e96d2  download/mysql-5.1.58.tar.gz
+a5acdb8ee0e6e5ea2b8704f708ced419  download/mysql-5.1.58-dash.patch
+e8bcbb39cf129ecf23176752f90f13d3  download/mysql-5.1.58-skip_abi_check.patch
+22ad8794ee5ae315be6148ee9c1c5a86  download/mysql-5.1.58-ac_cache_check.patch
+077675dc94df5f4421836096cecd61c0  download/mysql-5.1.58-perl.patch.gar
+8ab296fb60cc4871fee3d0364b99ad29  download/mysql-5.1.58-mysql_config.patch.gar
+b575e2ca49ea2a31ac7d012d252d1f77  download/mysql-5.1.58-cross.patch
+ae57d5f0b29b7b33de9b0fe4b1267ae4  download/config.cache.i386
+ae57d5f0b29b7b33de9b0fe4b1267ae4  download/config.cache.x86_64

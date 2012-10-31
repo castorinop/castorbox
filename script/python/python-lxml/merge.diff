@@ -1,0 +1,25 @@
+--- old/Makefile	2011-07-26 21:24:30.883700992 -0300
++++ new/Makefile	2012-06-09 15:39:23.800667000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = python-lxml
+-GARVERSION = 2.3
++GARVERSION = 2.3.4
+ CATEGORIES = python
+ MASTER_SITES = http://codespeak.net/lxml/
+ DISTFILES = $(patsubst python-%,%,$(GARNAME))-$(GARVERSION).tgz
+@@ -34,8 +34,8 @@
+ GAR_EXTRA_CONF += python/python/package-api.mk
+ include ../../gar.mk
+ 
+-#CFLAGS  += -L$(DESTDIR)$(libdir)
+-#LDFLAGS += -L$(DESTDIR)$(libdir)
++CFLAGS  := $(CFLAGS)  -fPIC
++LDFLAGS := $(LDFLAGS) -fPIC
+ 
+ build-%/setup.py:
+ 	@echo " ==> Running setup.py build in $*"
+--- old/checksums	2011-07-26 21:24:30.883700992 -0300
++++ new/checksums	2012-06-09 15:39:23.800667000 -0300
+@@ -1 +1 @@
+-a245a015fd59b63e220005f263e1682a  download/lxml-2.3.tgz
++61d4ad80726b984b35c9a81aa2510b4d  download/lxml-2.3.4.tgz

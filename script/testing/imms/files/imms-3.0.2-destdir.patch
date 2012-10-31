@@ -1,0 +1,26 @@
+diff --speed-large-files --minimal -Nru tmp/imms-3.1.0-rc2/rules.mk work/main.d/imms-3.1.0-rc2/rules.mk
+--- tmp/imms-3.1.0-rc2/rules.mk	2007-01-17 12:53:04.000000000 -0300
++++ imms-3.1.0-rc2/rules.mk	2007-12-20 15:43:46.000000000 -0300
+@@ -31,4 +31,4 @@
+ install: all plugins_install programs_install
+ 
+ programs_install: $(patsubst %,%_install,$(OPTIONAL))
+-	${INSTALL} -D immsd immstool $(bindir)
++	${INSTALL} -D immsd immstool $(DESTDIR)$(bindir)
+diff --speed-large-files --minimal -Nru tmp/imms-3.0.2/build/Makefile work/main.d/imms-3.0.2/build/Makefile
+--- tmp/imms-3.0.2/build/Makefile	2005-12-26 20:12:03.000000000 -0300
++++ imms-3.0.2/build/Makefile	2008-02-07 14:54:54.000000000 -0200
+@@ -45,10 +45,10 @@
+ plugins_install: $(PLUGINS_INSTALL)
+ 
+ analyzer_install: analyzer
+-	${INSTALL} -D $< $(bindir)/$<
++	${INSTALL} -D $< $(DESTDIR)$(bindir)/$<
+ 
+ immsremote_install: immsremote glade_install
+-	${INSTALL} -D $< $(bindir)/$<
++	${INSTALL} -D $< $(DESTDIR)$(bindir)/$<
+ 
+ glade_install: ../immsremote/immsremote.glade
+-	${INSTALL} -D $< $(datadir)/imms/immsremote.glade
++	${INSTALL} -D $< $(DESTDIR)$(datadir)/imms/immsremote.glade

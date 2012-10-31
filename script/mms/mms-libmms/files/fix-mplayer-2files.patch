@@ -1,0 +1,42 @@
+=== modified file 'plugins/feature/movie/players/mplayer/mplayer.cpp'
+--- old/plugins/feature/movie/players/mplayer/mplayer.cpp	2008-07-06 15:45:02 +0000
++++ new/plugins/feature/movie/players/mplayer/mplayer.cpp	2008-08-03 15:20:09 +0000
+@@ -587,6 +587,10 @@
+ 
+   usleep(100*1000);
+ 
++ // return to current position
++ char tmp[20];
++ sprintf(tmp, "seek %.1f 2", pos);
++ send_command(tmp);
+   if (was_paused)
+     pause();
+ }
+@@ -666,6 +670,7 @@
+ 
+   char buff[bsize+2]; // additional space for fake newline
+   int c=0;
++  bool last_in_fullscreen = player->in_fullscreen;
+ 
+   while (player->running) {
+     poll(&pfd,1,300);
+@@ -683,14 +688,15 @@
+         if(p) {
+           *p++=0;
+           float itime;
+-          if(strncmp(buff,"Starting playback",17)==0) {
+-	    if (player->pos > 0.0) {
++          /*if(strncmp(buff,"Starting playback",17)==0) {
++	    if (last_in_fullscreen != player->in_fullscreen && player->pos > 0.0) {
+ 	      char tmp[20];
+ 	      sprintf(tmp, "seek %.1f 2", player->pos);
+ 	      player->send_command(tmp);
++	      last_in_fullscreen = player->in_fullscreen;
+ 	    }
+ 	  }
+-          else if(sscanf(buff,"ANS_TIME_POSITION=%f",&itime)==1) {
++          else */ if(sscanf(buff,"ANS_TIME_POSITION=%f",&itime)==1) {
+ 	    player->stop_playback_ok = true;
+             if(itime>0) {
+ 	      player->pos=itime;
+

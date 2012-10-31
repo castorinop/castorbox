@@ -1,0 +1,77 @@
+GARNAME = xbmc
+GARVERSION = 11.0
+CATEGORIES = gui
+MASTER_SITES = http://mirrors.xbmc.org/releases/source/
+DISTFILES = $(DISTNAME).tar.gz
+#PATCHFILES = $(DISTNAME)-crosscompiling.patch.gar
+PATCHFILES = $(DISTNAME)-fix_XB_FIND_SONAME.patch
+LICENSE = GPL2
+
+DESCRIPTION =
+define BLURB
+endef
+
+DEPENDS = lang/cxx \
+	  db/mysql \
+	  lib/boost \
+	  xbmc/enca \
+	  xbmc/fribidi \
+	  xbmc/jasper \
+	  xbmc/libass \
+	  lib/libcdio \
+	  lib/faad2 \
+	  lib/ffmpeg \
+       	  xbmc/libmicrohttpd \
+ 	  xbmc/libmms \
+	  xbmc/libmodplug \
+	  lib/libmad \
+	  lib/libmpeg2 \
+	  lib/libsamplerate \
+	  lib/SDL \
+	  games/SDL_image \
+	  games/SDL_mixer \
+	  lib/libtiff \
+	  xbmc/wavpack \
+	  lib/lzo \
+	  python/python
+
+BUILDDEPS = xbmc/cmake utils/zip
+
+CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
+
+PYTHON_ARGS = PYTHON=$(DESTDIR)$(bindir)/python \
+	                    LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(LD_LIBRARY_PATH)"
+
+CONFIGURE_ARGS = $(DIRPATHS)  PYTHON_LDFLAGS="-L${build_PYTHON_lidir}" --build=$(GARBUILD) --host=$(GARHOST) \
+	-C \
+	--enable-external-libraries \
+	--disable-optimizations \
+	--disable-non-free
+
+#CONFIGURE_ENV = PYTHON_NOVERSIONCHECK=no-check \
+#		PYTHON_VERSION=2.6 \
+#		PYTHON_LDFLAGS="-L${build_PYTHON_lidir} -lpython2.6" \
+#		PYTHON_CPPFLAGS="-I${build_PYTHON_includedir}" \
+#		PYTHON_SITE_PKG="${build_prefix}/lib/python2.6/site-packages"
+#
+#no
+#	--disable-debug \
+#	--disable-ccache \
+#	--enable-external-python \
+#	--disable-dvdcss \
+#	--enable-goom 
+
+
+GAR_EXTRA_CONF += python/pyton/package-api.mk
+include ../../gar.mk
+
+pre-configure:
+	# remove prebuilt libraries
+	find $(WORKSRC) -type f \( -iname '*.so' -o -iname '*.dll' -o -iname '*.exe' \) -delete
+	cd $(WORKSRC) && ./bootstrap
+	echo "ac_cv_prog_HAVE_ZIP=true" > $(WORKSRC)/config.cache
+	@$(call FIX_LIBTOOL_LIBPATH,$(WORKSRC),configure)
+	$(MAKECOOKIE)
+

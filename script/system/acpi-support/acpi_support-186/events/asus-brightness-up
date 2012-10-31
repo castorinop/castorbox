@@ -1,0 +1,2 @@
+event=hotkey (ATKD|HOTK) 0000001[0123456789abcdef]
+action=/etc/acpi/asus-brn-up.sh

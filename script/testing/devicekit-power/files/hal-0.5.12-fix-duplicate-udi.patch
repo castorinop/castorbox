@@ -1,0 +1,43 @@
+From 999818f10b45cf516dc7e828d2f7e2cbe615cae3 Mon Sep 17 00:00:00 2001
+From: Danny Kukawka <danny.kukawka@web.de>
+Date: Wed, 18 Mar 2009 16:30:53 +0000
+Subject: ignore ADD events if there is already a device with same sysfs_path
+
+Ignore ADD events if there is already a device with the same
+syfs_path available in the GDL or TDL. This should prevent
+problems getting duplicated devices from calling 'udevadm trigger'
+(fd.o#18861) or from some other rare cases (see:
+http://lists.freedesktop.org/archives/hal/2009-February/012954.html).
+
+TODO: Check if it make sense to call a refresh for the already
+      existing device instead of ignoring the event completely.
+---
+diff --git a/hald/linux/device.c b/hald/linux/device.c
+index 6653782..1b3316a 100644
+--- a/hald/linux/device.c
++++ b/hald/linux/device.c
+@@ -4829,11 +4829,22 @@ hotplug_event_begin_add_dev (const gchar *subsystem, const gchar *sysfs_path, co
+ 		handler = dev_handlers[i];
+ 		if (strcmp (handler->subsystem, subsystem) == 0) {
+ 			HalDevice *d;
++			HalDevice *check;
+ 
+ 			if (strcmp (subsystem, "scsi") == 0)
+ 				if (missing_scsi_host (sysfs_path, (HotplugEvent *)end_token, HOTPLUG_ACTION_ADD))
+ 					goto out;
+ 
++			/* check if there is already a device with this sysfs_path in the system */
++			if ((check = hal_device_store_match_key_value_string (hald_get_gdl (), "linux.sysfs_path", sysfs_path)) != NULL ||
++			    (check = hal_device_store_match_key_value_string (hald_get_tdl (), "linux.sysfs_path", sysfs_path)) != NULL) {
++				HAL_WARNING(("Have already a device with sysfs_path='%s' and udi='%s'. Ignore new add event for now.", 
++					     sysfs_path, hal_device_get_udi(check)));
++				/* maybe we should do a refresh on the found device ??? */
++				hotplug_event_end (end_token);
++				goto out; 
++			}
++
+ 			/* attempt to add the device */
+ 			d = handler->add (sysfs_path, device_file, parent_dev, parent_path);
+ 			if (d == NULL) {
+--
+cgit v0.8.2

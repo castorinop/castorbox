@@ -1,0 +1,72 @@
+--- old/sapi/apache2handler/sapi_apache2.c	2007-01-01 10:36:12.000000000 +0100
++++ new/sapi/apache2handler/sapi_apache2.c.oden	2007-02-07 21:18:47.000000000 +0100
+@@ -419,20 +419,33 @@
+ 	return OK;
+ }
+ 
+ static apr_status_t php_server_context_cleanup(void *data_)
+ {
+ 	void **data = data_;
+ 	*data = NULL;
+ 	return APR_SUCCESS;
+ }
+ 
++static int saved_umask;
++
++static void php_save_umask(void)
++{
++	saved_umask = umask(0777);
++	umask(saved_umask);
++}
++
++static void php_restore_umask(void)
++{
++	umask(saved_umask);
++}
++
+ static int php_apache_request_ctor(request_rec *r, php_struct *ctx TSRMLS_DC)
+ {
+ 	char *content_length;
+ 	const char *auth;
+ 
+ 	SG(sapi_headers).http_response_code = !r->status ? HTTP_OK : r->status;
+ 	SG(request_info).content_type = apr_table_get(r->headers_in, "Content-Type");
+ 	SG(request_info).query_string = apr_pstrdup(r->pool, r->args);
+ 	SG(request_info).request_method = r->method;
+ 	SG(request_info).proto_num = r->proto_num;
+@@ -607,31 +620,35 @@
+ 	}
+ 
+ 	/* Determine if we need to parse the file or show the source */
+ 	if (strncmp(r->handler, PHP_SOURCE_MAGIC_TYPE, sizeof(PHP_SOURCE_MAGIC_TYPE) - 1) == 0) {
+ 		zend_syntax_highlighter_ini syntax_highlighter_ini;
+ 		php_get_highlight_struct(&syntax_highlighter_ini);
+ 		highlight_file((char *)r->filename, &syntax_highlighter_ini TSRMLS_CC);
+ 	} else {
+ 		zend_file_handle zfd;
+ 
++		php_save_umask();
++
+ 		zfd.type = ZEND_HANDLE_FILENAME;
+ 		zfd.filename = (char *) r->filename;
+ 		zfd.free_filename = 0;
+ 		zfd.opened_path = NULL;
+ 
+ 		if (!parent_req) {
+ 			php_execute_script(&zfd TSRMLS_CC);
+ 		} else {
+ 			zend_execute_scripts(ZEND_INCLUDE TSRMLS_CC, NULL, 1, &zfd);
+ 		}
+ 
++		php_restore_umask();
++
+ 		apr_table_set(r->notes, "mod_php_memory_usage",
+ 			apr_psprintf(ctx->r->pool, "%u", zend_memory_peak_usage(1 TSRMLS_CC)));
+ 	}
+ 
+ } zend_end_try();
+ 
+ 	if (!parent_req) {
+ 		php_apache_request_dtor(r TSRMLS_CC);
+ 		ctx->request_processed = 1;
+ 		bucket = apr_bucket_eos_create(r->connection->bucket_alloc);

@@ -1,0 +1,106 @@
+diff -Naur lirc-0.8.5pre2-old/configure.ac lirc-0.8.5pre2-new/configure.ac
+--- lirc-0.8.5pre2-old/configure.ac	2009-03-31 19:05:28.000000000 -0700
++++ lirc-0.8.5pre2-new/configure.ac	2009-03-31 19:05:59.000000000 -0700
+@@ -168,7 +168,6 @@
+ 	(lirc_dev lirc_ite8709) \
+ 	(lirc_dev lirc_mceusb) \
+ 	(lirc_dev lirc_mceusb2) \
+-	(lirc_dev lirc_parallel) \
+ 	(lirc_dev lirc_sasem) \
+ 	(lirc_dev lirc_serial) \
+ 	(lirc_dev lirc_sir) \
+@@ -302,9 +301,6 @@
+ AH_TEMPLATE([LIRC_IMON_LCD],
+ 	[Define if your iMON is an LCD and not a VFD.])
+ 
+-AH_TEMPLATE([LIRC_TIMER],
+-	[Set the timer for the parallel port driver])
+-
+ AH_TEMPLATE([LOCALSTATEDIR],
+ 	[modifiable single-machine data])
+ 
+@@ -448,7 +444,7 @@
+                           livedrive_midi, livedrive_seq, logitech,
+                           lptX, macmini, mceusb, mceusb2, mediafocusI,
+                           mouseremote, mouseremote_ps2, mp3anywhere,
+-                          mplay, nslu2,packard_bell, parallel, pcmak,
++                          mplay, nslu2,packard_bell, pcmak,
+                           pcmak_usb, pctv, pixelview_bt878,
+                           pixelview_pak, pixelview_pro, provideo,
+                           realmagic, remotemaster, sa1100, samsung,
+@@ -607,8 +603,6 @@
+ 		;;
+ 	lirc_dev-lirc_mceusb2)
+ 		;;
+-	lirc_dev-lirc_parallel)
+-		;;
+ 	lirc_dev-lirc_sasem)
+ 		;;
+ 	lirc_dev-lirc_serial)
+@@ -1132,18 +1126,6 @@
+   lircmd_conf="logitech/lircmd.conf.logitech"
+ fi
+ 
+-if test "$driver" = "lpt1"; then
+-  lirc_driver="lirc_dev lirc_parallel"
+-  port=0x378
+-  irq=7
+-fi
+-
+-if test "$driver" = "lpt2"; then
+-  lirc_driver="lirc_dev lirc_parallel"
+-  port=0x278
+-  irq=5
+-fi
+-
+ if test "$driver" = "macmini"; then
+   lirc_driver="$driver"
+   hw_module="hw_hiddev.o"
+@@ -1207,10 +1189,6 @@
+   lircd_conf="packard_bell/lircd.conf.packard_bell"
+ fi
+ 
+-if test "$driver" = "parallel"; then
+-  lirc_driver="lirc_dev lirc_parallel"
+-fi
+-
+ if test "$driver" = "pcmak" -o "$driver" = "pcmak_usb"; then
+   lirc_driver="none"
+   hw_module="hw_pcmak.o serial.o"
+@@ -1499,7 +1477,6 @@
+ 	lirc_ite8709 \
+ 	lirc_mceusb \
+ 	lirc_mceusb2 \
+-	lirc_parallel \
+ 	lirc_sasem \
+ 	lirc_serial \
+ 	lirc_sir \
+@@ -1570,10 +1547,6 @@
+ irq=${withval}
+ )
+ 
+-AC_ARG_WITH(timer,
+-[  --with-timer=value      specify the timer value for the parallel driver],
+-timer=${withval})
+-
+ dnl I dont think libirman  will accept this at the moment
+ AC_ARG_WITH(tty,
+ [  --with-tty=file         specify the tty to use (Irman, RemoteMaster, etc.)],
+@@ -1700,9 +1673,6 @@
+ if test "$irq" != ""; then
+   AC_DEFINE_UNQUOTED(LIRC_IRQ, $irq)
+ fi
+-if test "$timer" != ""; then
+-  AC_DEFINE_UNQUOTED(LIRC_TIMER, $timer)
+-fi
+ AC_DEFINE_UNQUOTED(LIRC_IRTTY, "$irtty")
+ AC_DEFINE_UNQUOTED(LIRC_SYSLOG, $facility)
+ 
+@@ -1775,7 +1745,6 @@
+   drivers/lirc_ite8709/Makefile
+   drivers/lirc_mceusb/Makefile
+   drivers/lirc_mceusb2/Makefile
+-  drivers/lirc_parallel/Makefile
+   drivers/lirc_sasem/Makefile
+   drivers/lirc_serial/Makefile
+   drivers/lirc_sir/Makefile

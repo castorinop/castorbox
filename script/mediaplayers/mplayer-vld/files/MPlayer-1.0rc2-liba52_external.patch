@@ -1,0 +1,165 @@
+diff -Naur MPlayer-1.0rc2-old/configure MPlayer-1.0rc2-new/configure
+--- MPlayer-1.0rc2-old/configure	2007-10-07 12:49:33.000000000 -0700
++++ MPlayer-1.0rc2-new/configure	2009-04-20 15:31:21.000000000 -0700
+@@ -5972,6 +5972,7 @@
+ if test "$_liba52" = yes ; then
+   _def_liba52='#define USE_LIBA52 1'
+   _codecmodules="liba52 $_codecmodules"
++  _ld_extra="$_ld_extra -la52"
+ else
+   _def_liba52='#undef USE_LIBA52'
+   _nocodecmodules="liba52 $_nocodecmodules"
+diff -Naur MPlayer-1.0rc2-old/libmpcodecs/ad_hwac3.c MPlayer-1.0rc2-new/libmpcodecs/ad_hwac3.c
+--- MPlayer-1.0rc2-old/libmpcodecs/ad_hwac3.c	2007-10-07 12:49:25.000000000 -0700
++++ MPlayer-1.0rc2-new/libmpcodecs/ad_hwac3.c	2009-04-20 16:11:52.000000000 -0700
+@@ -91,10 +91,6 @@
+   demux_read_data(sh_audio->ds, sh_audio->a_in_buffer + 10, length - 10);
+   sh_audio->a_in_buffer_len = length;
+     
+-  // TODO: is DTS also checksummed?
+-  if(isdts == 0 && crc16_block(sh_audio->a_in_buffer + 2, length - 2) != 0)
+-    mp_msg(MSGT_DECAUDIO, MSGL_STATUS, "a52: CRC check failed!  \n");
+-    
+   return length;
+ }
+ 
+diff -Naur MPlayer-1.0rc2-old/libmpcodecs/ad_liba52.c MPlayer-1.0rc2-new/libmpcodecs/ad_liba52.c
+--- MPlayer-1.0rc2-old/libmpcodecs/ad_liba52.c	2007-10-07 12:49:25.000000000 -0700
++++ MPlayer-1.0rc2-new/libmpcodecs/ad_liba52.c	2009-04-20 15:40:45.000000000 -0700
+@@ -1,3 +1,4 @@
++#define _XOPEN_SOURCE 600
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -16,8 +17,14 @@
+ 
+ #include "libaf/af_format.h"
+ 
++#ifdef CONFIG_LIBA52_INTERNAL
+ #include "liba52/a52.h"
+ #include "liba52/mm_accel.h"
++#else
++#include <a52dec/a52.h>
++#include <a52dec/mm_accel.h>
++int (* a52_resample) (float * _f, int16_t * s16);
++#endif
+ 
+ static a52_state_t *a52_state;
+ static uint32_t a52_flags=0;
+@@ -38,8 +45,6 @@
+ float a52_drc_level = 1.0;
+ static int a52_drc_action = DRC_NO_ACTION;
+ 
+-#include "mpbswap.h"
+-
+ static ad_info_t info = 
+ {
+ 	"AC3 decoding with liba52",
+@@ -81,8 +86,10 @@
+     if(sh_audio->format!=0x2000)
+ 	swab(sh_audio->a_in_buffer+8,sh_audio->a_in_buffer+8,length-8);
+     
++#ifdef CONFIG_LIBA52_INTERNAL
+     if(crc16_block(sh_audio->a_in_buffer+2,length-2)!=0)
+ 	mp_msg(MSGT_DECAUDIO,MSGL_STATUS,"a52: CRC check failed!  \n");
++#endif
+     
+     return length;
+ }
+@@ -123,7 +130,11 @@
+ {
+   /* Dolby AC3 audio: */
+   /* however many channels, 2 bytes in a word, 256 samples in a block, 6 blocks in a frame */
++#ifdef CONFIG_LIBA52_INTERNAL
+   if (sh->samplesize < 2) sh->samplesize = 2;
++#else
++  if (sh->samplesize < 4) sh->samplesize = 4;
++#endif
+   sh->audio_out_minsize=audio_output_channels*sh->samplesize*256*6;
+   sh->audio_in_minsize=3840;
+   a52_level = 1.0;
+@@ -160,17 +171,26 @@
+   sample_t level=a52_level, bias=384;
+   int flags=0;
+   /* Dolby AC3 audio:*/
++#ifdef MM_ACCEL_X86_SSE
+   if(gCpuCaps.hasSSE) a52_accel|=MM_ACCEL_X86_SSE;
++#endif
+   if(gCpuCaps.hasMMX) a52_accel|=MM_ACCEL_X86_MMX;
+   if(gCpuCaps.hasMMX2) a52_accel|=MM_ACCEL_X86_MMXEXT;
+   if(gCpuCaps.has3DNow) a52_accel|=MM_ACCEL_X86_3DNOW;
++#ifdef MM_ACCEL_X86_3DNOWEXT
+   if(gCpuCaps.has3DNowExt) a52_accel|=MM_ACCEL_X86_3DNOWEXT;
++#endif
++#ifdef MM_ACCEL_PPC_ALTIVEC
+   if(gCpuCaps.hasAltiVec) a52_accel|=MM_ACCEL_PPC_ALTIVEC;
++#endif
+   a52_state=a52_init (a52_accel);
+   if (a52_state == NULL) {
+ 	mp_msg(MSGT_DECAUDIO,MSGL_ERR,"A52 init failed\n");
+ 	return 0;
+   }
++#ifndef CONFIG_LIBA52_INTERNAL
++  sh_audio->sample_format = AF_FORMAT_FLOAT_NE;
++#endif
+   if(a52_fillbuff(sh_audio)<0){
+ 	mp_msg(MSGT_DECAUDIO,MSGL_ERR,"A52 sync failed\n");
+ 	return 0;
+@@ -243,8 +263,12 @@
+ 	  break;
+       }
+   } else
++#ifdef CONFIG_LIBA52_INTERNAL
+   if(a52_resample_init(a52_accel,flags,sh_audio->channels)) break;
+   --sh_audio->channels; /* try to decrease no. of channels*/
++#else
++  break;
++#endif
+ }
+   if(sh_audio->channels<=0){
+     mp_msg(MSGT_DECAUDIO,MSGL_ERR,"a52: no resampler. try different channel setup!\n");
+@@ -255,6 +279,7 @@
+ 
+ static void uninit(sh_audio_t *sh)
+ {
++  a52_free(a52_state);
+ }
+ 
+ static int control(sh_audio_t *sh,int cmd,void* arg, ...)
+diff -Naur MPlayer-1.0rc2-old/Makefile MPlayer-1.0rc2-new/Makefile
+--- MPlayer-1.0rc2-old/Makefile	2007-10-07 12:49:33.000000000 -0700
++++ MPlayer-1.0rc2-new/Makefile	2009-04-20 15:26:43.000000000 -0700
+@@ -62,7 +62,6 @@
+ COMMON_LIBS-$(LIBPOSTPROC_A)      += libpostproc/libpostproc.a
+ COMMON_LIBS-$(WIN32DLL)           += loader/libloader.a
+ COMMON_LIBS-$(MP3LIB)             += mp3lib/libmp3.a
+-COMMON_LIBS-$(LIBA52)             += liba52/liba52.a
+ COMMON_LIBS-$(LIBMPEG2)           += libmpeg2/libmpeg2.a
+ COMMON_LIBS-$(FAAD_INTERNAL)      += libfaad2/libfaad2.a
+ COMMON_LIBS-$(TREMOR_INTERNAL)    += tremor/libvorbisidec.a
+@@ -106,7 +105,6 @@
+ PARTS = dvdread \
+         gui \
+         input \
+-        liba52 \
+         libaf \
+         libao2 \
+         libass \
+@@ -193,9 +191,6 @@
+ libao2/libao2.a:
+ 	$(MAKE) -C libao2
+ 
+-liba52/liba52.a:
+-	$(MAKE) -C liba52
+-
+ libfaad2/libfaad2.a:
+ 	$(MAKE) -C libfaad2
+ 
+@@ -389,7 +384,6 @@
+ libswscale/libswscale.a: .norecurse $(wildcard libswscale/*.[ch])
+ 
+ libmpeg2/libmpeg2.a: .norecurse $(wildcard libmpeg2/*.[ch])
+-liba52/liba52.a: .norecurse $(wildcard liba52/*.[ch])
+ mp3lib/libmp3.a: .norecurse $(wildcard mp3lib/*.[ch])
+ libfaad2/libfaad2.a: .norecurse $(wildcard libfaad2/*.[ch] libfaad2/*/*.[ch])
+ 

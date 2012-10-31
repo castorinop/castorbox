@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org - MiniMyth - Documents - Configuration Instructions</title>
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">MiniMyth from <a href="http://linpvr.org">LinPVR.org</a></div>
+        <div class="menu">
+          <span class="menuItemFirst"><a href="../index.shtml">Home</a></span>
+          <span class="menuItem"     ><a href="index.shtml">MiniMyth</a></span>
+          <span class="menuItem"     ><a href="document.shtml">Documents</a></span>
+          <span class="menuItem"     >Configure</span>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">Configuration Instructions</div>
+        <div id="toc" class="section">
+          <div class="heading">Table of contents</div>
+          <dl>
+            <dt><a href="#general">General</a></dt>
+            <dt><a href="#bootline">Configuration obtained from the boot line</a></dt>
+            <dt><a href="#dhcp">Configuration obtained from the DHCP server</a></dt>
+            <dt><a href="#location">Location of configuration files</a></dt>
+            <dt><a href="#minimyth_conf">Configuration obtained from the MiniMyth configuration file</a></dt>
+            <dt><a href="#minimyth_script">Configuration obtained from the MiniMyth configuration script</a></dt>
+            <dt><a href="#misc">Configuration obtained from miscellaneous configuration files</a></dt>
+          </dl>
+        </div>
+        <div id="general" class="section">
+          <div class="heading">General</div>
+          <p>
+            MiniMyth obtains configuration from the following places:
+          </p>
+          <ul>
+            <li><a href="#bootline">the boot line</a>,</li>
+            <li><a href="#dhcp">the DHCP server</a>,</li>
+            <li><a href="#minimyth_conf">the MiniMyth configuration file</a>,</li>
+            <li><a href="#minimyth_script">the MiniMyth configuration script</a> and</li>
+            <li><a href="#misc">miscellaneous configuration files</a>.</li>
+          </ul>
+          <p>
+            Ideally, the MiniMyth configuration script and the miscellaneous configuration files should not be needed.
+            However, MiniMyth still lacks configuration files for many remote control recievers, remote controls, and LCD and VFD displays.
+            In addition, MiniMyth still lacks the flexibility needed for some X Window System configurations.
+            If you have configuration files for your hardware and setup that you would like included in MiniMyth, then
+            <a href="http://linpvr.org/bugs/">file a bug report</a>
+            containing a list of you hardware including vendor and model,
+            the outputs of the commands 'lspci&nbsp;-mn' and 'lsusb' with all you hardware connected,
+            and the configuration files you want included.
+          </p>
+        </div>
+        <div id="bootline" class="section">
+          <div class="heading">Configuration obtained from the boot line</div>
+          <p>
+            MiniMyth can obtain configuration from the boot line.
+            You can find information on the configuration that can be obtained from the boot line in the
+            <a href="document-boot.shtml#bootline">MiniMyth boot instructions' boot line parameters</a> section.
+          </p>
+        </div>
+        <div id="dhcp" class="section">
+          <div class="heading">Configuration obtained from the DHCP server</div>
+          <p>
+            MiniMyth can obtain configuration from the DHCP server.
+            You can find information on the configuration that can be obtained from the DHCP server in the
+            <a href="document-minimyth_conf.shtml#MM_DHCP">minimyth.conf description's DHCP override variables</a> section.
+          </p>
+        </div>
+        <div id="location" class="section">
+          <div class="heading">Location of configuration files</div>
+          <p>
+            MiniMyth looks for configuration files and scripts in the MiniMyth configuration directory.
+            The MiniMyth configuration directory is named 'conf'.
+          </p>
+          <p>
+            MiniMyth looks for the MiniMyth configuration directory in the MiniMyth boot directory.
+            MiniMyth 'guesses' the location of the boot directory as follows.
+            If the file system contains the directory '/minimyth', then MiniMyth assumes that '/minimyth' is the boot directory.
+            Otherwise, MiniMyth assumes the boot directory is the directory on the TFTP server that contains the boot loader.
+          </p>
+          <p>
+            In practice, this means that
+            if you network boot MiniMyth
+            then you put the MiniMyth configuration directory in the same directory on the TFTP server as the network boot loader
+            (called 'pxelinux.0' when using PXELinux), and that
+            if you local boot MiniMyth,
+            then you put the MiniMyth configuration directory at the root of the partition labeled 'minimyth',
+            which MiniMyth will automatically mount at the mount point '/minimyth'.
+          </p>
+          <p>
+            Once MiniMyth has 'guessed' the boot directory (lets call it '{boot}'),
+            then MiniMyth looks for configuration files
+            first in the directory '{boot}/conf/{hostname}' and
+            second in the directory '{boot}/conf/default',
+            where '{hostname}' is the hostname of the MiniMyth frontend.
+          </p>
+        </div>
+        <div id="minimyth_conf" class="section">
+          <div class="heading">Configuration obtained from the MiniMyth configuration file</div>
+          <p>
+            The MiniMyth configuration file is called 'minimyth.conf'.
+            The MiniMyth configuration file is required.
+            You can find information on the configuration that can be obtained from MiniMyth configuration file in the
+            <a href="document-minimyth_conf.shtml">minimyth.conf description</a>.
+          </p>
+        </div>
+        <div id="minimyth_script" class="section">
+          <div class="heading">Configuration obtained from the MiniMyth configuration script</div>
+          <p>
+            The MiniMyth configuration script is called 'minimyth.script'.
+            The MiniMyth configuration script is optional.
+            The MiniMyth configuration script is a shell script that is executed by MiniMyth
+            after MiniMyth has retrieved and processed the MiniMyth configuration file and configured name (DNS) and logging (syslog) services.
+            You can use the MiniMyth configuration script to do things such as install additional kernel modules,
+          </p>
+        </div>
+        <div id="misc" class="section">
+          <div class="heading">Configuration obtained from miscellaneous configuration files</div>
+          <p>
+            MiniMyth can override the following configuration files:
+          </p>
+          <dl>
+            <dt>LCDd.conf</dt>
+            <dd>
+              The LCDproc daemon ('LCDd') configuration file.
+              MiniMyth will use this file as the '/etc/LCDd.conf' file in the MiniMyth file system.
+            </dd>
+            <dt>lircd.conf</dt>
+            <dd>
+              The LIRC daemon ('lircd') configuration file.
+              MiniMyth will use this file as the '/etc/lircd.conf' file in the MiniMyth file system.
+            </dd>
+            <dt>lircrc</dt>
+            <dd>
+              The LIRC configuration file.
+              MiniMyth will use this file as the '/etc/lircrc' file in the MiniMyth file system.
+            </dd>
+            <dt>xinitrc</dt>
+            <dd>
+              The X Window System (Xorg) startup file.
+              MiniMyth will use this file as the '/etc/X11/xinit/xinitrc' file in the MiniMyth file system.
+            </dd>
+            <dt>xorg.conf</dt>
+            <dd>
+              The X Window System (Xorg) configuration file.
+              MiniMyth will use this file as the '/etc/X11/xorg.conf' file in the MiniMyth file system.
+            </dd>
+          </dl>
+          <p>
+            If you want to use an LCD or VFD in your MiniMyth frontend,
+            and you do not like the 'LCDd.conf' file that MiniMyth uses for your LCD or VFD,
+            then you can provide a different 'LCDd.conf' file.
+          </p>
+          <p>
+            If you want to control your MiniMyth frontend with a remote control,
+            and either your remote control receiver or remote control is not one of the
+            built in remote control receivers and remote controls,
+            then you will need to provide the appropriate 'lircd.conf' and 'lircrc' files.
+          </p>
+          <p>
+            If you cannot configure the X Window System to your liking using the
+            <a href="document-minimyth_conf.shtml#MM_X">X configuration variables</a>
+            in the MiniMyth configuration file, then you can provide different 'xinitrc' and/or
+            'xorg.conf' files.
+          </p>
+          <p>
+            If you want to override any other configuration files,
+            then you will need to use the
+            <a href="#minimyth_script">MiniMyth configuration script</a>.
+          </p>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-09-30 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

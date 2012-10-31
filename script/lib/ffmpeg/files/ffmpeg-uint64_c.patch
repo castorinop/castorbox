@@ -1,0 +1,15 @@
+diff -Naur ffmpeg-5d1b39f-old/libavutil/common.h ffmpeg-5d1b39f-new/libavutil/common.h
+--- ffmpeg-5d1b39f-old/libavutil/common.h	2011-07-07 20:11:14.000000000 -0700
++++ ffmpeg-5d1b39f-new/libavutil/common.h	2011-07-07 20:11:14.000000000 -0700
+@@ -26,6 +26,11 @@
+ #ifndef AVUTIL_COMMON_H
+ #define AVUTIL_COMMON_H
+ 
++#ifndef __STDC_CONSTANT_MACROS
++#  define __STDC_CONSTANT_MACROS
++#endif
++#include <stdint.h>
++
+ #include <ctype.h>
+ #include <errno.h>
+ #include <inttypes.h>

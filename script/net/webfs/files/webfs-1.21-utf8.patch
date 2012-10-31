@@ -1,0 +1,95 @@
+diff -Naur webfs-1.21-old/cgi/fdcheck.cgi webfs-1.21-new/cgi/fdcheck.cgi
+--- old/webfs-1.21-old/cgi/fdcheck.cgi	2004-06-08 05:52:03.000000000 -0700
++++ webfs-1.21-new/cgi/fdcheck.cgi	2008-02-23 02:12:24.000000000 -0800
+@@ -1,4 +1,4 @@
+ #!/bin/sh
+-echo "Content-Type: text/plain"
++echo "Content-Type: text/plain; charset=utf-8"
+ echo
+ ls -l /proc/$$/fd
+diff -Naur webfs-1.21-old/cgi/ludo.pl webfs-1.21-new/cgi/ludo.pl
+--- old/webfs-1.21-old/cgi/ludo.pl	2004-06-08 05:52:03.000000000 -0700
++++ webfs-1.21-new/cgi/ludo.pl	2008-02-23 02:13:52.000000000 -0800
+@@ -1,6 +1,6 @@
+ #!/usr/bin/perl -wU
+ sleep(5);
+-print "Content-Type: text/html\nStatus: 200 OK\nCache-Control:
++print "Content-Type: text/html; charset=utf-8\nStatus: 200 OK\nCache-Control:
+ no-store\nPragma: no-cache\nConnection: close\n\n";
+ 
+ #The next line seems to make it a lot worse, but also without it it goes
+diff -Naur webfs-1.21-old/cgi/slow.cgi webfs-1.21-new/cgi/slow.cgi
+--- old/webfs-1.21-old/cgi/slow.cgi	2004-06-08 05:52:03.000000000 -0700
++++ webfs-1.21-new/cgi/slow.cgi	2008-02-23 02:13:20.000000000 -0800
+@@ -1,4 +1,4 @@
+ #!/bin/sh
+-echo "Content-Type: text/plain"
++echo "Content-Type: text/plain; charset=utf-8"
+ echo
+ set | while read line; do echo $line; sleep 1; done
+diff -Naur webfs-1.21-old/cgi/test.cgi webfs-1.21-new/cgi/test.cgi
+--- old/webfs-1.21-old/cgi/test.cgi	2004-06-08 05:52:03.000000000 -0700
++++ webfs-1.21-new/cgi/test.cgi	2008-02-23 02:13:04.000000000 -0800
+@@ -1,4 +1,4 @@
+ #!/bin/sh
+-echo "Content-Type: text/plain"
++echo "Content-Type: text/plain; charset=utf-8"
+ echo
+ set
+diff -Naur webfs-1.21-old/cgi.c webfs-1.21-new/cgi.c
+--- old/webfs-1.21-old/cgi.c	2004-06-08 05:51:59.000000000 -0700
++++ webfs-1.21-new/cgi.c	2008-02-23 02:14:33.000000000 -0800
+@@ -177,7 +177,7 @@
+     execve(filename,argv,env_convert(env));
+ 
+     /* exec failed ... */
+-    printf("Content-Type: text/plain\n"
++    printf("Content-Type: text/plain; charset=utf-8\n"
+ 	   "\n"
+ 	   "execve %s: %s\n",
+ 	   filename,strerror(errno));
+diff -Naur webfs-1.21-old/request.c webfs-1.21-new/request.c
+--- old/webfs-1.21-old/request.c	2004-06-10 02:45:50.000000000 -0700
++++ webfs-1.21-new/request.c	2008-02-23 02:17:47.000000000 -0800
+@@ -552,7 +552,7 @@
+ 	    return;
+ 	}
+ 	strftime(req->mtime, sizeof(req->mtime), RFC1123, gmtime(&req->bst.st_mtime));
+-	req->mime = "text/html";
++	req->mime = "text/html; charset=utf-8";
+ 	req->dir = get_dir(req,filename);
+ 	if (NULL == req->body) {
+ 	    /* We arrive here if opendir failed, probably due to -EPERM
+diff -Naur webfs-1.21-old/response.c webfs-1.21-new/response.c
+--- old/webfs-1.21-old/response.c	2004-06-10 02:45:50.000000000 -0700
++++ webfs-1.21-new/response.c	2008-02-23 02:15:13.000000000 -0800
+@@ -189,7 +189,7 @@
+ 	req->keep_alive = 0;
+     req->lres = sprintf(req->hres,
+ 			RESPONSE_START
+-			"Content-Type: text/plain\r\n"
++			"Content-Type: text/plain; charset=utf-8\r\n"
+ 			"Content-Length: %" PRId64 "\r\n",
+ 			http[i].head,server_name,
+ 			req->keep_alive ? "Keep-Alive" : "Close",
+@@ -215,7 +215,7 @@
+     req->lres = sprintf(req->hres,
+ 			RESPONSE_START
+ 			"Location: http://%s:%d%s\r\n"
+-			"Content-Type: text/plain\r\n"
++			"Content-Type: text/plain; charset=utf-8\r\n"
+ 			"Content-Length: %" PRId64 "\r\n",
+ 			"302 Redirect",server_name,
+ 			req->keep_alive ? "Keep-Alive" : "Close",
+diff -Naur webfs-1.21-old/webfsd.c webfs-1.21-new/webfsd.c
+--- old/webfs-1.21-old/webfsd.c	2004-06-10 02:45:50.000000000 -0700
++++ webfs-1.21-new/webfsd.c	2008-02-23 02:59:09.000000000 -0800
+@@ -900,7 +900,7 @@
+     }
+ 
+     /* init misc stuff */
+-    init_mime(mimetypes,"text/plain");
++    init_mime(mimetypes,"text/plain; charset=utf-8");
+     init_quote();
+ #ifdef USE_SSL
+     if (with_ssl)

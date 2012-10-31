@@ -1,0 +1,8 @@
+etc/acpi
+etc/acpi/events
+etc/default
+etc/init.d
+usr/bin
+usr/share/acpi-support
+usr/share/doc/acpi-support
+var/lib/acpi-support

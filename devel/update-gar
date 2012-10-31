@@ -1,0 +1,223 @@
+#!/bin/sh
+
+# This script copies the needed GAR files
+# from the directory ${GAR_LNX_BBC_DIR} to ${SCRIPT_DIR}
+# and makes the needed modifications.
+
+cd `echo ${0} | sed 's%/[^/]*$%%'`
+GAR_LNX_BBC_DIR=`pwd`/gar-lnx-bbc
+cd ..
+SCRIPT_DIR=`pwd`/script
+
+#-------------------------------------------------------------------------------
+# GAR values to change.
+#-------------------------------------------------------------------------------
+ALL_DESTIMGS='main build'
+GARBUILD='$(shell gcc -dumpmachine)'
+build_GARHOST='$(GARBUILD)'
+build_GARCH='$(strip $(subst x86_64,x86-64, \\\
+    $(if $(filter-out unknown,$(shell uname -m)), \\\
+        $(shell uname -m) \\\
+    , \\\
+        $(shell arch) \\\
+    )))'
+build_GARCH_FAMILY='$(strip $(subst x86-64,x86-64, \\\
+    $(if $(filter-out unknown,$(shell uname -i)), \\\
+        $(shell uname -i) \\\
+    , \\\
+        $(if $(filter i386 i486 i586 i686 c3 c3_2,$(shell echo $(build_GARHOST) | cut -d- -f1)),i386  ) \\\
+        $(if $(filter x86_64 athlon64            ,$(shell echo $(build_GARHOST) | cut -d- -f1)),x86_64) \\\
+    )))'
+main_GARHOST='$(mm_GARHOST)'
+main_GARCH='$(mm_GARCH)'
+main_GARCH_FAMILY='$(mm_GARCH_FAMILY)'
+build_DESTDIR='/'
+build_rootdir='$(mm_HOME)/images/build'
+main_DESTDIR='$(mm_HOME)/images/main'
+main_rootdir='/'
+GARCHIVEROOT='$(mm_HOME)/source'
+PATCHDIR='$(WORKSRC)'
+GAR_EXTRA_CONF='$(HOME)/.minimyth/minimyth.conf.mk minimyth.conf.mk extras/extras.conf.mk devel/gcc/package-api.mk'
+GAR_EXTRA_LIBS='minimyth.lib.mk'
+MASTER_SITES='http://linpvr.org/dnload/gar-source/'
+build_NODEPEND='kernel/linux-libc-headers devel/glibc'
+build_compiler_prefix=''
+main_compiler_prefix='$(GARHOST)-'
+build_CPPFLAGS=''
+build_CFLAGS='-march=$(build_GARCH) -O2 $(if $(filter i386,$(build_GARCH_FAMILY)),-m32) $(if $(filter x86_64,$(build_GARCH_FAMILY)),-m64)'
+build_CXXFLAGS='-march=$(build_GARCH) -O2 $(if $(filter i386,$(build_GARCH_FAMILY)),-m32) $(if $(filter x86_64,$(build_GARCH_FAMILY)),-m64)'
+build_LDFLAGS=''
+main_CPPFLAGS=''
+main_CFLAGS='$(mm_CFLAGS)'
+main_CXXFLAGS='$(mm_CXXFLAGS)'
+main_LDFLAGS=''
+GAR_SYSTEM_PATH='$(build_DESTDIR)$(build_esbindir):$(build_DESTDIR)$(build_ebindir):$(build_DESTDIR)$(build_sbindir):$(build_DESTDIR)$(build_bindir):$(build_DESTDIR)$(build_qtbindir):$(build_DESTDIR)$(build_rootdir)/bin-build-system'
+_LD_LIBRARY_PATH='$(build_DESTDIR)$(build_elibdir):$(build_DESTDIR)$(build_libdir):$(build_DESTDIR)$(build_qtlibdir):$(build_DESTDIR)$(build_libdir)/mysql'
+_PKG_CONFIG_PATH='$(DESTDIR)$(libdir)/pkgconfig:$(DESTDIR)$(qtlibdir)/pkgconfig'
+
+# Replace current GAR files with clean GAR files.
+rm -f ${SCRIPT_DIR}/gar.mk      ; cp ${GAR_LNX_BBC_DIR}/gar.mk ${SCRIPT_DIR}
+rm -f ${SCRIPT_DIR}/gar.*.mk    ; cp ${GAR_LNX_BBC_DIR}/gar.*.mk ${SCRIPT_DIR}
+rm -f ${SCRIPT_DIR}/category.mk ; cp ${GAR_LNX_BBC_DIR}/category.mk ${SCRIPT_DIR}
+rm -f ${SCRIPT_DIR}/Makefile    ; cp ${GAR_LNX_BBC_DIR}/Makefile ${SCRIPT_DIR}
+
+# Fix bugs.
+sed -i 's%^STAGE_EXPORTS *+= *CC .*%& LD%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i '/main_[^ ]* = $(prefix)/ { s%$(prefix)%$(main_prefix)%g }' ${SCRIPT_DIR}/gar.conf.mk
+sed -i '/main_[^ ]* = $(exec_prefix)/ { s%$(exec_prefix)%$(main_exec_prefix)%g }' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%# Extra configuration for the lnx-bbc build%# Extra confs to include after gar.conf.mk%g' ${SCRIPT_DIR}/gar.conf.mk
+
+# Add the --oldincludedir directory path.
+sed -i 's%^\(build\|main\)_includedir *=.*$%&\n\1_oldincludedir = $(\1_exec_prefix)/include%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_includedir *?= *$(main_includedir)%&\n$(DESTIMG)_oldincludedir ?= $(main_oldincludedir)%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^includedir *= *$($(DESTIMG)_includedir)%&\noldincludedir = $($(DESTIMG)_oldincludedir)%g' ${SCRIPT_DIR}/gar.mk
+sed -i '/^INSTALL_DIRS *=/s% $(includedir)%& $(oldincludedir)%g' ${SCRIPT_DIR}/gar.mk
+sed -i '/^TMP_DIRPATHS *=/s% --includedir=$(includedir)%& --oldincludedir=$(oldincludedir)%g' ${SCRIPT_DIR}/gar.lib.mk
+sed -i '/^STAGE_EXPORTS *+=/s% includedir%& oldincludedir%g' ${SCRIPT_DIR}/gar.conf.mk
+
+# Make directory hierarchy compliant with Filesystem Hierarchy Standard.
+# Add the variable rootdir.
+# Set prefix=rootdir/usr.
+# Set sysconfdir=rootdir/etc and locatestatedir=rootdir/var.
+# Set mandir=rootdir/usr/share/man
+# Add essential library (elib), user binary (ebin) and system binary (esbin) directories.
+# Make all prefixes and directories relative to rootdir.
+sed -i "s%^build_prefix *?=.*%build_rootdir ?= ${build_rootdir}\n&%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^main_prefix *?=.*%main_rootdir ?= ${main_rootdir}\n&%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_prefix *?=.*%$(DESTIMG)_rootdir ?= $(main_rootdir)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^prefix *=.*%rootdir = $($(DESTIMG)_rootdir)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(build\|main\)_prefix *?=.*%\1_prefix = $(\1_rootdir)/usr%g' ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i 's%^\(build\|main\)_sysconfdir *=.*%\1_sysconfdir = $(\1_rootdir)/etc%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^\(build\|main\)_localstatedir *=.*%\1_localstatedir = $(\1_rootdir)/var%g' ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i 's%^\(build\|main\)_mandir *=.*%\1_mandir = $(\1_rootdir)/usr/share/man%g' ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i 's%^\(build\|main\)_exec_prefix *=.*$%&\n\1_qtlibdir = $(\1_qtprefix)/lib%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_exec_prefix *?= *$(main_exec_prefix)%$(DESTIMG)_qtlibdir ?= $(main_qtlibdir)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^exec_prefix *= *$($(DESTIMG)_exec_prefix)%qtlibdir = $($(DESTIMG)_qtlibdir)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(build\|main\)_exec_prefix *=.*$%&\n\1_qtincludedir = $(\1_qtprefix)/include%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_exec_prefix *?= *$(main_exec_prefix)%$(DESTIMG)_qtincludedir ?= $(main_qtincludedir)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^exec_prefix *= *$($(DESTIMG)_exec_prefix)%qtincludedir = $($(DESTIMG)_qtincludedir)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(build\|main\)_exec_prefix *=.*$%&\n\1_qtbindir = $(\1_qtprefix)/bin%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_exec_prefix *?= *$(main_exec_prefix)%$(DESTIMG)_qtbindir ?= $(main_qtbindir)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^exec_prefix *= *$($(DESTIMG)_exec_prefix)%qtbindir = $($(DESTIMG)_qtbindir)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(build\|main\)_exec_prefix *=.*$%&\n\1_qtprefix = $(\1_libdir)/qt%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_exec_prefix *?= *$(main_exec_prefix)%$(DESTIMG)_qtprefix ?= $(main_qtprefix)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^exec_prefix *= *$($(DESTIMG)_exec_prefix)%qtprefix = $($(DESTIMG)_qtprefix)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(build\|main\)_libdir *=.*$%\1_elibdir = $(\1_rootdir)/lib\n&%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_libdir *?= *$(main_libdir)%$(DESTIMG)_elibdir ?= $(main_elibdir)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^libdir *= *$($(DESTIMG)_libdir)%elibdir = $($(DESTIMG)_elibdir)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(build\|main\)_bindir *=.*$%\1_ebindir = $(\1_rootdir)/bin\n&%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_bindir *?= *$(main_bindir)%$(DESTIMG)_ebindir ?= $(main_ebindir)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^bindir *= *$($(DESTIMG)_bindir)%ebindir = $($(DESTIMG)_ebindir)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(build\|main\)_sbindir *=.*$%\1_esbindir = $(\1_rootdir)/sbin\n&%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^$(DESTIMG)_sbindir *?= *$(main_sbindir)%$(DESTIMG)_esbindir ?= $(main_esbindir)\n&%g' ${SCRIPT_DIR}/gar.mk
+sed -i 's%^sbindir *= *$($(DESTIMG)_sbindir)%esbindir = $($(DESTIMG)_esbindir)\n&%g' ${SCRIPT_DIR}/gar.mk
+
+sed -i 's%^\(main\|build\)\(_[^ ]*\) *= *$(\(main\|build\)_prefix)%\1\2 = $(\3_rootdir)/usr%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^\(main\|build\)\(_[^ ]*\) *= *$(\(main\|build\)_exec_prefix)%\1\2 = $(\3_rootdir)/usr%g' ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i 's%^\(build\|main\)_rootdir *?=.*%&\n# Warning: any changes to these paths will cause certain packages to break.%g' ${SCRIPT_DIR}/gar.conf.mk
+
+# Configure compiler programs
+sed -i "s%^build_CC *?=%build_compiler_prefix ?= ${build_compiler_prefix}\n&%" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^main_CC *?=%main_compiler_prefix ?= ${main_compiler_prefix}\n&%" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\$(DESTIMG)_CC *?=%\$(DESTIMG)_compiler_prefix ?= \$(main_compiler_prefix)\n&%" ${SCRIPT_DIR}/gar.mk
+sed -i "s%^CC *=%compiler_prefix = \$(\$(DESTIMG)_compiler_prefix)\n&%" ${SCRIPT_DIR}/gar.mk
+programs="CC CXX LD"
+sed -i "s%^build_CC *?=.*%build_CC = \$(build_compiler_prefix)gcc%" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^main_CC *?=.*%main_CC = \$(main_compiler_prefix)gcc%" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^build_CXX *?=.*%build_CXX = \$(build_compiler_prefix)g++%" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^main_CXX *?=.*%main_CXX = \$(main_compiler_prefix)g++%" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^build_LD *?=.*%build_LD = \$(build_compiler_prefix)ld%" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^main_LD *?=.*%main_LD = \$(main_compiler_prefix)ld%" ${SCRIPT_DIR}/gar.conf.mk
+programs="CPP AR AS NM RANLIB STRIP OBJCOPY OBJDUMP"
+for program in ${programs} ; do
+    program_uc=`echo ${program} | sed -r 's%[a-z]+%\U&%g'`
+    program_lc=`echo ${program} | sed -r 's%[A-Z]+%\L&%g'`
+    sed -i "s%^build_LD *=.*$%&\nbuild_${program_uc} = \$(build_compiler_prefix)${program_lc}%g" ${SCRIPT_DIR}/gar.conf.mk
+    sed -i "s%^main_LD *=.*$%&\nmain_${program_uc} = \$(main_compiler_prefix)${program_lc}%g" ${SCRIPT_DIR}/gar.conf.mk
+    sed -i "s%^\$(DESTIMG)_LD *?= *\$(main_LD)%&\n\$(DESTIMG)_${program_uc} ?= \$(main_${program_uc})%g" ${SCRIPT_DIR}/gar.mk
+    sed -i "s%^LD *= *\$(\$(DESTIMG)_LD)%&\n${program_uc} = \$(\$(DESTIMG)_${program_uc})%g" ${SCRIPT_DIR}/gar.mk
+    sed -i "s%^STAGE_EXPORTS *+= *CC .*%& ${program_uc}%g" ${SCRIPT_DIR}/gar.conf.mk
+done
+    
+sed -i "s%^\(#*ALL_DESTIMGS\) *=.*$%\1 = ${ALL_DESTIMGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*GARBUILD\) *?=.*$%\1 ?= ${GARBUILD}%g" ${SCRIPT_DIR}/gar.mk
+sed -i "s%^\(#*build_GARHOST\) *:=.*$%\1 := ${build_GARHOST}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*build_GARCH\) *:=.*$%\1 := ${build_GARCH}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*main_GARHOST\) *?=.*$%\1 ?= ${main_GARHOST}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*main_GARCH\) *?=.*$%\1 ?= ${main_GARCH}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*build_DESTDIR\) *?=.*$%\1 ?= ${build_DESTDIR}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*main_DESTDIR\) *?=.*$%\1 ?= ${main_DESTDIR}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*GARCHIVEROOT\) *?=.*$%\1 ?= ${GARCHIVEROOT}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*build_NODEPEND\) *=.*$%\1 += ${build_NODEPEND}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*MASTER_SITES\) *+=.*$%\1 += ${MASTER_SITES}%g" ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i "s%^\(#*GAR_EXTRA_CONF\) *+=.*$%\1 +=%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i '$!N; /^\(GAR_EXTRA_CONF +=.*\)\n\1$/!P; D' ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^GAR_EXTRA_CONF +=.*$%GAR_EXTRA_CONF += ${GAR_EXTRA_CONF}%g" ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i "s%^\(#*GAR_EXTRA_LIBS\) *+=.*$%\1 +=%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i '$!N; /^\(GAR_EXTRA_LIBS +=.*\)\n\1$/!P; D' ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^GAR_EXTRA_LIBS +=.*$%GAR_EXTRA_LIBS += ${GAR_EXTRA_LIBS}%g" ${SCRIPT_DIR}/gar.conf.mk
+
+if [ "x${GAR_EXTRA_LIBS}" = "x" ] ; then
+	sed -i 's%^include *.*$(GAR_EXTRA_LIBS).*$%#&%g' ${SCRIPT_DIR}/gar.lib.mk
+fi
+
+# Replace compiler flags
+sed -i 's%^#*\(build_[^ ]*FLAGS\) *+=.*$%\1 +=%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i -n 'G; s%\n%&&%; /^\(build_[^ ]*FLAGS +=.*\n\).*\n\1/d; s%\n%%; h; P' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^build_CXXFLAGS *+=.*$%#&%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*build_CPPFLAGS\) *+=.*$%\1 += ${build_CPPFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*build_CFLAGS\) *+=.*$%\1 += ${build_CFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*build_CXXFLAGS\) *+=.*$%\1 += ${build_CXXFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*build_LDFLAGS\) *+=.*$%\1 += ${build_LDFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i 's%^#*\(main_[^ ]*FLAGS\) *+=.*$%\1 +=%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i -n 'G; s%\n%&&%; /^\(main_[^ ]*FLAGS +=.*\n\).*\n\1/d; s%\n%%; h; P' ${SCRIPT_DIR}/gar.conf.mk
+sed -i 's%^main_CXXFLAGS *+=.*$%#&%g' ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*main_CPPFLAGS\) *+=.*$%\1 += ${main_CPPFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*main_CFLAGS\) *+=.*$%\1 += ${main_CFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*main_CXXFLAGS\) *+=.*$%\1 += ${main_CXXFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\(#*main_LDFLAGS\) *+=.*$%\1 += ${main_LDFLAGS}%g" ${SCRIPT_DIR}/gar.conf.mk
+
+# Add GARCH_FAMILY attribute.
+sed -i "s%^build_GARHOST *:=.*$%&\nbuild_GARCH_FAMILY := ${build_GARCH_FAMILY}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^main_GARHOST *?=.*$%&\nmain_GARCH_FAMILY ?= ${main_GARCH_FAMILY}%g" ${SCRIPT_DIR}/gar.conf.mk
+sed -i "s%^\$(DESTIMG)_GARHOST *?= *\$(main_GARHOST)%&\n\$(DESTIMG)_GARCH_FAMILY ?= \$(main_GARCH_FAMILY)%g" ${SCRIPT_DIR}/gar.mk
+sed -i "s%^GARHOST *= *\$(\$(DESTIMG)_GARHOST)%&\nGARCH_FAMILY = \$(\$(DESTIMG)_GARCH_FAMILY)%g" ${SCRIPT_DIR}/gar.mk
+
+# # Disable LD_LIBRARY_PATH
+# # We use the Linux From Scratch patches instead.
+# sed -i "s%^LD_LIBRARY_PATH *:=.*$%#&%g" ${SCRIPT_DIR}/gar.mk
+
+sed -i "s%^\(LD_LIBRARY_PATH\) *:=.*$%\1 = ${_LD_LIBRARY_PATH}%g" ${SCRIPT_DIR}/gar.mk
+
+# Change PATCHDIR
+sed -i "s%^\(#*PATCHDIR\) *?=.*$%\1 ?= ${PATCHDIR}%g" ${SCRIPT_DIR}/gar.lib.mk
+
+# Change PATH
+sed -i "s%^PATH *:= *%BUILD_SYSTEM_PATH := \$(if \$(BUILD_SYSTEM_PATH),\$(BUILD_SYSTEM_PATH),\$(PATH))\nPATH := %g" ${SCRIPT_DIR}/gar.mk
+sed -i "s%^PATH *:= *%GAR_SYSTEM_PATH := ${GAR_SYSTEM_PATH}\nPATH := %g" ${SCRIPT_DIR}/gar.mk
+sed -i "s%^PATH *:=.*$%PATH := \$(if \$(wildcard \$(build_DESTDIR)\$(build_rootdir)/bin-build-system),\$(GAR_SYSTEM_PATH),\$(GAR_SYSTEM_PATH):\$(BUILD_SYSTEM_PATH))%g" ${SCRIPT_DIR}/gar.mk
+sed -i "s%^export PATH%export BUILD_SYSTEM_PATH GAR_SYSTEM_PATH PATH%g" ${SCRIPT_DIR}/gar.conf.mk
+
+# Change PKG_CONFIG_PATH.
+sed -i "s%^PKG_CONFIG_PATH *=.*$%PKG_CONFIG_PATH = ${_PKG_CONFIG_PATH}%g" ${SCRIPT_DIR}/gar.conf.mk
+
+sed -i '/^INSTALL_DIRS *=/s%$(sbindir)%$(esbindir) &%' ${SCRIPT_DIR}/gar.mk
+sed -i '/^INSTALL_DIRS *=/s%$(bindir)%$(ebindir) &%' ${SCRIPT_DIR}/gar.mk
+sed -i '/^INSTALL_DIRS *=/s%$(libdir)%$(elibdir) &%' ${SCRIPT_DIR}/gar.mk
+
+# Change build_DEPENDS
+sed -i "s%^build_DEPENDS *+= *\(.*\)$%build_DEPENDS += devel/build-system-bins \1%g" ${SCRIPT_DIR}/gar.lib.mk

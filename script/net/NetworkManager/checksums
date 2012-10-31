@@ -1,0 +1,4 @@
+954742cfd47191204d62d8d57f2bc6dd  download/NetworkManager-0.7.1.tar.bz2
+bd8092263b5232e6ef2b37b420d6b96d  download/NetworkManager-0.7.1-busybox_distro.patch
+e1380b78d09e8fc58317515b31cf318b  download/NetworkManager-0.7.1-strip_doc.patch
+ab0f315179a768fd93a4b1a1983fd226  download/NetworkManager-0.7.1-polkit_disable.patch

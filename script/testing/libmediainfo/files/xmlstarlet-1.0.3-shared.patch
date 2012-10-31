@@ -1,0 +1,31 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xmlstarlet-1.0.3/configure.ac work/main.d/xmlstarlet-1.0.3/configure.ac
+--- tmp/xmlstarlet-1.0.3/configure.ac	2010-11-17 16:47:55.000000000 -0300
++++ new-xmlstarlet-1.0.3/configure.ac	2010-11-30 21:52:02.252296474 -0300
+@@ -30,15 +30,15 @@
+ AS_IF([test "x$LIBXML_SRCDIR" != x],
+       [LIBXML_INCDIR="$LIBXML_SRCDIR/include"],
+       [: ${LIBXML_INCDIR="$LIBXML_PREFIX/include/libxml2"}])
+-[LIBXML_LIBS="$LIBXML_LIBDIR/libxml2.a"]
+-[LIBXML_CPPFLAGS="-DLIBXML_STATIC -I$LIBXML_INCDIR"]
++[LIBXML_LIBS="-lxml2"]
++[LIBXML_CPPFLAGS="-I$LIBXML_INCDIR"]
+ 
+ XSTAR_LIB_CHECK([LIBXSLT], [xslt-config])
+ [: ${LIBXSLT_INCDIR="$LIBXSLT_PREFIX/include"}]
+ AS_IF([test "x$LIBXSLT_SRCDIR" != x],
+       [LIBXSLT_INCDIR="$LIBXSLT_SRCDIR"
+        LIBXSLT_LIBS="$LIBXSLT_SRCDIR/libexslt/.libs/libexslt.a $LIBXSLT_SRCDIR/libxslt/.libs/libxslt.a"],
+-      [LIBXSLT_LIBS="$LIBXSLT_LIBDIR/libexslt.a $LIBXSLT_LIBDIR/libxslt.a"])
++      [LIBXSLT_LIBS="-lexslt -lxslt"])
+ [: ${LIBSLT_INCDIR="$LIBXSLT_PREFIX/include"}]
+ [LIBXSLT_CPPFLAGS="-I$LIBXSLT_INCDIR"]
+ 
+@@ -57,8 +57,6 @@
+        AC_DEFINE([vsnprintf],[_vsnprintf],[Win32 Std C name mangling work-around])])
+ 
+ AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
+-AC_FUNC_MALLOC
+-AC_FUNC_REALLOC
+ AC_TYPE_MODE_T
+ AC_TYPE_SIZE_T
+ 

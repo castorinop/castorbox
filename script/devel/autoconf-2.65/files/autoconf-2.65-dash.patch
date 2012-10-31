@@ -1,0 +1,24 @@
+diff -Naur autoconf-2.65-old/configure autoconf-2.65-new/configure
+--- autoconf-2.65-old/configure	2009-11-21 05:59:10.000000000 -0800
++++ autoconf-2.65-new/configure	2010-11-18 10:08:00.000000000 -0800
+@@ -2380,7 +2380,7 @@
+       ac_snippet=change'quote(<,>)in''dir(<if''def>,mac,bug)'
+       ac_snippet=${ac_snippet}pat'subst(a,\(b\)\|\(a\),\1)d'nl
+       test -z "`$ac_path_M4 -F conftest.m4f </dev/null 2>&1`" \
+-      && test -z "`echo $ac_snippet | $ac_path_M4 --trace=mac 2>&1`" \
++      && test -z "`$as_echo $ac_snippet | $ac_path_M4 --trace=mac 2>&1`" \
+       && test -f conftest.m4f \
+       && ac_cv_path_M4=$ac_path_M4 ac_path_M4_found=:
+       rm -f conftest.m4f
+diff -Naur autoconf-2.65-old/m4/m4.m4 autoconf-2.65-new/m4/m4.m4
+--- autoconf-2.65-old/m4/m4.m4	2009-10-28 18:53:42.000000000 -0700
++++ autoconf-2.65-new/m4/m4.m4	2010-11-18 10:07:43.000000000 -0800
+@@ -29,7 +29,7 @@
+       ac_snippet=change'quote(<,>)in''dir(<if''def>,mac,bug)'
+       ac_snippet=${ac_snippet}pat'subst(a,\(b\)\|\(a\),\1)d'nl
+       test -z "`$ac_path_M4 -F conftest.m4f </dev/null 2>&1`" \
+-      && test -z "`echo $ac_snippet | $ac_path_M4 --trace=mac 2>&1`" \
++      && test -z "`AS_ECHO([$ac_snippet]) | $ac_path_M4 --trace=mac 2>&1`" \
+       && test -f conftest.m4f \
+       && ac_cv_path_M4=$ac_path_M4 ac_path_M4_found=:
+       rm -f conftest.m4f],

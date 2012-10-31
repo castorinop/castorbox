@@ -1,0 +1,22 @@
+diff -Naur curl-7.19.6-old/lib/tftp.c curl-7.19.6-new/lib/tftp.c
+--- curl-7.19.6-old/lib/tftp.c	2009-08-12 01:19:39.000000000 -0700
++++ curl-7.19.6-new/lib/tftp.c	2009-08-12 19:32:46.000000000 -0700
+@@ -387,11 +387,14 @@
+       long tsize = 0;
+ 
+       tsize = strtol( value, NULL, 10 );
+-      if(!tsize) {
+-        failf(data, "invalid tsize value in OACK packet");
+-        return CURLE_TFTP_ILLEGAL;
++      if(state->state == TFTP_STATE_RX)
++      {
++        if(!tsize) {
++          failf(data, "invalid tsize value in OACK packet");
++          return CURLE_TFTP_ILLEGAL;
++        }
++        Curl_pgrsSetDownloadSize(data, tsize);
+       }
+-      Curl_pgrsSetDownloadSize(data, tsize);
+       infof(data, "%s (%d)\n", "tsize parsed from OACK", tsize);
+     }
+   }

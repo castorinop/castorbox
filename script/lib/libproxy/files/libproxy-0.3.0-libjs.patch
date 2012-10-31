@@ -1,0 +1,13 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/libproxy-0.2.3/configure.ac work/main.d/libproxy-0.2.3/configure.ac
+--- tmp/libproxy-0.2.3/configure.ac	2008-06-05 17:56:16.000000000 -0300
++++ new-libproxy-0.2.3/configure.ac	2009-07-21 14:46:30.000000000 -0300
+@@ -29,7 +29,8 @@
+ PKG_CHECK_MODULES(mozjs, xulrunner-js, have_mozjs=yes, 
+ 		[PKG_CHECK_MODULES(mozjs, firefox-js, have_mozjs=yes,
+ 		[PKG_CHECK_MODULES(mozjs, mozilla-js, have_mozjs=yes, 
+-		[PKG_CHECK_MODULES(mozjs, seamonkey-js, have_mozjs=yes,have_mozjs=no)])])])
++		[PKG_CHECK_MODULES(mozjs, seamonkey-js, have_mozjs=yes, 
++		[PKG_CHECK_MODULES(mozjs, libjs, have_mozjs=yes,have_mozjs=no)])])])])
+ PKG_CHECK_MODULES(NetworkManager, NetworkManager dbus-1, 
+ 					have_networkmanager=yes, have_networkmanager=no)
+ 

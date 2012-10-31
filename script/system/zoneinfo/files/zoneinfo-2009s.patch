@@ -1,0 +1,15 @@
+diff -Naur zoneinfo-2009s-old/Makefile zoneinfo-2009s-new/Makefile
+--- zoneinfo-2009s-old/Makefile	2009-10-21 06:12:41.000000000 -0700
++++ zoneinfo-2009s-new/Makefile	2009-11-30 20:44:04.000000000 -0800
+@@ -347,9 +347,8 @@
+ 
+ $(TZLIB):	$(LIBOBJS)
+ 		-mkdir $(TOPDIR) $(LIBDIR)
+-		ar ru $@ $(LIBOBJS)
+-		if [ -x /usr/ucb/ranlib -o -x /usr/bin/ranlib ] ; \
+-			then ranlib $@ ; fi
++		$(AR) ru $@ $(LIBOBJS)
++		$(RANLIB) $@
+ 
+ date:		$(DATEOBJS)
+ 		$(CC) $(CFLAGS) date.o localtime.o asctime.o strftime.o \

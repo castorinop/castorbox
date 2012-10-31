@@ -1,0 +1,442 @@
+Binary files tmp/kiki/kodilib/linux/libkodi.a and work/main.d/kiki/kodilib/linux/libkodi.a differ
+diff --speed-large-files --minimal -Nru tmp/kiki/kodilib/linux/Makefile work/main.d/kiki/kodilib/linux/Makefile
+--- tmp/kiki/kodilib/linux/Makefile	2003-04-08 23:55:58.000000000 -0300
++++ work/main.d/kiki/kodilib/linux/Makefile	2007-02-08 15:31:58.000000000 -0300
+@@ -5,9 +5,10 @@
+ # you might have to change these to match your system
+ #
+ 
+-X11_INCLUDES = -I /usr/X11/include
+-SDL_INCLUDES = -I /usr/include/SDL
++X11_INCLUDES = -I $(DESTDIR)$(includedir)
++SDL_INCLUDES = -I $(DESTDIR)$(includedir)/SDL
+ SDL_CFLAGS = -D_REENTRANT
++OPTFLAGS = -O2
+ 
+ #
+ # the following should be ok on most machines
+@@ -21,7 +22,7 @@
+ 
+ INCLUDES = $(KODI_INCLUDES) $(X11_INCLUDES) $(SDL_INCLUDES)
+ 
+-CXXFLAGS = $(INCLUDES) $(SDL_CFLAGS)
++CXXFLAGS = $(INCLUDES) $(SDL_CFLAGS) $(OPTFLAGS)
+ 
+ src =  \
+ 	$(KODISRCDIR)/handler/KEventHandler.cpp \
+Binary files tmp/kiki/kodilib/src/handler/KEventHandler.o and work/main.d/kiki/kodilib/src/handler/KEventHandler.o differ
+Binary files tmp/kiki/kodilib/src/handler/KFileHandler.o and work/main.d/kiki/kodilib/src/handler/KFileHandler.o differ
+Binary files tmp/kiki/kodilib/src/handler/KKeyActionHandler.o and work/main.d/kiki/kodilib/src/handler/KKeyActionHandler.o differ
+Binary files tmp/kiki/kodilib/src/handler/KKeyHandler.o and work/main.d/kiki/kodilib/src/handler/KKeyHandler.o differ
+Binary files tmp/kiki/kodilib/src/handler/KKeyRecorder.o and work/main.d/kiki/kodilib/src/handler/KKeyRecorder.o differ
+Binary files tmp/kiki/kodilib/src/handler/KPickable.o and work/main.d/kiki/kodilib/src/handler/KPickable.o differ
+Binary files tmp/kiki/kodilib/src/handler/KPickHandler.o and work/main.d/kiki/kodilib/src/handler/KPickHandler.o differ
+Binary files tmp/kiki/kodilib/src/handler/KSelectable.o and work/main.d/kiki/kodilib/src/handler/KSelectable.o differ
+Binary files tmp/kiki/kodilib/src/handler/KSelectionHandler.o and work/main.d/kiki/kodilib/src/handler/KSelectionHandler.o differ
+Binary files tmp/kiki/kodilib/src/tools/KDisplayTools.o and work/main.d/kiki/kodilib/src/tools/KDisplayTools.o differ
+Binary files tmp/kiki/kodilib/src/tools/KFileTools.o and work/main.d/kiki/kodilib/src/tools/KFileTools.o differ
+Binary files tmp/kiki/kodilib/src/tools/KIntrospection.o and work/main.d/kiki/kodilib/src/tools/KIntrospection.o differ
+Binary files tmp/kiki/kodilib/src/tools/KKeyTools.o and work/main.d/kiki/kodilib/src/tools/KKeyTools.o differ
+Binary files tmp/kiki/kodilib/src/tools/KNotificationObject.o and work/main.d/kiki/kodilib/src/tools/KNotificationObject.o differ
+Binary files tmp/kiki/kodilib/src/tools/KStringTools.o and work/main.d/kiki/kodilib/src/tools/KStringTools.o differ
+Binary files tmp/kiki/kodilib/src/tools/KXMLTools.o and work/main.d/kiki/kodilib/src/tools/KXMLTools.o differ
+Binary files tmp/kiki/kodilib/src/types/KKey.o and work/main.d/kiki/kodilib/src/types/KKey.o differ
+Binary files tmp/kiki/kodilib/src/types/KLightingProjection.o and work/main.d/kiki/kodilib/src/types/KLightingProjection.o differ
+Binary files tmp/kiki/kodilib/src/types/KLight.o and work/main.d/kiki/kodilib/src/types/KLight.o differ
+Binary files tmp/kiki/kodilib/src/types/KMatrix.o and work/main.d/kiki/kodilib/src/types/KMatrix.o differ
+Binary files tmp/kiki/kodilib/src/types/KOrthographicProjection.o and work/main.d/kiki/kodilib/src/types/KOrthographicProjection.o differ
+Binary files tmp/kiki/kodilib/src/types/KPerspectiveProjection.o and work/main.d/kiki/kodilib/src/types/KPerspectiveProjection.o differ
+Binary files tmp/kiki/kodilib/src/types/KProjection.o and work/main.d/kiki/kodilib/src/types/KProjection.o differ
+Binary files tmp/kiki/kodilib/src/types/KQuaternion.o and work/main.d/kiki/kodilib/src/types/KQuaternion.o differ
+Binary files tmp/kiki/kodilib/src/types/KSeparatedMatrix.o and work/main.d/kiki/kodilib/src/types/KSeparatedMatrix.o differ
+Binary files tmp/kiki/kodilib/src/types/KTexture.o and work/main.d/kiki/kodilib/src/types/KTexture.o differ
+Binary files tmp/kiki/kodilib/src/types/KTrash.o and work/main.d/kiki/kodilib/src/types/KTrash.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KButtonBox.o and work/main.d/kiki/kodilib/src/widgets/KButtonBox.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KButton.o and work/main.d/kiki/kodilib/src/widgets/KButton.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KFileNameField.o and work/main.d/kiki/kodilib/src/widgets/KFileNameField.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KFileTreeDirCurrent.o and work/main.d/kiki/kodilib/src/widgets/KFileTreeDirCurrent.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KFileTreeDir.o and work/main.d/kiki/kodilib/src/widgets/KFileTreeDir.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KFileTreeDirUp.o and work/main.d/kiki/kodilib/src/widgets/KFileTreeDirUp.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KFileTreeFile.o and work/main.d/kiki/kodilib/src/widgets/KFileTreeFile.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KFileTreeNode.o and work/main.d/kiki/kodilib/src/widgets/KFileTreeNode.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KFileTreeWidget.o and work/main.d/kiki/kodilib/src/widgets/KFileTreeWidget.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KIconButton.o and work/main.d/kiki/kodilib/src/widgets/KIconButton.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KKeySequenceField.o and work/main.d/kiki/kodilib/src/widgets/KKeySequenceField.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KLabel.o and work/main.d/kiki/kodilib/src/widgets/KLabel.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KMenuItem.o and work/main.d/kiki/kodilib/src/widgets/KMenuItem.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KMenu.o and work/main.d/kiki/kodilib/src/widgets/KMenu.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KNumberField.o and work/main.d/kiki/kodilib/src/widgets/KNumberField.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KProjectionWidget.o and work/main.d/kiki/kodilib/src/widgets/KProjectionWidget.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KScrollBar.o and work/main.d/kiki/kodilib/src/widgets/KScrollBar.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KSliderButton.o and work/main.d/kiki/kodilib/src/widgets/KSliderButton.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KStatusMenuItem.o and work/main.d/kiki/kodilib/src/widgets/KStatusMenuItem.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KSubMenuItem.o and work/main.d/kiki/kodilib/src/widgets/KSubMenuItem.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KTextField.o and work/main.d/kiki/kodilib/src/widgets/KTextField.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KTextWidget.o and work/main.d/kiki/kodilib/src/widgets/KTextWidget.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KToggleButton.o and work/main.d/kiki/kodilib/src/widgets/KToggleButton.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KWidgetArray.o and work/main.d/kiki/kodilib/src/widgets/KWidgetArray.o differ
+Binary files tmp/kiki/kodilib/src/widgets/KWidget.o and work/main.d/kiki/kodilib/src/widgets/KWidget.o differ
+Binary files tmp/kiki/kodilib/src/windows/KConsole.o and work/main.d/kiki/kodilib/src/windows/KConsole.o differ
+Binary files tmp/kiki/kodilib/src/windows/KFileTreeWindow.o and work/main.d/kiki/kodilib/src/windows/KFileTreeWindow.o differ
+Binary files tmp/kiki/kodilib/src/windows/KMenuWindow.o and work/main.d/kiki/kodilib/src/windows/KMenuWindow.o differ
+Binary files tmp/kiki/kodilib/src/windows/KMessagePanel.o and work/main.d/kiki/kodilib/src/windows/KMessagePanel.o differ
+Binary files tmp/kiki/kodilib/src/windows/KPopupMenu.o and work/main.d/kiki/kodilib/src/windows/KPopupMenu.o differ
+Binary files tmp/kiki/kodilib/src/windows/KWindow.o and work/main.d/kiki/kodilib/src/windows/KWindow.o differ
+Binary files tmp/kiki/linux/kiki and work/main.d/kiki/linux/kiki differ
+diff --speed-large-files --minimal -Nru tmp/kiki/linux/Makefile work/main.d/kiki/linux/Makefile
+--- tmp/kiki/linux/Makefile	2007-02-08 15:40:23.000000000 -0300
++++ work/main.d/kiki/linux/Makefile	2007-02-08 15:38:38.000000000 -0300
+@@ -4,17 +4,21 @@
+ #
+ # you might have to change these to match your system
+ #
++
++pyincludedir = $(includedir)
++pylibdir = $(libdir)
++X11_INCLUDES = -I $(DESTDIR)$(includedir)
++PYTHON_VERSION=2.4
++PYTHON_INCLUDES = -I $(DESTDIR)$(pyincludedir)/python$(PYTHON_VERSION)
+ 
+-X11_INCLUDES = -I /usr/X11/include/
+-PYTHON_VERSION=2.3
+-PYTHON_INCLUDES = -I /usr/include/python$(PYTHON_VERSION)
+-
+-SDLCFLAGS = $(shell sdl-config --cflags)
+-SDLLIBS = $(shell sdl-config --libs) -lSDL_image -lSDL_mixer
++SDLCFLAGS = $(shell $(DESTDIR)$(bindir)/sdl-config --cflags)
++SDLLIBS = $(shell $(DESTDIR)$(bindir)/sdl-config --libs) -lSDL_image -lSDL_mixer
+ 
+ GLLIBS = -lglut -lGLU -lGL
+ 
+-PYTHONHOME = /usr/lib/python$(PYTHON_VERSION)/
++OPTFLAGS = -O2
++
++PYTHONHOME = $(DESTDIR)$(pylibdir)/python$(PYTHON_VERSION)/
+ PYTHONLIBS = -lpython$(PYTHON_VERSION) -lutil \
+              $(PYTHONHOME)/lib-dynload/math.so \
+ 	     $(PYTHONHOME)/lib-dynload/time.so \
+@@ -48,7 +52,7 @@
+ 
+ INCLUDES = $(KIKI_INCLUDES) $(KIKI_DATADIR) $(X11_INCLUDES) $(PYTHON_INCLUDES)
+ 
+-CXXFLAGS = $(INCLUDES) $(SDLCFLAGS)
++CXXFLAGS = $(INCLUDES) $(SDLCFLAGS) $(OPTFLAGS)
+ 
+ src =  \
+ 	$(KIKISRC)/base/KikiAction.cpp \
+@@ -108,7 +112,7 @@
+ 
+ kiki: $(KIKISRC)/../SWIG/KikiPy_wrap.cpp $(obj)
+ 	-(cd ../SWIG; swig -c++ -python -globals kiki -o KikiPy_wrap.cpp KikiPy.i; cp kiki.py ../py)
+-	$(CXX) $(obj) $(KODILIB) -o kiki $(GLLIBS) $(SDLLIBS) $(PYTHONLIBS)
++	$(CXX) $(obj) $(KODILIB) -o kiki $(GLLIBS) $(SDLLIBS) $(PYTHONLIBS) $(CXXFLAGS)
+ 
+ obj-clean:
+ 	$(RM) -f $(obj)
+diff --speed-large-files --minimal -Nru tmp/kiki/linux/Makefile~ work/main.d/kiki/linux/Makefile~
+--- tmp/kiki/linux/Makefile~	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/kiki/linux/Makefile~	2007-02-08 15:38:21.000000000 -0300
+@@ -0,0 +1,125 @@
++#
++# kiki makefile for linux
++#
++#
++# you might have to change these to match your system
++#
++
++pyincludedir = $(includedir)
++pylibdir = $(libdir)
++X11_INCLUDES = -I $(DESTDIR)$(includedir)
++PYTHON_VERSION=2.4
++PYTHON_INCLUDES = -I $(DESTDIR)$(pyincludedir)/python$(PYTHON_VERSION)
++
++SDLCFLAGS = $(shell $(DESTDIR)$(bindir)/sdl-config --cflags)
++SDLLIBS = $(shell $(DESTDIR)$(bindir)/sdl-config --libs) -lSDL_image -lSDL_mixer
++
++GLLIBS = -lglut -lGLU -lGL
++
++OPTFLAGS = -O2
++
++PYTHONHOME = $(DESTDIR)$(pylibdir)/python$(PYTHON_VERSION)/
++PYTHONLIBS = -lpython$(PYTHON_VERSION) -lutil \
++             $(PYTHONHOME)/lib-dynload/math.so \
++	     $(PYTHONHOME)/lib-dynload/time.so \
++	     $(PYTHONHOME)/lib-dynload/_random.so
++
++# change this, if the kodilib directory isn't parallel to the kiki directory
++
++KODILIBDIR = ../kodilib
++
++#
++# the following should be ok on most machines
++#
++# please let me know, if you had a hard time compiling kiki (monsterkodi@gmx.net)
++#
++
++KODILIB = $(KODILIBDIR)/linux/libkodi.a
++
++KODILIBINC =	-I $(KODILIBDIR)/src/handler \
++		-I $(KODILIBDIR)/src/tools   \
++		-I $(KODILIBDIR)/src/types   \
++		-I $(KODILIBDIR)/src/widgets \
++		-I $(KODILIBDIR)/src/windows
++
++KIKISRC = ../src
++
++KIKI_INCLUDES = -I ../SWIG $(KODILIBINC) \
++	-I $(KIKISRC)/base -I $(KIKISRC)/bots -I $(KIKISRC)/gui -I $(KIKISRC)/items \
++	-I $(KIKISRC)/main -I $(KIKISRC)/sound -I $(KIKISRC)/world \
++
++KIKI_DATADIR = -DKIKI_HOME='"$(KIKI_HOME)/"'
++
++INCLUDES = $(KIKI_INCLUDES) $(KIKI_DATADIR) $(X11_INCLUDES) $(PYTHON_INCLUDES)
++
++CXXFLAGS = $(INCLUDES) $(SDLCFLAGS) $(OPTFLAGS)
++
++src =  \
++	$(KIKISRC)/base/KikiAction.cpp \
++	$(KIKISRC)/base/KikiActionObject.cpp \
++	$(KIKISRC)/base/KikiEvent.cpp \
++	$(KIKISRC)/base/KikiFace.cpp \
++	$(KIKISRC)/base/KikiObject.cpp \
++	$(KIKISRC)/base/KikiPyAction.cpp \
++	$(KIKISRC)/base/KikiTools.cpp \
++	$(KIKISRC)/bots/KikiBot.cpp \
++	$(KIKISRC)/bots/KikiBotFume.cpp \
++	$(KIKISRC)/bots/KikiMutant.cpp \
++	$(KIKISRC)/bots/KikiPlayback.cpp \
++	$(KIKISRC)/bots/KikiPlayer.cpp \
++	$(KIKISRC)/bots/KikiRecorder.cpp \
++	$(KIKISRC)/bots/KikiStatusDisplay.cpp \
++	$(KIKISRC)/gui/KikiCharacter.cpp \
++	$(KIKISRC)/gui/KikiColumnMenu.cpp \
++	$(KIKISRC)/gui/KikiGUI.cpp \
++	$(KIKISRC)/gui/KikiMenu.cpp \
++	$(KIKISRC)/gui/KikiPageText.cpp \
++	$(KIKISRC)/gui/KikiScreenText.cpp \
++	$(KIKISRC)/gui/KikiScrollMenu.cpp \
++	$(KIKISRC)/gui/KikiText.cpp \
++	$(KIKISRC)/gui/KikiTextLine.cpp \
++	$(KIKISRC)/items/KikiAtom.cpp \
++	$(KIKISRC)/items/KikiBillBoard.cpp \
++	$(KIKISRC)/items/KikiBomb.cpp \
++	$(KIKISRC)/items/KikiBullet.cpp \
++	$(KIKISRC)/items/KikiCellText.cpp \
++	$(KIKISRC)/items/KikiGate.cpp \
++	$(KIKISRC)/items/KikiGear.cpp \
++	$(KIKISRC)/items/KikiGenerator.cpp \
++	$(KIKISRC)/items/KikiLight.cpp \
++	$(KIKISRC)/items/KikiMotorCylinder.cpp \
++	$(KIKISRC)/items/KikiMotorGear.cpp \
++	$(KIKISRC)/items/KikiNeutron.cpp \
++	$(KIKISRC)/items/KikiPushable.cpp \
++	$(KIKISRC)/items/KikiSpikes.cpp \
++	$(KIKISRC)/items/KikiStone.cpp \
++	$(KIKISRC)/items/KikiSwitch.cpp \
++	$(KIKISRC)/items/KikiTest.cpp \
++	$(KIKISRC)/items/KikiValve.cpp \
++	$(KIKISRC)/items/KikiWall.cpp \
++	$(KIKISRC)/items/KikiWire.cpp \
++	$(KIKISRC)/items/KikiWireStone.cpp \
++	$(KIKISRC)/main/KikiController.cpp \
++	$(KIKISRC)/main/main.cpp \
++	$(KIKISRC)/sound/KikiSound.cpp \
++	$(KIKISRC)/world/KikiCell.cpp \
++	$(KIKISRC)/world/KikiWorld.cpp \
++	$(KIKISRC)/main/KikiPythonWidget.cpp \
++	$(KIKISRC)/main/KikiPython.cpp \
++	$(KIKISRC)/../SWIG/KikiPy_wrap.cpp
++
++obj = $(src:.cpp=.o)
++
++kiki: $(KIKISRC)/../SWIG/KikiPy_wrap.cpp $(obj)
++	-(cd ../SWIG; swig -c++ -python -globals kiki -o KikiPy_wrap.cpp KikiPy.i; cp kiki.py ../py)
++	$(CXX) $(obj) $(KODILIB) -o kiki $(GLLIBS) $(SDLLIBS) $(PYTHONLIBS)
++
++obj-clean:
++	$(RM) -f $(obj)
++
++clean:
++	$(RM) -f $(obj) kiki
++
++%.o:    %.cpp
++	$(CXX) -c $(CXXFLAGS) -o $@ $<
++
+diff --speed-large-files --minimal -Nru tmp/kiki/linux/Makefile.orig work/main.d/kiki/linux/Makefile.orig
+--- tmp/kiki/linux/Makefile.orig	2007-02-08 15:40:23.000000000 -0300
++++ work/main.d/kiki/linux/Makefile.orig	1969-12-31 21:00:00.000000000 -0300
+@@ -1,121 +0,0 @@
+-#
+-# kiki makefile for linux
+-#
+-#
+-# you might have to change these to match your system
+-#
+-
+-X11_INCLUDES = -I /usr/X11/include/
+-PYTHON_VERSION=2.3
+-PYTHON_INCLUDES = -I /usr/include/python$(PYTHON_VERSION)
+-
+-SDLCFLAGS = $(shell sdl-config --cflags)
+-SDLLIBS = $(shell sdl-config --libs) -lSDL_image -lSDL_mixer
+-
+-GLLIBS = -lglut -lGLU -lGL
+-
+-PYTHONHOME = /usr/lib/python$(PYTHON_VERSION)/
+-PYTHONLIBS = $(PYTHONHOME)/config/libpython$(PYTHON_VERSION).a -lutil \
+-             $(PYTHONHOME)/lib-dynload/math.so \
+-	     $(PYTHONHOME)/lib-dynload/time.so \
+-	     $(PYTHONHOME)/lib-dynload/_random.so
+-
+-# change this, if the kodilib directory isn't parallel to the kiki directory
+-
+-KODILIBDIR = ../kodilib
+-
+-#
+-# the following should be ok on most machines
+-#
+-# please let me know, if you had a hard time compiling kiki (monsterkodi@gmx.net)
+-#
+-
+-KODILIB = $(KODILIBDIR)/linux/libkodi.a
+-
+-KODILIBINC =	-I $(KODILIBDIR)/src/handler \
+-		-I $(KODILIBDIR)/src/tools   \
+-		-I $(KODILIBDIR)/src/types   \
+-		-I $(KODILIBDIR)/src/widgets \
+-		-I $(KODILIBDIR)/src/windows
+-
+-KIKISRC = ../src
+-
+-KIKI_INCLUDES = -I ../SWIG $(KODILIBINC) \
+-	-I $(KIKISRC)/base -I $(KIKISRC)/bots -I $(KIKISRC)/gui -I $(KIKISRC)/items \
+-	-I $(KIKISRC)/main -I $(KIKISRC)/sound -I $(KIKISRC)/world \
+-
+-KIKI_DATADIR = -DKIKI_HOME='"$(KIKI_HOME)/"'
+-
+-INCLUDES = $(KIKI_INCLUDES) $(KIKI_DATADIR) $(X11_INCLUDES) $(PYTHON_INCLUDES)
+-
+-CXXFLAGS = $(INCLUDES) $(SDLCFLAGS)
+-
+-src =  \
+-	$(KIKISRC)/base/KikiAction.cpp \
+-	$(KIKISRC)/base/KikiActionObject.cpp \
+-	$(KIKISRC)/base/KikiEvent.cpp \
+-	$(KIKISRC)/base/KikiFace.cpp \
+-	$(KIKISRC)/base/KikiObject.cpp \
+-	$(KIKISRC)/base/KikiPyAction.cpp \
+-	$(KIKISRC)/base/KikiTools.cpp \
+-	$(KIKISRC)/bots/KikiBot.cpp \
+-	$(KIKISRC)/bots/KikiBotFume.cpp \
+-	$(KIKISRC)/bots/KikiMutant.cpp \
+-	$(KIKISRC)/bots/KikiPlayback.cpp \
+-	$(KIKISRC)/bots/KikiPlayer.cpp \
+-	$(KIKISRC)/bots/KikiRecorder.cpp \
+-	$(KIKISRC)/bots/KikiStatusDisplay.cpp \
+-	$(KIKISRC)/gui/KikiCharacter.cpp \
+-	$(KIKISRC)/gui/KikiColumnMenu.cpp \
+-	$(KIKISRC)/gui/KikiGUI.cpp \
+-	$(KIKISRC)/gui/KikiMenu.cpp \
+-	$(KIKISRC)/gui/KikiPageText.cpp \
+-	$(KIKISRC)/gui/KikiScreenText.cpp \
+-	$(KIKISRC)/gui/KikiScrollMenu.cpp \
+-	$(KIKISRC)/gui/KikiText.cpp \
+-	$(KIKISRC)/gui/KikiTextLine.cpp \
+-	$(KIKISRC)/items/KikiAtom.cpp \
+-	$(KIKISRC)/items/KikiBillBoard.cpp \
+-	$(KIKISRC)/items/KikiBomb.cpp \
+-	$(KIKISRC)/items/KikiBullet.cpp \
+-	$(KIKISRC)/items/KikiCellText.cpp \
+-	$(KIKISRC)/items/KikiGate.cpp \
+-	$(KIKISRC)/items/KikiGear.cpp \
+-	$(KIKISRC)/items/KikiGenerator.cpp \
+-	$(KIKISRC)/items/KikiLight.cpp \
+-	$(KIKISRC)/items/KikiMotorCylinder.cpp \
+-	$(KIKISRC)/items/KikiMotorGear.cpp \
+-	$(KIKISRC)/items/KikiNeutron.cpp \
+-	$(KIKISRC)/items/KikiPushable.cpp \
+-	$(KIKISRC)/items/KikiSpikes.cpp \
+-	$(KIKISRC)/items/KikiStone.cpp \
+-	$(KIKISRC)/items/KikiSwitch.cpp \
+-	$(KIKISRC)/items/KikiTest.cpp \
+-	$(KIKISRC)/items/KikiValve.cpp \
+-	$(KIKISRC)/items/KikiWall.cpp \
+-	$(KIKISRC)/items/KikiWire.cpp \
+-	$(KIKISRC)/items/KikiWireStone.cpp \
+-	$(KIKISRC)/main/KikiController.cpp \
+-	$(KIKISRC)/main/main.cpp \
+-	$(KIKISRC)/sound/KikiSound.cpp \
+-	$(KIKISRC)/world/KikiCell.cpp \
+-	$(KIKISRC)/world/KikiWorld.cpp \
+-	$(KIKISRC)/main/KikiPythonWidget.cpp \
+-	$(KIKISRC)/main/KikiPython.cpp \
+-	$(KIKISRC)/../SWIG/KikiPy_wrap.cpp
+-
+-obj = $(src:.cpp=.o)
+-
+-kiki: $(KIKISRC)/../SWIG/KikiPy_wrap.cpp $(obj)
+-	-(cd ../SWIG; swig -c++ -python -globals kiki -o KikiPy_wrap.cpp KikiPy.i; cp kiki.py ../py)
+-	$(CXX) $(obj) $(KODILIB) -o kiki $(GLLIBS) $(SDLLIBS) $(PYTHONLIBS)
+-
+-obj-clean:
+-	$(RM) -f $(obj)
+-
+-clean:
+-	$(RM) -f $(obj) kiki
+-
+-%.o:    %.cpp
+-	$(CXX) -c $(CXXFLAGS) -o $@ $<
+-
+Binary files tmp/kiki/src/base/KikiAction.o and work/main.d/kiki/src/base/KikiAction.o differ
+Binary files tmp/kiki/src/base/KikiActionObject.o and work/main.d/kiki/src/base/KikiActionObject.o differ
+Binary files tmp/kiki/src/base/KikiEvent.o and work/main.d/kiki/src/base/KikiEvent.o differ
+Binary files tmp/kiki/src/base/KikiFace.o and work/main.d/kiki/src/base/KikiFace.o differ
+Binary files tmp/kiki/src/base/KikiObject.o and work/main.d/kiki/src/base/KikiObject.o differ
+Binary files tmp/kiki/src/base/KikiPyAction.o and work/main.d/kiki/src/base/KikiPyAction.o differ
+Binary files tmp/kiki/src/base/KikiTools.o and work/main.d/kiki/src/base/KikiTools.o differ
+Binary files tmp/kiki/src/bots/KikiBotFume.o and work/main.d/kiki/src/bots/KikiBotFume.o differ
+Binary files tmp/kiki/src/bots/KikiBot.o and work/main.d/kiki/src/bots/KikiBot.o differ
+Binary files tmp/kiki/src/bots/KikiMutant.o and work/main.d/kiki/src/bots/KikiMutant.o differ
+Binary files tmp/kiki/src/bots/KikiPlayback.o and work/main.d/kiki/src/bots/KikiPlayback.o differ
+Binary files tmp/kiki/src/bots/KikiPlayer.o and work/main.d/kiki/src/bots/KikiPlayer.o differ
+Binary files tmp/kiki/src/bots/KikiRecorder.o and work/main.d/kiki/src/bots/KikiRecorder.o differ
+Binary files tmp/kiki/src/bots/KikiStatusDisplay.o and work/main.d/kiki/src/bots/KikiStatusDisplay.o differ
+Binary files tmp/kiki/src/gui/KikiCharacter.o and work/main.d/kiki/src/gui/KikiCharacter.o differ
+Binary files tmp/kiki/src/gui/KikiColumnMenu.o and work/main.d/kiki/src/gui/KikiColumnMenu.o differ
+Binary files tmp/kiki/src/gui/KikiGUI.o and work/main.d/kiki/src/gui/KikiGUI.o differ
+Binary files tmp/kiki/src/gui/KikiMenu.o and work/main.d/kiki/src/gui/KikiMenu.o differ
+Binary files tmp/kiki/src/gui/KikiPageText.o and work/main.d/kiki/src/gui/KikiPageText.o differ
+Binary files tmp/kiki/src/gui/KikiScreenText.o and work/main.d/kiki/src/gui/KikiScreenText.o differ
+Binary files tmp/kiki/src/gui/KikiScrollMenu.o and work/main.d/kiki/src/gui/KikiScrollMenu.o differ
+Binary files tmp/kiki/src/gui/KikiTextLine.o and work/main.d/kiki/src/gui/KikiTextLine.o differ
+Binary files tmp/kiki/src/gui/KikiText.o and work/main.d/kiki/src/gui/KikiText.o differ
+Binary files tmp/kiki/src/items/KikiAtom.o and work/main.d/kiki/src/items/KikiAtom.o differ
+Binary files tmp/kiki/src/items/KikiBillBoard.o and work/main.d/kiki/src/items/KikiBillBoard.o differ
+Binary files tmp/kiki/src/items/KikiBomb.o and work/main.d/kiki/src/items/KikiBomb.o differ
+Binary files tmp/kiki/src/items/KikiBullet.o and work/main.d/kiki/src/items/KikiBullet.o differ
+Binary files tmp/kiki/src/items/KikiCellText.o and work/main.d/kiki/src/items/KikiCellText.o differ
+Binary files tmp/kiki/src/items/KikiGate.o and work/main.d/kiki/src/items/KikiGate.o differ
+Binary files tmp/kiki/src/items/KikiGear.o and work/main.d/kiki/src/items/KikiGear.o differ
+Binary files tmp/kiki/src/items/KikiGenerator.o and work/main.d/kiki/src/items/KikiGenerator.o differ
+Binary files tmp/kiki/src/items/KikiLight.o and work/main.d/kiki/src/items/KikiLight.o differ
+Binary files tmp/kiki/src/items/KikiMotorCylinder.o and work/main.d/kiki/src/items/KikiMotorCylinder.o differ
+Binary files tmp/kiki/src/items/KikiMotorGear.o and work/main.d/kiki/src/items/KikiMotorGear.o differ
+Binary files tmp/kiki/src/items/KikiNeutron.o and work/main.d/kiki/src/items/KikiNeutron.o differ
+Binary files tmp/kiki/src/items/KikiPushable.o and work/main.d/kiki/src/items/KikiPushable.o differ
+Binary files tmp/kiki/src/items/KikiSpikes.o and work/main.d/kiki/src/items/KikiSpikes.o differ
+Binary files tmp/kiki/src/items/KikiStone.o and work/main.d/kiki/src/items/KikiStone.o differ
+Binary files tmp/kiki/src/items/KikiSwitch.o and work/main.d/kiki/src/items/KikiSwitch.o differ
+Binary files tmp/kiki/src/items/KikiTest.o and work/main.d/kiki/src/items/KikiTest.o differ
+Binary files tmp/kiki/src/items/KikiValve.o and work/main.d/kiki/src/items/KikiValve.o differ
+Binary files tmp/kiki/src/items/KikiWall.o and work/main.d/kiki/src/items/KikiWall.o differ
+Binary files tmp/kiki/src/items/KikiWire.o and work/main.d/kiki/src/items/KikiWire.o differ
+Binary files tmp/kiki/src/items/KikiWireStone.o and work/main.d/kiki/src/items/KikiWireStone.o differ
+Binary files tmp/kiki/src/main/KikiController.o and work/main.d/kiki/src/main/KikiController.o differ
+Binary files tmp/kiki/src/main/KikiPython.o and work/main.d/kiki/src/main/KikiPython.o differ
+Binary files tmp/kiki/src/main/KikiPythonWidget.o and work/main.d/kiki/src/main/KikiPythonWidget.o differ
+Binary files tmp/kiki/src/main/main.o and work/main.d/kiki/src/main/main.o differ
+Binary files tmp/kiki/src/sound/KikiSound.o and work/main.d/kiki/src/sound/KikiSound.o differ
+Binary files tmp/kiki/src/world/KikiCell.o and work/main.d/kiki/src/world/KikiCell.o differ
+Binary files tmp/kiki/src/world/KikiWorld.o and work/main.d/kiki/src/world/KikiWorld.o differ
+Binary files tmp/kiki/SWIG/KikiPy_wrap.o and work/main.d/kiki/SWIG/KikiPy_wrap.o differ
+Binary files tmp/title_song.mp3 and work/main.d/title_song.mp3 differ

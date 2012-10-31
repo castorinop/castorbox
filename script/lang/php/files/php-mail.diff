@@ -1,0 +1,85 @@
+--- old/ext/standard/mail.c	2009-01-09 16:37:01.000000000 +0100
++++ new/ext/standard/mail.c.oden	2009-01-13 22:04:58.000000000 +0100
+@@ -21,6 +21,8 @@
+ #include <stdlib.h>
+ #include <ctype.h>
+ #include <stdio.h>
++#include <syslog.h>
++#include <string.h>
+ #include "php.h"
+ #include "ext/standard/info.h"
+ #include "ext/standard/php_string.h"
+@@ -44,6 +46,9 @@
+ #include "safe_mode.h"
+ #include "exec.h"
+ 
++#include "zend_operators.h"
++#include "zend_globals.h"
++
+ #ifdef PHP_WIN32
+ #include "win32/sendmail.h"
+ #endif
+@@ -127,6 +132,18 @@ PHP_FUNCTION(mail)
+ 		MAIL_ASCIIZ_CHECK(extra_cmd, extra_cmd_len);
+ 	}
+ 
++    /* search for To: and Subject: headers which should be specified in proper mail() parameters, not in additional headers */
++    if (headers != NULL) {
++        if (strncasecmp(headers, "to:", sizeof("to:") - 1) == 0 || strcasestr(headers, "\nto:")) {
++            php_error_docref(NULL TSRMLS_CC, E_WARNING, "To: headers aren't allowed in the additional_headers parameter. Use $to parameter for that. Mail not sent.");
++            RETURN_FALSE;
++        }
++        if (strncasecmp(headers, "subject:", sizeof("subject:") - 1) == 0 || strcasestr(headers, "\nsubject:")) {
++            php_error_docref(NULL TSRMLS_CC, E_WARNING, "Subject: headers aren't allowed in the additional_headers parameter. Use $subject parameter for that. Mail not sent.");
++            RETURN_FALSE;
++        }
++    }
++
+ 	if (to_len > 0) {
+ 		to_r = estrndup(to, to_len);
+ 		for (; to_len; to_len--) {
+@@ -304,8 +321,42 @@ PHPAPI int php_mail(char *to, char *subj
+ 			MAIL_RET(0);
+ 		}
+ #endif
+-		fprintf(sendmail, "To: %s\n", to);
+-		fprintf(sendmail, "Subject: %s\n", subject);
++		TSRMLS_FETCH();
++		
++		if ((to != NULL) && (strlen(to)!=0)) { 
++			fprintf(sendmail, "To: %s\n", to);
++		}
++		if ((subject != NULL) && (strlen(subject)!=0)) {
++			fprintf(sendmail, "Subject: %s\n", subject);
++		}
++
++		if (PG(http_globals)[TRACK_VARS_SERVER]) {
++			zval **remote_addr, **server_name, **server_port,
++				**script_name, **http_user_agent;
++			
++			if (zend_hash_find(PG(http_globals)[TRACK_VARS_SERVER]->value.ht, "REMOTE_ADDR", sizeof("REMOTE_ADDR"), (void **) &remote_addr)==SUCCESS) {
++				convert_to_string_ex(remote_addr);
++				fprintf(sendmail, "HTTP-Posting-Client: %s\n", Z_STRVAL_PP(remote_addr));
++			}
++			if (zend_hash_find(PG(http_globals)[TRACK_VARS_SERVER]->value.ht, "SERVER_NAME", sizeof("SERVER_NAME"), (void **) &server_name)==SUCCESS) {
++				convert_to_string_ex(server_name);
++				fprintf(sendmail, "HTTP-Posting-URI: %s", Z_STRVAL_PP(server_name));
++				if (zend_hash_find(PG(http_globals)[TRACK_VARS_SERVER]->value.ht, "SERVER_PORT", sizeof("SERVER_PORT"), (void **) &server_port)==SUCCESS) {
++					convert_to_string_ex(server_port);
++					fprintf(sendmail, ":%s", Z_STRVAL_PP(server_port));
++				}	
++				if (zend_hash_find(PG(http_globals)[TRACK_VARS_SERVER]->value.ht, "SCRIPT_NAME", sizeof("SCRIPT_NAME"), (void **) &script_name)==SUCCESS) {
++					convert_to_string_ex(script_name);
++					fprintf(sendmail, "%s", Z_STRVAL_PP(script_name));
++				}
++				fprintf(sendmail, "\n");
++			}
++			if (zend_hash_find(PG(http_globals)[TRACK_VARS_SERVER]->value.ht, "HTTP_USER_AGENT", sizeof("HTTP_USER_AGENT"), (void **) &http_user_agent)==SUCCESS) {
++				convert_to_string_ex(http_user_agent);
++					fprintf(sendmail, "HTTP-Posting-User-Agent: %s\n", Z_STRVAL_PP(http_user_agent));
++			}
++		}
++
+ 		if (hdr != NULL) {
+ 			fprintf(sendmail, "%s\n", hdr);
+ 		}

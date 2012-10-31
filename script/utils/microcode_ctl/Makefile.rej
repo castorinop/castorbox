@@ -1,0 +1,29 @@
+***************
+*** 0 ****
+--- 1,26 ----
++ GARNAME = microcode_ctl
++ GARVERSION = 1.17
++ CATEGORIES = utils
++ MASTER_SITES = http://www.urbanmyth.org/microcode/
++ DISTFILES = $(DISTNAME).tar.gz
++ LICENSE = GPL2
++ 
++ DESCRIPTION =
++ define BLURB
++ endef
++ 
++ DEPENDS = lang/c
++ 
++ BUILD_SCRIPTS   = custom
++ INSTALL_SCRIPTS = custom
++ 
++ include ../../gar.mk
++ 
++ build-custom:
++ 	cd $(WORKSRC) ; $(CC) $(CFLAGS) -o $(GARNAME) $(GARNAME).c
++ 	@$(MAKECOOKIE)
++ 
++ install-custom:
++ 	@mkdir -p $(DESTDIR)$(sbindir)
++ 	@cp -f $(WORKSRC)/$(GARNAME) $(DESTDIR)$(sbindir)
++ 	@$(MAKECOOKIE)

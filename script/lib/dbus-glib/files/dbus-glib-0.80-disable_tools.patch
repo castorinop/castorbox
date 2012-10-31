@@ -1,0 +1,24 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/dbus-glib-0.76/dbus/Makefile.in work/main.d/dbus-glib-0.76/dbus/Makefile.in
+--- tmp/dbus-glib-0.76/dbus/Makefile.in	2008-06-05 15:55:41.000000000 -0300
++++ dbus-glib-0.76/dbus/Makefile.in	2008-09-20 10:22:02.000000000 -0300
+@@ -295,7 +295,7 @@
+ target_vendor = @target_vendor@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-SUBDIRS = . examples
++SUBDIRS = .
+ INCLUDES = \
+ 	-I$(top_srcdir)						\
+ 	-I$(top_builddir)
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/dbus-glib-0.76/Makefile.in work/main.d/dbus-glib-0.76/Makefile.in
+--- tmp/dbus-glib-0.76/Makefile.in	2008-06-05 15:55:41.000000000 -0300
++++ dbus-glib-0.76/Makefile.in	2008-09-20 10:22:16.000000000 -0300
+@@ -264,7 +264,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ GLIB_PC = dbus-glib-1.pc
+-SUBDIRS = dbus tools test doc
++SUBDIRS = dbus
+ DIST_SUBDIRS = dbus tools test doc m4
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = $(GLIB_PC)

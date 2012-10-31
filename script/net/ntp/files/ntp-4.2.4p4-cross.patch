@@ -1,0 +1,24 @@
+diff -Naur ntp-4.2.4p4-old/ntpdc/Makefile.am ntp-4.2.4p4-new/ntpdc/Makefile.am
+--- old/ntp-4.2.4p4-old/ntpdc/Makefile.am	2007-04-14 04:07:05.000000000 -0700
++++ ntp-4.2.4p4-new/ntpdc/Makefile.am	2007-09-23 17:16:02.000000000 -0700
+@@ -41,7 +41,7 @@
+ ntpdc-layout.o: nl.c
+ 
+ layout.here: ntpdc-layout
+-	./ntpdc-layout > $@
++	ntp-ntpdc-layout > $@
+ 
+ check-layout: ntpdc-layout layout.std layout.here
+ 	cmp $(srcdir)/layout.std layout.here && echo stamp > $@
+diff -Naur ntp-4.2.4p4-old/ntpdc/Makefile.in ntp-4.2.4p4-new/ntpdc/Makefile.in
+--- old/ntp-4.2.4p4-old/ntpdc/Makefile.in	2007-09-10 17:18:07.000000000 -0700
++++ ntp-4.2.4p4-new/ntpdc/Makefile.in	2007-09-23 17:16:02.000000000 -0700
+@@ -616,7 +616,7 @@
+ ntpdc-layout.o: nl.c
+ 
+ layout.here: ntpdc-layout
+-	./ntpdc-layout > $@
++	ntp-ntpdc-layout > $@
+ 
+ check-layout: ntpdc-layout layout.std layout.here
+ 	cmp $(srcdir)/layout.std layout.here && echo stamp > $@

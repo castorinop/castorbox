@@ -1,0 +1,12 @@
+diff -Naur vcdimager-0.7.23-old/configure.ac vcdimager-0.7.23-new/configure.ac
+--- vcdimager-0.7.23-old/configure.ac	2005-07-11 05:43:02.000000000 -0700
++++ vcdimager-0.7.23-new/configure.ac	2007-04-27 10:23:47.000000000 -0700
+@@ -246,7 +246,7 @@
+ ], bf_lsbf=0, AC_MSG_ERROR([unsupported bitfield ordering]))
+   ],
+   [case "$host" in
+-     *-*-mingw32* | *-*-cygwin*)
++     i?86-* | x86_64-* | *-*-mingw32* | *-*-cygwin*)
+        bf_lsbf=1
+      ;;
+      *)

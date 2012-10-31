@@ -1,0 +1,44 @@
+--- old/package-api.mk	2010-07-21 18:04:52.000000000 -0300
++++ new/package-api.mk	2011-08-04 11:17:36.290376698 -0300
+@@ -1 +1 @@
+-MAKE_VERSION = 3.81
++MAKE_VERSION = 3.82
+--- old/Makefile	2011-07-26 21:39:30.023701001 -0300
++++ new/Makefile	2011-08-04 11:17:36.290376698 -0300
+@@ -3,7 +3,7 @@
+ CATEGORIES = devel
+ MASTER_SITES = http://ftp.gnu.org/gnu/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.bz2
+-PATCHFILES  = $(DISTNAME)-savannah_bug_18124.patch $(DISTNAME)-library_search.patch
++PATCHFILES  = $(DISTNAME)-savannah_bug_30723.patch $(DISTNAME)-library_search.patch
+ ifneq ("$(DESTIMG)+$(CROSSIMG)","build+build")
+ PATCHFILES += $(DISTNAME)-perl.patch.gar
+ endif
+diff -ruP -x '.*' -x '*~' ./files/make-3.82-savannah_bug_30723.patch new/files/make-3.82-savannah_bug_30723.patch
+--- old/files/make-3.82-savannah_bug_30723.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/make-3.82-savannah_bug_30723.patch	2011-08-04 11:17:36.250376699 -0300
+@@ -0,0 +1,12 @@
++diff -Naur make-3.82-old/main.c make-3.82-new/main.c
++--- make-3.82-old/main.c	2010-07-19 00:10:53.000000000 -0700
+++++ make-3.82-new/main.c	2011-07-29 11:03:50.000000000 -0700
++@@ -2093,7 +2093,7 @@
++             const char *pv = define_makeflags (1, 1);
++             char *p = alloca (sizeof ("MAKEFLAGS=") + strlen (pv) + 1);
++             sprintf (p, "MAKEFLAGS=%s", pv);
++-            putenv (p);
+++            putenv (allocated_variable_expand (p));
++           }
++ 
++ 	  if (ISDB (DB_BASIC))
+--- old/checksums	2011-07-26 21:39:30.043700999 -0300
++++ new/checksums	2011-08-04 11:17:36.290376698 -0300
+@@ -1,8 +1,4 @@
+-354853e0b2da90c527e35aabb8d6f1e6  download/make-3.81.tar.bz2
+-3f1ce13687b5c5262c9f6da0304af8fe  download/make-3.81-savannah_bug_18124.patch
+-f0621e0fc6d2c4480899a84df528c7bd  download/make-3.81-library_search.patch
+-af6de2afe8491c1f49fd72761a26218c  download/make-3.81-perl.patch.gar
+-
+ 1a11100f3c63fcf5753818e59d63088f  download/make-3.82.tar.bz2
++c34253e6fafbf308cd6326ab06743ef9  download/make-3.82-savannah_bug_30723.patch
+ 09d7c80331e350398e19c3fc96efa1ce  download/make-3.82-library_search.patch
+ 8d149f284d0cbb3d99784390b4c6c591  download/make-3.82-perl.patch.gar

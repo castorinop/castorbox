@@ -1,0 +1,71 @@
+diff -p -up VirtualBox-1.5.4_OSE/kBuild/sdks/LIBSDL.kmk.libpath VirtualBox-1.5.4_OSE/kBuild/sdks/LIBSDL.kmk
+--- VirtualBox-1.5.4_OSE/kBuild/sdks/LIBSDL.kmk.libpath	2007-11-05 21:16:01.000000000 +0100
++++ VirtualBox-1.5.4_OSE/kBuild/sdks/LIBSDL.kmk	2008-01-03 16:29:11.000000000 +0100
+@@ -53,18 +53,12 @@ ifndef PATH_SDK_LIBSDL
+    # Search in the typical unix places.
+    ifeq ($(filter-out %64,$(BUILD_TARGET_ARCH)),)
+     PATH_SDK_LIBSDL := $(firstword $(wildcard \
+-	/lib64/libSDL.* \
+-	/lib/libSDL.* \
+-	/usr/lib64/libSDL.* \
+-	/usr/lib/libSDL.* \
+-	/usr/local/lib64/libSDL.* \
+-	/usr/local/lib/libSDL.* \
+-	/opt/lib64/libSDL.* \
+-	/opt/lib/libSDL.* \
+-	/opt/local/lib64/libSDL.* \
+-	/opt/local/lib/libSDL.* \
+-	/sw/lib64/libSDL.* \
+-	/sw/lib/libSDL.* \
++	/$(LIBPATH_LIB)/libSDL.* \
++	/usr/$(LIBPATH_LIB)/libSDL.* \
++	/usr/local/$(LIBPATH_LIB)/libSDL.* \
++	/opt/$(LIBPATH_LIB)/libSDL.* \
++	/opt/local/$(LIBPATH_LIB)/libSDL.* \
++	/sw/$(LIBPATH_LIB)/libSDL.* \
+ 	) )
+    else
+     PATH_SDK_LIBSDL := $(firstword $(wildcard \
+@@ -185,5 +179,5 @@ else # ASSUMES Unix like system
+  SDK_LIBSDL_LIBS ?= \
+ 	$(LIB_SDK_LIBSDL_SDL)
+  SDK_LIBSDL_LIBPATH ?= \
+- 	$(PATH_SDK_LIBSDL)/lib
++ 	$(PATH_SDK_LIBSDL)/$(LIBPATH_LIB)
+ endif
+diff -p -up VirtualBox-1.5.4_OSE/configure.libpath VirtualBox-1.5.4_OSE/configure
+--- VirtualBox-1.5.4_OSE/configure.libpath	2008-01-03 16:29:11.000000000 +0100
++++ VirtualBox-1.5.4_OSE/configure	2008-01-03 16:29:11.000000000 +0100
+@@ -60,7 +60,7 @@ LIBXERCES="-lxerces-c"
+ LIBXERCES_DIR="/usr/local/lib"
+ LIBCRYPTO="-lcrypto"
+ LIBPTHREAD="-lpthread"
+-LIBX11="-L/usr/X11R6/lib -L/usr/X11R6/lib64 -L/usr/local/lib -lXext -lX11"
++LIBX11="-L/usr/X11R6/${LIBPATH_LIB:-lib} -lXext -lX11"
+ INCX11="/usr/local/include"
+ LIBXCURSOR="-lXcursor"
+ INCZ=""
+@@ -1045,8 +1045,8 @@ EOF
+       echo "compiling the following source file:" >> $LOG
+       cat .tmp_src.cc >> $LOG
+       echo "using the following command line:" >> $LOG
+-      echo "$CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/$l -lqt-mt $LIBPTHREAD" >> $LOG
+-      $CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/$l -lqt-mt $LIBPTHREAD >> $LOG 2>&1
++      echo "$CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/${LIBPATH_LIB:-lib} -lqt-mt $LIBPTHREAD" >> $LOG
++      $CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/${LIBPATH_LIB:-lib} -lqt-mt $LIBPTHREAD >> $LOG 2>&1
+       if [ $? -eq 0 ]; then
+         if test_execute; then
+           cnf_append "QTDIR" "`cd $q ; pwd`"
+@@ -1489,6 +1489,12 @@ if [ -n "$HEADLESS" ]; then
+   cnf_append "VBOX_HEADLESS" "1"
+ fi
+ 
++# extra path overrides
++if test -n "$LIBPATH_LIB"; then
++  cnf_append "LIBPATH_LIB" "$LIBPATH_LIB"
++fi
++
++
+ # emit disable directives corresponding to any --disable-xxx options.
+ [ $WITH_XPCOM -eq 0 ]   && cnf_append "VBOX_WITH_MAIN" ""
+ [ $WITH_QT -eq 0 ]      && cnf_append "VBOX_WITH_QTGUI" ""

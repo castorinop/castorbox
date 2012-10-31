@@ -1,0 +1,526 @@
+LNX-BBC Developer FAQ
+
+The information needed to understand our development toolset is odd
+and not useful to the general public.  What follows is a FAQ for those
+who are participating in LNX-BBC GAR development.
+
+= CVS =
+
+== How do I check stuff into CVS? ==
+
+First you have to make sure you check the tree out with your own
+account.  Your old anonymous checkouts will not be useful to you.  Run
+the following to get a new copy of the tree with your account attached
+to it.
+
+----8<----
+export CVS_RSH=ssh
+cvs -d:ext:username@cvs.lnx-bbc.org:/var/cvs co gar
+----8<----
+
+Optionally, you can check out STABLE.
+
+----8<----
+export CVS_RSH=ssh
+cvs -d:ext:username@cvs.lnx-bbc.org:/var/cvs co -r STABLE gar
+----8<----
+
+Be sure to type your username for cvs.lnx-bbc.org in place of
+"username"!
+
+Now when you change something you can type "cvs diff" to see a diff of
+what you changed, and "cvs ci" to check your changes in.
+
+== Whoa!  Why did cvs bring up this strange text editor? ==
+
+That's because your $EDITOR environment variable is set to vi or nano
+or ae or something.  simply set it to your favorite editor like so
+
+----8<----
+export EDITOR=emacs
+----8<----
+
+and you should be good.
+
+== CVS is a crazy system.  Are there any good docs on it? ==
+
+Possibly the best documentation on CVS is available free for download
+at <http://cvsbook.red-bean.com/>.  It was published in dead-tree
+format by Coriolis OpenPress as _Open Source Development With CVS_
+with some added material.  The important stuff is up on the
+aforementioned Web site though. 
+
+The book is also installed on gargoyle.lnx-bbc.org, so you can shell
+in and run "pinfo cvsbook" to read it.
+
+== I can ssh in, but I get permission denied when trying to do a CVS
+checkin! ==
+
+Whoops!  Whoever made your account probably forgot to add you to the
+src group!  Ask to be added and try again.
+
+== I have all these empty directories lying about.  What gives? ==
+
+Try running "cvs up -Pd".  This will prune empty directories and add
+any new files in the repository.  In fact, it's probably best to have
+the following in your ~/.cvsrc
+
+----8<----
+diff -u
+rdiff -u
+update -Pd
+cvs -z9 -q
+----8<----
+
+The first line makes all "cvs diff" commands come in the unified
+format (preferred by this project).  The second line does the same for
+the "rdiff" command.  The third line makes all cvs update commands use
+the aforementioned -Pd switches.  The final line makes all cvs
+commands use maximal compression and low-noise output.
+
+== I want to move some changes from HEAD into STABLE.  The CVS docs
+are way too wordy.  Give us a hand? ==
+
+The easiest way is with the "rdiff" function of cvs.  To get a
+complete set of differences, you do:
+
+----8<----
+cvs rdiff -u -r STABLE -r HEAD gar 
+----8<----
+
+(Note that you may need to specify the repository location with "-d"
+or the CVSROOT environment variable if you're not in a checked out
+directory) 
+
+It's a lot of stuff.  If you want just the summary of
+files, versions, and dates, you can use:
+
+----8<----
+cvs rdiff -u -r STABLE -r HEAD -s gar 
+----8<----
+
+This command works even without a local repository, if your CVSROOT
+env var points to gargoyle, or if you specify a repository with -d.
+
+Let's say I just wanted to look at one file:
+
+----8<----
+[gargoyle(~)] cvs rdiff -u -r STABLE -r HEAD -s gar/CREDITS       
+File gar/CREDITS changed from revision 1.19 to 1.21
+[gargoyle(~)] cvs rdiff -u -r STABLE -r HEAD gar/CREDITS 
+Index: gar/CREDITS
+diff -u gar/CREDITS:1.19 gar/CREDITS:1.21
+--- gar/CREDITS:1.19    Mon Feb 24 13:51:04 2003
++++ gar/CREDITS Fri Mar 28 15:15:42 2003
+@@ -21,7 +21,7 @@
+ Paul "this is research, dammit" Gray
+ Ian "what the...?" Harding
+ Duncan MacKinnon
+-Nick Moffitt
++Nick "makes make make sense" Moffitt
+ Sean "keen with the winchesters" Neakums
+ Niall O Broin
+ "Yosemite" Sam Phillips
+@@ -66,6 +66,8 @@
+ Compression: cloop (Rusty Russell and Klaus Knopper)
+ 
+ Development: gar (Nick Moffitt)
++
++Disc Label Design and Artwork: Rev. Patty "icon bitch" Morin
+ 
+ And thanks to all the subscribers of the lnx-bbc-devel and lnx-bbc lists for
+ their useful questions and advice, and to all beta testers and reporters
+----8<----
+
+Now this can be run through patch:
+
+----8<----
+[gargoyle(~/gar)] cvs rdiff -u -r STABLE -r HEAD gar/CREDITS | patch -p1
+patching file CREDITS
+----8<----
+
+Note that I did -p1 because the patch begins with gar/, and I am in
+that directory, which is a checkout of STABLE.  A subsequent "cvs
+diff" shows me the same patch that rdiff did before (but with
+filenames changed).
+
+
+
+= Nightly Builds =
+
+== So how do these nightly builds work? ==
+
+The script is in /usr/local/bin/nightly-build.sh and is run every
+minute unless a build is running already.  Builds currently are
+performed with the aid of ccache, and tend to take about one and a
+half hours, and another 10-30 minutes for the images to rsync over to
+<http://www.lnx-bbc.org/builds/>.
+
+All the information from the current build is in /var/tmp/build/
+including logs, the gar tree, and the $(main_DESTDIR) and
+$(build_prefix) dirs.
+
+The system first blows away the working dir, then checks out a fresh
+copy of GAR and builds lnx-bbc.  
+
+== Wait, so why are they called nightly builds if they run every two
+hours?  ==
+
+Historically, they ran at a quarter past noon and a quarter past
+midnight.  They weren't specifically "nightly" then either.  Things
+change; people don't.
+
+== Ack!  I was looking at a file in the nightly build dir and a new
+build started, removing everything!  ==
+
+At the end of each build, the /var/tmp/build dir is rsync'd over
+to /usr/local/var/build-last, so check there.
+
+You can browse this on the Web at
+<http://build.lnx-bbc.org/build-last/>, but remember that box is on a
+slow network.
+
+
+= The Bug Tracking System =
+
+== So how does the bug tracking system work, in a nutshell? ==
+
+Each package has a MAINTAINER variable where the author can put her or
+his e-mail address.  People send mail to submit@bugs.lnx-bbc.org with
+a line that looks like this:
+
+----8<----
+Package: gar
+----8<----
+
+The index of package maintainers is generated from the package
+Makefiles during the nightly builds, so the system then sends out
+e-mail to the owner of the package the bug was filed against as well
+as the <http://zork.net/mailman/listinfo/lnx-bbc-bugs lnx-bbc-bugs
+list>.  
+
+When replying to the bug, make sure that your mail goes to the
+numbered address, such as 242@bugs.lnx-bbc.org instead of the submit
+address.  When you've fixed the problem that the bug submission
+mentioned, send mail to e.g. 242-done@bugs.lnx-bbc.org.
+
+== What are these "Closes:" and "Clarifies:" lines I see in some
+updates?  Are they necessary? ==
+
+Those are part of the hooks into CVS.  Basically if your commit
+message has a list of bug numbers following the word "closes" or
+"clarifies", it will send your commit message to the bug addresses or
+bug close addresses, respectively.
+
+So if your message looks like this:
+
+----8<----
+Hello, world.
+
+Clarifies: 242
+
+This explains why we had trouble with foonly!  I just fixed the
+gronkulation problem in the zoot boots.
+
+Closes: 105
+----8<----
+
+Then it will be sent to 242@bugs.lnx-bbc.org as well as
+105-done@bugs.lnx-bbc.org.  
+
+Note that this *only* affects the cvs commits.  These lines have no
+effect when writing bug updates from e-mail.  See the previous
+question for closing or clarifying a bug manually via e-mail.
+
+== How come my bugs are split in two on the by-developer summary? ==
+
+It's likely that in one package you entered your address differently
+than another, for example you could have done
+
+----8<----
+MAINTAINER = asmythee@nowhere.tld
+----8<----
+
+While in another package you put the full address with your name
+
+----8<----
+MAINTAINER = Alan Smythee <asmythee@nowhere.tld>
+----8<----
+
+== How come the ownership of this package isn't working? ==
+
+You may have put quotation marks around your address, which breaks
+things.  For example, you may have put the following in.
+
+----8<----
+MAINTAINER = "Alan Smythee <asmythee@nowhere.tld>"
+----8<----
+
+ *THIS IS VERY WRONG* 
+
+
+= The Build Machine =
+
+== So what is this gar.lnx-bbc.org? ==
+
+It's a dual Pentium II that Duncan MacKinnon and Nick Moffitt set up
+in early 2001.  It lives at Duncan's house in San Francisco, on his
+ADSL line.  We were using it as a CVS server, bug tracking system, 
+and build box.   It has been showing its age;  we still use it as
+the bug tracking system, but we have a new machine for the build box
+and CVS host, gargoyle. 
+
+It is running an installation of Debian testing.
+
+== Ahhh, gargoyle. What is this gargoyle.lnx-bbc.org, then? ==
+
+Gargoyle is a brand new machine, with fast dual CPUs and a freshly
+mirrored RAID drive.  It lives in the same location.  It is our CVS
+server and primary build box. If you have CVS access, you also have a
+shell account on gargoyle.
+
+It is running an installation of Debian stable, with very few
+development packages installed (so as not to confuse the compilation
+process).  If your Debian install has a lot of -dev packages, that
+could be one reason why your builds behave differently.  We also
+hacked in a symlink in /lib to work around a bug finding
+{libc_nonshared.a}.
+
+We recommend that any scripts you create in order to do CVS requests
+or commits use the more generic name "cvs.lnx-bbc.org" instead.
+
+== It seems really slow! ==
+
+Since ADSL is half-duplex, and has a relatively small uplink pipe, it
+makes a poor connection for server machines.  Thus, whenever anyone
+sends a great deal of information /from/ gar to another box on the
+Internet, it clogs the connection for everyone else.  In order to
+reduce this, we have moved as many services as possible off of the
+build box.  Our regular rsyncs of the nightly build are run with
+--bwlimit=10 to keep from using the /whole/ upstream pipe.  
+
+However, currently the last-resort garchive for packages whose
+MASTER_SITES have changed or vanished is
+<http://build.lnx-bbc.org/garchive/>.  This means that when a big
+package's upstream changes, all those doing a build will end up
+hitting our box.  We've added some higher-priority garchives, and hope
+to set up a proper mirror system eventually.
+
+A bandwidth upgrade is also planned shortly.
+
+----8<----
+begin  Duncan MacKinnon  quotation:
+> Folks at our present NOC are always surprised at how good the
+> present line is when they test it. I've gotten the feeling that
+> everything else on ADSL must be worse.
+
+        My buddy Jason used to have a 1979 VW Rabbit.  It came with a
+Blaupunkt AM radio.
+
+        "Best AM radio I ever owned." he used to say.
+
+        You've got there a Blaupunkt AM radio with super clean amp and
+nice speakers.  Best AM radio you'll ever own, but you're not ever
+going to get it to play in stereo.
+----8<----
+
+== What are all these goofy messages interrupting my shells on gargoyle? ==
+
+That's nwall, a chatty replacement for the BSD wall program.  Run
+nwall to join in, or "nwall -n" to shut off the chatter on the current
+terminal.  "nwall -y" will turn the nwall chatter back on again, and
+you can catch up by looking at /var/log/nwall.log!
+
+You can exit the nwall program by hitting ^D (control-D).
+
+= The Web Site =
+
+== Aho, Weinberger, and Kernighan ==
+
+The Web site is made with an awk script (actually gawk, as it uses
+some of the more advanced features) that translates a sort of rough
+text-like markup into HTML.  The advantage to this is that the .txt
+files that we distribute with GAR are the actual source code to the
+Web site!  The script is called tron.awk because I originally wanted
+it to spit out troff code when I started it years ago.
+
+If you run "make html" in the top gar dir, it will translate all of
+the .txt files into .html files, sometimes breaking a document up into
+multiple HTML chapters.  The script manages the navigational bars
+automatically, and highlights the link for the page displayed.
+
+== Navbar ==
+
+The main navbar (typically just the LNX-BBC and GAR blocks, but more
+may be added later) is stored in the file navbar.nav.  The format is
+one list element or h4 every two lines, and all elements must be of
+the class "navbar".  If you need to modify it, just copy a line and
+make sure your spacing is good.
+
+All the chapter-based navbars are generated by tron.awk.  
+
+== Markup ==
+
+So the markup is a little finnicky.  Play around some in sample.txt
+and do a few local builds before you push anything up to the site.
+Some things like the emphasis code are broken, and the rules for
+certain elements get confusing when you try and nest them.  The chief
+bit of advice is to keep things simple.  They'll have to look good
+both as text and as HTML, so try not to get fancy.
+
+tron.awk goes through a set of detection rules, which I'll try to
+explain here (but this will likely get out of date pretty easily).
+
+paragraphs:
+	The most important feature is that paragraphs are delimited
+	with one or more blank lines.  This is done by setting the
+	record separator to a regex that matches just that.  The
+	"fore" and "aft" variables store the "<p>" and "</p>" tags,
+	respectively, and are used later on for when something other
+	than a paragraph is used.
+
+document title:
+	The first paragraph of the document is the title, which
+	appears in an <h1> tag at the beginning of the HTML page.  Be
+	sure to leave a blank line after your document title, or you
+	may find a long paragraph set in a very large font!
+
+code blocks:
+	Any line that looks like a row of hyphens being snipped by a
+	pair of scissors made from an eight and a less than or greater
+	than sign (such as "----8<----") marks the begin or end of a
+	code blocks.  Code blocks are rendered with the PRE tag in
+	HTML.  No other formatting is done to these blocks.
+
+horizontal rules:
+	A line consisting of nothing but hyphens, equal signs,
+	and underlines is considered to be an HR tag.  Try to keep
+	your HRs consistent in the plain text, so that it's obvious
+	where the delimiters are.  HRs are probably best replaced with
+	headings wherever possible, though.
+
+definition lists:
+	Any paragraph whose first line ends with a colon is considered
+	to be part of a definition list.  The first line (sans colon)
+	is made into the <dt> element, and the rest of the paragraph
+	is made the <dd>.  
+
+	All subsequent paragraphs whose first line is indented with an
+	initial tab are considered to also be <dd> elements!  That
+	means that the first non-indented paragraph (or the first
+	paragraph indented with something other than a tab) will end
+	with a </dl> any definition list you had going.  Watch your
+	whitespace!
+
+	<dd> paragraphs may contain later transformations, so you'll
+	see next that they may contain citations.
+
+citations:
+	Any paragraph whose first line begins with a >, #, or |
+	followed by whitespace is considered then to be a citation.
+	Note that definition list <dd> blocks can contain citations,
+	like so:
+
+	> This is citation text
+	> and if it weren't for the definition list,
+	> this would be flush left!
+
+	Note that these citations may contain later markup as well.
+
+lists:
+	Paragraphs contain bulleted lists if the first line begins
+	with whitespace followed by a -, *, ., or o, or enumerated if
+	the whitespace is followed by an arbitrary number of digits
+	(potentially followed by the previous characters).
+
+	Lists can nest, so you can have a bulleted list containing an
+	enumerated list, but that may stress the system a little.
+
+	* Tabs become 8 spaces
+	* Indentation is gauged by space
+	  1. Sometimes it's not that clever
+	    - Sometimes it's too clever
+
+headers:
+	If the first line begins with a row of = signs (preceded by
+	optional whitespace), then that paragraph is a header of a
+	level equal to the number of consecutive = symbols found.
+	Thus "=== Wow" would become "<h3> Wow</h3>".  Note that
+	trailing = symbols are removed, so "== Gar! ==" would become
+	"<h2> Gar! </h2>", as would "== Gar! ============"
+
+	Headers also update the Table of Contents for a given
+	document.  Any H1 headers are considered chapter headings, and
+	will trigger the TOC-generation code, which creates a navbar
+	for all of the chapters, highlighting the one that's currently
+	being viewed.  A full nested-list table of contents is then
+	placed on the main HTML page for the document, right after any
+	text that preceeded the first H1 header.  Next>> links are
+	created automatically.
+
+URLs:
+	URLs are any text in <wedges> for which the first word
+	either begins with a standard http:// slug or ends with .html,
+	.jpeg, .png, or .jpg.  Any text following the URL is made the
+	text for the link, or in the case of images the ALT tag.
+
+	So you can look at the <logo.png LNX-BBC> logo here, or
+	<http://google.com venture off to google>!
+
+sidebars:
+	Unfinished, but soon whole paragraphs wrapped in [brackets]
+	will be made into sidebars of a sort.
+
+emphasis:
+	This is a little broken, but it's supposed to work so that
+	slashes mark italics, stars bold, and underscores underline. I
+	/don't/ *think* it _works_ quite right yet.  Certainly not
+	anything so complicated as */_this_/*!
+
+goofiness:
+	As an experiment, I made words beginning with dollar signs
+	into <tt>typewriter text</tt>, just to see how it worked.  It
+	seems to look okay!  All of our variables look like they've
+	been typeset specifically.   Thus we have $(DESTDIR) but
+	BUILD_SCRIPTS.  We may wish to update all vars to be in
+	$-format (but see how that gets mistakenly typeset!).
+
+As you can see, the system needs work.  It did, however, generate a
+lot of good HTML using basically legible TXT files.  Beaujolais!
+
+== Cascading StyleSheets ==
+
+All of the stylesheet info is in bbc.css, and all of the Web systems
+we use should grab their style info from it.  I've already converted
+the package list and some of the bug system over to using it.  The
+wiki will lag behind for a while, and we should look into CVS.
+
+If you find yourself tempted to do something like put stars or
+underbars around all of your definition list headings, consider
+instead playing with the CSS.  We can customize the appearance of most
+tags on a global level this way, while keeping the original .txt files
+pure.
+
+== Publishing ==
+
+I have the following crontab on lnx-bbc.genetikayos.com:
+
+----8<----
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=nick@zork.net
+
+*/20 * * * *		killall cvs &> /dev/null || true; cd \
+/var/www/lnx-bbc.org/; cvs -Q up -Pd > /dev/null
+*/15 * * * *		make -C /var/www/lnx-bbc.org/ garchive \
+GARCHIVEDIR='/var/www/lnx-bbc.org/garchive/$(DISTNAME)/' > /dev/null
+*/5 * * * *		make -C /var/www/lnx-bbc.org/ html > /dev/null
+----8<----
+
+(lines broken and backwhacked to keep page width down)
+
+Basically it does a full cvs update every 20 minutes, does a "make
+garchive" every 15, and a "make html" every 5 minutes.  So generally
+you have to wait 25 minutes at most for your checkin to be reflected
+on the Web site.
+

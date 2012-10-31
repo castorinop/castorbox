@@ -1,0 +1,12 @@
+--- old/configure.in	2008-07-31 22:33:53.000000000 -0400
++++ new/configure.in.oden	2008-08-25 18:19:04.000000000 -0400
+@@ -226,9 +226,6 @@
+     GCC_MAJOR_VERSION=`$CC --version | $SED -n '1s/[[^0-9]]*//;1s/\..*//;1p'`
+     ;;
+   esac
+-  if test $GCC_MAJOR_VERSION -ge 4; then
+-    CFLAGS="$CFLAGS -fvisibility=hidden"
+-  fi
+ fi
+ 
+ case $host_alias in

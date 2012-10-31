@@ -1,0 +1,21 @@
+diff -Naur xf86-video-openchrome-856-old/configure.ac xf86-video-openchrome-856-new/configure.ac
+--- xf86-video-openchrome-856-old/configure.ac	2010-06-24 13:45:17.000000000 -0700
++++ xf86-video-openchrome-856-new/configure.ac	2010-06-24 13:46:31.000000000 -0700
+@@ -38,6 +38,7 @@
+ AC_DISABLE_STATIC
+ AC_PROG_LIBTOOL
+ AC_PROG_CC
++PKG_PROG_PKG_CONFIG
+ 
+ AH_TOP([#include "xorg-server.h"])
+ 
+@@ -75,7 +76,8 @@
+  HAVE_XEXTPROTO_71="yes"; AC_DEFINE(HAVE_XEXTPROTO_71, 1, [xextproto 7.1 available]),
+  HAVE_XEXTPROTO_71="no")
+ AM_CONDITIONAL(HAVE_XEXTPROTO_71, [ test "$HAVE_XEXTPROTO_71" = "yes" ])
+-sdkdir=$(pkg-config --variable=sdkdir xorg-server)
++m4_pattern_allow([^PKG_CONFIG_SYSROOT_DIR$])
++sdkdir="$PKG_CONFIG_SYSROOT_DIR$($PKG_CONFIG --variable=sdkdir xorg-server)"
+ 
+ # Checks for libraries.
+ 

@@ -1,0 +1,19 @@
+diff -Nru tmp/glib-1.2.10/glib-config.in work/glib-1.2.10/glib-config.in
+--- glib-1.2.10/glib-config.in	Fri Oct 27 21:35:30 2000
++++ glib-1.2.10/glib-config.in	Thu May  2 23:58:24 2002
+@@ -88,7 +88,7 @@
+ 	if test "$lib_gthread" = "yes"; then
+ 		cflags="$cflags @G_THREAD_CFLAGS@"
+ 	fi
+-	echo -I@includedir@/glib-1.2 -I@libdir@/glib/include $includes $cflags
++	echo -I${DESTDIR}@includedir@/glib-1.2 -I${DESTDIR}@libdir@/glib/include $includes $cflags
+ fi
+ if test "$echo_libs" = "yes"; then
+ 	libsp=""
+@@ -104,5 +104,5 @@
+ 		libsp="@G_MODULE_LDFLAGS@ -lgmodule $libsp"
+ 		libsa="$libsa @G_MODULE_LIBS@"
+ 	fi
+-	echo -L@libdir@ $libsp $libsa
++	echo -L${DESTDIR}@libdir@ $libsp $libsa
+ fi

@@ -1,0 +1,24 @@
+diff -Naurp php-5.2.8/scripts/Makefile.frag php-5.2.8.oden/scripts/Makefile.frag
+--- php-5.2.8/scripts/Makefile.frag	2005-11-22 00:08:02.000000000 +0100
++++ php-5.2.8.oden/scripts/Makefile.frag	2008-12-12 13:27:58.000000000 +0100
+@@ -4,7 +4,7 @@
+ #
+ 
+ phpincludedir = $(includedir)/php
+-phpbuilddir = $(libdir)/build
++phpbuilddir = $(libdir)/php/build
+ 
+ BUILD_FILES = \
+ 	scripts/phpize.m4 \
+diff -Naurp php-5.2.8/scripts/phpize.in php-5.2.8.oden/scripts/phpize.in
+--- php-5.2.8/scripts/phpize.in	2008-12-12 13:27:36.000000000 +0100
++++ php-5.2.8.oden/scripts/phpize.in	2008-12-12 13:27:58.000000000 +0100
+@@ -3,7 +3,7 @@
+ # Variable declaration
+ prefix='@prefix@'
+ exec_prefix="`eval echo @exec_prefix@`"
+-phpdir="`eval echo @libdir@`/build"
++phpdir="`eval echo @libdir@`/php/build"
+ includedir="`eval echo @includedir@`/php"
+ builddir="`pwd`"
+ SED="@SED@"

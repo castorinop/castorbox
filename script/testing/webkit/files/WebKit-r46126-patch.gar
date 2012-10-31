@@ -1,0 +1,29 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/WebKit-r46126/configure.ac new-WebKit-r46126/configure.ac
+--- tmp/WebKit-r46126/configure.ac	2009-07-17 20:39:33.000000000 -0300
++++ new-WebKit-r46126/configure.ac	2009-07-21 10:05:11.000000000 -0300
+@@ -78,6 +78,7 @@
+ WEBKIT_INIT
+ AC_DISABLE_STATIC
+ AC_LIBTOOL_WIN32_DLL
++AC_PROG_CXX
+ AC_PROG_LIBTOOL
+ # use dolt to speedup the build
+ DOLT
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/WebKit-r46126/WebKit/gtk/docs/GNUmakefile.am new-WebKit-r46126/WebKit/gtk/docs/GNUmakefile.am
+--- tmp/WebKit-r46126/WebKit/gtk/docs/GNUmakefile.am	2009-07-12 20:13:25.000000000 -0300
++++ new-WebKit-r46126/WebKit/gtk/docs/GNUmakefile.am	2009-07-21 10:07:02.000000000 -0300
+@@ -88,11 +88,11 @@
+ 	$(LIBSOUP_LIBS)
+ 
+ # This includes the standard gtk-doc make rules, copied by gtkdocize.
+-include $(top_srcdir)/gtk-doc.make
++#include $(top_srcdir)/gtk-doc.make
+ 
+ # Other files to distribute
+ # e.g. EXTRA_DIST += version.xml.in
+-EXTRA_DIST +=
++#EXTRA_DIST +=
+ 
+ # Files not to distribute
+ # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
+

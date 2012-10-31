@@ -1,0 +1,40 @@
+=== modified file 'notify_area.cpp'
+--- old/notify_area.cpp	2008-03-18 20:34:41 +0000
++++ new/notify_area.cpp	2008-06-14 10:24:31 +0000
+@@ -93,8 +93,10 @@
+   ScreenUpdater *screen_updater = S_ScreenUpdater::get_instance();
+   screen_updater->timer.deactivate("status area");
+   screen_updater->timer.deactivate("update area");
++  render->wait_and_aquire();
+   status_overlay.cleanup();
+   disabled = true;
++  render->draw_and_release("notify area", true);
+ }
+ 
+ void NotifyArea::enable()
+
+=== modified file 'plugins/feature/common-feature.cpp'
+--- old/plugins/feature/common-feature.cpp	2008-06-18 12:14:30.000000000 -0300
++++ new/plugins/feature/common-feature.cpp	2008-06-18 14:16:15.000000000 -0300
+@@ -35,6 +35,10 @@
+ 
+ void aquire_exclusive_access()
+ {
++#ifdef use_notify_area
++  S_NotifyArea::get_instance()->disable();
++#endif
++
+   S_InputMaster::get_instance()->suspend();
+ 
+   S_ScreenUpdater::get_instance()->deactivate();
+@@ -58,7 +62,9 @@
+ {
+   S_ScreenUpdater::get_instance()->activate();
+   S_BackgroundUpdater::get_instance()->activate();
+-
++#ifdef use_notify_area
++  S_NotifyArea::get_instance()->enable();
++#endif
+   run::release_exclusive_plugin_access();
+   S_InputMaster::get_instance()->wake_up();
+ }

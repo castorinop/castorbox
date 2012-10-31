@@ -1,0 +1,12 @@
+diff --speed-large-files --minimal -Nru tmp/joyevmouse-0.2a/Makefile work/main.d/joyevmouse-0.2a/Makefile
+--- joyevmouse-0.2a/Makefile	2007-06-20 16:15:45.000000000 -0300
++++ joyevmouse-0.2a/Makefile	2007-07-13 10:29:55.000000000 -0300
+@@ -23,7 +23,7 @@
+ 	$(CC) $(CFLAGS) $(INC) -DVERSION=\"$(VERSION)\" -o $@ $^ $(LIB)
+ 
+ install: joyevmouse
+-	$(INSTALL) $^ $(DESTINIATION)
++	$(INSTALL) $^ $(DESTINATION)
+ 
+ clean:
+ 	rm -f joyevmouse

@@ -1,0 +1,6 @@
+7360b7138b899ee7fc885791c740c3c3  download/busybox-1.17.2.tar.bz2
+a4b751e94582b6f49a96f78d1fb62cbb  download/busybox-1.17.2.config
+9ed57a327d68af952c17cdf5b4ee6973  download/busybox-1.17.2-check_cc.patch
+c852da2e5c6615fc89ca6c9ee02f2c67  download/busybox-1.17.2-dhcp_log_server.patch
+1144ea152fde236700008baeea71b9e1  download/busybox-1.17.2-dhcp_tcode.patch
+1bc4ce8a8f80eba6f5e01daeaa3cb8ff  download/busybox-1.17.2-tftp_timeout.patch

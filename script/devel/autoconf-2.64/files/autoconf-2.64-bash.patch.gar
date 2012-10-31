@@ -1,0 +1,39 @@
+diff -Naur autoconf-2.64-old/lib/m4sugar/m4sh.m4 autoconf-2.64-new/lib/m4sugar/m4sh.m4
+--- autoconf-2.64-old/lib/m4sugar/m4sh.m4	2009-07-24 17:58:33.000000000 -0700
++++ autoconf-2.64-new/lib/m4sugar/m4sh.m4	2010-08-28 09:25:15.000000000 -0700
+@@ -59,7 +59,7 @@
+ # KILL is only used to suppress output.
+ #
+ # - BINSH
+-#   AC_REQUIRE'd #! /bin/sh line
++#   AC_REQUIRE'd #! @GAR_ebindir@/bash line
+ # - HEADER-REVISION
+ #   RCS keywords etc.
+ # - HEADER-COMMENT
+@@ -272,7 +272,7 @@
+   fi
+   AS_EXIT])])
+ fi
+-SHELL=${CONFIG_SHELL-/bin/sh}
++SHELL=${CONFIG_SHELL-@GAR_ebindir@/bash}
+ export SHELL
+ # Unset more variables known to interfere with behavior of common tools.
+ CLICOLOR_FORCE= GREP_OPTIONS=
+@@ -518,7 +518,7 @@
+ # The shell comments are intentional, to work around people who don't
+ # realize the impacts of using insufficient m4 quoting.  This macro
+ # always uses : and provides a default case, to work around Solaris
+-# /bin/sh bugs regarding the exit status.
++# @GAR_ebindir@/bash bugs regarding the exit status.
+ m4_define([_AS_CASE],
+ [ [@%:@(]
+   $1[)] :
+@@ -2065,7 +2065,7 @@
+ m4_pattern_forbid([^_?AS_])
+ 
+ # Bangshe and minimal initialization.
+-m4_divert_text([BINSH], [@%:@! /bin/sh])
++m4_divert_text([BINSH], [@%:@! @GAR_ebindir@/bash])
+ m4_divert_text([HEADER-COMMENT],
+ 	       [@%:@ Generated from __file__ by m4_PACKAGE_STRING.])
+ m4_divert_text([M4SH-SANITIZE], [_AS_SHELL_SANITIZE])

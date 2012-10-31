@@ -1,0 +1,11 @@
+diff -p -up VirtualBox-1.6.2/configure.mdvconfig VirtualBox-1.6.2/configure
+--- VirtualBox-1.6.2/configure.mdvconfig	2008-05-28 14:45:38.000000000 +0200
++++ VirtualBox-1.6.2/configure	2008-07-09 00:53:09.000000000 +0200
+@@ -1786,6 +1786,7 @@ export PATH
+ if [ $OSE -ge 1 ]; then
+   cnf_append "VBOX_OSE" "1"
+   cnf_append "VBOX_WITH_TESTSUITE" ""
++  cnf_append "VBOX_WITH_VBOXDRV" ""
+   cnf_append "VBOX_WITH_WIN32_ADDITIONS" ""
+ 
+   if [ "$OS" = "linux" ]; then

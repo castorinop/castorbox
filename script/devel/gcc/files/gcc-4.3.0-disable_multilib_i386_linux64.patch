@@ -1,0 +1,28 @@
+diff -Naur gcc-4.3.0-old/gcc/config/i386/t-linux64 gcc-4.3.0-new/gcc/config/i386/t-linux64
+--- gcc-4.3.0-old/gcc/config/i386/t-linux64	2007-09-27 12:56:06.000000000 -0700
++++ gcc-4.3.0-new/gcc/config/i386/t-linux64	2008-07-03 08:20:59.000000000 -0700
+@@ -11,16 +11,16 @@
+ # it doesn't tell anything about the 32bit libraries on those systems.  Set
+ # MULTILIB_OSDIRNAMES according to what is found on the target.
+ 
+-MULTILIB_OPTIONS = m64/m32
+-MULTILIB_DIRNAMES = 64 32 
+-MULTILIB_OSDIRNAMES = ../lib64 $(if $(wildcard $(shell echo $(SYSTEM_HEADER_DIR))/../../usr/lib32),../lib32,../lib)
++#MULTILIB_OPTIONS = m64/m32
++#MULTILIB_DIRNAMES = 64 32 
++#MULTILIB_OSDIRNAMES = ../lib64 $(if $(wildcard $(shell echo $(SYSTEM_HEADER_DIR))/../../usr/lib32),../lib32,../lib)
+ 
+-LIBGCC = stmp-multilib
+-INSTALL_LIBGCC = install-multilib
++#LIBGCC = stmp-multilib
++#INSTALL_LIBGCC = install-multilib
+ 
+-EXTRA_MULTILIB_PARTS=crtbegin.o crtend.o crtbeginS.o crtendS.o \
+-		     crtbeginT.o crtprec32.o crtprec64.o crtprec80.o \
+-		     crtfastmath.o
++#EXTRA_MULTILIB_PARTS=crtbegin.o crtend.o crtbeginS.o crtendS.o \
++#		     crtbeginT.o crtprec32.o crtprec64.o crtprec80.o \
++#		     crtfastmath.o
+ 
+ softfp_wrap_start := '\#ifdef __x86_64__'
+ softfp_wrap_end := '\#endif'

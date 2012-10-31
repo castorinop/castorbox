@@ -1,0 +1,12 @@
+diff -Naur linux-3.0-old/fs/unionfs/unlink.c linux-3.0-new/fs/unionfs/unlink.c
+--- linux-3.0-old/fs/unionfs/unlink.c	2011-07-22 09:15:20.000000000 -0700
++++ linux-3.0-new/fs/unionfs/unlink.c	2011-07-22 09:16:22.000000000 -0700
+@@ -144,8 +144,6 @@
+ 	if (!err) {
+ 		unionfs_postcopyup_release(dentry);
+ 		unionfs_postcopyup_setmnt(parent);
+-		if (inode->i_nlink == 0) /* drop lower inodes */
+-			iput_lowers_all(inode, false);
+ 		d_drop(dentry);
+ 		/*
+ 		 * if unlink/whiteout succeeded, parent dir mtime has

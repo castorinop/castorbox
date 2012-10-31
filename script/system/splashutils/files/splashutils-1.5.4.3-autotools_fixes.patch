@@ -1,0 +1,23 @@
+diff -Naur splashutils-1.5.4.3-old/configure.ac splashutils-1.5.4.3-new/configure.ac
+--- splashutils-1.5.4.3-old/configure.ac	2008-11-13 11:54:19.000000000 -0800
++++ splashutils-1.5.4.3-new/configure.ac	2008-11-14 22:26:33.000000000 -0800
+@@ -503,6 +503,7 @@
+           [
+             MNG_LIBS="${MNG_LIBS} -lmng"
+             MNG_LIBS="${MNG_LIBS} ${JPEG_LIBS}"
++            MNG_LIBS="${MNG_LIBS} ${RT_LIBS}"
+             AC_CHECK_LIB([z],    [zlibVersion],    [MNG_LIBS="${MNG_LIBS} -lz"   ])
+             AC_CHECK_LIB([lcms], [cmsCloseProfile],[MNG_LIBS="${MNG_LIBS} -llcms"])
+           ],
+diff -Naur splashutils-1.5.4.3-old/src/Makefile.am splashutils-1.5.4.3-new/src/Makefile.am
+--- splashutils-1.5.4.3-old/src/Makefile.am	2008-11-13 11:54:19.000000000 -0800
++++ splashutils-1.5.4.3-new/src/Makefile.am	2008-11-14 22:26:33.000000000 -0800
+@@ -119,7 +119,7 @@
+ 	fbsplash.h
+ libfbsplashrender_la_CFLAGS   = $(AM_CFLAGS)
+ libfbsplashrender_la_LDFLAGS  = $(AM_LDFLAGS) -version-info $(libfbsplashrender_version)
+-libfbsplashrender_la_LIBADD   = -lfbsplash
++libfbsplashrender_la_LIBADD   = libfbsplash.la
+ 
+ libfbsplashrender_la_CFLAGS  += $(JPEG_CFLAGS)
+ libfbsplashrender_la_LIBADD  += $(JPEG_LIBS)

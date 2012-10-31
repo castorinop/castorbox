@@ -1,0 +1,1642 @@
+diff -Naur e2fsprogs-1.41.7-old/debugfs/Makefile.in e2fsprogs-1.41.7-new/debugfs/Makefile.in
+--- e2fsprogs-1.41.7-old/debugfs/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/debugfs/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -30,25 +30,25 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) -c $(ALL_CFLAGS) $< -o $@
++	$(CC) -c $(ALL_CFLAGS) $< -o $@
+ 
+ all:: $(PROGS) $(MANPAGES)
+ 
+ debugfs: $(DEBUG_OBJS) $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o debugfs $(DEBUG_OBJS) $(LIBS)
++	$(CC) $(ALL_LDFLAGS) -o debugfs $(DEBUG_OBJS) $(LIBS)
+ 
+ debug_cmds.c debug_cmds.h: debug_cmds.ct
+ 	@echo "	MK_CMDS $@"
+-	@$(MK_CMDS) $(srcdir)/debug_cmds.ct
++	$(MK_CMDS) $(srcdir)/debug_cmds.ct
+ 
+ debugfs.8: $(DEP_SUBSTITUTE) $(srcdir)/debugfs.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/debugfs.8.in debugfs.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/debugfs.8.in debugfs.8
+ 
+ installdirs:
+ 	@echo "	MKINSTALLDIRS $(root_sbindir) $(man8dir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(root_sbindir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(root_sbindir) \
+ 		$(DESTDIR)$(man8dir)
+ 
+ install: $(PROGS) $(MANPAGES) installdirs
+diff -Naur e2fsprogs-1.41.7-old/doc/Makefile.in e2fsprogs-1.41.7-new/doc/Makefile.in
+--- e2fsprogs-1.41.7-old/doc/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/doc/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -19,9 +19,9 @@
+ all:: libext2fs.info libext2fs.dvi
+ 
+ install-doc-libs: libext2fs.info libext2fs.dvi
+-	@$(RM) -rf $(DESTDIR)$(infodir)/libext2fs.info*
++	$(RM) -rf $(DESTDIR)$(infodir)/libext2fs.info*
+ 	@echo "	MKINSTALLDIRS $(infodir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(infodir)
++	$(MKINSTALLDIRS) $(DESTDIR)$(infodir)
+ 	-@for i in libext2fs.info* ; do \
+ 		echo "	INSTALL_DATA $(infodir)/$$i" ; \
+ 		$(INSTALL_DATA) $$i $(DESTDIR)$(infodir)/$$i ; \
+@@ -34,11 +34,11 @@
+ 
+ libext2fs.info: $(srcdir)/libext2fs.texinfo
+ 	@echo "	MAKEINFO $@"
+-	-@$(INFO) $(srcdir)/libext2fs.texinfo
++	-$(INFO) $(srcdir)/libext2fs.texinfo
+ 
+ libext2fs.dvi: $(srcdir)/libext2fs.texinfo
+ 	@echo "	TEXI2DVI $@"
+-	-@$(DVI) $(srcdir)/libext2fs.texinfo
++	-$(DVI) $(srcdir)/libext2fs.texinfo
+ 
+ .PHONY: distclean
+ distclean:: clean
+diff -Naur e2fsprogs-1.41.7-old/e2fsck/Makefile.in e2fsprogs-1.41.7-new/e2fsck/Makefile.in
+--- e2fsprogs-1.41.7-old/e2fsck/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/e2fsck/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -33,8 +33,8 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) -c $(ALL_CFLAGS) $< -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++	$(CC) -c $(ALL_CFLAGS) $< -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+ 
+ #
+ # Flags for using Checker
+@@ -110,46 +110,46 @@
+ 
+ prof_err.c prof_err.h: prof_err.et
+ 	@echo "	COMPILE_ET prof_err.et"
+-	@$(COMPILE_ET) $(srcdir)/prof_err.et
++	$(COMPILE_ET) $(srcdir)/prof_err.et
+ 
+ e2fsck: $(OBJS)  $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) -o e2fsck $(OBJS) $(LIBS) 
++	$(LD) $(ALL_LDFLAGS) -o e2fsck $(OBJS) $(LIBS) 
+ 
+ e2fsck.static: $(OBJS) $(STATIC_DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(LD) $(LDFLAGS_STATIC) -o e2fsck.static $(OBJS) $(STATIC_LIBS) 
++	$(LD) $(LDFLAGS_STATIC) -o e2fsck.static $(OBJS) $(STATIC_LIBS) 
+ 
+ e2fsck.profiled: $(PROFILED_OBJS)  $(PROFILED_DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) -g -pg -o e2fsck.profiled $(PROFILED_OBJS) \
++	$(LD) $(ALL_LDFLAGS) -g -pg -o e2fsck.profiled $(PROFILED_OBJS) \
+ 		$(PROFILED_LIBS) 
+ 
+ gen_crc32table: $(srcdir)/gen_crc32table.c
+ 	@echo "	CC $@"
+-	@$(BUILD_CC) $(BUILD_CFLAGS) -o gen_crc32table \
++	$(BUILD_CC) $(BUILD_CFLAGS) -o gen_crc32table \
+ 		$(srcdir)/gen_crc32table.c
+ 
+ crc32table.h: gen_crc32table
+ 	@echo "	GEN32TABLE $@"
+-	@./gen_crc32table > crc32table.h
++	./gen_crc32table > crc32table.h
+ 
+ tst_problem: $(srcdir)/problem.c $(srcdir)/problem.h $(LIBEXT2FS)
+-	@$(CC) $(BUILD_LDFLAGS) $(ALL_CFLAGS) -o tst_problem \
++	$(CC) $(BUILD_LDFLAGS) $(ALL_CFLAGS) -o tst_problem \
+ 		$(srcdir)/problem.c -DUNITTEST $(LIBEXT2FS) $(LIBCOM_ERR)
+ 
+ tst_crc32: $(srcdir)/crc32.c $(LIBEXT2FS)
+-	@$(CC) $(BUILD_LDFLAGS) $(ALL_CFLAGS) -o tst_crc32 $(srcdir)/crc32.c \
++	$(CC) $(BUILD_LDFLAGS) $(ALL_CFLAGS) -o tst_crc32 $(srcdir)/crc32.c \
+ 		-DUNITTEST $(LIBEXT2FS) $(LIBCOM_ERR)
+ 
+ tst_refcount: ea_refcount.c
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_refcount $(srcdir)/ea_refcount.c \
++	$(CC) -o tst_refcount $(srcdir)/ea_refcount.c \
+ 		$(ALL_CFLAGS) -DTEST_PROGRAM $(LIBCOM_ERR) $(LIBEXT2FS) 
+ 
+ tst_region: region.c
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_region $(srcdir)/region.c \
++	$(CC) -o tst_region $(srcdir)/region.c \
+ 		$(ALL_CFLAGS) -DTEST_PROGRAM $(LIBCOM_ERR)
+ 
+ check:: tst_refcount tst_region tst_crc32 tst_problem
+@@ -160,20 +160,20 @@
+ 
+ extend: extend.o
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) -o extend extend.o $(CHECKLIB)
++	$(LD) $(ALL_LDFLAGS) -o extend extend.o $(CHECKLIB)
+ 
+ flushb: flushb.o
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) -o flushb flushb.o $(CHECKLIB)
++	$(LD) $(ALL_LDFLAGS) -o flushb flushb.o $(CHECKLIB)
+ 
+ iscan: iscan.o util.o ehandler.o $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) -o iscan iscan.o util.o ehandler.o $(LIBS)
++	$(LD) $(ALL_LDFLAGS) -o iscan iscan.o util.o ehandler.o $(LIBS)
+ 
+ test_profile: $(srcdir)/profile.c profile_helpers.o argv_parse.o \
+ 		prof_err.o profile.h $(STATIC_LIBCOM_ERR)
+ 	@echo "	LD $@"
+-	@$(CC) -o test_profile -DDEBUG_PROGRAM $(srcdir)/profile.c prof_err.o \
++	$(CC) -o test_profile -DDEBUG_PROGRAM $(srcdir)/profile.c prof_err.o \
+ 		profile_helpers.o argv_parse.o $(STATIC_LIBCOM_ERR) \
+ 		$(ALL_CFLAGS)
+ 
+@@ -183,15 +183,15 @@
+ 
+ e2fsck.8: $(DEP_SUBSTITUTE) $(srcdir)/e2fsck.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/e2fsck.8.in e2fsck.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/e2fsck.8.in e2fsck.8
+ 
+ e2fsck.conf.5: $(DEP_SUBSTITUTE) $(srcdir)/e2fsck.conf.5.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/e2fsck.conf.5.in e2fsck.conf.5
++	$(SUBSTITUTE_UPTIME) $(srcdir)/e2fsck.conf.5.in e2fsck.conf.5
+ 
+ installdirs:
+ 	@echo "	MKINSTALLDIRS $(root_sbindir) $(man8dir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(root_sbindir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(root_sbindir) \
+ 		$(DESTDIR)$(man8dir) $(DESTDIR)$(man5dir)
+ 
+ install: $(PROGS) $(MANPAGES) $(FMANPAGES) installdirs
+@@ -200,16 +200,16 @@
+ 		$(INSTALL_PROGRAM) $$i $(DESTDIR)$(root_sbindir)/$$i; \
+ 	done
+ 	@echo "	LINK $(root_sbindir)/fsck.ext2"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
+ 			$(DESTDIR)$(root_sbindir)/fsck.ext2
+ 	@echo "	LINK $(root_sbindir)/fsck.ext3"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
+ 			$(DESTDIR)$(root_sbindir)/fsck.ext3
+ 	@echo "	LINK $(root_sbindir)/fsck.ext4"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
+ 			$(DESTDIR)$(root_sbindir)/fsck.ext4
+ 	@echo "	LINK $(root_sbindir)/fsck.ext4dev"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/e2fsck \
+ 			$(DESTDIR)$(root_sbindir)/fsck.ext4dev
+ 	@for i in $(MANPAGES); do \
+ 		for j in $(COMPRESS_EXT); do \
+@@ -226,16 +226,16 @@
+ 		$(INSTALL_DATA) $$i $(DESTDIR)$(man5dir)/$$i; \
+ 	done
+ 	@echo "	LINK $(man8dir)/fsck.ext2.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
+ 		$(DESTDIR)$(man8dir)/fsck.ext2.8
+ 	@echo "	LINK $(man8dir)/fsck.ext3.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
+ 		$(DESTDIR)$(man8dir)/fsck.ext3.8
+ 	@echo "	LINK $(man8dir)/fsck.ext4.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
+ 		$(DESTDIR)$(man8dir)/fsck.ext4.8
+ 	@echo "	LINK $(man8dir)/fsck.ext4.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/e2fsck.8 \
+ 		$(DESTDIR)$(man8dir)/fsck.ext4dev.8
+ 
+ install-strip: install
+diff -Naur e2fsprogs-1.41.7-old/intl/Makefile.in e2fsprogs-1.41.7-new/intl/Makefile.in
+--- e2fsprogs-1.41.7-old/intl/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/intl/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -148,9 +148,9 @@
+ libintl.a libgnuintl.a: $(OBJECTS)
+ 	@rm -f $@
+ 	@echo "	AR $@"
+-	@$(AR) cru $@ $(OBJECTS)
++	$(AR) cru $@ $(OBJECTS)
+ 	@echo "	RANLIB $@"
+-	@$(RANLIB) $@
++	$(RANLIB) $@
+ 
+ libintl.la libgnuintl.la: $(OBJECTS)
+ 	$(LIBTOOL) --mode=link \
+@@ -174,7 +174,7 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(COMPILE) $<
++	$(COMPILE) $<
+ 
+ .y.c:
+ 	$(YACC) $(YFLAGS) --output $@ $<
+@@ -252,7 +252,7 @@
+ 
+ charset.alias: $(srcdir)/config.charset
+ 	@echo "	CONFIG.CHARSET $@"
+-	@$(SHELL) $(srcdir)/config.charset '@host@' > t-$@
++	$(SHELL) $(srcdir)/config.charset '@host@' > t-$@
+ 	@mv t-$@ $@
+ 
+ check: all
+diff -Naur e2fsprogs-1.41.7-old/lib/blkid/Makefile.in e2fsprogs-1.41.7-new/lib/blkid/Makefile.in
+--- e2fsprogs-1.41.7-old/lib/blkid/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/blkid/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -55,11 +55,11 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+-@CHECKER_CMT@	@$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
+-@ELF_CMT@	@$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
+-@BSDLIB_CMT@	@$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++@CHECKER_CMT@	$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
++@ELF_CMT@	$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
++@BSDLIB_CMT@	$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
+ 
+ all:: $(SMANPAGES) blkid.pc
+ 
+@@ -70,60 +70,60 @@
+ 
+ libblkid.3: $(DEP_SUBSTITUTE) $(srcdir)/libblkid.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/libblkid.3.in libblkid.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/libblkid.3.in libblkid.3
+ 
+ tst_cache: $(srcdir)/cache.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_cache -DTEST_PROGRAM $(srcdir)/cache.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_cache -DTEST_PROGRAM $(srcdir)/cache.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_dev: $(srcdir)/dev.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_dev -DTEST_PROGRAM $(srcdir)/dev.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_dev -DTEST_PROGRAM $(srcdir)/dev.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_devname: $(srcdir)/devname.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_devname -DTEST_PROGRAM $(srcdir)/devname.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_devname -DTEST_PROGRAM $(srcdir)/devname.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_devno: $(srcdir)/devno.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_devno -DTEST_PROGRAM $(srcdir)/devno.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_devno -DTEST_PROGRAM $(srcdir)/devno.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_getsize: $(srcdir)/getsize.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_getsize -DTEST_PROGRAM $(srcdir)/getsize.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_getsize -DTEST_PROGRAM $(srcdir)/getsize.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_probe: $(srcdir)/probe.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_probe -DTEST_PROGRAM $(srcdir)/probe.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_probe -DTEST_PROGRAM $(srcdir)/probe.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_read: $(srcdir)/read.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_read -DTEST_PROGRAM $(srcdir)/read.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_read -DTEST_PROGRAM $(srcdir)/read.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_resolve: $(srcdir)/resolve.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_resolve -DTEST_PROGRAM $(srcdir)/resolve.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_resolve -DTEST_PROGRAM $(srcdir)/resolve.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_save: $(srcdir)/save.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_save -DTEST_PROGRAM $(srcdir)/save.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_save -DTEST_PROGRAM $(srcdir)/save.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_tag: $(srcdir)/tag.c $(DEPLIBS_BLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_tag -DTEST_PROGRAM $(srcdir)/tag.c $(LIBS_BLKID) $(ALL_CFLAGS)
++	$(CC) -o tst_tag -DTEST_PROGRAM $(srcdir)/tag.c $(LIBS_BLKID) $(ALL_CFLAGS)
+ 
+ tst_types: tst_types.o blkid_types.h 
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_types tst_types.o 
++	$(CC) -o tst_types tst_types.o 
+ 
+ ../../misc/blkid.o: $(top_srcdir)/misc/blkid.c blkid.h
+ 	@echo "	CC $@"
+-	@$(CC) $(ALL_CFLAGS) -c $(top_srcdir)/misc/blkid.c \
++	$(CC) $(ALL_CFLAGS) -c $(top_srcdir)/misc/blkid.c \
+ 		-o ../../misc/blkid.o
+ 
+ blkid: ../../misc/blkid.o libblkid.a $(DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) -o blkid ../../misc/blkid.o libblkid.a $(LIBUUID)
++	$(CC) -o blkid ../../misc/blkid.o libblkid.a $(LIBUUID)
+ 
+ test_probe: test_probe.in Makefile
+ 	@echo "Creating test_probe..."
+@@ -143,14 +143,14 @@
+ 
+ installdirs::
+ 	@echo "	MKINSTALLDIRS $(libdir) $(includedir)/blkid"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
+ 		$(DESTDIR)$(includedir)/blkid $(DESTDIR)$(libdir)/pkgconfig
+ 
+ install:: all installdirs 
+ 	@echo "	INSTALL_DATA $(libdir)/libblkid.a"
+-	@$(INSTALL_DATA) libblkid.a $(DESTDIR)$(libdir)/libblkid.a
+-	@-$(RANLIB) $(DESTDIR)$(libdir)/libblkid.a
+-	@$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libblkid.a
++	$(INSTALL_DATA) libblkid.a $(DESTDIR)$(libdir)/libblkid.a
++	-$(RANLIB) $(DESTDIR)$(libdir)/libblkid.a
++	$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libblkid.a
+ 	@set -e; for i in $(HFILES); do \
+ 	  echo "	INSTALL_DATA $(includedir)/blkid/$$i"; \
+ 	  $(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(includedir)/blkid/$$i; \
+@@ -164,7 +164,7 @@
+ 		$(INSTALL_DATA) $$i $(DESTDIR)$(man3dir)/$$i; \
+ 	done
+ 	@echo "	INSTALL_DATA $(libdir)/pkgconfig/blkid.pc"
+-	@$(INSTALL_DATA) blkid.pc $(DESTDIR)$(libdir)/pkgconfig/blkid.pc
++	$(INSTALL_DATA) blkid.pc $(DESTDIR)$(libdir)/pkgconfig/blkid.pc
+ 
+ uninstall::
+ 	$(RM) -f $(DESTDIR)$(libdir)/libblkid.a \
+diff -Naur e2fsprogs-1.41.7-old/lib/e2p/Makefile.in e2fsprogs-1.41.7-new/lib/e2p/Makefile.in
+--- e2fsprogs-1.41.7-old/lib/e2p/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/e2p/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -54,11 +54,11 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+-@CHECKER_CMT@	@$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
+-@ELF_CMT@	@$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
+-@BSDLIB_CMT@	@$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++@CHECKER_CMT@	$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
++@ELF_CMT@	$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
++@BSDLIB_CMT@	$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
+ 
+ e2p.pc: $(srcdir)/e2p.pc.in $(top_builddir)/config.status
+ 	@echo "	CONFIG.STATUS $@"
+@@ -66,12 +66,12 @@
+ 
+ tst_ostype: $(srcdir)/ostype.c
+ 	@echo "	LD $@"
+-	@$(CC) -DTEST_PROGRAM -I$(top_srcdir)/lib -o tst_ostype \
++	$(CC) -DTEST_PROGRAM -I$(top_srcdir)/lib -o tst_ostype \
+ 		$(srcdir)/ostype.c $(ALL_CFLAGS)
+ 
+ tst_feature: $(srcdir)/feature.c
+ 	@echo "	LD $@"
+-	@$(CC) -DTEST_PROGRAM -I$(top_srcdir)/lib -o tst_feature \
++	$(CC) -DTEST_PROGRAM -I$(top_srcdir)/lib -o tst_feature \
+ 		$(srcdir)/feature.c $(ALL_CFLAGS)
+ 
+ check::	tst_ostype tst_feature
+@@ -80,20 +80,20 @@
+ 
+ installdirs::
+ 	@echo "	MKINSTALLDIRS $(libdir) $(includedir)/e2p"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
+ 		$(DESTDIR)$(includedir)/e2p $(DESTDIR)$(libdir)/pkgconfig
+ 
+ install:: all installdirs 
+ 	@echo "	INSTALL_DATA $(libdir)/libe2p.a"
+-	@$(INSTALL_DATA) libe2p.a $(DESTDIR)$(libdir)/libe2p.a
+-	@-$(RANLIB) $(DESTDIR)$(libdir)/libe2p.a
+-	@$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libe2p.a
++	$(INSTALL_DATA) libe2p.a $(DESTDIR)$(libdir)/libe2p.a
++	-$(RANLIB) $(DESTDIR)$(libdir)/libe2p.a
++	$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libe2p.a
+ 	@set -e; for i in $(HFILES); do \
+ 	  echo "	INSTALL_DATA $(includedir)/e2p/$$i"; \
+ 	  $(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(includedir)/e2p/$$i; \
+ 	done
+ 	@echo "	INSTALL_DATA $(libdir)/pkgconfig/e2p.pc"
+-	@$(INSTALL_DATA) e2p.pc $(DESTDIR)$(libdir)/pkgconfig/e2p.pc
++	$(INSTALL_DATA) e2p.pc $(DESTDIR)$(libdir)/pkgconfig/e2p.pc
+ 
+ uninstall::
+ 	$(RM) -f $(DESTDIR)$(libdir)/libe2p.a \
+diff -Naur e2fsprogs-1.41.7-old/lib/et/Makefile.in e2fsprogs-1.41.7-new/lib/et/Makefile.in
+--- e2fsprogs-1.41.7-old/lib/et/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/et/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -42,11 +42,11 @@
+ #
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+-@CHECKER_CMT@	@$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
+-@ELF_CMT@	@$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
+-@BSDLIB_CMT@	@$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++@CHECKER_CMT@	$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
++@ELF_CMT@	$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
++@BSDLIB_CMT@	$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
+ 
+ @MAKEFILE_LIBRARY@
+ @MAKEFILE_ELF@
+@@ -56,8 +56,8 @@
+ 
+ compile_et: $(DEP_SUBSTITUTE) $(srcdir)/compile_et.sh.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE) $(srcdir)/compile_et.sh.in compile_et
+-	@$(CHMOD) +x compile_et
++	$(SUBSTITUTE) $(srcdir)/compile_et.sh.in compile_et
++	$(CHMOD) +x compile_et
+ 
+ com_err.ps : com_err.dvi
+ com_err.dvi: com_err.texinfo
+@@ -75,16 +75,16 @@
+ 
+ installdirs::
+ 	@echo "	MKINSTALLDIRS $(libdir) $(includedir)/et $(datadir)/et $(bindir) $(man1dir) $(man3dir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
+ 		$(DESTDIR)$(includedir)/et $(DESTDIR)$(datadir)/et \
+ 		$(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) \
+ 		$(DESTDIR)$(man3dir) $(DESTDIR)$(libdir)/pkgconfig
+ 
+ install:: compile_et libcom_err.a $(HFILES) installdirs com_err.pc
+ 	@echo "	INSTALL_DATA $(libdir)/libcom_err.a"
+-	@$(INSTALL_DATA) libcom_err.a $(DESTDIR)$(libdir)/libcom_err.a
+-	@-$(RANLIB) $(DESTDIR)$(libdir)/libcom_err.a
+-	@$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libcom_err.a
++	$(INSTALL_DATA) libcom_err.a $(DESTDIR)$(libdir)/libcom_err.a
++	-$(RANLIB) $(DESTDIR)$(libdir)/libcom_err.a
++	$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libcom_err.a
+ 	@for i in $(HFILES); do \
+ 		echo "	INSTALL_DATA $(includedir)/et/$$i"; \
+ 		$(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(includedir)/et/$$i; \
+@@ -94,14 +94,14 @@
+ 		$(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(datadir)/et/$$i; \
+ 	done
+ 	@echo "	INSTALL_SCRIPT $(bindir)/compile_et"
+-	@$(INSTALL_SCRIPT) compile_et $(DESTDIR)$(bindir)/compile_et
++	$(INSTALL_SCRIPT) compile_et $(DESTDIR)$(bindir)/compile_et
+ 	@echo "	INSTALL_DATA $(man3dir)/com_err.3"
+-	@$(INSTALL_DATA) $(srcdir)/com_err.3 $(DESTDIR)$(man3dir)/com_err.3
++	$(INSTALL_DATA) $(srcdir)/com_err.3 $(DESTDIR)$(man3dir)/com_err.3
+ 	@echo "	INSTALL_DATA $(man1dir)/compile_et.1"
+-	@$(INSTALL_DATA) $(srcdir)/compile_et.1 \
++	$(INSTALL_DATA) $(srcdir)/compile_et.1 \
+ 			$(DESTDIR)$(man1dir)/compile_et.1
+ 	@echo "	INSTALL_DATA $(libdir)/pkgconfig/com_err.pc"
+-	@$(INSTALL_DATA) com_err.pc $(DESTDIR)$(libdir)/pkgconfig/com_err.pc
++	$(INSTALL_DATA) com_err.pc $(DESTDIR)$(libdir)/pkgconfig/com_err.pc
+ 
+ uninstall::
+ 	$(RM) -f $(DESTDIR)$(libdir)/libcom_err.a \
+diff -Naur e2fsprogs-1.41.7-old/lib/ext2fs/Makefile.in e2fsprogs-1.41.7-new/lib/ext2fs/Makefile.in
+--- e2fsprogs-1.41.7-old/lib/ext2fs/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/ext2fs/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -177,11 +177,11 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+-@CHECKER_CMT@	@$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
+-@ELF_CMT@	@$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
+-@BSDLIB_CMT@	@$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++@CHECKER_CMT@	$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
++@ELF_CMT@	$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
++@BSDLIB_CMT@	$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
+ 
+ COMPILE_ET=../et/compile_et --build-tree
+ 
+@@ -189,11 +189,11 @@
+ 
+ ext2_err.et: $(DEP_SUBSTITUTE) $(srcdir)/ext2_err.et.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE) $(srcdir)/ext2_err.et.in ext2_err.et
++	$(SUBSTITUTE) $(srcdir)/ext2_err.et.in ext2_err.et
+ 
+ ext2_err.c ext2_err.h: ext2_err.et
+ 	@echo "	COMPILE_ET ext2_err.et"
+-	@$(COMPILE_ET) ext2_err.et
++	$(COMPILE_ET) ext2_err.et
+ 
+ ext2fs.pc: $(srcdir)/ext2fs.pc.in $(top_builddir)/config.status
+ 	@echo "	CONFIG.STATUS $@"
+@@ -201,124 +201,124 @@
+ 
+ tst_badblocks: tst_badblocks.o $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_badblocks tst_badblocks.o $(STATIC_LIBEXT2FS) \
++	$(CC) -o tst_badblocks tst_badblocks.o $(STATIC_LIBEXT2FS) \
+ 		$(LIBCOM_ERR)
+ 
+ tst_icount: $(srcdir)/icount.c $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_icount $(srcdir)/icount.c -DDEBUG $(ALL_CFLAGS) \
++	$(CC) -o tst_icount $(srcdir)/icount.c -DDEBUG $(ALL_CFLAGS) \
+ 		$(STATIC_LIBEXT2FS) $(LIBCOM_ERR)
+ 
+ tst_iscan: tst_iscan.o $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_iscan tst_iscan.o $(STATIC_LIBEXT2FS) $(LIBCOM_ERR)
++	$(CC) -o tst_iscan tst_iscan.o $(STATIC_LIBEXT2FS) $(LIBCOM_ERR)
+ 
+ tst_getsize: tst_getsize.o $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_getsize tst_getsize.o $(STATIC_LIBEXT2FS) \
++	$(CC) -o tst_getsize tst_getsize.o $(STATIC_LIBEXT2FS) \
+ 		$(LIBCOM_ERR)
+ 
+ tst_ismounted: $(srcdir)/ismounted.c $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_ismounted $(srcdir)/ismounted.c -DDEBUG $(ALL_CFLAGS) $(LIBCOM_ERR) 
++	$(CC) -o tst_ismounted $(srcdir)/ismounted.c -DDEBUG $(ALL_CFLAGS) $(LIBCOM_ERR) 
+ 
+ tst_byteswap: tst_byteswap.o $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_byteswap tst_byteswap.o $(STATIC_LIBEXT2FS) \
++	$(CC) -o tst_byteswap tst_byteswap.o $(STATIC_LIBEXT2FS) \
+ 		$(LIBCOM_ERR)
+ 
+ tst_bitops: tst_bitops.o $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_bitops tst_bitops.o $(ALL_CFLAGS) \
++	$(CC) -o tst_bitops tst_bitops.o $(ALL_CFLAGS) \
+ 		$(STATIC_LIBEXT2FS) $(LIBCOM_ERR)
+ 
+ tst_getsectsize: tst_getsectsize.o $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_sectgetsize tst_getsectsize.o \
++	$(CC) -o tst_sectgetsize tst_getsectsize.o \
+ 		$(STATIC_LIBEXT2FS) $(LIBCOM_ERR)
+ 
+ tst_types: tst_types.o ext2_types.h 
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_types tst_types.o 
++	$(CC) -o tst_types tst_types.o 
+ 
+ tst_super_size: tst_super_size.o ext2_fs.h
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_super_size tst_super_size.o 
++	$(CC) -o tst_super_size tst_super_size.o 
+ 
+ ext2_tdbtool: tdbtool.o
+ 	@echo "	LD $@"
+-	@$(CC) -o ext2_tdbtool tdbtool.o tdb.o
++	$(CC) -o ext2_tdbtool tdbtool.o tdb.o
+ 
+ extent_dbg.c: $(srcdir)/extent_dbg.ct
+ 	@echo "	MK_CMDS $<"
+-	@$(MK_CMDS) $(srcdir)/extent_dbg.ct
++	$(MK_CMDS) $(srcdir)/extent_dbg.ct
+ 
+ debug_cmds.c debug_cmds.h: $(top_srcdir)/debugfs/debug_cmds.ct
+ 	@echo "	MK_CMDS $<@"
+-	@$(MK_CMDS) $(top_srcdir)/debugfs/debug_cmds.ct
++	$(MK_CMDS) $(top_srcdir)/debugfs/debug_cmds.ct
+ 
+ DEBUG_OBJS= debug_cmds.o debugfs.o util.o ncheck.o icheck.o ls.o \
+ 	lsdel.o dump.o set_fields.o logdump.o htree.o unused.o
+ 
+ debugfs.o: $(top_srcdir)/debugfs/debugfs.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ util.o: $(top_srcdir)/debugfs/util.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ ncheck.o: $(top_srcdir)/debugfs/ncheck.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ icheck.o: $(top_srcdir)/debugfs/icheck.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ ls.o: $(top_srcdir)/debugfs/ls.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ lsdel.o: $(top_srcdir)/debugfs/lsdel.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ dump.o: $(top_srcdir)/debugfs/dump.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ set_fields.o: $(top_srcdir)/debugfs/set_fields.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ logdump.o: $(top_srcdir)/debugfs/logdump.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ htree.o: $(top_srcdir)/debugfs/htree.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ unused.o: $(top_srcdir)/debugfs/unused.c
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
+ 
+ tst_extents: $(srcdir)/extent.c extent_dbg.c $(DEBUG_OBJS) $(DEPLIBSS) $(LIBE2P) $(DEPLIBUUID) $(DEPLIBBLKID)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_extents $(srcdir)/extent.c extent_dbg.c \
++	$(CC) -o tst_extents $(srcdir)/extent.c extent_dbg.c \
+ 		$(ALL_CFLAGS) -DDEBUG $(DEBUG_OBJS) $(LIBSS) $(LIBE2P) \
+ 		$(STATIC_LIBEXT2FS) $(LIBBLKID) $(LIBUUID) $(LIBCOM_ERR) \
+ 		-I $(top_srcdir)/debugfs
+ 
+ tst_csum: csum.c $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o tst_csum $(srcdir)/csum.c -DDEBUG \
++	$(CC) -o tst_csum $(srcdir)/csum.c -DDEBUG \
+ 		$(ALL_CFLAGS) $(STATIC_LIBEXT2FS) $(LIBCOM_ERR)
+ 
+ mkjournal: mkjournal.c $(STATIC_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) -o mkjournal $(srcdir)/mkjournal.c -DDEBUG $(STATIC_LIBEXT2FS) $(LIBCOM_ERR) $(ALL_CFLAGS)
++	$(CC) -o mkjournal $(srcdir)/mkjournal.c -DDEBUG $(STATIC_LIBEXT2FS) $(LIBCOM_ERR) $(ALL_CFLAGS)
+ 
+ check:: tst_bitops tst_badblocks tst_iscan tst_types tst_icount tst_super_size tst_types tst_csum
+ 	LD_LIBRARY_PATH=$(LIB) DYLD_LIBRARY_PATH=$(LIB) ./tst_bitops
+@@ -331,14 +331,14 @@
+ 
+ installdirs::
+ 	@echo "	MKINSTALLDIRS $(libdir) $(includedir)/ext2fs"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
+ 		$(DESTDIR)$(includedir)/ext2fs $(DESTDIR)$(libdir)/pkgconfig
+ 
+ install:: all $(HFILES) $(HFILES_IN) installdirs ext2fs.pc
+ 	@echo "	INSTALL_DATA $(libdir)/libext2fs.a"
+-	@$(INSTALL_DATA) libext2fs.a $(DESTDIR)$(libdir)/libext2fs.a
+-	@-$(RANLIB) $(DESTDIR)$(libdir)/libext2fs.a
+-	@$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libext2fs.a
++	$(INSTALL_DATA) libext2fs.a $(DESTDIR)$(libdir)/libext2fs.a
++	-$(RANLIB) $(DESTDIR)$(libdir)/libext2fs.a
++	$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libext2fs.a
+ 	@for i in $(HFILES); do \
+ 		echo "	INSTALL_DATA $(includedir)/ext2fs/$$i"; \
+ 		$(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(includedir)/ext2fs/$$i; \
+@@ -348,7 +348,7 @@
+ 		$(INSTALL_DATA) $$i $(DESTDIR)$(includedir)/ext2fs/$$i; \
+ 	done
+ 	@echo "	INSTALL_DATA $(libdir)/pkgconfig/ext2fs.pc"
+-	@$(INSTALL_DATA) ext2fs.pc $(DESTDIR)$(libdir)/pkgconfig/ext2fs.pc
++	$(INSTALL_DATA) ext2fs.pc $(DESTDIR)$(libdir)/pkgconfig/ext2fs.pc
+ 
+ uninstall::
+ 	$(RM) -f $(DESTDIR)$(libdir)/libext2fs.a \
+diff -Naur e2fsprogs-1.41.7-old/lib/Makefile.bsd-lib e2fsprogs-1.41.7-new/lib/Makefile.bsd-lib
+--- e2fsprogs-1.41.7-old/lib/Makefile.bsd-lib	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/Makefile.bsd-lib	2009-06-30 16:41:03.000000000 -0700
+@@ -29,9 +29,9 @@
+ 
+ install-shlibs install:: $(BSD_LIB)
+ 	@echo "	INSTALL_PROGRAM $(BSDLIB_INSTALL_DIR)/$(BSD_LIB)"
+-	@$(INSTALL_PROGRAM) $(BSD_LIB) \
++	$(INSTALL_PROGRAM) $(BSD_LIB) \
+ 		$(DESTDIR)$(BSDLIB_INSTALL_DIR)/$(BSD_LIB)
+-	@-$(LDCONFIG)
++	-$(LDCONFIG)
+ 
+ install-strip: install
+ 
+diff -Naur e2fsprogs-1.41.7-old/lib/Makefile.checker e2fsprogs-1.41.7-new/lib/Makefile.checker
+--- e2fsprogs-1.41.7-old/lib/Makefile.checker	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/Makefile.checker	2009-06-30 16:41:03.000000000 -0700
+@@ -11,6 +11,6 @@
+ 	@echo "	GEN_CHECKER_LIB $@"
+ 	@(test -r $@ && $(RM) -f $@.bak && $(MV) $@ $@.bak)
+ 	(cd checker; $(ARGEN) $@ $(OBJS))
+-	-@$(RANLIB) $@
+-	@$(RM) -f ../$@
+-	@$(LN) $@ ../$@
++	-$(RANLIB) $@
++	$(RM) -f ../$@
++	$(LN) $@ ../$@
+diff -Naur e2fsprogs-1.41.7-old/lib/Makefile.darwin-lib e2fsprogs-1.41.7-new/lib/Makefile.darwin-lib
+--- e2fsprogs-1.41.7-old/lib/Makefile.darwin-lib	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/Makefile.darwin-lib	2009-06-30 16:41:03.000000000 -0700
+@@ -25,16 +25,16 @@
+ 	@echo "	GEN_BSD_SOLIB $(BSD_LIB)"
+ 	@(cd pic; $(CC) -dynamiclib -compatibility_version 1.0 -current_version $(BSDLIB_VERSION) \
+ 		-flat_namespace -undefined warning -o $(BSD_LIB) $(OBJS))
+-	@$(MV) pic/$(BSD_LIB) .
+-	@$(RM) -f ../$(BSD_LIB)
+-	@$(LN) $(BSD_LIB) ../$(BSD_LIB)
+-	@$(LN) ../$(BSD_LIB) ../$(BSDLIB_IMAGE).dylib
++	$(MV) pic/$(BSD_LIB) .
++	$(RM) -f ../$(BSD_LIB)
++	$(LN) $(BSD_LIB) ../$(BSD_LIB)
++	$(LN) ../$(BSD_LIB) ../$(BSDLIB_IMAGE).dylib
+ 
+ install-shlibs install:: $(BSD_LIB)
+ 	@echo "	INSTALL_PROGRAM $(BSDLIB_INSTALL_DIR)/$(BSD_LIB)"
+-	@$(INSTALL_PROGRAM) $(BSD_LIB) \
++	$(INSTALL_PROGRAM) $(BSD_LIB) \
+ 		$(DESTDIR)$(BSDLIB_INSTALL_DIR)/$(BSD_LIB)
+-	@-$(LDCONFIG)
++	-$(LDCONFIG)
+ 
+ install-strip: install
+ 
+diff -Naur e2fsprogs-1.41.7-old/lib/Makefile.elf-lib e2fsprogs-1.41.7-new/lib/Makefile.elf-lib
+--- e2fsprogs-1.41.7-old/lib/Makefile.elf-lib	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/Makefile.elf-lib	2009-06-30 16:41:03.000000000 -0700
+@@ -15,7 +15,7 @@
+ 
+ real-subdirs:: Makefile
+ 	@echo "	MKDIR elfshared"
+-	@mkdir -p elfshared
++	mkdir -p elfshared
+ 
+ ELF_LIB = $(ELF_IMAGE).so.$(ELF_VERSION)
+ ELF_SONAME = $(ELF_IMAGE).so.$(ELF_SO_VERSION)
+@@ -24,44 +24,44 @@
+ 
+ $(ELF_LIB): $(OBJS)
+ 	@echo "	GEN_ELF_SOLIB $(ELF_LIB)"
+-	@(cd elfshared; $(CC) --shared -o $(ELF_LIB) $(LDFLAGS) \
++	(cd elfshared; $(CC) --shared -o $(ELF_LIB) $(LDFLAGS) \
+ 		-Wl,-soname,$(ELF_SONAME) $(OBJS) $(ELF_OTHER_LIBS))
+-	@$(MV) elfshared/$(ELF_LIB) .
+-	@$(RM) -f ../$(ELF_LIB) ../$(ELF_IMAGE).so ../$(ELF_SONAME)
+-	@$(LN) $(ELF_LIB) ../$(ELF_LIB)
+-	@$(LN) ../$(ELF_LIB) ../$(ELF_IMAGE).so
+-	@$(LN) ../$(ELF_LIB) ../$(ELF_SONAME)
++	$(MV) elfshared/$(ELF_LIB) .
++	$(RM) -f ../$(ELF_LIB) ../$(ELF_IMAGE).so ../$(ELF_SONAME)
++	$(LN) $(ELF_LIB) ../$(ELF_LIB)
++	$(LN) ../$(ELF_LIB) ../$(ELF_IMAGE).so
++	$(LN) ../$(ELF_LIB) ../$(ELF_SONAME)
+ 
+ installdirs-elf-lib::
+ 	@echo "	MKINSTALLDIRS $(ELF_INSTALL_DIR) $(libdir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(ELF_INSTALL_DIR) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(ELF_INSTALL_DIR) \
+ 		$(DESTDIR)$(libdir)
+ 
+ installdirs:: installdirs-elf-lib
+ 
+ install-shlibs install:: $(ELF_LIB) installdirs-elf-lib
+ 	@echo "	INSTALL-ELF-LIB $(ELF_INSTALL_DIR)/$(ELF_LIB)"
+-	@$(INSTALL_PROGRAM) $(ELF_LIB) $(DESTDIR)$(ELF_INSTALL_DIR)/$(ELF_LIB)
++	$(INSTALL_PROGRAM) $(ELF_LIB) $(DESTDIR)$(ELF_INSTALL_DIR)/$(ELF_LIB)
+ 	@echo "	SYMLINK $(ELF_INSTALL_DIR)/$(ELF_SONAME)"
+-	@$(LN_S) -f $(ELF_LIB) $(DESTDIR)$(ELF_INSTALL_DIR)/$(ELF_SONAME)
++	$(LN_S) -f $(ELF_LIB) $(DESTDIR)$(ELF_INSTALL_DIR)/$(ELF_SONAME)
+ 	@echo "	SYMLINK $(libdir)/$(ELF_IMAGE).so"
+-	@if test "$(ELF_INSTALL_DIR)" = "$(libdir)"; then \
++	if test "$(ELF_INSTALL_DIR)" = "$(libdir)"; then \
+ 		$(LN_S) -f $(ELF_SONAME) $(DESTDIR)$(libdir)/$(ELF_IMAGE).so ; \
+ 	else \
+ 		$(LN_S) -f $(ELF_INSTALL_DIR)/$(ELF_SONAME) \
+ 			$(DESTDIR)$(libdir)/$(ELF_IMAGE).so; \
+ 	fi			
+ 	@echo "	LDCONFIG"
+-	@-$(LDCONFIG)
++	-$(LDCONFIG)
+ 
+ install-strip: install
+ 	@echo "	STRIP-LIB $(ELF_INSTALL_DIR)/$(ELF_LIB)"
+-	@$(STRIP) --strip-unneeded --remove-section=.comment \
++	$(STRIP) --strip-unneeded --remove-section=.comment \
+ 		--remove-section=.note $(DESTDIR)$(ELF_INSTALL_DIR)/$(ELF_LIB)
+ 
+ install-shlibs-strip: install-shlibs
+ 	@echo "	STRIP-LIB $(ELF_INSTALL_DIR)/$(ELF_LIB)"
+-	@$(STRIP) --strip-unneeded --remove-section=.comment \
++	$(STRIP) --strip-unneeded --remove-section=.comment \
+ 		--remove-section=.note $(DESTDIR)$(ELF_INSTALL_DIR)/$(ELF_LIB)
+ 
+ uninstall-shlibs uninstall::
+diff -Naur e2fsprogs-1.41.7-old/lib/Makefile.library e2fsprogs-1.41.7-new/lib/Makefile.library
+--- e2fsprogs-1.41.7-old/lib/Makefile.library	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/Makefile.library	2009-06-30 16:41:03.000000000 -0700
+@@ -7,18 +7,18 @@
+ real-subdirs::
+ 
+ subdirs:: Makefile
+-	@$(MAKE) -s real-subdirs
++	$(MAKE) -s real-subdirs
+ 	@touch subdirs
+ 
+ clean::
+-	@$(RM) -f subdirs
++	$(RM) -f subdirs
+ 
+ $(LIBRARY).a: $(OBJS)
+ 	@echo "	GEN_LIB $@"
+ 	@(if test -r $@; then $(RM) -f $@.bak && $(MV) $@ $@.bak; fi)
+-	@$(ARGEN) $@ $(OBJS)
+-	-@$(RANLIB) $@
+-	@$(RM) -f ../$@
+-	@$(LN) $@ ../$@
++	$(ARGEN) $@ $(OBJS)
++	-$(RANLIB) $@
++	$(RM) -f ../$@
++	$(LN) $@ ../$@
+ 
+ $(LIB)/$(LIBRARY).a: $(LIBRARY).a
+diff -Naur e2fsprogs-1.41.7-old/lib/Makefile.profile e2fsprogs-1.41.7-new/lib/Makefile.profile
+--- e2fsprogs-1.41.7-old/lib/Makefile.profile	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/Makefile.profile	2009-06-30 16:41:03.000000000 -0700
+@@ -12,15 +12,15 @@
+ 	@echo "	GEN_PROFILED_LIB $(ELF_LIB)"
+ 	@(if test -r $@; then $(RM) -f $@.bak && $(MV) $@ $@.bak; fi)
+ 	@(cd profiled; $(ARUPD) ../$@ $(OBJS))
+-	-@$(RANLIB) $@
+-	@$(RM) -f ../$@
+-	@$(LN) $@ ../$@
++	-$(RANLIB) $@
++	$(RM) -f ../$@
++	$(LN) $@ ../$@
+ 
+ install:: $(LIBRARY)_p.a installdirs
+ 	@echo "	INSTALL_DATA $(libdir)/$(LIBRARY)_p.a"
+-	@$(INSTALL_DATA) $(LIBRARY)_p.a $(DESTDIR)$(libdir)/$(LIBRARY)_p.a
+-	@-$(RANLIB) $(DESTDIR)$(libdir)/$(LIBRARY)_p.a
+-	@$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/$(LIBRARY)_p.a
++	$(INSTALL_DATA) $(LIBRARY)_p.a $(DESTDIR)$(libdir)/$(LIBRARY)_p.a
++	-$(RANLIB) $(DESTDIR)$(libdir)/$(LIBRARY)_p.a
++	$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/$(LIBRARY)_p.a
+ 
+ uninstall::
+ 	$(RM) -f $(DESTDIR)$(libdir)/$(LIBRARY)_p.a
+diff -Naur e2fsprogs-1.41.7-old/lib/Makefile.solaris-lib e2fsprogs-1.41.7-new/lib/Makefile.solaris-lib
+--- e2fsprogs-1.41.7-old/lib/Makefile.solaris-lib	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/Makefile.solaris-lib	2009-06-30 16:41:03.000000000 -0700
+@@ -26,11 +26,11 @@
+ 	@echo "	GEN_ELF_SOLIB $(ELF_LIB)"
+ 	@(cd elfshared; $(CC) --shared -o $(ELF_LIB) $(LDFLAGS) \
+ 		-Wl,-h,$(ELF_SONAME) $(OBJS) $(ELF_OTHER_LIBS))
+-	@$(MV) elfshared/$(ELF_LIB) .
+-	@$(RM) -f ../$(ELF_LIB) ../$(ELF_IMAGE).so ../$(ELF_SONAME)
+-	@$(LN) $(ELF_LIB) ../$(ELF_LIB)
+-	@$(LN) ../$(ELF_LIB) ../$(ELF_IMAGE).so
+-	@$(LN) ../$(ELF_LIB) ../$(ELF_SONAME)
++	$(MV) elfshared/$(ELF_LIB) .
++	$(RM) -f ../$(ELF_LIB) ../$(ELF_IMAGE).so ../$(ELF_SONAME)
++	$(LN) $(ELF_LIB) ../$(ELF_LIB)
++	$(LN) ../$(ELF_LIB) ../$(ELF_IMAGE).so
++	$(LN) ../$(ELF_LIB) ../$(ELF_SONAME)
+ 
+ installdirs-elf-lib::
+ 	$(MKINSTALLDIRS) $(DESTDIR)$(ELF_INSTALL_DIR) \
+diff -Naur e2fsprogs-1.41.7-old/lib/ss/Makefile.in e2fsprogs-1.41.7-new/lib/ss/Makefile.in
+--- e2fsprogs-1.41.7-old/lib/ss/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/ss/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -38,11 +38,11 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $<
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+-@CHECKER_CMT@	@$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
+-@ELF_CMT@	@$(CC) $(ALL_CFLAGS) -DSHARED_ELF_LIB -fPIC -o elfshared/$*.o -c $<
+-@BSDLIB_CMT@	@$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
++	$(CC) $(ALL_CFLAGS) -c $<
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++@CHECKER_CMT@	$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
++@ELF_CMT@	$(CC) $(ALL_CFLAGS) -DSHARED_ELF_LIB -fPIC -o elfshared/$*.o -c $<
++@BSDLIB_CMT@	$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
+ 
+ # for the library
+ 
+@@ -107,7 +107,7 @@
+ 
+ ss_err.c ss_err.h: ss_err.et
+ 	@echo "	COMPILE_ET ss_err.et"
+-	@$(COMPILE_ET) $(srcdir)/ss_err.et
++	$(COMPILE_ET) $(srcdir)/ss_err.et
+ 
+ ct.tab.c ct.tab.h: ct.y
+ 	$(RM) -f ct.tab.* y.*
+@@ -121,8 +121,8 @@
+ 
+ mk_cmds: $(DEP_SUBSTITUTE) $(srcdir)/mk_cmds.sh.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE) $(srcdir)/mk_cmds.sh.in mk_cmds
+-	@$(CHMOD) +x mk_cmds
++	$(SUBSTITUTE) $(srcdir)/mk_cmds.sh.in mk_cmds
++	$(CHMOD) +x mk_cmds
+ 
+ ss.pc: $(srcdir)/ss.pc.in $(top_builddir)/config.status
+ 	@echo "	CONFIG.STATUS $@"
+@@ -130,32 +130,32 @@
+ 
+ installdirs::
+ 	@echo "	MKINSTALLDIRS $(libdir) $(includedir)/ss $(datadir)/ss $(bindir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(libdir) \
+ 		$(DESTDIR)$(includedir)/ss $(DESTDIR)$(datadir)/ss \
+ 		$(DESTDIR)$(bindir) $(DESTDIR)$(libdir)/pkgconfig
+ 
+ install:: libss.a $(INSTALL_HFILES) installdirs ss_err.h mk_cmds ss.pc
+ 	@echo "	INSTALL_DATA $(DESTDIR)$(libdir)/libss.a"
+-	@$(INSTALL_DATA) libss.a $(DESTDIR)$(libdir)/libss.a
+-	@-$(RANLIB) $(DESTDIR)$(libdir)/libss.a
+-	@$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libss.a
+-	@$(RM) -f $(DESTDIR)$(includedir)/ss/*
++	$(INSTALL_DATA) libss.a $(DESTDIR)$(libdir)/libss.a
++	-$(RANLIB) $(DESTDIR)$(libdir)/libss.a
++	$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libss.a
++	$(RM) -f $(DESTDIR)$(includedir)/ss/*
+ 	@for i in $(INSTALL_HFILES); do \
+ 		echo "	INSTALL_DATA $(DESTDIR)$(includedir)/ss/$$i"; \
+ 		$(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(includedir)/ss/$$i; \
+ 	done
+ 	@echo "	INSTALL_DATA $(includedir)/ss/ss_err.h"
+-	@$(INSTALL_DATA) ss_err.h $(DESTDIR)$(includedir)/ss/ss_err.h
++	$(INSTALL_DATA) ss_err.h $(DESTDIR)$(includedir)/ss/ss_err.h
+ 	@for i in $(SHARE_FILES); do \
+ 		echo "	INSTALL_DATA $(DESTDIR)$(datadir)/ss/$$i"; \
+ 		$(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(datadir)/ss/$$i; \
+ 	done
+ 	@echo "	INSTALL $(bindir)/mk_cmds"
+-	@$(INSTALL) mk_cmds $(DESTDIR)$(bindir)/mk_cmds
++	$(INSTALL) mk_cmds $(DESTDIR)$(bindir)/mk_cmds
+ 	@echo "	INSTALL_DATA $(man1dir)/mk_cmds.1"
+-	@$(INSTALL_DATA) $(srcdir)/mk_cmds.1 $(DESTDIR)$(man1dir)/mk_cmds.1
++	$(INSTALL_DATA) $(srcdir)/mk_cmds.1 $(DESTDIR)$(man1dir)/mk_cmds.1
+ 	@echo "	INSTALL_DATA $(libdir)/pkgconfig/ss.pc"
+-	@$(INSTALL_DATA) ss.pc $(DESTDIR)$(libdir)/pkgconfig/ss.pc
++	$(INSTALL_DATA) ss.pc $(DESTDIR)$(libdir)/pkgconfig/ss.pc
+ 
+ uninstall::
+ 	$(RM) -f $(DESTDIR)$(libdir)/libss.a $(DESTDIR)$(bindir)/mk_cmds \
+@@ -165,7 +165,7 @@
+ 
+ test_ss: test_ss.o test_cmd.o $(DEPLIBSS) $(LIBCOM_ERR)
+ 	@echo "	LD $@"
+-	@$(CC) -o $@ test_ss.o test_cmd.o $(ALL_CFLAGS) \
++	$(CC) -o $@ test_ss.o test_cmd.o $(ALL_CFLAGS) \
+ 		$(LIBSS) $(LIBCOM_ERR)
+ 
+ check:: all test_ss
+diff -Naur e2fsprogs-1.41.7-old/lib/uuid/Makefile.in e2fsprogs-1.41.7-new/lib/uuid/Makefile.in
+--- e2fsprogs-1.41.7-old/lib/uuid/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/lib/uuid/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -61,11 +61,11 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) $(ALL_CFLAGS) -c $< -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+-@CHECKER_CMT@	@$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
+-@ELF_CMT@	@$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
+-@BSDLIB_CMT@	@$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
++	$(CC) $(ALL_CFLAGS) -c $< -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++@CHECKER_CMT@	$(CC) $(ALL_CFLAGS) -checker -g -o checker/$*.o -c $<
++@ELF_CMT@	$(CC) $(ALL_CFLAGS) -fPIC -o elfshared/$*.o -c $<
++@BSDLIB_CMT@	$(CC) $(ALL_CFLAGS) $(BSDLIB_PIC_FLAG) -o pic/$*.o -c $<
+ 
+ all:: tst_uuid uuid_time $(SMANPAGES) uuid.pc
+ 
+@@ -74,52 +74,52 @@
+ 
+ tst_uuid.o: $(srcdir)/tst_uuid.c
+ 	@echo "	CC $@"
+-	@$(CC) $(ALL_CFLAGS) -c $(srcdir)/tst_uuid.c -o tst_uuid.o
++	$(CC) $(ALL_CFLAGS) -c $(srcdir)/tst_uuid.c -o tst_uuid.o
+ 
+ tst_uuid: tst_uuid.o $(DEPSTATIC_LIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o tst_uuid tst_uuid.o $(STATIC_LIBUUID)
++	$(CC) $(ALL_LDFLAGS) -o tst_uuid tst_uuid.o $(STATIC_LIBUUID)
+ 
+ uuid_time: $(srcdir)/uuid_time.c $(DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_CFLAGS) -DDEBUG -o uuid_time $(srcdir)/uuid_time.c \
++	$(CC) $(ALL_CFLAGS) -DDEBUG -o uuid_time $(srcdir)/uuid_time.c \
+ 		$(LIBUUID)
+ 
+ uuid.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid.3.in uuid.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid.3.in uuid.3
+ 
+ uuid_clear.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_clear.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_clear.3.in uuid_clear.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_clear.3.in uuid_clear.3
+ 
+ uuid_compare.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_compare.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_compare.3.in uuid_compare.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_compare.3.in uuid_compare.3
+ 
+ uuid_copy.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_copy.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_copy.3.in uuid_copy.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_copy.3.in uuid_copy.3
+ 
+ uuid_generate.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_generate.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_generate.3.in uuid_generate.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_generate.3.in uuid_generate.3
+ 
+ uuid_is_null.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_is_null.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_is_null.3.in uuid_is_null.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_is_null.3.in uuid_is_null.3
+ 
+ uuid_parse.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_parse.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_parse.3.in uuid_parse.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_parse.3.in uuid_parse.3
+ 
+ uuid_time.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_time.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_time.3.in uuid_time.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_time.3.in uuid_time.3
+ 
+ uuid_unparse.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_unparse.3.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_unparse.3.in uuid_unparse.3
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_unparse.3.in uuid_unparse.3
+ 
+ uuid.pc: $(srcdir)/uuid.pc.in $(top_builddir)/config.status
+ 	@echo "	CONFIG.STATUS $@"
+@@ -127,30 +127,30 @@
+ 
+ installdirs::
+ 	@echo "	MKINSTALLDIRS $(libdir) $(includedir)/uuid $(man3dir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(libdir)  \
++	$(MKINSTALLDIRS) $(DESTDIR)$(libdir)  \
+ 		$(DESTDIR)$(includedir)/uuid $(DESTDIR)$(man3dir) \
+ 		$(DESTDIR)$(libdir)/pkgconfig
+ 
+ install:: all installdirs 
+ 	@echo "	INSTALL_DATA $(libdir)/libuuid.a"
+-	@$(INSTALL_DATA) libuuid.a $(DESTDIR)$(libdir)/libuuid.a
+-	@-$(RANLIB) $(DESTDIR)$(libdir)/libuuid.a
+-	@$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libuuid.a
++	$(INSTALL_DATA) libuuid.a $(DESTDIR)$(libdir)/libuuid.a
++	-$(RANLIB) $(DESTDIR)$(libdir)/libuuid.a
++	$(CHMOD) $(LIBMODE) $(DESTDIR)$(libdir)/libuuid.a
+ 	@echo "	INSTALL_DATA $(includedir)/uuid/uuid.h"
+-	@$(INSTALL_DATA) $(srcdir)/uuid.h $(DESTDIR)$(includedir)/uuid/uuid.h
++	$(INSTALL_DATA) $(srcdir)/uuid.h $(DESTDIR)$(includedir)/uuid/uuid.h
+ 	@for i in $(SMANPAGES); do \
+ 		$(RM) -f $(DESTDIR)$(man3dir)/$$i.gz; \
+ 		echo "	INSTALL_DATA $(man3dir)/$$i"; \
+ 		$(INSTALL_DATA) $$i $(DESTDIR)$(man3dir)/$$i; \
+ 	done
+-	@$(RM) -f $(DESTDIR)$(man3dir)/uuid_generate_random.3.gz \
++	$(RM) -f $(DESTDIR)$(man3dir)/uuid_generate_random.3.gz \
+ 		$(DESTDIR)$(man3dir)/uuid_generate_time.3.gz
+ 	@echo "	LINK $(man3dir)/uuid_generate_random.3"
+-	@$(LN) -f $(DESTDIR)$(man3dir)/uuid_generate.3 $(DESTDIR)$(man3dir)/uuid_generate_random.3
++	$(LN) -f $(DESTDIR)$(man3dir)/uuid_generate.3 $(DESTDIR)$(man3dir)/uuid_generate_random.3
+ 	@echo "	LINK $(man3dir)/uuid_generate_time.3"
+-	@$(LN) -f $(DESTDIR)$(man3dir)/uuid_generate.3 $(DESTDIR)$(man3dir)/uuid_generate_time.3
++	$(LN) -f $(DESTDIR)$(man3dir)/uuid_generate.3 $(DESTDIR)$(man3dir)/uuid_generate_time.3
+ 	@echo "	INSTALL_DATA $(libdir)/pkgconfig/uuid.pc"
+-	@$(INSTALL_DATA) uuid.pc $(DESTDIR)$(libdir)/pkgconfig/uuid.pc
++	$(INSTALL_DATA) uuid.pc $(DESTDIR)$(libdir)/pkgconfig/uuid.pc
+ 
+ uninstall::
+ 	$(RM) -f $(DESTDIR)$(libdir)/libuuid.a \
+diff -Naur e2fsprogs-1.41.7-old/misc/Makefile.in e2fsprogs-1.41.7-new/misc/Makefile.in
+--- e2fsprogs-1.41.7-old/misc/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/misc/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -94,8 +94,8 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) -c $(ALL_CFLAGS) $< -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
++	$(CC) -c $(ALL_CFLAGS) $< -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/$*.o -c $<
+ 
+ all:: profiled $(SPROGS) $(UPROGS) $(USPROGS) $(SMANPAGES) $(UMANPAGES) \
+ 	$(FMANPAGES) $(LPROGS)
+@@ -111,88 +111,88 @@
+ 
+ prof_err.c prof_err.h: $(srcdir)/../e2fsck/prof_err.et
+ 	@echo "	COMPILE_ET prof_err.et"
+-	@$(COMPILE_ET) $(srcdir)/../e2fsck/prof_err.et
++	$(COMPILE_ET) $(srcdir)/../e2fsck/prof_err.et
+ 
+ default_profile.c: $(srcdir)/mke2fs.conf $(srcdir)/profile-to-c.awk
+ 	@echo "	PROFILE_TO_C mke2fs.conf"
+-	@$(AWK) -f $(srcdir)/profile-to-c.awk < $(srcdir)/mke2fs.conf \
++	$(AWK) -f $(srcdir)/profile-to-c.awk < $(srcdir)/mke2fs.conf \
+ 		>  default_profile.c
+ profile.o:
+ 	@echo "	CC $<"
+-	@$(CC) -c $(ALL_CFLAGS) $(srcdir)/../e2fsck/profile.c -o $@
+-@PROFILE_CMT@	@$(CC) $(ALL_CFLAGS) -g -pg -o profiled/profile.o -c \
++	$(CC) -c $(ALL_CFLAGS) $(srcdir)/../e2fsck/profile.c -o $@
++@PROFILE_CMT@	$(CC) $(ALL_CFLAGS) -g -pg -o profiled/profile.o -c \
+ @PROFILE_CMT@	$(srcdir)/../e2fsck/profile.c
+ 
+ findsuper: findsuper.o
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o findsuper findsuper.o
++	$(CC) $(ALL_LDFLAGS) -o findsuper findsuper.o
+ 
+ partinfo: partinfo.o
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o partinfo partinfo.o
++	$(CC) $(ALL_LDFLAGS) -o partinfo partinfo.o
+ 
+ e2initrd_helper: e2initrd_helper.o $(DEPLIBS) $(DEPLIBBLKID) $(LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o e2initrd_helper e2initrd_helper.o $(LIBS) \
++	$(CC) $(ALL_LDFLAGS) -o e2initrd_helper e2initrd_helper.o $(LIBS) \
+ 		$(LIBBLKID) $(LIBEXT2FS) $(LIBINTL)
+ 
+ tune2fs: $(TUNE2FS_OBJS) $(DEPLIBS) $(DEPLIBS_E2P) $(DEPLIBBLKID) \
+ 		$(DEPLIBUUID) $(LIBEXT2FS) 
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o tune2fs $(TUNE2FS_OBJS) $(LIBS) \
++	$(CC) $(ALL_LDFLAGS) -o tune2fs $(TUNE2FS_OBJS) $(LIBS) \
+ 		$(LIBBLKID) $(LIBUUID) $(LIBEXT2FS) $(LIBS_E2P) $(LIBINTL)
+ 
+ tune2fs.static: $(TUNE2FS_OBJS) $(STATIC_DEPLIBS) $(STATIC_LIBE2P) $(DEPSTATIC_LIBBLKID)
+ 	@echo "	LD $@"
+-	@$(CC) $(LDFLAGS_STATIC) -o tune2fs.static $(TUNE2FS_OBJS) \
++	$(CC) $(LDFLAGS_STATIC) -o tune2fs.static $(TUNE2FS_OBJS) \
+ 		$(STATIC_LIBS) $(STATIC_LIBBLKID) $(STATIC_LIBUUID) \
+ 		$(STATIC_LIBE2P) $(LIBINTL)
+ 
+ tune2fs.profiled: $(PROFILED_TUNE2FS_OBJS) $(PROFILED_DEPLIBS) \
+ 		$(PROFILED_E2P) $(DEPPROFILED_LIBBLKID) $(DEPPROFILED_LIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o tune2fs.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o tune2fs.profiled \
+ 		$(PROFILED_TUNE2FS_OBJS) $(PROFILED_LIBBLKID) \
+ 		$(PROFILED_LIBUUID) $(PROFILED_LIBE2P) $(LIBINTL) \
+ 		$(PROFILED_LIBS) 
+ 
+ blkid: $(BLKID_OBJS) $(DEPLIBBLKID) $(LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o blkid $(BLKID_OBJS) $(LIBBLKID) $(LIBINTL) \
++	$(CC) $(ALL_LDFLAGS) -o blkid $(BLKID_OBJS) $(LIBBLKID) $(LIBINTL) \
+ 		$(LIBEXT2FS)
+ 
+ blkid.static: $(BLKID_OBJS) $(STATIC_DEPLIBS) $(DEPSTATIC_LIBBLKID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o blkid.static $(BLKID_OBJS) $(STATIC_LIBS) \
++	$(CC) $(ALL_LDFLAGS) -o blkid.static $(BLKID_OBJS) $(STATIC_LIBS) \
+ 		$(STATIC_LIBBLKID) $(LIBINTL)
+ 
+ blkid.profiled: $(PROFILED_BLKID_OBJS) $(DEPPROFILED_LIBBLKID) \
+ 		$(PROFILED_LIBEXT2FS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o blkid.profiled $(PROFILED_BLKID_OBJS) \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o blkid.profiled $(PROFILED_BLKID_OBJS) \
+ 		$(PROFILED_LIBBLKID) $(LIBINTL) $(PROFILED_LIBEXT2FS)
+ 
+ e2image: $(E2IMAGE_OBJS) $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o e2image $(E2IMAGE_OBJS) $(LIBS) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o e2image $(E2IMAGE_OBJS) $(LIBS) $(LIBINTL)
+ 
+ e2image.profiled: $(PROFILED_E2IMAGE_OBJS) $(PROFILED_DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o e2image.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o e2image.profiled \
+ 		$(PROFILED_E2IMAGE_OBJS) $(PROFILED_LIBS) $(LIBINTL)
+ 
+ e2undo: $(E2UNDO_OBJS) $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o e2undo $(E2UNDO_OBJS) $(LIBS) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o e2undo $(E2UNDO_OBJS) $(LIBS) $(LIBINTL)
+ 
+ e2undo.profiled: $(PROFILED_E2UNDO_OBJS) $(PROFILED_DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o e2undo.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o e2undo.profiled \
+ 		$(PROFILED_E2UNDO_OBJS) $(PROFILED_LIBS) $(LIBINTL)
+ 
+ base_device: base_device.c
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) $(srcdir)/base_device.c \
++	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) $(srcdir)/base_device.c \
+ 		-DDEBUG -o base_device
+ 
+ check:: base_device
+@@ -201,99 +201,99 @@
+ 
+ mklost+found: $(MKLPF_OBJS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o mklost+found $(MKLPF_OBJS) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o mklost+found $(MKLPF_OBJS) $(LIBINTL)
+ 
+ mke2fs: $(MKE2FS_OBJS) $(DEPLIBS) $(LIBE2P) $(DEPLIBBLKID) $(DEPLIBUUID) \
+ 		$(LIBEXT2FS) 
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o mke2fs $(MKE2FS_OBJS) $(LIBS) $(LIBBLKID) \
++	$(CC) $(ALL_LDFLAGS) -o mke2fs $(MKE2FS_OBJS) $(LIBS) $(LIBBLKID) \
+ 		$(LIBUUID) $(LIBEXT2FS) $(LIBE2P) $(LIBINTL)
+ 
+ mke2fs.static: $(MKE2FS_OBJS) $(STATIC_DEPLIBS) $(STATIC_LIBE2P) $(DEPSTATIC_LIBUUID) $(DEPSTATIC_LIBBLKID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -static -o mke2fs.static $(MKE2FS_OBJS) \
++	$(CC) $(ALL_LDFLAGS) -static -o mke2fs.static $(MKE2FS_OBJS) \
+ 		$(STATIC_LIBS) $(STATIC_LIBE2P) $(STATIC_LIBBLKID) \
+ 		$(STATIC_LIBUUID) $(LIBINTL)
+ 
+ mke2fs.profiled: $(PROFILED_MKE2FS_OBJS) $(PROFILED_DEPLIBS) \
+ 	$(PROFILED_LIBE2P) $(PROFILED_DEPLIBBLKID) $(PROFILED_DEPLIBUUID) 
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o mke2fs.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o mke2fs.profiled \
+ 		$(PROFILED_MKE2FS_OBJS) $(PROFILED_LIBBLKID) \
+ 		$(PROFILED_LIBUUID) $(PROFILED_LIBE2P) $(LIBINTL) \
+ 		$(PROFILED_LIBS)
+ 
+ chattr: $(CHATTR_OBJS) $(DEPLIBS_E2P)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o chattr $(CHATTR_OBJS) $(LIBS_E2P) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o chattr $(CHATTR_OBJS) $(LIBS_E2P) $(LIBINTL)
+ 
+ lsattr: $(LSATTR_OBJS) $(DEPLIBS_E2P)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o lsattr $(LSATTR_OBJS) $(LIBS_E2P) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o lsattr $(LSATTR_OBJS) $(LIBS_E2P) $(LIBINTL)
+ 
+ uuidgen: $(UUIDGEN_OBJS) $(DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o uuidgen $(UUIDGEN_OBJS) $(LIBUUID) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o uuidgen $(UUIDGEN_OBJS) $(LIBUUID) $(LIBINTL)
+ 
+ uuidgen.profiled: $(PROFILED_UUIDGEN_OBJS) $(PROFILED_DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o uuidgen.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o uuidgen.profiled \
+ 		$(PROFILED_UUIDGEN_OBJS) $(PROFILED_LIBUUID) $(LIBINTL)
+ 
+ uuidd: $(UUIDD_OBJS) $(DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o uuidd $(UUIDD_OBJS) $(LIBUUID) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o uuidd $(UUIDD_OBJS) $(LIBUUID) $(LIBINTL)
+ 
+ uuidd.profiled: $(PROFILED_UUIDD_OBJS) $(PROFILED_DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o uuidd.profiled $(PROFILED_UUIDD_OBJS) \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o uuidd.profiled $(PROFILED_UUIDD_OBJS) \
+ 		$(PROFILED_LIBUUID) $(LIBINTL)
+ 
+ dumpe2fs: $(DUMPE2FS_OBJS) $(DEPLIBS) $(DEPLIBS_E2P) $(DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o dumpe2fs $(DUMPE2FS_OBJS) $(LIBS) \
++	$(CC) $(ALL_LDFLAGS) -o dumpe2fs $(DUMPE2FS_OBJS) $(LIBS) \
+ 		$(LIBS_E2P) $(LIBUUID) $(LIBINTL)
+ 
+ dumpe2fs.profiled: $(PROFILED_DUMPE2FS_OBJS) $(PROFILED_DEPLIBS) \
+ 		$(PROFILED_LIBE2P) $(PROFILED_DEPLIBUUID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o dumpe2fs.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o dumpe2fs.profiled \
+ 		$(PROFILED_DUMPE2FS_OBJS) $(PROFILED_LIBS) \
+ 		$(PROFILED_LIBE2P) $(PROFILED_LIBUUID) $(LIBINTL)
+ 
+ fsck: $(FSCK_OBJS) $(DEPLIBBLKID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o fsck $(FSCK_OBJS) $(LIBBLKID) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o fsck $(FSCK_OBJS) $(LIBBLKID) $(LIBINTL)
+ 
+ fsck.profiled: $(PROFILED_FSCK_OBJS) $(PROFILED_DEPLIBBLKID)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o fsck.profiled $(PROFILED_FSCK_OBJS) \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o fsck.profiled $(PROFILED_FSCK_OBJS) \
+ 		$(PROFILED_LIBBLKID) $(LIBINTL)
+ 
+ badblocks: $(BADBLOCKS_OBJS) $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o badblocks $(BADBLOCKS_OBJS) $(LIBS) $(LIBINTL)
++	$(CC) $(ALL_LDFLAGS) -o badblocks $(BADBLOCKS_OBJS) $(LIBS) $(LIBINTL)
+ 
+ badblocks.profiled: $(PROFILED_BADBLOCKS_OBJS) $(PROFILED_DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o badblocks.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o badblocks.profiled \
+ 		$(PROFILED_BADBLOCKS_OBJS) $(PROFILED_LIBS) $(LIBINTL)
+ 
+ logsave: logsave.o
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o logsave logsave.o
++	$(CC) $(ALL_LDFLAGS) -o logsave logsave.o
+ 
+ logsave.profiled: profiled/logsave.o
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o logsave.profiled profiled/logsave.o
++	$(CC) $(ALL_LDFLAGS) -g -pg -o logsave.profiled profiled/logsave.o
+ 
+ filefrag: $(FILEFRAG_OBJS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o filefrag $(FILEFRAG_OBJS) 
++	$(CC) $(ALL_LDFLAGS) -o filefrag $(FILEFRAG_OBJS) 
+ 
+ filefrag.profiled: $(PROFILED_FILEFRAG_OBJS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -g -pg -o filefrag.profiled \
++	$(CC) $(ALL_LDFLAGS) -g -pg -o filefrag.profiled \
+ 		$(PROFILED_FILEFRAG_OBJS) 
+ 
+ tst_ismounted: $(srcdir)/ismounted.c $(STATIC_LIBEXT2FS)
+@@ -302,83 +302,83 @@
+ 
+ tune2fs.8: $(DEP_SUBSTITUTE) $(srcdir)/tune2fs.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/tune2fs.8.in tune2fs.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/tune2fs.8.in tune2fs.8
+ 
+ mklost+found.8: $(DEP_SUBSTITUTE) $(srcdir)/mklost+found.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/mklost+found.8.in mklost+found.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/mklost+found.8.in mklost+found.8
+ 
+ mke2fs.8: $(DEP_SUBSTITUTE) $(srcdir)/mke2fs.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/mke2fs.8.in mke2fs.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/mke2fs.8.in mke2fs.8
+ 
+ mke2fs.conf.5: $(DEP_SUBSTITUTE) $(srcdir)/mke2fs.conf.5.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/mke2fs.conf.5.in mke2fs.conf.5
++	$(SUBSTITUTE_UPTIME) $(srcdir)/mke2fs.conf.5.in mke2fs.conf.5
+ 
+ e2label.8: $(DEP_SUBSTITUTE) $(srcdir)/e2label.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/e2label.8.in e2label.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/e2label.8.in e2label.8
+ 
+ e2undo.8: $(DEP_SUBSTITUTE) $(srcdir)/e2undo.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/e2undo.8.in e2undo.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/e2undo.8.in e2undo.8
+ 
+ findfs.8: $(DEP_SUBSTITUTE) $(srcdir)/findfs.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/findfs.8.in findfs.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/findfs.8.in findfs.8
+ 
+ e2image.8: $(DEP_SUBSTITUTE) $(srcdir)/e2image.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/e2image.8.in e2image.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/e2image.8.in e2image.8
+ 
+ dumpe2fs.8: $(DEP_SUBSTITUTE) $(srcdir)/dumpe2fs.8.in 
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/dumpe2fs.8.in dumpe2fs.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/dumpe2fs.8.in dumpe2fs.8
+ 
+ badblocks.8: $(DEP_SUBSTITUTE) $(srcdir)/badblocks.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/badblocks.8.in badblocks.8	
++	$(SUBSTITUTE_UPTIME) $(srcdir)/badblocks.8.in badblocks.8	
+ 
+ fsck.8: $(DEP_SUBSTITUTE) $(srcdir)/fsck.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/fsck.8.in fsck.8 
++	$(SUBSTITUTE_UPTIME) $(srcdir)/fsck.8.in fsck.8 
+ 
+ blkid.8: $(DEP_SUBSTITUTE) $(srcdir)/blkid.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/blkid.8.in blkid.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/blkid.8.in blkid.8
+ 
+ logsave.8: $(DEP_SUBSTITUTE) $(srcdir)/logsave.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/logsave.8.in logsave.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/logsave.8.in logsave.8
+ 
+ uuidd.8: $(DEP_SUBSTITUTE) $(srcdir)/uuidd.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuidd.8.in uuidd.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuidd.8.in uuidd.8
+ 
+ chattr.1: $(DEP_SUBSTITUTE) $(srcdir)/chattr.1.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/chattr.1.in chattr.1 
++	$(SUBSTITUTE_UPTIME) $(srcdir)/chattr.1.in chattr.1 
+ 
+ lsattr.1: $(DEP_SUBSTITUTE) $(srcdir)/lsattr.1.in 
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/lsattr.1.in lsattr.1 
++	$(SUBSTITUTE_UPTIME) $(srcdir)/lsattr.1.in lsattr.1 
+ 
+ uuidgen.1: $(DEP_SUBSTITUTE) $(srcdir)/uuidgen.1.in 
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuidgen.1.in uuidgen.1 
++	$(SUBSTITUTE_UPTIME) $(srcdir)/uuidgen.1.in uuidgen.1 
+ 
+ blkid.1: $(DEP_SUBSTITUTE) $(srcdir)/blkid.1.in 
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/blkid.1.in blkid.1 
++	$(SUBSTITUTE_UPTIME) $(srcdir)/blkid.1.in blkid.1 
+ 
+ filefrag.8: $(DEP_SUBSTITUTE) $(srcdir)/filefrag.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/filefrag.8.in filefrag.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/filefrag.8.in filefrag.8
+ 
+ installdirs:
+ 	@echo "	MKINSTALLDIRS $(sbindir) $(root_sbindir) $(bindir) $(man1dir) $(man8dir) $(libdir) $(root_sysconfdir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(sbindir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(sbindir) \
+ 		$(DESTDIR)$(root_sbindir) $(DESTDIR)$(bindir) \
+ 		$(DESTDIR)$(man1dir) $(DESTDIR)$(man8dir) \
+ 		$(DESTDIR)$(man1dir) $(DESTDIR)$(man5dir) \
+@@ -394,19 +394,19 @@
+ 		$(INSTALL_PROGRAM) $$i $(DESTDIR)$(sbindir)/$$i; \
+ 	done
+ 	@echo "	LINK $(root_sbindir)/mkfs.ext2"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
+ 		$(DESTDIR)$(root_sbindir)/mkfs.ext2
+ 	@echo "	LINK $(root_sbindir)/mkfs.ext3"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
+ 		$(DESTDIR)$(root_sbindir)/mkfs.ext3
+ 	@echo "	LINK $(root_sbindir)/mkfs.ext4"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
+ 		$(DESTDIR)$(root_sbindir)/mkfs.ext4
+ 	@echo "	LINK $(root_sbindir)/mkfs.ext4dev"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/mke2fs \
+ 		$(DESTDIR)$(root_sbindir)/mkfs.ext4dev
+ 	@echo "	LINK $(root_sbindir)/e2label"
+-	@$(LN) -f $(DESTDIR)$(root_sbindir)/tune2fs \
++	$(LN) -f $(DESTDIR)$(root_sbindir)/tune2fs \
+ 		$(DESTDIR)$(root_sbindir)/e2label
+ 	@if test -n "$(FINDFS_LINK)"; then \
+ 		echo "  LINK $(root_sbindir)/findfs"; \
+@@ -428,19 +428,19 @@
+ 		echo "	INSTALL_DATA $(man8dir)/$$i"; \
+ 		$(INSTALL_DATA) $$i $(DESTDIR)$(man8dir)/$$i; \
+ 	done
+-	@$(RM) -f $(DESTDIR)$(man8dir)/mkfs.ext2.8.gz \
++	$(RM) -f $(DESTDIR)$(man8dir)/mkfs.ext2.8.gz \
+ 		$(DESTDIR)$(man8dir)/mkfs.ext3.8.gz
+ 	@echo "	LINK mkfs.ext2.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
+ 		$(DESTDIR)$(man8dir)/mkfs.ext2.8
+ 	@echo "	LINK mkfs.ext3.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
+ 		$(DESTDIR)$(man8dir)/mkfs.ext3.8
+ 	@echo "	LINK mkfs.ext4.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
+ 		$(DESTDIR)$(man8dir)/mkfs.ext4.8
+ 	@echo "	LINK mkfs.ext4dev.8"
+-	@$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
++	$(LN) -f $(DESTDIR)$(man8dir)/mke2fs.8 \
+ 		$(DESTDIR)$(man8dir)/mkfs.ext4dev.8
+ 	@for i in $(UMANPAGES); do \
+ 		for j in $(COMPRESS_EXT); do \
+diff -Naur e2fsprogs-1.41.7-old/po/Makefile.in.in e2fsprogs-1.41.7-new/po/Makefile.in.in
+--- e2fsprogs-1.41.7-old/po/Makefile.in.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/po/Makefile.in.in	2009-06-30 16:41:03.000000000 -0700
+@@ -293,7 +293,7 @@
+ distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+ dist distdir:
+ 	$(MAKE) update-po
+-	@$(MAKE) dist2
++	$(MAKE) dist2
+ # This is a separate target because 'update-po' must be executed before.
+ dist2: $(DISTFILES)
+ 	dists="$(DISTFILES)"; \
+diff -Naur e2fsprogs-1.41.7-old/resize/Makefile.in e2fsprogs-1.41.7-new/resize/Makefile.in
+--- e2fsprogs-1.41.7-old/resize/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/resize/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -35,30 +35,30 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) -c $(ALL_CFLAGS) $< -o $@
++	$(CC) -c $(ALL_CFLAGS) $< -o $@
+ 
+ all:: $(PROGS) $(TEST_PROGS) $(MANPAGES) 
+ 
+ resize2fs: $(RESIZE_OBJS) $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o resize2fs $(RESIZE_OBJS) $(LIBS) 
++	$(CC) $(ALL_LDFLAGS) -o resize2fs $(RESIZE_OBJS) $(LIBS) 
+ 
+ resize2fs.static: $(RESIZE_OBJS)  $(STATIC_DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) $(LDFLAG_STATIC) -o resize2fs.static \
++	$(LD) $(ALL_LDFLAGS) $(LDFLAG_STATIC) -o resize2fs.static \
+ 		$(RESIZE_OBJS) $(STATIC_LIBS) 
+ 
+ resize2fs.8: $(DEP_SUBSTITUTE) $(srcdir)/resize2fs.8.in
+ 	@echo "	SUBST $@"
+-	@$(SUBSTITUTE_UPTIME) $(srcdir)/resize2fs.8.in resize2fs.8
++	$(SUBSTITUTE_UPTIME) $(srcdir)/resize2fs.8.in resize2fs.8
+ 
+ test_extent: $(TEST_EXTENT_OBJS)
+ 	@echo "	LD $@"
+-	@$(CC) $(ALL_LDFLAGS) -o test_extent $(TEST_EXTENT_OBJS) $(LIBS) 
++	$(CC) $(ALL_LDFLAGS) -o test_extent $(TEST_EXTENT_OBJS) $(LIBS) 
+ 
+ installdirs:
+ 	@echo "	MKINSTALLDIRS $(root_sbindir) $(man8dir)"
+-	@$(MKINSTALLDIRS) $(DESTDIR)$(root_sbindir) \
++	$(MKINSTALLDIRS) $(DESTDIR)$(root_sbindir) \
+ 		$(DESTDIR)$(man8dir)
+ 
+ install: $(PROGS) $(MANPAGES) installdirs
+diff -Naur e2fsprogs-1.41.7-old/tests/progs/Makefile.in e2fsprogs-1.41.7-new/tests/progs/Makefile.in
+--- e2fsprogs-1.41.7-old/tests/progs/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/tests/progs/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -26,25 +26,25 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(CC) -c $(ALL_CFLAGS) $< -o $@
++	$(CC) -c $(ALL_CFLAGS) $< -o $@
+ 
+ all:: $(PROGS)
+ 
+ test_rel: $(TEST_REL_OBJS) $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) -o test_rel $(TEST_REL_OBJS) $(LIBS)
++	$(LD) $(ALL_LDFLAGS) -o test_rel $(TEST_REL_OBJS) $(LIBS)
+ 
+ test_rel_cmds.c: test_rel_cmds.ct
+ 	@echo "	MK_CMDS $@"
+-	@$(MK_CMDS) $(srcdir)/test_rel_cmds.ct
++	$(MK_CMDS) $(srcdir)/test_rel_cmds.ct
+ 
+ test_icount: $(TEST_ICOUNT_OBJS) $(DEPLIBS)
+ 	@echo "	LD $@"
+-	@$(LD) $(ALL_LDFLAGS) -o test_icount $(TEST_ICOUNT_OBJS) $(LIBS)
++	$(LD) $(ALL_LDFLAGS) -o test_icount $(TEST_ICOUNT_OBJS) $(LIBS)
+ 
+ test_icount_cmds.c: test_icount_cmds.ct
+ 	@echo "	MK_CMDS $@"
+-	@$(MK_CMDS) $(srcdir)/test_icount_cmds.ct
++	$(MK_CMDS) $(srcdir)/test_icount_cmds.ct
+ 
+ clean:
+ 	$(RM) -f $(PROGS) test_rel_cmds.c test_icount_cmds.c \
+diff -Naur e2fsprogs-1.41.7-old/util/Makefile.in e2fsprogs-1.41.7-new/util/Makefile.in
+--- e2fsprogs-1.41.7-old/util/Makefile.in	2009-06-30 16:39:53.000000000 -0700
++++ e2fsprogs-1.41.7-new/util/Makefile.in	2009-06-30 16:41:03.000000000 -0700
+@@ -15,7 +15,7 @@
+ 
+ .c.o:
+ 	@echo "	CC $<"
+-	@$(BUILD_CC) -c $(BUILD_CFLAGS) $< -o $@
++	$(BUILD_CC) -c $(BUILD_CFLAGS) $< -o $@
+ 
+ PROGS=		subst
+ 
+@@ -23,11 +23,11 @@
+ 
+ subst: subst.o
+ 	@echo "	LD $@"
+-	@$(BUILD_CC) $(BUILD_LDFLAGS) -o subst subst.o
++	$(BUILD_CC) $(BUILD_LDFLAGS) -o subst subst.o
+ 
+ copy_sparse: copy_sparse.o
+ 	@echo "	LD $@"
+-	@$(BUILD_CC) $(BUILD_LDFLAGS) -o copy_sparse copy_sparse.o
++	$(BUILD_CC) $(BUILD_LDFLAGS) -o copy_sparse copy_sparse.o
+ 
+ gen-tarball: $(srcdir)/gen-tarball.in $(top_builddir)/config.status
+ 	@echo "	CONFIG.STATUS $@"

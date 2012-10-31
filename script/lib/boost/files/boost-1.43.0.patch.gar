@@ -1,0 +1,24 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/boost_1_43_0/bootstrap.sh work/main.d/boost_1_43_0/bootstrap.sh
+--- tmp/boost_1_43_0/bootstrap.sh	2010-05-01 17:29:31.000000000 -0300
++++ new-boost_1_43_0/bootstrap.sh	2010-07-27 21:16:40.000000000 -0300
+@@ -9,7 +9,7 @@
+ 
+ BJAM=""
+ TOOLSET=""
+-BJAM_CONFIG=""
++BJAM_CONFIG="${PARALLELMFLAGS} link=shared"
+ BUILD=""
+ PREFIX=/usr/local
+ EPREFIX=
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/boost_1_43_0/tools/build/v2/tools/gcc.jam work/main.d/boost_1_43_0/tools/build/v2/tools/gcc.jam
+--- tmp/boost_1_43_0/tools/build/v2/tools/gcc.jam	2010-04-20 09:05:14.000000000 -0300
++++ new-boost_1_43_0/tools/build/v2/tools/gcc.jam	2010-07-27 21:18:25.000000000 -0300
+@@ -831,7 +831,7 @@
+ # does not have the same logic to set the .AR variable. We can put the same
+ # logic in intel-linux, but that's hardly worth the trouble as on Linux, 'ar' is
+ # always available.
+-.AR = ar ;
++#.AR = ar ;
+ .RANLIB = ranlib ;
+ 
+ toolset.flags gcc.archive AROPTIONS <archiveflags> ;

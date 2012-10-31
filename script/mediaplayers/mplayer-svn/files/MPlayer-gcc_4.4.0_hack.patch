@@ -1,0 +1,23 @@
+diff -Naur MPlayer-32716-old/configure MPlayer-32716-new/configure
+--- MPlayer-32716-old/configure	2010-12-16 07:17:36.000000000 -0800
++++ MPlayer-32716-new/configure	2010-12-16 07:17:36.000000000 -0800
+@@ -2511,8 +2511,8 @@
+ __attribute__((noinline)) static int foo3(int i1, int i2, int i3) { return i3; }
+ int main(void) { return foo3(1, 2, 3) == 3 ? 0 : 1; }
+ EOF
+-  cc_check -O4 -mstackrealign && tmp_run && cflags_stackrealign=-mstackrealign
+-  test -z "$cflags_stackrealign" && cc_check -O4 -mstackrealign -fno-unit-at-a-time \
++  cc_check -O2 -mstackrealign && tmp_run && cflags_stackrealign=-mstackrealign
++  test -z "$cflags_stackrealign" && cc_check -O2 -mstackrealign -fno-unit-at-a-time \
+     && tmp_run && cflags_stackrealign="-mstackrealign -fno-unit-at-a-time"
+   test -n "$cflags_stackrealign" && echores "yes" || echores "no"
+ fi # if darwin && test "$cc_vendor" = "gnu" ; then
+@@ -2535,7 +2535,7 @@
+   elif test "$cc_vendor" != "gnu" ; then
+     CFLAGS="-O2 $_march $_mcpu $_pipe"
+   else
+-    CFLAGS="-O4 $_march $_mcpu $_pipe -ffast-math -fomit-frame-pointer"
++    CFLAGS="-O2 $_march $_mcpu $_pipe -ffast-math -fomit-frame-pointer"
+     WARNFLAGS="-Wall -Wno-switch -Wno-parentheses -Wpointer-arith -Wredundant-decls"
+     extra_ldflags="$extra_ldflags -ffast-math"
+   fi

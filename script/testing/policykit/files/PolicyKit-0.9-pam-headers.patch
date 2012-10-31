@@ -1,0 +1,11 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/PolicyKit-0.9/src/polkit-dbus/polkit-resolve-exe-helper.c work/main.d/PolicyKit-0.9/src/polkit-dbus/polkit-resolve-exe-helper.c
+--- old-PolicyKit-0.9/src/polkit-dbus/polkit-resolve-exe-helper.c	2008-05-30 18:24:44.000000000 -0300
++++ new-PolicyKit-0.9/src/polkit-dbus/polkit-resolve-exe-helper.c	2009-04-20 15:10:34.000000000 -0300
+@@ -43,7 +43,6 @@
+ #ifdef HAVE_FREEBSD
+ #include <sys/param.h>
+ #endif
+-#include <security/pam_appl.h>
+ #include <grp.h>
+ #include <pwd.h>
+ #include <syslog.h>

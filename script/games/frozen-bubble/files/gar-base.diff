@@ -1,0 +1,24 @@
+diff --speed-large-files --minimal -Nru tmp/frozen-bubble-2.1.0/Makefile work/main.d/frozen-bubble-2.1.0/Makefile
+--- tmp/frozen-bubble-2.1.0/Makefile	2006-11-12 16:56:02.000000000 -0300
++++ work/main.d/frozen-bubble-2.1.0/Makefile	2008-05-17 12:48:12.000000000 -0300
+@@ -1,15 +1,16 @@
+ include settings.mk
+ 
+-DIRS = c_stuff po server
++DIRS = po server
++PERL = perl
+ 
+ all: prepare dirs
+ 
+ prepare:
+-	perl -ne "print \$$1 if m|\\\$$version = '(.*)';|" c_stuff/lib/fb_stuff.pm > VERSION
++	$(PERL) -ne "print \$$1 if m|\\\$$version = '(.*)';|" c_stuff/lib/fb_stuff.pm > VERSION
+ 
+ dirs:
+-	@if ! perl -e 'use SDL'; then echo -e "\n    *** I need perl-SDL installed"; false; fi
+-	@if ! perl -e 'use SDL; ($$mj, $$mn, $$mc) = split /\./, $$SDL::VERSION; exit 0 if $$mj > 1 || $$mn >= 19; exit 1'; then echo -e "\n    *** I need perl-SDL version 1.19.0 or upper"; false; fi
++	@#if ! perl -e 'use SDL'; then echo -e "\n    *** I need perl-SDL installed"; false; fi
++	@#if ! perl -e 'use SDL; ($$mj, $$mn, $$mc) = split /\./, $$SDL::VERSION; exit 0 if $$mj > 1 || $$mn >= 19; exit 1'; then echo -e "\n    *** I need perl-SDL version 1.19.0 or upper"; false; fi
+ 	@for n in . $(DIRS); do \
+ 		[ "$$n" = "." ] || $(MAKE) -C $$n || exit $$? ;\
+ 	done

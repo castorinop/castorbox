@@ -1,0 +1,34 @@
+Remove workaround for kernel headers, should work with current pristine
+kernel-headers. Without this capability.h provided by libcap can break
+build of other packages, like coreutils:
+
+In file included from /usr/include/bits/sigcontext.h:29,
+                 from /usr/include/signal.h:334,
+                 from ../lib/signal.h:35,
+                 from ls.c:67:
+/usr/include/asm/sigcontext.h:28: error: expected specifier-qualifier-list before '__u64'
+/usr/include/asm/sigcontext.h:191: error: expected specifier-qualifier-list before '__u64'
+make[3]: *** [ls.o] Error 1
+
+diff -p -up libcap-2.16/libcap/include/sys/capability.h.orig libcap-2.16/libcap/include/sys/capability.h
+--- libcap-2.16/libcap/include/sys/capability.h.orig	2009-03-05 11:19:00.000000000 -0300
++++ libcap-2.16/libcap/include/sys/capability.h	2009-03-05 11:19:38.000000000 -0300
+@@ -22,18 +22,6 @@ extern "C" {
+ #include <sys/types.h>
+ #include <stdint.h>
+ 
+-/*
+- * Make sure we can be included from userland by preventing
+- * capability.h from including other kernel headers
+- */
+-#define _LINUX_TYPES_H
+-#define _LINUX_FS_H
+-#define __LINUX_COMPILER_H
+-#define __user
+-
+-typedef unsigned int __u32;
+-typedef __u32 __le32;
+-
+ #include <linux/capability.h>
+ 
+ /*

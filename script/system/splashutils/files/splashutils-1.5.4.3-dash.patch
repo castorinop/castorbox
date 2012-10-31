@@ -1,0 +1,84 @@
+diff -Naur splashutils-1.5.4.3-old/configure.ac splashutils-1.5.4.3-new/configure.ac
+--- splashutils-1.5.4.3-old/configure.ac	2008-11-13 11:54:19.000000000 -0800
++++ splashutils-1.5.4.3-new/configure.ac	2010-08-28 07:04:23.000000000 -0700
+@@ -250,7 +250,7 @@
+   AS_HELP_STRING([--with-freetype2-src=DIR], [freetype2 source to use when linking with klibc]),
+   [
+ 	AS_IF(
+-	  [test "`echo ${withval} | sed -e 's,^/.*,,'`" = "${withval}"],
++	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+ 	  [LIBFREETYPE2_SOURCE="\$(abs_top_srcdir)/${withval}"],
+ 	  [LIBFREETYPE2_SOURCE="${withval}"]
+ 	)
+@@ -263,7 +263,7 @@
+   AS_HELP_STRING([--with-jpeg-src=DIR], [jpeglib source to use when linking with klibc]),
+   [
+ 	AS_IF(
+-	  [test "`echo ${withval} | sed -e 's,^/.*,,'`" = "${withval}"],
++	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+ 	  [LIBJPEG_SOURCE="\$(abs_top_srcdir)/${withval}"],
+ 	  [LIBJPEG_SOURCE="${withval}"]
+ 	)
+@@ -276,7 +276,7 @@
+   AS_HELP_STRING([--with-lpng-src=DIR], [libpng source to use when linking with klibc]),
+   [
+ 	AS_IF(
+-	  [test "`echo ${withval} | sed -e 's,^/.*,,'`" = "${withval}"],
++	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+ 	  [LIBPNG_SOURCE="\$(abs_top_srcdir)/${withval}"],
+ 	  [LIBPNG_SOURCE="${withval}"]
+ 	)
+@@ -289,7 +289,7 @@
+   AS_HELP_STRING([--with-zlib-src=DIR], [zlib source to use when linking with klibc]),
+   [
+ 	AS_IF(
+-	  [test "`echo ${withval} | sed -e 's,^/.*,,'`" = "${withval}"],
++	  [test "x`AS_ECHO([${withval}]) | $SED -e 's,^/.*,,'`" = "x${withval}"],
+ 	  [LIBZ_SOURCE="\$(abs_top_srcdir)/${withval}"],
+ 	  [LIBZ_SOURCE="${withval}"]
+ 	)
+@@ -300,7 +300,7 @@
+ 
+ AC_ARG_WITH([essential-prefix],
+   AS_HELP_STRING([--with-essential-prefix=ESPREFIX], [install essential files in ESPREFIX @<:@/@:>@]),
+-  [essential_prefix="$(echo ${withval} | sed -e 's#/$##')"],
++  [essential_prefix=`AS_ECHO([${withval}]) | $SED -e 's#/$##')`],
+   [essential_prefix="/"]
+ )
+ AC_SUBST([essential_prefix])
+@@ -414,7 +414,7 @@
+   ]
+ )
+ AS_IF(
+-  [test "x${JPEG_CFLAGS}" = "no"],
++  [test "x${JPEG_CFLAGS}" = "xno"],
+   [JPEG_CFLAGS=""]
+ )
+ AS_IF(
+@@ -427,7 +427,7 @@
+   ]
+ )
+ AS_IF(
+-  [test "x${JPEG_LIBS}" = "no"],
++  [test "x${JPEG_LIBS}" = "xno"],
+   [JPEG_LIBS=""]
+ )
+ AC_SUBST([JPEG_CFLAGS])
+@@ -450,7 +450,7 @@
+       ]
+     )
+     AS_IF(
+-      [test "x${GPM_CFLAGS}" = "no"],
++      [test "x${GPM_CFLAGS}" = "xno"],
+       [GPM_CFLAGS=""]
+     )
+     AS_IF(
+@@ -464,7 +464,7 @@
+       ]
+     )
+     AS_IF(
+-      [test "x${GPM_LIBS}" = "no"],
++      [test "x${GPM_LIBS}" = "xno"],
+       [GPM_LIBS=""]
+     )
+   ]

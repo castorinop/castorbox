@@ -1,0 +1,436 @@
+GAR Variables and their Uses 
+
+Probably the biggest hurdle for any new GAR Package maintainer is
+figuring out what all the variables are and how to use them.  This
+document attempts to catalog them all.
+
+= gar.conf.mk vars =
+
+=== DESTIMG ===
+
+Many of the variables in
+<http://cvs.lnx-bbc.org/cvs/gar/gar.conf.mk?rev=HEAD gar.conf.mk> are
+controlled by the value of DESTIMG.  Using different values of
+DESTIMG, it is possible to achieve vastly different configurations.
+Each such configuration specifies the parameters that packages use
+when they are installed into that particular filesystem image.  Its
+value is handled automatically, for the most part, and defaults to
+"main".
+
+Variables which are controlled by DESTIMG can be identified by the
+fact that they are set like this:
+
+----8<----
+foo = $($(DESTIMG)_foo)
+----8<----
+
+To override a variable in a particular image, prefix its name with the
+name of the image and an underscore.  For example if foo is controlled
+by DESTIMG and you want $(foo) to have the value "bar" in the "main"
+image, set the value of main_foo to "bar".
+
+=== prefix ===
+
+This is the directory, relative to the root of the final installed
+system, against which everything will be relative.  It is typically /
+or /usr.
+
+=== exec_prefix ===
+
+This is the root for architecture-specific files.  It is typically the
+same as $(prefix)
+
+=== bindir ===
+
+Where installed binaries go.  Usually $(exec_prefix)/bin
+
+=== sbindir ===
+
+Historically this was where statically linked programs went, but now
+it is used for system administration programs.  Typically
+$(exec_prefix)/sbin
+
+=== libexecdir ===
+
+This is where programs that will only be called from other programs
+are stored.  Some use $(bindir), while still others prefer something
+like $(prefix)/var/lib
+
+=== datadir ===
+
+This is where information that can be shared among machines via NFS is
+stored.  Typically $(prefix)/share
+
+=== sysconfdir ===
+
+This is the directory where system-wide configuration files go.
+Typically $(prefix)/etc
+
+=== sharedstatedir ===
+
+This is where information that can be shared among machines via NFS is
+stored.  Typically $(prefix)/share
+
+=== localstatedir ===
+
+This is the directory where variable data are stored.  Typically
+$(prefix)/var
+
+=== libdir ===
+
+This is where shared and static libraries are kept.  Defaults to
+$(exec_prefix)/lib
+
+=== infodir ===
+
+This is the standard directory for GNU Info files, which are a form of
+documentation.  Typically $(prefix)/info
+
+=== lispdir ===
+
+Possibly vestigial, modern autoconfs don't allow this as a switch.  It
+is included because an older version of the GNU make manual listed it
+as a standard path variable.  Defaults to
+$(prefix)/share/emacs/site-lisp
+
+=== includedir ===
+
+This is where header files are kept.  Typically $(prefix)/include
+
+=== mandir ===
+
+Where man (manual) pages are kept.  Typically $(prefix)/man
+
+=== docdir ===
+
+Not one of the standard GNU dir variables, this is provided to distinguish
+documentation from all the required-to-run /usr/share type files.
+Defaults to $(prefix)/share/doc
+
+=== sourcedir ===
+
+Again, not one of the standard GNU dir variables.  This is a location
+for packages to install source code in order that other packages can
+find it.  Defaults to $(prefix)/src
+
+=== DESTDIR ===
+
+This is the location relative to the root of the /build system/ where
+files will be installed.  This is different from the $(prefix) var in
+that $(DESTDIR) defines where the dirs will be at /install time/,
+while $(prefix) defines what the prefix will be at /runtime/.  These
+two are different for the BBC because of chroot magic and the fact
+that we're building a filesystem that will later become the root.   
+
+The value of DESTDIR is dependent on the value of DESTIMG, and should
+be different for each defined image.
+
+=== BUILD_PREFIX ===
+
+BUILD_PREFIX is deprecated.  The following is kept for nostalgia
+value:
+
+Sometimes files should be installed in order to assist a build, but
+won't be needed at runtime.  The BBC GAR tree uses this prefix for
+documentation and headers. In addition, BUILD_DEPS will be installed
+into this prefix.  Because of the DESTDIR/prefix relationship, this
+dir must be relative to the $(DESTDIR), with enough /..'s prepended to
+it to get back to the host system's /.
+
+The default is $(ROOTFROMDEST)/tmp/build, which uses the ROOTFROMDEST
+variable to calculate the number of /..'s necessary.  This allows it
+to survive changes in DESTDIR that happen with some targets (such as
+tarball).
+
+=== ROOTFROMDEST ===
+
+This variable does transformations on DESTDIR to create the correct
+number of /..'s to get to the host system's root.  That is,
+$(ROOTFROMDEST)$(DESTDIR) should be equivalent to / on the host
+system.  It is largely useful for making a proper BUILD_PREFIX.
+
+=== Compiler Flags ===
+
+These three standard variables are used by the C compiler.  We append
+switches to tell the compiler to look in our install directories for
+our custom-compiled libraries.
+
+==== CPPFLAGS ====
+
+==== CFLAGS ====
+
+==== LDFLAGS ====
+
+=== FILE_SITES ===
+
+This contains a space-separated list of file:// URLs to locations
+where downloadable files (source archives and patches) on the local
+system.
+
+=== MASTER_SITES ===
+
+We append a master download site to the end of this variable, in the
+event that both the $(FILE_SITES) and the URLs supplied by the GAR
+package's Makefile have all failed.
+
+= Garball Makefile vars =
+
+These vars must be set inside a package Makefile in order to define
+the package's behavior.
+
+=== GARNAME ===
+
+The name of the package, such as "grep" or "nwall"
+
+=== GARVERSION ===
+
+The version number of the upstream package, such as 2.4.2 or 1.31
+
+=== CATEGORIES ===
+
+The categories the package is in, starting with the one whose dir it
+resides in.
+
+=== MAINTAINER ===
+
+A valid e-mail address as would appear in mail headers, such as 
+
+----8<----
+MAINTAINER = Nick Moffitt <nick@zork.net>
+----8<----
+
+=== DESCRIPTION ===
+
+A short, one-line description of the package.
+
+=== BLURB ===
+
+A longer description of the package, set using the define directive
+like so:
+
+
+----8<----
+define BLURB 
+ nwall is a system-local chat program based on BSD wall.  It logs
+ chat, as well as providing opt-out lockfiles for users who want to be
+ alerted to system walls, but do not want to be distracted by the
+ nwall chatter.  
+endef
+----8<----
+
+
+=== DISTFILES ===
+
+A list of all the files to be downloaded, such as
+$(GARNAME)-$(GARVERSION).tar.gz (incidentally, this can be shortened
+to $(DISTNAME).tar.gz).
+
+=== MASTER_SITES ===
+
+A list of URLs to the directories where the $(DISTFILES) may be found.  
+
+=== CONFIGURE_SCRIPTS ===
+
+A list of all of the scripts used in configuration of a package.  The
+most common case is $(WORKSRC)/configure for autoconf-using packages.
+
+=== BUILD_SCRIPTS ===
+
+A list of all of the scripts used to compile or build a package.
+Typically this is $(WORKSRC)/Makefile
+
+=== INSTALL_SCRIPTS ===
+
+A list of all of the scripts used to install a package.  Typically
+this is $(WORKSRC)/Makefile or manifest.
+
+=== Environment Setting Vars ===
+
+These three vars allow one to set environment variables on the command
+line when the given _SCRIPTS are run.  This may be useful in some
+cases, but is often not the best way of doing things.
+
+==== CONFIGURE_ENV ====
+
+==== BUILD_ENV ====
+
+==== INSTALL_ENV ====
+
+=== Script Argument Vars ===
+
+These three vars allow one to provide arguments that will come /last/
+on the command line when the given _SCRIPTS are run.  
+
+==== CONFIGURE_ARGS ====
+
+==== BUILD_ARGS ====
+
+==== INSTALL_ARGS ====
+
+=== BUILD_OVERRIDE_DIRS ===
+
+---8<---
+BUILD_OVERRIDE_DIRS = prefix includedir
+---8<---
+
+is equivalent to
+
+---8<---
+BUILD_ARGS = prefix=$(prefix) includedir=$(includedir)
+---8<---
+
+It makes use of the fact that variables set on the make command line
+(instead of in the environment) actually trump variable assignments
+performed within a Makefile.
+
+It's useful for packages that follow most of the GNU Makefile
+standards, but not all.  
+
+=== INSTALL_OVERRIDE_DIRS ===
+
+---8<---
+INSTALL_OVERRIDE_DIRS = prefix includedir
+---8<---
+
+is equivalent to
+
+---8<---
+INSTALL_ARGS = prefix=$(DESTDIR)$(prefix)
+includedir=$(DESTDIR)$(includedir)
+---8<---
+
+It makes use of the fact that variables set on the make command line
+(instead of in the environment) actually trump variable assignments
+performed within a Makefile.
+
+It's useful for packages that follow most of the GNU Makefile
+standards, but not all.  Typically it's used in cases where autoconf
+was used, but not automake, so the Makefile.in doesn't honor DESTDIR.
+
+=== DEP vars ===
+
+These vars define package dependencies.  The general format is a
+space-separated list of category/package tuples.
+
+==== DEPENDS ====
+
+This lists general programs and packages that are needed.
+
+==== LIBDEPS ====
+
+This lists libraries that are needed.
+
+==== BUILDDEPS ====
+
+This lists dependencies that aren't actually to be installed on the
+final system, but are needed to build the package.
+
+= Working Dir Variables and Convenience Macros =
+
+Most of these are read-only variables that can be used in package
+Makefiles.
+
+=== GARDIR ===
+
+This is the path to the directory where the gar library makefiles can
+be found.  It's currently not very robust, and is relative to the
+package dir.
+
+=== FILEDIR ===
+
+This is the name of a directory where one may permanently store files
+that will outlive a "make clean".  It is especially useful when one
+adds file://$(FILEDIR)/ to FILE_SITES.
+
+Defaults to files
+
+=== DOWNLOADDIR ===
+
+This is where files downloaded in the "make fetch" phase will be
+stored.
+
+Defaults to download
+
+=== COOKIEDIR ===
+
+This is where cookie files indicating progress are stored.
+
+Defaults to cookies
+
+=== WORKDIR ===
+
+This is where working files are put and archives extracted.
+
+Defaults to work
+
+=== WORKSRC ===
+
+This is the directory where the actual source code and build scripts
+for a package will be extracted.  
+
+Defaults to $(WORKDIR)/$(DISTNAME)
+
+=== EXTRACTDIR ===
+
+This is the directory that the system will temporarily cd into before
+running an extract.
+
+Defaults to $(WORKDIR)
+
+=== SCRATCHDIR ===
+
+This is a temporary directory currently unused by anything, but may be
+useful in future.
+
+Defaults to tmp
+
+=== CHECKSUM_FILE ===
+
+This is the name of the checksums file used to store the md5 checksums
+that are consulted in the "make checksum" stage.
+
+Defaults to checksums
+
+=== MANIFEST_FILE ===
+
+This is the name of the manifest file used in manifest-based installs.
+
+Defaults to manifest
+
+=== DISTNAME ===
+
+This is a convenience variable that expands out to
+$(GARNAME)-$(GARVERSION)
+
+=== ALLFILES ===
+
+This is a  convenience variable that expands out to $(DISTFILES)
+$(PATCHFILES)
+
+=== INSTALL_DIRS ===
+
+This variable lists all of the directories that will be used for
+installation, notably those listed in
+<http://cvs.lnx-bbc.org/cvs/gar/gar.conf.mk?rev=HEAD gar.conf.mk>.
+All are listed beginning with the $(DESTDIR)
+
+=== MAKECOOKIE ===
+
+This macro is used at the end of each rule that is only to be run
+once.  It touches a cookie for the rule that used it.  All rules that
+appear in a package makefile must use this at the end to avoid
+repetition!
+
+=== DIRPATHS ===
+
+This contains all of the path vars set in
+<http://cvs.lnx-bbc.org/cvs/gar/gar.conf.mk?rev=HEAD gar.conf.mk>
+formatted as command-line switches to a configure script (as in
+--prefix=$(prefix) --includedir=$(includedir)).  It is most often used
+as the value of CONFIGURE_ARGS 
+
+=== NODIRPATHS ===
+
+This contains the switches not to be included in DIRPATHS.
+
+Defaults to --lispdir (note the format).

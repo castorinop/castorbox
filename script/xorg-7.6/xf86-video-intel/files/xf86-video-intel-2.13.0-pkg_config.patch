@@ -1,0 +1,21 @@
+diff -Naur xf86-video-intel-2.13.0-old/configure.ac xf86-video-intel-2.13.0-new/configure.ac
+--- xf86-video-intel-2.13.0-old/configure.ac	2010-09-30 08:45:46.000000000 -0700
++++ xf86-video-intel-2.13.0-new/configure.ac	2010-09-30 15:32:51.000000000 -0700
+@@ -43,6 +43,7 @@
+ # Initialize libtool
+ AC_DISABLE_STATIC
+ AC_PROG_LIBTOOL
++PKG_PROG_PKG_CONFIG
+ 
+ PKG_CHECK_MODULES(GEN4ASM, [intel-gen4asm >= 1.0], [gen4asm=yes], [gen4asm=no])
+ AM_CONDITIONAL(HAVE_GEN4ASM, test x$gen4asm = xyes)
+@@ -82,7 +83,8 @@
+ PKG_CHECK_MODULES(DRM, [libdrm >= 2.4.22])
+ PKG_CHECK_MODULES(PCIACCESS, [pciaccess >= 0.10])
+ 
+-sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
++m4_pattern_allow([^PKG_CONFIG_SYSROOT_DIR$])
++sdkdir="$PKG_CONFIG_SYSROOT_DIR$($PKG_CONFIG --variable=sdkdir xorg-server)"
+ 
+ save_CFLAGS="$CFLAGS"
+ CFLAGS="$XORG_CFLAGS $DRI_CFLAGS $DRM_CFLAGS"

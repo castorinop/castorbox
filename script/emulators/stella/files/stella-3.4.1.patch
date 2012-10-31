@@ -1,0 +1,38 @@
+diff -Naur stella-3.4.1-old/configure stella-3.4.1-new/configure
+--- stella-3.4.1-old/configure	2011-04-16 16:39:31.000000000 -0700
++++ stella-3.4.1-new/configure	2011-06-12 12:53:52.000000000 -0700
+@@ -31,10 +31,10 @@
+ _build_profile=no
+ 
+ # more defaults
+-_ranlib=ranlib
++_ranlib="${RANLIB:-'ranlib'}"
+ _install=install
+-_ar="ar cru"
+-_strip=strip
++_ar="${AR:-'ar'} cru"
++_strip="${STRIP:-'strip'}"
+ _mkdir="mkdir -p"
+ _echo=printf
+ _cat=cat
+@@ -101,7 +101,7 @@
+ 	# In cross-compiling mode, we cannot run the result
+ 	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+ else
+-	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
++	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+ fi
+ }
+ 
+diff -Naur stella-3.4.1-old/Makefile stella-3.4.1-new/Makefile
+--- stella-3.4.1-old/Makefile	2011-04-22 11:57:20.000000000 -0700
++++ stella-3.4.1-new/Makefile	2011-06-12 12:53:52.000000000 -0700
+@@ -163,7 +163,7 @@
+ 
+ install: all
+ 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
+-	$(INSTALL) -c -s -m 755 "$(srcdir)/stella$(EXEEXT)" "$(DESTDIR)$(BINDIR)/stella$(EXEEXT)"
++	$(INSTALL) -c -m 755 "$(srcdir)/stella$(EXEEXT)" "$(DESTDIR)$(BINDIR)/stella$(EXEEXT)"
+ 	$(INSTALL) -d "$(DESTDIR)$(DOCDIR)"
+ 	$(INSTALL) -c -m 644 "$(srcdir)/Announce.txt" "$(srcdir)/Changes.txt" "$(srcdir)/Copyright.txt" "$(srcdir)/License.txt" "$(srcdir)/README-SDL.txt" "$(srcdir)/Readme.txt" "$(srcdir)/Todo.txt" "$(srcdir)/docs/index.html" "$(srcdir)/docs/debugger.html" "$(DESTDIR)$(DOCDIR)/"
+ 	$(INSTALL) -d "$(DESTDIR)$(DOCDIR)/graphics"

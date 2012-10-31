@@ -1,0 +1,33 @@
+diff -Naur libgcrypt-1.4.6-old/src/libgcrypt-config.in libgcrypt-1.4.6-new/src/libgcrypt-config.in
+--- libgcrypt-1.4.6-old/src/libgcrypt-config.in	2009-04-02 02:25:32.000000000 -0700
++++ libgcrypt-1.4.6-new/src/libgcrypt-config.in	2010-08-10 09:39:14.000000000 -0700
+@@ -12,6 +12,7 @@
+ # File: @configure_input@
+ 
+ # General.
++DESTDIR=@GAR_DESTDIR@
+ prefix="@prefix@"
+ exec_prefix="@exec_prefix@"
+ version="@VERSION@"
+@@ -126,8 +127,8 @@
+     cflags_final="$cflags"
+ 
+     # Set up `includes'.
+-    if test "x$includedir" != "x/usr/include" -a "x$includedir" != "x/include"; then
+-	includes="-I$includedir"
++    if test "x$DESTDIR$includedir" != "x@GAR_DESTDIR@@GAR_includedir@"; then
++	includes="-I$DESTDIR$includedir"
+     fi
+     # Set up `cflags_final'.
+     cflags_final="$cflags_final $gpg_error_cflags"
+@@ -146,8 +147,8 @@
+     libs_final="$libs"
+ 
+     # Set up `libdirs'.
+-    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/lib"; then
+-	libdirs="-L$libdir"
++    if test "x$DESTDIR$libdir" != "x@GAR_DESTDIR@@GAR_libdir@" -a "x$DESTDIR$libdir" != "x@GAR_DESTDIR@@GAR_elibdir"; then
++	libdirs="-L$DESTDIR$libdir"
+     fi
+ 
+     # Set up `libs_final'.

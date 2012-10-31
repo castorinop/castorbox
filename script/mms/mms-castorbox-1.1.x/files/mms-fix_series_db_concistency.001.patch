@@ -1,0 +1,48 @@
+=== modified file 'plugins/feature/movie/series.cpp'
+--- old/plugins/feature/movie/series.cpp	2010-03-02 13:53:21 +0000
++++ new/plugins/feature/movie/series.cpp	2010-07-09 14:54:45 +0000
+@@ -46,7 +46,6 @@
+ #endif
+ 
+   set_folders();
+-  check_db_consistency();
+ 
+   S_BackgroundUpdater::get_instance()->run_once(boost::bind(&Series::scan, this));
+   S_BackgroundUpdater::get_instance()->run_once(boost::bind(&Series::getUpdates, this));
+@@ -129,6 +128,7 @@
+ void Series::scan()
+ {
+   scanning = true;
++  check_db_consistency();
+   check_for_changes();
+   series = getSeries();
+   loaded_correctly = true;
+@@ -531,7 +509,7 @@
+ }
+ 
+ void Series::updated_db() {
+-  if (scanning)
++  if (scanning || !visible)
+     return;
+ 
+   string serie_str = vector_lookup(series, pos_serie).name;
+@@ -1265,14 +1239,14 @@
+ 
+ void Series::check_db_consistency()
+ {
+-  db_mutex.enterMutex();
+ 
+-  if (!db.hasTable("Episode")) {
+-    db_mutex.leaveMutex();
++  if (!db.hasTable("Files")) {
+     return;
+   }
+ 
+-  SQLQuery *q = db.query("Files", "SELECT id, filename FROM %t WHERE present = 1");
++  db_mutex.enterMutex();
++  SQLQuery *q = db.query("Files", "SELECT filename FROM %t WHERE present = 1");
++  db_mutex.leaveMutex();
+   if (q && q->numberOfTuples() >  0) { 
+     for (int i = 0; i < q->numberOfTuples(); ++i) {
+       string filename = (*q)[i]["filename"].c_str();
+

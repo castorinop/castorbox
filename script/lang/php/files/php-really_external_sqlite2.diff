@@ -1,0 +1,26 @@
+--- old/ext/sqlite/config.m4	2007-04-19 08:42:28.000000000 +0200
++++ new/ext/sqlite/config.m4.oden	2007-06-11 13:14:20.000000000 +0200
+@@ -86,7 +86,6 @@
+     ])
+     SQLITE_MODULE_TYPE=external
+     PHP_SQLITE_CFLAGS=$pdo_inc_path
+-    sqlite_extra_sources="libsqlite/src/encode.c"
+   else
+     # use bundled library
+     PHP_PROG_LEMON
+@@ -109,14 +108,13 @@
+   dnl
+   dnl Common for both bundled/external
+   dnl
+-  sqlite_sources="sqlite.c sess_sqlite.c pdo_sqlite2.c $sqlite_extra_sources" 
++  sqlite_sources="sqlite.c sess_sqlite.c pdo_sqlite2.c" 
+   PHP_NEW_EXTENSION(sqlite, $sqlite_sources, $ext_shared,,$PHP_SQLITE_CFLAGS)
+   PHP_ADD_EXTENSION_DEP(sqlite, spl, true)
+   PHP_ADD_EXTENSION_DEP(sqlite, pdo, true)
+ 
+   PHP_ADD_MAKEFILE_FRAGMENT
+   PHP_SUBST(SQLITE_SHARED_LIBADD)
+-  PHP_INSTALL_HEADERS([$ext_builddir/libsqlite/src/sqlite.h])
+   
+   if test "$SQLITE_MODULE_TYPE" = "builtin"; then
+     PHP_ADD_BUILD_DIR($ext_builddir/libsqlite/src, 1)

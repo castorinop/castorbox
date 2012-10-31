@@ -1,0 +1,11 @@
+--- old/configure.orig	2010-07-29 18:19:00.000000000 -0300
++++ new/configure	2010-07-29 18:19:19.000000000 -0300
+@@ -16364,7 +16364,7 @@
+   if test "$found" = "yes"; then
+     ac_libs=$LIBS
+     LIBS="$LIBS -ldl"
+-    if test "$cross_compiling" = yes; then :
++    if test "$cross_compiling" = ignore_yes; then :
+   found=no
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext

@@ -1,0 +1,13 @@
+7e27e535c2d267637df34898f1b91707  download/MPlayer-1.0rc2.tar.bz2
+332f97eb6f08e745b3493c2d283856cc  download/MPlayer-1.0rc2-demux_audio_fix_20080129.patch
+33aee5c3fbc4d3ba42d4ffc53606efd6  download/MPlayer-1.0rc2-demux_mov_fix_20080129.patch
+9539a18b849b74b1b4b4fc4f1a390793  download/MPlayer-1.0rc2-url_fix_20080120.patch
+8d18842541ecd6fcec9444abcb505930  download/MPlayer-1.0rc2-stream_cddb_fix_20080120.patch
+155aa3fe7df4362114a139c7bbe40d8c  download/MPlayer-1.0rc2-gcc_4.4.0_hack.patch
+a30833d71de46f3cbb0232e5780414d7  download/MPlayer-1.0rc2-liba52_external.patch
+2bfbfb499c46cb5eb7297d7e06b2a86e  download/MPlayer-1.0rc2-libdvdread_udf.patch
+9421a56499d498bd5c07d0744582064d  download/MPlayer-1.0rc2-dvdnav.patch
+d41d8cd98f00b204e9800998ecf8427e  download/MPlayer-1.0rc2-openchrome.patch
+d4f952ba2f7be738c499cdd28034f577  download/MPlayer-1.0rc2-x11_headers.patch
+dddcdb34f6fb526b8d006921a43f1203  download/MPlayer-1.0rc2-cross-i386.patch
+6555b48e9fe6775cf95d5d5cae13ff64  download/MPlayer-1.0rc2-cross-x86_64.patch

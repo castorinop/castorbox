@@ -1,0 +1,12 @@
+diff -Naur xine-ui-0.99.6-old/configure.ac xine-ui-0.99.6-new/configure.ac
+--- xine-ui-0.99.6-old/configure.ac	2010-05-04 09:39:38.000000000 -0700
++++ xine-ui-0.99.6-new/configure.ac	2010-05-04 09:41:58.000000000 -0700
+@@ -615,7 +615,7 @@
+ dnl
+ dnl Some include paths ( !!! DO NOT REMOVE !!! )
+ dnl
+-INCLUDES='-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src -I$(top_builddir)/src -I$(top_srcdir)/src/common -I$(top_builddir)/src/common -I$(top_srcdir)/src/xitk/xine-toolkit -I$(top_builddir)/src/xitk/xine-toolkit -I$(prefix)/include $(INTLDIR)'
++INCLUDES='-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src -I$(top_builddir)/src -I$(top_srcdir)/src/common -I$(top_builddir)/src/common -I$(top_srcdir)/src/xitk/xine-toolkit -I$(top_builddir)/src/xitk/xine-toolkit -I@GAR_DESTDIR@@GAR_includedir@ $(INTLDIR)'
+ AC_SUBST(INCLUDES)
+ 
+ AC_DEFINE(NEED_MRLBROWSER,,[Define this to add mrl browser into xitk lib])

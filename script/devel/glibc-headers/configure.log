@@ -1,0 +1,151 @@
+[===== NOW BUILDING:	glibc-headers-2.11.2	=====]
+	[fetch] complete for glibc-headers.
+	[checksum] complete for glibc-headers.
+	[extract] complete for glibc-headers.
+	[patch] complete for glibc-headers.
+cd work/main.d/glibc-2.11.2_build && DESTDIR="/home/pablo/gar-castorbox/images/main" CC="gcc" CXX="g++" LD="ld" AR="ar" AS="as" OBJDUMP="objdump" RANLIB="ranlib" .//../../../work/main.d/glibc-2.11.2/configure --prefix=/usr --exec_prefix=/usr --bindir=/usr/bin --sbindir=/usr/sbin --libexecdir=/usr/libexec --datadir=/usr/share --sysconfdir=/etc --sharedstatedir=/usr/share --localstatedir=/var --libdir=/usr/lib --infodir=/usr/info --includedir=/usr/include --oldincludedir=/usr/include --mandir=/usr/share/man --build=x86_64-manbo-linux-gnu --host=i586-castorbox-linux-gnu --disable-sanity-checks --enable-kernel=2.6.34 --with-binutils=//home/pablo/gar-castorbox/images/build/usr/bin --without-cvs --with-headers=/home/pablo/gar-castorbox/images/main/usr/include --disable-add-ons --without-tls --without-__thread
+checking build system type... x86_64-manbo-linux-gnu
+checking host system type... i586-castorbox-linux-gnu
+checking for i586-castorbox-linux-gnu-gcc... gcc
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking for gcc... gcc
+checking how to run the C preprocessor... gcc -E
+checking whether we are using the GNU C++ compiler... yes
+checking whether g++ accepts -g... yes
+checking sysdep dirs... sysdeps/i386/elf sysdeps/unix/sysv/linux/i386 sysdeps/unix/sysv/linux sysdeps/gnu sysdeps/unix/common sysdeps/unix/mman sysdeps/unix/inet sysdeps/unix/sysv/i386 sysdeps/unix/sysv sysdeps/unix/i386 sysdeps/unix sysdeps/posix sysdeps/i386/i586 sysdeps/i386/i486 sysdeps/i386/fpu sysdeps/i386 sysdeps/wordsize-32 sysdeps/ieee754/ldbl-96 sysdeps/ieee754/dbl-64 sysdeps/ieee754/flt-32 sysdeps/ieee754 sysdeps/generic/elf sysdeps/generic
+checking for a BSD-compatible install... //home/pablo/gar-castorbox/images/build/usr/bin/install -c
+checking whether ln -s works... yes
+checking for i586-castorbox-linux-gnu-ranlib... ranlib
+checking whether as is GNU as... yes
+checking whether ld is GNU ld... yes
+checking for as... as
+checking version of as... 2.20.51.0.9.20100526, ok
+checking for ld... ld
+checking version of ld... 2.20.51.0.9.20100526, ok
+checking for pwd... //home/pablo/gar-castorbox/images/build/usr/bin/pwd
+checking for i586-castorbox-linux-gnu-gcc... (cached) gcc
+checking version of gcc... 4.5.1, ok
+checking for gnumake... no
+checking for gmake... no
+checking for make... make
+checking version of make... 3.81, ok
+checking for gnumsgfmt... no
+checking for gmsgfmt... no
+checking for msgfmt... msgfmt
+checking version of msgfmt... 0.18.1, ok
+checking for makeinfo... makeinfo
+checking version of makeinfo... 4.13, ok
+checking for sed... sed
+checking version of sed... 4.2.1, ok
+checking for autoconf... autoconf
+checking whether autoconf works... yes
+CC=gcc: /usr/bin/gcc /usr/bin/gcc4.4-version /usr/lib/gcc
+PATH=/home/pablo/gar-castorbox/images/main/usr/bin-config://home/pablo/gar-castorbox/images/build/sbin://home/pablo/gar-castorbox/images/build/bin://home/pablo/gar-castorbox/images/build/usr/sbin://home/pablo/gar-castorbox/images/build/usr/bin://home/pablo/gar-castorbox/images/build/usr/lib/qt/bin:/://home/pablo/gar-castorbox/images/build/bin-build-system
+call gcc -print-file-name=include
+return /include
+sysinclude=/include
+call gcc -print-file-name=include-fixed
+return /home/pablo/gar-castorbox/images/build/usr/lib/gcc/x86_64-manbo-linux-gnu/4.5.1/include-fixed
+sysinclude=/home/pablo/gar-castorbox/images/build/usr/lib/gcc/x86_64-manbo-linux-gnu/4.5.1/include-fixed
+checking whether ranlib is necessary... no
+checking LD_LIBRARY_PATH variable... ok
+checking whether GCC supports -static-libgcc... -static-libgcc
+checking for bash... //home/pablo/gar-castorbox/images/build/bin/bash
+checking for gawk... gawk
+checking for perl... //home/pablo/gar-castorbox/images/build/usr/bin/perl
+checking for install-info... //home/pablo/gar-castorbox/images/build/usr/bin/install-info
+checking for bison... //home/pablo/gar-castorbox/images/build/usr/bin/bison
+checking for signed size_t type... no
+checking for libc-friendly stddef.h... yes
+checking whether we need to use -P to assemble .S files... no
+checking whether .text pseudo-op must be used... yes
+checking for assembler global-symbol directive... .globl
+checking for .set assembler directive... yes
+checking for assembler .type directive prefix... @
+checking for assembler gnu_unique_object symbol type... yes
+checking for .symver assembler directive... yes
+checking for ld --version-script... yes
+checking for .previous assembler directive... yes
+checking for .protected and .hidden assembler directive... yes
+checking whether __attribute__((visibility())) is supported... yes
+checking for broken __attribute__((visibility()))... no
+checking for broken __attribute__((alias()))... no
+checking whether to put _rtld_local into .sdata section... no
+checking for .preinit_array/.init_array/.fini_array support... yes
+checking for libunwind-support in compiler... no
+checking for -z nodelete option... yes
+checking for -z nodlopen option... yes
+checking for -z initfirst option... yes
+checking for -z relro option... yes
+checking for -Bgroup option... yes
+checking for libgcc_s suffix... 
+checking for --as-needed option... yes
+checking whether --noexecstack is desirable for .S files... yes
+checking for -z combreloc... yes
+checking for -z execstack... yes
+checking for -fpie... yes
+checking for --hash-style option... yes
+checking for -fno-toplevel-reorder -fno-section-anchors... yes
+checking for -fstack-protector... yes
+checking for -fgnu89-inline... yes
+checking whether cc puts quotes around section names... no
+checking for assembler .weak directive... yes
+checking whether CFI directives are supported... yes
+checking for ld --no-whole-archive... yes
+checking for gcc -fexceptions... yes
+checking for __builtin_expect... yes
+checking for __builtin_memset... yes
+checking for redirection of built-in functions... yes
+checking for libgd... no
+checking for is_selinux_enabled in -lselinux... no
+checking for grep that handles long lines and -e... //home/pablo/gar-castorbox/images/build/usr/bin/grep
+checking for egrep... //home/pablo/gar-castorbox/images/build/usr/bin/grep -E
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking size of long double... 16
+running configure fragment for sysdeps/i386/elf
+running configure fragment for sysdeps/unix/sysv/linux
+checking for grep that handles long lines and -e... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/grep
+checking for egrep... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/grep -E
+checking installed Linux kernel header files... 2.0.10 or later
+checking for kernel header at least 2.6.34... ok
+*** WARNING: Are you sure you do not want to use the `nptl'
+*** add-on?
+running configure fragment for sysdeps/i386
+checking for grep that handles long lines and -e... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/grep
+checking for egrep... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/grep -E
+checking for ANSI C header files... (cached) yes
+checking for sys/types.h... (cached) yes
+checking for sys/stat.h... (cached) yes
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking for memory.h... (cached) yes
+checking for strings.h... (cached) yes
+checking for inttypes.h... (cached) yes
+checking for stdint.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking cpuid.h usability... yes
+checking cpuid.h presence... yes
+checking for cpuid.h... yes
+checking if -g produces usable source locations for assembler-with-cpp... yes
+checking for SSE4 support... yes
+checking for old glibc 2.0.x headers... no
+checking whether -fPIC is default... no
+configure: creating ./config.status
+config.status: creating config.make
+config.status: creating Makefile
+config.status: creating config.h
+config.status: config.h is unchanged
+config.status: executing default commands
+	[configure] complete for glibc-headers.

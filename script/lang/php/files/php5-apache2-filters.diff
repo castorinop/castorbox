@@ -1,0 +1,84 @@
+
+ Description: Enables mod_php to manually add apache output filters
+ Author: Paul Querna
+ URL: http://www.outoforder.cc/projects/apache/mod_transform/patches/php5-apache2-filters.patch
+      http://www.outoforder.cc/presentations/apachecon2004/mod_transform/tu19_mod_transform_slides.pdf
+ 
+diff -Naurp php-5.3.0RC1/sapi/apache2handler/php_functions.c php-5.3.0RC1.oden/sapi/apache2handler/php_functions.c
+--- php-5.3.0RC1/sapi/apache2handler/php_functions.c	2009-01-19 20:32:40.000000000 +0100
++++ php-5.3.0RC1.oden/sapi/apache2handler/php_functions.c	2009-03-27 12:08:05.000000000 +0100
+@@ -216,6 +216,65 @@ PHP_FUNCTION(apache_response_headers)
+ }
+ /* }}} */
+ 
++/* {{{ proto array apache_get_output_filters()
++   Get All Active Output filters */
++PHP_FUNCTION(apache_get_output_filters)
++{
++       ap_filter_t* ff;
++       php_struct *ctx;
++
++       if (ZEND_NUM_ARGS() != 0) {
++               WRONG_PARAM_COUNT;
++       }
++
++       if(array_init(return_value) != SUCCESS)
++       {
++               RETURN_NULL();
++       }
++
++       ctx = SG(server_context);
++
++       ff = ctx->r->output_filters;
++
++       do {
++               add_next_index_string(return_value, ff->frec->name, 1);
++               ff = ff->next ;
++       } while (ff);
++
++}
++/* }}} */
++
++/* {{{ proto bool apache_add_output_filter(string filter_name)
++   Add an output filter to this request */
++PHP_FUNCTION(apache_add_output_filter)
++{
++       php_struct *ctx;
++       int arg_count = ZEND_NUM_ARGS();
++       zval **filter_name;
++       ap_filter_rec_t* ap_filter;
++
++       if (arg_count != 1 ||
++               zend_get_parameters_ex(arg_count, &filter_name) == FAILURE) {
++               WRONG_PARAM_COUNT;
++       }
++
++       ctx = SG(server_context);
++
++       convert_to_string_ex(filter_name);
++
++        ap_filter = ap_get_output_filter_handle(Z_STRVAL_PP(filter_name));
++
++        /* requested output filter was not found */
++       if(ap_filter == NULL) {
++               RETURN_FALSE;
++       }
++       else {
++               ap_add_output_filter_handle(ap_filter, NULL, ctx->r, ctx->r->connection);
++               RETURN_TRUE;
++       }
++}
++/* }}} */
++
+ /* {{{ proto string apache_note(string note_name [, string note_value])
+    Get and set Apache request notes */
+ PHP_FUNCTION(apache_note)
+@@ -516,6 +575,8 @@ ZEND_END_ARG_INFO()
+ static const zend_function_entry apache_functions[] = {
+ 	PHP_FE(apache_lookup_uri, 		arginfo_apache2handler_lookup_uri)
+ 	PHP_FE(virtual, 				arginfo_apache2handler_virtual) 
++ 	PHP_FE(apache_get_output_filters, NULL)
++ 	PHP_FE(apache_add_output_filter, NULL)
+ 	PHP_FE(apache_request_headers, 	arginfo_apache2handler_getallheaders)
+ 	PHP_FE(apache_response_headers, arginfo_apache2handler_response_headers)
+ 	PHP_FE(apache_setenv, 		arginfo_apache2handler_setenv)

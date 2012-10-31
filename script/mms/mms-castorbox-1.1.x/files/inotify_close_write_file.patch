@@ -1,0 +1,82 @@
+=== modified file 'notify.cpp'
+--- old/notify.cpp	2008-08-31 01:05:03 +0000
++++ new/notify.cpp	2008-09-16 17:52:15 +0000
+@@ -156,7 +156,7 @@
+ 	    // teach inotifytools about new dir added...
+ 	    inotifytools_remove_watch_by_filename(dir.c_str());
+ 	    inotifytools_watch_recursively(dir.c_str(), IN_CREATE | IN_DELETE | IN_DELETE_SELF |
+-					   IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_UNMOUNT);
++					   IN_CLOSE_WRITE | IN_MODIFY | IN_MOVE_SELF | IN_MOVE | IN_UNMOUNT);
+ 	  }
+ 	  add_notification(item.plugin_name, type, str_filename);
+ 	  found_match = true;
+@@ -204,7 +204,7 @@
+ 
+ bool Notify::valid_type(const string& type)
+ {
+-  return (type == "DELETE" || type == "DELETE_SELF" || type == "CREATE" || type == "CREATE,ISDIR" || type == "MODIFY" || type.find("MOVED_TO") != string::npos || type.find("MOVED_FROM") != string::npos);
++  return (type == "DELETE" || type == "DELETE_SELF" || type == "CREATE" || type == "CREATE,ISDIR" || type == "MODIFY" || type == "CLOSE_WRITE,CLOSE" || type.find("MOVED_TO") != string::npos || type.find("MOVED_FROM") != string::npos);
+ }
+ 
+ NotifyUpdate::NotifyUpdate(const string& plugin, const string& t, const string& the_path)
+@@ -222,6 +222,8 @@
+     type = MODIFY_FILE;
+   else if (t == "MOVED_TO")
+     type = MOVE;
++  else if (t == "CLOSE_WRITE,CLOSE")
++    type = WRITE_CLOSE_FILE;
+   else
+     type = UNKNOWN;
+ 
+=== modified file 'notify.hpp'
+--- old/notify.hpp	2008-08-31 01:05:03 +0000
++++ new/notify.hpp	2008-09-16 17:50:09 +0000
+@@ -14,7 +14,7 @@
+ class NotifyUpdate
+ {
+ public:
+-  enum notify_update_type { DELETE_FILE = 0, DELETE_DIR, CREATE_FILE, CREATE_DIR, MODIFY_FILE, MOVE, UNKNOWN };
++  enum notify_update_type { DELETE_FILE = 0, DELETE_DIR, CREATE_FILE, CREATE_DIR, MODIFY_FILE, MOVE, WRITE_CLOSE_FILE, UNKNOWN };
+   notify_update_type type;
+   std::string path;
+   std::string plugin_name;
+
+=== modified file 'plugins/feature/game/game.cpp'
+--- old/plugins/feature/game/game.cpp	2008-09-09 22:43:01 +0000
++++ new/plugins/feature/game/game.cpp	2008-09-16 17:29:13 +0000
+@@ -417,7 +417,7 @@
+   if (dir[dir.size()-1] != '/')
+     dir = dir.substr(0, dir.rfind('/')+1);
+   
+-  if (type != NotifyUpdate::MODIFY_FILE)
++  if (type != NotifyUpdate::MODIFY_FILE && type != NotifyUpdate::CREATE_FILE)
+     reload_dir(dir);
+ 
+   foreach (string& p, folders.top().first)
+
+=== modified file 'plugins/feature/movie/movie.hpp'
+--- old/plugins/feature/movie/movie.hpp	2008-09-09 22:43:01 +0000
++++ new/plugins/feature/movie/movie.hpp	2008-09-16 17:29:13 +0000
+@@ -438,7 +438,7 @@
+     if (dir[dir.size()-1] != '/')
+       dir = dir.substr(0, dir.rfind('/')+1);
+ 
+-    if (type != NotifyUpdate::MODIFY_FILE)
++    if (type != NotifyUpdate::MODIFY_FILE && type != NotifyUpdate::CREATE_FILE)
+       reload_dir(dir);
+ 
+     foreach (std::string& p, folders.top().first)
+
+=== modified file 'plugins/feature/picture/pictures.cpp'
+--- old/plugins/feature/picture/pictures.cpp	2008-09-09 22:43:01 +0000
++++ new/plugins/feature/picture/pictures.cpp	2008-09-16 17:29:13 +0000
+@@ -2768,7 +2768,7 @@
+   if (dir[dir.size()-1] != '/')
+     dir = dir.substr(0, dir.rfind('/')+1);
+   
+-  if (type != NotifyUpdate::MODIFY_FILE)
++  if (type != NotifyUpdate::MODIFY_FILE && type != NotifyUpdate::CREATE_FILE)
+     reload_dir(dir);
+ 
+   foreach (string& p, folders.top().first)
+

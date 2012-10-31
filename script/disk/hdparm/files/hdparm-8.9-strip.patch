@@ -1,0 +1,11 @@
+diff -Naur hdparm-8.9-old/Makefile hdparm-8.9-new/Makefile
+--- old/hdparm-8.9-old/Makefile	2008-06-02 09:58:29.000000000 -0700
++++ hdparm-8.9-new/Makefile	2008-06-16 18:14:17.000000000 -0700
+@@ -29,7 +29,6 @@
+ 
+ hdparm: hdparm.h sgio.h $(OBJS)
+ 	$(CC) $(LDFLAGS) -o hdparm $(OBJS)
+-	strip hdparm
+ 
+ sgio.o:	sgio.h
+ 

@@ -1,0 +1,18 @@
+diff --speed-large-files --minimal -Nru tmp/CriticalMass-1.0.2/configure.in work/main.d/CriticalMass-1.0.2/configure.in
+--- CriticalMass-1.0.2/configure.in	2006-07-15 22:48:18.000000000 -0300
++++ CriticalMass-1.0.2/configure.in	2007-07-14 21:56:12.000000000 -0300
+@@ -80,10 +80,10 @@
+ fi
+ 
+ AC_CHECK_LIB(SDL, main,
+-    LIBS="$LIBS `sdl-config --libs`" ; \
+-    CFLAGS="$CFLAGS `sdl-config --cflags`" ; \
+-    CXXFLAGS="$CXXFLAGS `sdl-config --cflags`" ; \
+-    HAVE_SDL=1, AC_MSG_ERROR(SDL is needed), `sdl-config --libs`)
++    LIBS="$LIBS `$(DESTDIR)/$(bindir)/sdl-config --libs`" ; \
++    CFLAGS="$CFLAGS `$(DESTDIR)/$(bindir)/sdl-config --cflags`" ; \
++    CXXFLAGS="$CXXFLAGS `$(DESTDIR)/$(bindir)/sdl-config --cflags`" ; \
++    HAVE_SDL=1, AC_MSG_ERROR(SDL is needed), `$(DESTDIR)/$(bindir)/sdl-config --libs`)
+ 
+ AC_CHECK_LIB(SDL_image, main, LIBS="$LIBS -lSDL_image", 
+     AC_MSG_ERROR(SDL_image is needed))

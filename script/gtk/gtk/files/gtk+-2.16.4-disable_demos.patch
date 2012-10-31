@@ -1,0 +1,24 @@
+diff -Naur gtk+-2.16.4-old/Makefile.am gtk+-2.16.4-new/Makefile.am
+--- gtk+-2.16.4-old/Makefile.am	2009-07-01 12:11:52.000000000 -0700
++++ gtk+-2.16.4-new/Makefile.am	2009-07-03 07:53:03.000000000 -0700
+@@ -1,7 +1,7 @@
+ ## Makefile.am for GTK+
+ include $(top_srcdir)/Makefile.decl
+ 
+-SRC_SUBDIRS = gdk-pixbuf gdk gtk modules demos tests perf contrib
++SRC_SUBDIRS = gdk-pixbuf gdk gtk modules tests perf contrib
+ SUBDIRS = po po-properties $(SRC_SUBDIRS) docs m4macros
+ 
+ # require automake 1.4
+diff -Naur gtk+-2.16.4-old/Makefile.in gtk+-2.16.4-new/Makefile.in
+--- gtk+-2.16.4-old/Makefile.in	2009-07-01 14:09:42.000000000 -0700
++++ gtk+-2.16.4-new/Makefile.in	2009-07-03 07:53:03.000000000 -0700
+@@ -527,7 +527,7 @@
+ 	&& DISPLAY=:$$XID && export DISPLAY
+ 
+ 
+-SRC_SUBDIRS = gdk-pixbuf gdk gtk modules demos tests perf contrib
++SRC_SUBDIRS = gdk-pixbuf gdk gtk modules tests perf contrib
+ SUBDIRS = po po-properties $(SRC_SUBDIRS) docs m4macros
+ 
+ # require automake 1.4

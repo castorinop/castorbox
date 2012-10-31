@@ -1,0 +1,80 @@
+diff -Naur sdlmame0125-old/makefile sdlmame0125-new/makefile
+--- old/sdlmame0125-old/makefile	2008-05-05 05:44:38.000000000 -0700
++++ sdlmame0125-new/makefile	2008-05-05 08:16:39.000000000 -0700
+@@ -127,10 +127,10 @@
+ # BIGENDIAN = 1
+ 
+ # uncomment next line to build expat as part of MAME build
+-BUILD_EXPAT = 1
++# BUILD_EXPAT = 1
+ 
+ # uncomment next line to build zlib as part of MAME build
+-BUILD_ZLIB = 1
++# BUILD_ZLIB = 1
+ 
+ # uncomment next line to include the symbols
+ # SYMBOLS = 1
+@@ -200,11 +200,11 @@
+ endif
+ 
+ # compiler, linker and utilities
+-AR = @ar
+-CC = @gcc
+-LD = @gcc
+-MD = -mkdir$(EXE)
+-RM = @rm -f
++AR ?= ar
++CC ?= gcc
++LD = $(CC)
++MD = mkdir$(EXE) -p
++RM = rm -f
+ 
+ 
+ 
+@@ -340,7 +340,7 @@
+ ifneq ($(OPTIMIZE),0)
+ CFLAGS += $(ARCHOPTS) -fno-strict-aliasing
+ ifneq ($(TARGETOS),os2)
+-CFLAGS += -Werror
++#CFLAGS += -Werror
+ endif
+ endif
+ 
+diff -Naur sdlmame0125-old/src/osd/sdl/sdl.mak sdlmame0125-new/src/osd/sdl/sdl.mak
+--- old/sdlmame0125-old/src/osd/sdl/sdl.mak	2008-03-10 16:40:14.000000000 -0700
++++ sdlmame0125-new/src/osd/sdl/sdl.mak	2008-05-05 08:16:39.000000000 -0700
+@@ -206,8 +206,8 @@
+ endif
+ 
+ ifndef SDL_INSTALL_ROOT
+-CFLAGS += `sdl-config --cflags`
+-LIBS += -lm `sdl-config --libs` $(LIBGL)
++CFLAGS += `@GAR_DESTDIR@@GAR_bindir@/sdl-config --cflags`
++LIBS += -lm `@GAR_DESTDIR@@GAR_bindir@/sdl-config --libs` $(LIBGL)
+ else
+ CFLAGS += -I$(SDL_INSTALL_ROOT)/include
+ LIBS += -lm -L$(SDL_INSTALL_ROOT)/lib -Wl,-rpath,$(SDL_INSTALL_ROOT)/lib -lSDL $(LIBGL)
+@@ -226,10 +226,10 @@
+ endif # DEBUGGER
+ 
+ # make sure we can find X headers
+-CFLAGS += -I/usr/X11/include -I/usr/X11R6/include -I/usr/openwin/include
++CFLAGS +=
+ # some systems still put important things in a different prefix
+ ifndef NO_X11
+-LIBS += -L/usr/X11/lib -L/usr/X11R6/lib -L/usr/openwin/lib
++LIBS +=
+ endif
+ endif # Unix
+ 
+@@ -276,8 +276,8 @@
+ 
+ # OS2: add the necessary libraries
+ ifeq ($(TARGETOS),os2)
+-CFLAGS += `sdl-config --cflags`
+-LIBS += `sdl-config --libs`
++CFLAGS += `@GAR_DESTDIR@@GAR_bindir@/sdl-config --cflags`
++LIBS += `@GAR_DESTDIR@@GAR_bindir@/sdl-config --libs`
+ endif # OS2
+ 
+ TOOLS += \

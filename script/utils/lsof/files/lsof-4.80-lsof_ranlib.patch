@@ -1,0 +1,15 @@
+diff -Naur lsof_4.80_src-old/Configure lsof_4.80_src-new/Configure
+--- lsof_4.80_src-old/Configure	2008-05-12 05:39:16.000000000 -0700
++++ lsof_4.80_src-new/Configure	2008-06-23 04:44:04.000000000 -0700
+@@ -159,7 +159,10 @@
+ LSOF_LIB_NO=""
+ LSOF_LINUX_INCL=""
+ LSOF_PL=""
+-LSOF_RANLIB="ranlib \${LIB}"
++if test "X$LSOF_RANLIB" = "X"	# {
++then
++  LSOF_RANLIB="ranlib \${LIB}"
++fi	# }
+ LSOF_SCRIPT_CALL="yes"
+ LSOF_SPMKF=""
+ LSOF_TMP1=""

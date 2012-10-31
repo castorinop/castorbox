@@ -1,0 +1,663 @@
+=== modified file 'plugins/feature/audio/audio.cpp'
+--- old/plugins/feature/audio/audio.cpp	2009-09-13 18:36:22 +0000
++++ new/plugins/feature/audio/audio.cpp	2009-09-14 00:35:56 +0000
+@@ -41,6 +41,19 @@
+ using std::vector;
+ using std::string;
+ 
++/* void ScreenSaverLoop::run()
++{
++   Audio *audio = get_class<Audio>(dgettext("mms-audio", "Audio"));
++   Lyrics *lyrics = S_Lyrics::get_instance();
++
++  while(true) {
++    lyrics->update_px_count();
++    audio->print_audio_fullscreen();
++    mmsUsleep( audio->check_audio_fullscreen() * 1000 ); // ms
++  }
++} */
++
++
+ Audio::Audio()
+   : exit_loop(false), change_mode(false),
+     printing_information(false),
+@@ -85,7 +98,7 @@
+   screensaver_lyrics_artist_font = graphics::resolution_dependant_font_wrapper(24, conf);
+   screensaver_lyrics_album_font = graphics::resolution_dependant_font_wrapper(21, conf);
+   screensaver_lyrics_normal_font = graphics::resolution_dependant_font_wrapper(18, conf);
+-  screensaver_lyric_font = graphics::resolution_dependant_font_wrapper(22, conf);
++  screensaver_lyrics_font = graphics::resolution_dependant_font_wrapper(14, conf);
+ 
+   screensaver_artist_font = graphics::resolution_dependant_font_wrapper(28, conf);
+   screensaver_album_font = graphics::resolution_dependant_font_wrapper(25, conf);
+@@ -105,6 +118,7 @@
+   screensaver_lyrics_artist_font_height = graphics::calculate_font_height(screensaver_lyrics_artist_font, conf);
+   screensaver_lyrics_album_font_height = graphics::calculate_font_height(screensaver_lyrics_album_font, conf);
+   screensaver_lyrics_normal_font_height = graphics::calculate_font_height(screensaver_lyrics_normal_font, conf);
++  screensaver_lyrics_font_height = graphics::calculate_font_height(screensaver_lyrics_font, conf);
+ }
+ 
+ void Audio::set_folders()
+@@ -168,6 +182,9 @@
+ 
+     if (audio_state->p->is_playing()) {
+       was_playing = true;
++      //render->show_audio_track = false;
++      //audio_state->has_played = true;
++      
+       was_paused = audio_state->p_pause();
+       audio_state->suspend_playback();
+     }
+@@ -183,7 +200,7 @@
+   if (was_started) {
+ 
+     was_started = false;
+-
++    //render->show_audio_track = true;
+     if (was_playing) {
+       audio_state->restore_playback();
+ 
+@@ -194,6 +211,8 @@
+ 	audio_state->p->pause();
+     }
+   }
++   
++
+ }
+ 
+ void Audio::check_mount_before(const std::string& type)
+@@ -1123,7 +1142,6 @@
+ void Audio::print_audiotrack()
+ {
+   if (audio_conf->p_audio_started()) {
+-
+     if (!render->show_audio_track && audio_state->has_played) {
+       render->wait_and_aquire();
+       audio_state->has_played = false;
+@@ -1345,6 +1363,10 @@
+ 
+     get_audiotrack_info(buffer, artist, album, title);
+ 
++    Lyrics *lyrics = S_Lyrics::get_instance();
++    lyrics->set_total_time(audio_state->p->p_total_time());
++    lyrics->set_current_time(audio_state->p->p_cur_time());
++
+     if (is_screensaver_lyrics())
+       print_audio_screensaver_lyrics(artist, album, title, buffer);
+     else
+@@ -1466,43 +1488,42 @@
+   }
+   
+   y += screensaver_lyrics_normal_font_height*1/3;
+-  audio_state->playback_fullscreen.add(new PObj("shadow-up.png", 0 , y, conf->p_h_res(), 60, true, 2));
+-  audio_state->playback_fullscreen.add(new PObj("shadow-down.png", 0 , conf->p_v_res() - 60, conf->p_h_res(), 60, true, 2));
++  audio_state->playback_fullscreen.add(new PObj("shadow-up.png", 0 , y, conf->p_h_res(), screensaver_lyrics_font_height * 2, true, 2));
++  audio_state->playback_fullscreen.add(new PObj("shadow-down.png", 0 , conf->p_v_res() - screensaver_lyrics_font_height * 2, 
++			conf->p_h_res(), screensaver_lyrics_font_height * 2, true, 2));
+   if (audio_state->p->p_cur_nr().type != "web")
+-    y += screensaver_lyrics_normal_font_height;
++  y += screensaver_lyrics_normal_font_height;
+   y += 5;
+ 
+   string current_lyric;
+ 
+   Lyrics *lyrics = S_Lyrics::get_instance();
+ 
+-  lyrics->set_total_time(audio_state->p->p_total_time());
++   if (audio_state->p_playing()) {
++      if (!audio_state->p_pause() ) {
++        lyrics->play();
++      } else {
++        lyrics->pause();
++      }
++    }
++  lyrics->update_px_count();
+ 
+   if (lyrics->is_enabled()) {
+-    lyrics->set_display_height(conf->p_v_res() - y - 60); // Fixed : - calculate with bottom border as for shadow
++    lyrics->set_display_height(conf->p_v_res() - y - screensaver_lyrics_font_height * 2); // Fixed : - calculate with bottom border as for shadow
+ 
+     std::vector<std::string>::iterator itVectorData;
+     itVectorData = lyrics->vecLyric.begin();
+ 
+-    if (audio_state->p_playing()) {
+-      if (!audio_state->p_pause() ) {
+-        lyrics->play();
+-	lyrics->set_current_time(audio_state->p->p_cur_time());
+-      } else {
+-        lyrics->pause();
+-      }
+-    }
+-
+     int y_pos, y_curr = 0;
+     if (lyrics->get_displace()) {
+ 
+       current_lyric = (lyrics->get_displace() > 0 ? "+" : "") + conv::itos(lyrics->get_displace());
+ 
+-      string_format::format_to_size(current_lyric, screensaver_lyric_font, conf->p_h_res()-50, false);
+-
+-      std::pair<int, int> size = string_format::calculate_string_size(current_lyric, screensaver_lyric_font);
+-
+-      audio_state->playback_fullscreen.add(new TObj(current_lyric, screensaver_lyric_font,
++      string_format::format_to_size(current_lyric, screensaver_lyrics_font, conf->p_h_res()-50, false);
++
++      std::pair<int, int> size = string_format::calculate_string_size(current_lyric, screensaver_lyrics_font);
++
++      audio_state->playback_fullscreen.add(new TObj(current_lyric, screensaver_lyrics_font,
+ #ifdef use_notify_area
+ 		(conf->p_h_res() - size.first - 10) , y + (conf->p_v_res() - y - NotifyArea::height) /2 - size.second/2,
+ #else
+@@ -1512,6 +1533,7 @@
+ 		themes->audio_playback_font2,
+ 		themes->audio_playback_font3, 1));
+     }
++    //std::cout << "Audio::print_audio_screensaver_lyrics " << lyrics->get_line() << ", " << lyrics->vecLyric.size() << std::endl;
+ 
+     int blank_lines = lyrics->display_lines() - 1;
+     unsigned int t;
+@@ -1523,11 +1545,11 @@
+ 
+       current_lyric = t < blank_lines ? " " : lyrics->vecLyric[t - blank_lines]; 
+ 
+-      string_format::format_to_size(current_lyric, screensaver_lyric_font, conf->p_h_res()-50, false);
+-
+-      std::pair<int, int> size = string_format::calculate_string_size(current_lyric, screensaver_lyric_font);
+-
+-      audio_state->playback_fullscreen.add(new TObj(current_lyric, screensaver_lyric_font,
++      string_format::format_to_size(current_lyric, screensaver_lyrics_font, conf->p_h_res()-50, false);
++
++      std::pair<int, int> size = string_format::calculate_string_size(current_lyric, screensaver_lyrics_font);
++
++      audio_state->playback_fullscreen.add(new TObj(current_lyric, screensaver_lyrics_font,
+ 						    (conf->p_h_res() /2 - size.first/2), y_pos,
+ 						    themes->audio_playback_font1,
+ 						    themes->audio_playback_font2,
+@@ -1541,11 +1563,11 @@
+ 
+         current_lyric = lyrics->vecLyric[t - blank_lines]; 
+ 
+-        string_format::format_to_size(current_lyric, screensaver_lyric_font, conf->p_h_res()-50, false);
+-
+-        std::pair<int, int> size = string_format::calculate_string_size(current_lyric, screensaver_lyric_font);
+-
+-        audio_state->playback_fullscreen.add(new TObj(current_lyric, screensaver_lyric_font,
++        string_format::format_to_size(current_lyric, screensaver_lyrics_font, conf->p_h_res()-50, false);
++
++        std::pair<int, int> size = string_format::calculate_string_size(current_lyric, screensaver_lyrics_font);
++
++        audio_state->playback_fullscreen.add(new TObj(current_lyric, screensaver_lyrics_font,
+                               (conf->p_h_res() /2 - size.first/2), y_pos,
+                               themes->audio_playback_font1,
+                               themes->audio_playback_font2,
+@@ -1675,9 +1697,11 @@
+ 
+ int Audio::check_audio_fullscreen()
+ {
++  //std::cout << "Audio::check_audio_fullscreen()" << std::endl;
+   Lyrics *lyrics = S_Lyrics::get_instance();
+-
+-  return (opts.lyrics() == dgettext("mms-audio", "yes") && lyrics->is_enabled() ? static_cast<int>(lyrics->get_period()) : 250); // ms
++  // use period only if screensaver are running
++  return (opts.lyrics() == dgettext("mms-audio", "yes") && lyrics->is_enabled() ? 
++	lyrics->get_period() : 250.0); // ms
+ }
+ 
+ void Audio::show_lyrics()
+
+=== modified file 'plugins/feature/audio/audio.hpp'
+--- old/plugins/feature/audio/audio.hpp	2009-09-13 18:36:22 +0000
++++ new/plugins/feature/audio/audio.hpp	2009-09-14 01:03:03 +0000
+@@ -42,6 +42,12 @@
+ #include <cassert>
+ #include "CD_Tag.h"
+ 
++class ScreenSaverLoop : public ost::Thread
++{
++private:
++  virtual void run();
++};
++
+ class Audio : public Module
+ {
+   friend class AudioPlayer;
+@@ -330,7 +336,7 @@
+   std::string screensaver_lyrics_artist_font;
+   std::string screensaver_lyrics_album_font;
+   std::string screensaver_lyrics_normal_font;
+-  std::string screensaver_lyric_font;
++  std::string screensaver_lyrics_font;
+ 
+   std::string screensaver_artist_font;
+   std::string screensaver_album_font;
+@@ -345,7 +351,7 @@
+   int screensaver_lyrics_artist_font_height;
+   int screensaver_lyrics_album_font_height;
+   int screensaver_lyrics_normal_font_height;
+-  int screensaver_lyric_font_height;
++  int screensaver_lyrics_font_height;
+ 
+   int screensaver_artist_font_height;
+   int screensaver_album_font_height;
+@@ -2281,7 +2287,7 @@
+           global->playback_in_fullscreen = true;
+           audio_state->playback_fullscreen_shown = true;
+           print_audio_screensaver();
+-          ts = time_helper::compute_interval(50); /* next loop in 1/20 second */
++          ts = time_helper::compute_interval(check_audio_fullscreen()); /* next loop in 1/4 second */
+           continue;
+         }
+         else { /* we got a time-out but either there has been a new key pressed, or mms is not playing */
+
+=== modified file 'plugins/feature/audio/lyrics.cpp'
+--- old/plugins/feature/audio/lyrics.cpp	2009-09-12 09:09:26 +0000
++++ new/plugins/feature/audio/lyrics.cpp	2009-09-14 01:04:04 +0000
+@@ -36,16 +36,17 @@
+   Lyrics *lyrics = S_Lyrics::get_instance();
+   while(true) {
+     lyrics->update_px_count();
+-    mmsUsleep(lyrics->get_period()*1000); // ms
++    std::cout << "LyricsLoop " << lyrics->get_frequency() << ", "<< lyrics->get_period() << std::endl;
++    mmsUsleep( (lyrics->is_running() ? lyrics->get_period() : 250) * 1000 ); // ms
+   }
+ }
+ 
+ Lyrics::Lyrics()
+-  : enabled(false), running(false), lf(0)
++  : enabled(false), running(false), lf(0), direction(LYR_STOP)
+ {
+   vecLyric.clear();
+ 
+-  string screensaver_lyric_font = "Vera/" + conv::itos(resolution_dependant_font_size(22, conf->p_v_res()));
++  string screensaver_lyric_font = "Vera/" + conv::itos(resolution_dependant_font_size(14, conf->p_v_res()));
+ 
+   std::pair<int, int> size =  string_format::calculate_string_size("(asdfghjkjlASDFGHJKL):", screensaver_lyric_font);
+ 
+@@ -54,9 +55,6 @@
+   ScreenUpdater *screen_updater = S_ScreenUpdater::get_instance();
+   screen_updater->timer.add(TimeElement("audio_lyric_status", boost::bind(&Lyrics::idle_status, this),
+ 					boost::bind(&Lyrics::check_status, this)));
+-  LyricsLoop *ll = new LyricsLoop;
+-  ll->start();
+-
+ }
+ 
+ int Lyrics::idle_status()
+@@ -69,17 +67,11 @@
+   if (enabled) {
+     if (lf && !lf->is_busy() && lf->get_ready()) {
+ 	vecLyric = lf->get_lyric();
++	std::cout << "Lyrics::check_status OK! RUN! " << std::endl;
++        get_frequency();
+ 	enabled = false;
+     }
+   }
+-  
+-/*  
+-    std::cout << "Lyrics::check_status()" << std::endl;
+-    Load() || search_result();
+-    if (buff_text.size() && !vecLyric.size())
+-      parse_text(buff_text);
+-  }
+-  enabled = false;*/
+ }
+ 
+ string Lyrics::mainloop()
+@@ -96,13 +88,18 @@
+   cache_artist = artist;
+   cache_title = title;
+   vecLyric.clear();
+-  px_count = 0;
++  px_current = 0;
+   tm_old = 0;
+-  total_time = 0;
+-  current_time = 0;
++  time_total = 0;
++  time_current = 0;
+   display_height = 0;
++  ln_start_delay = 0;
+   ln_displace = 0;
+-  period_fix = 0;
++  period.clear();
++  per = 1;
++  frequency = 0;
++  error = 0;
++  old_error = 0;
+   enabled = true;
+ 
+   if (lf != 0)
+@@ -118,12 +115,16 @@
+   return (vecLyric.size() ? true : false);
+ }
+ 
++bool Lyrics::is_running()
++{
++  return running;
++}
++
+ void Lyrics::set_displace(int step)
+ {
+   int nvalue = ln_displace + step;
+   if (std::abs(nvalue) < vecLyric.size() - display_lines())
+     ln_displace += step;
+-  px_count = float(current_time) * get_frequency(); // FORCE PIXEL COUNT IF CHANGE LN_DISPLACE
+ }
+ 
+ int Lyrics::get_displace()
+@@ -133,33 +134,69 @@
+ 
+ int Lyrics::get_total_lines()
+ {
+-  return vecLyric.size() + display_lines() - ln_displace;
++  return vecLyric.size();
+ }
+ 
+ void Lyrics::set_total_time(int time)
+ {
+-  total_time = time;
++  if (time_total == 0) {
++    time_total = time;
++  }
+ }
+ 
+ void Lyrics::set_current_time(int time)
+ {
+-  current_time = time;
+-
+-  if (total_time != 0) {
+-    int df = current_time - tm_old;
++
++  if (time == time_current) 
++	return;
++
++  if (frequency != 0) {
++    int tm = time * 100 / time_total;
++    int df = tm - tm_old;
++    time_current = time;
++  
++    px_should_be = time_total ? (time_current + 1) * px_total / time_total : 0;
++
+     // resync lyric with track time when rewind or fastforward
+-    if (std::abs(df) > 1) {
+-      px_count = current_time * get_frequency();
++    if (tm_old == 0) {
++      px_current = px_should_be; // time * frequency;
++      std::cout << "Lyrics, setting px_current = " << px_current << std::endl;
+     }
+-    tm_old = current_time;
++
++    pixel_diff = px_should_be + (ln_displace * font_size ) - px_current;
++    old_error = error;
++    error =  (pixel_diff >= 0 ? 1 : -1) * pow((std::abs(pixel_diff)), 1.2) / ( frequency /2);
++
++    std::cout << "Lyrics " << direction 
++	<< ", px = " <<  px_anim_min << " < " <<  px_current << ", (" << px_should_be << ") < " << px_anim_max  
++	<< ",  diff =  " << (px_should_be - px_current) << ", " << error 
++	<< ", freq=" << frequency << ", f+e=" << (frequency + error)
++	<< ", " << per << std::endl;
++
++
++    tm_old = tm;
++/*  if (error * 2 > frequency)
++    error = pow (error, 2); */
++    
+   } else
+-    px_count = 0;
++    px_current = 0;
+ }
+ 
+ void Lyrics::update_px_count()
+ {
+-  if (running && get_line() < max_line())
+-    px_count++;
++  if (running) {
++    if (direction == LYR_DOWN) {
++	if (px_current < px_anim_max) 
++	  px_current++;
++	else 
++          direction == LYR_STOP;
++    } else if (direction == LYR_UP) {
++	if (px_current > 0) 
++	  px_current--;
++	else 
++	  direction == LYR_STOP;
++    } // NOTHING TO LYR_STOP;
++  }
+ }
+ 
+ void Lyrics::play()
+@@ -175,23 +212,91 @@
+ 
+ void Lyrics::set_display_height(int h)
+ {
++  if (display_height == h && h != 0)
++    return;
++
+   display_height = h;
++  int px_disp_half= (h/2);
++  px_anim_min = int(px_disp_half / font_size) * font_size;
++  px_anim_max = int((px_total - px_disp_half)/font_size) * font_size;
++
++}
++
++void Lyrics::get_direction() 
++{
++    direction = pixel_diff >= -1 * font_size ? LYR_DOWN : LYR_UP;
+ }
+ 
+ float Lyrics::get_frequency()
+ {
+-  float pixel = float(get_total_lines()) * float(font_size);
+-  float freq  = total_time ? pixel / (total_time) : 0;
+-  return freq;
+-}
++
++  
++  if (frequency == 0) {
++    px_total  = get_total_lines() * font_size + px_anim_min;
++    if (time_total <= 0 || px_total <= 0) {
++	 std::cout << "get_frequency bad data " << time_total << ", " <<  px_total  << std::endl;
++	return 0;
++    }
++    frequency  = px_total / time_total;
++    std::cout << "get_frequency " << frequency  << std::endl;
++  }
++
++  
++  float retFreq = frequency;
++
++
++  retFreq += (direction == LYR_DOWN ? error : std::abs(error));
++  if (retFreq < 0) {
++    retFreq = 1;
++    direction = LYR_STOP;
++  } else
++    get_direction();
++
++  return retFreq;
++} 
+ 
+ float Lyrics::get_period()
+ {
++  int sample = 8;
++  if (px_current >= px_anim_max) return 250;
+   float freq = get_frequency();
+-  float per = (freq ?  1 / freq * 1000 : 0);
+-  per -=  period_fix;
+-  period_fix = per - int(per);
+-  return (per ? per : 250); // ms
++  float part = 0;
++  if (freq > 0) {
++
++    part = (1 / freq * 1000);
++
++    if (period.size() == 0) {
++	for (int i = 1; i > sample; i++)
++	period.push_back(250);
++        std::cout << "fill period with " << (250)  << std::endl;
++    }
++
++    if (part != per)
++	period.push_back(part);
++
++    if (period.size() > sample)
++	period.pop_front();
++
++    //std::cout << "calc period with ";
++    part = 0;
++    foreach(float& val, period) {
++  //      std::cout << ", " << (1/val);
++	part += (1/val);
++    }
++    //std::cout << " = " << sample << "/" << part;
++    per = (sample/part);
++    //per = 2 / ((1/per) + (1/(1 / freq * 1000)));
++    //per = 1 / freq * 1000;
++
++    if (999 < per || per <= 0) {
++	per = 500;
++	direction = LYR_STOP;
++    }
++  } else
++    per = 250;
++
++  //std::cout << " = " << per  << std::endl;
++  return per;
+ }
+ 
+ /**
+@@ -210,27 +315,22 @@
+   */
+ int Lyrics::max_line()
+ {
+-  return get_total_lines() - display_lines() + ln_displace;
+-}
+-
+-int Lyrics::get_real_line() 
+-{
+-return px_count / font_size + ln_displace;
++  return px_anim_max / font_size;
+ }
+ 
+ int Lyrics::get_line()
+ {
+-  int val = get_real_line();
+-
+-  if (val > 0)
+-    return (val < max_line() ? val : max_line());
+-  else
+-    return 0;
++  if ( px_anim_min < px_current) {
++    if (px_current < px_anim_max) 
++	return (px_current - px_anim_min) / font_size;
++    else
++	return (px_anim_max - px_anim_min) / font_size;
++  }
++  return 0;
+ }
+ 
+ 
+ int Lyrics::get_anim()
+ {
+-  int val = get_real_line();
+-  return 0 <= val  ? px_count % font_size : 0;
++  return px_anim_min <= px_current  && px_current < px_anim_max ? (px_current - px_anim_min) % font_size : 0;
+ }
+
+=== modified file 'plugins/feature/audio/lyrics.hpp'
+--- old/plugins/feature/audio/lyrics.hpp	2008-08-08 14:28:06 +0000
++++ new/plugins/feature/audio/lyrics.hpp	2009-02-26 18:24:51 +0000
+@@ -9,6 +9,8 @@
+ #include <string>
+ #include <vector>
+ 
++enum lyric_move { LYR_UP, LYR_DOWN, LYR_STOP };
++
+ class LyricsLoop : public ost::Thread
+ {
+ private:
+@@ -26,15 +28,27 @@
+   std::string cache_artist;
+   std::string cache_title;
+ 
+-  int px_count;
++  int px_current;
++  int px_total;
++  int px_should_be;
++  int px_anim_min;
++  int px_anim_max;
++  int pixel_diff;
++
+   int tm_old;
+-  int total_time;
+-  int current_time;
++  int time_total;
++  int time_current;
+   int display_height;
++  int ln_start_delay;
+   int ln_displace;
+   int font_size;
+-  float period_fix;
+-
++  std::list<float> period;
++  float per;
++  float frequency;
++  float old_error;
++
++
++  lyric_move direction;
+   bool enabled;
+   bool running;
+   
+@@ -42,6 +56,7 @@
+ 
+   int get_real_line();
+   int get_total_lines();
++  void get_direction();
+ 
+ public:
+ 
+@@ -56,6 +71,7 @@
+ 
+   bool get_status();
+   bool is_enabled();
++  bool is_running();
+ 
+   void clear();
+ 
+@@ -67,14 +83,34 @@
+   void set_displace(int step);
+   void set_total_time(int time);
+   void set_current_time(int time);
++
+   void set_display_height(int h);
+ 
+   float	get_frequency();
+   float get_period();
+-  int get_line();
++
+   int get_displace();
+   int display_lines();
++
++  float error;
++
++/**
++ *
++ * get number of current line
++ */
++  int get_line();
++
++/**
++ *
++ * max line of vector to move (only for visualization)
++ */
+   int max_line();
++
++
++/**
++ *
++ * return value for animation 
++ */
+   int get_anim();
+ 
+   Options* get_opts()
+

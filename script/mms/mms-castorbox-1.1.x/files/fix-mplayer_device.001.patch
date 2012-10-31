@@ -1,0 +1,16 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1792/plugins/feature/movie/players/mplayer/mplayer.cpp work/main.d/mms-1.1.0-1792/plugins/feature/movie/players/mplayer/mplayer.cpp
+--- tmp/mms-1.1.0-1792/plugins/feature/movie/players/mplayer/mplayer.cpp	2010-07-24 00:09:06.000000000 -0300
++++ new-mms-1.1.0-1792/plugins/feature/movie/players/mplayer/mplayer.cpp	2010-08-01 21:13:17.000000000 -0300
+@@ -249,10 +249,10 @@
+ 
+   audio_mode += gad.dev_output;
+ 
+-  if (gad.dev_output == "alsa")
++  /*if (gad.dev_output == "alsa") // disable to work with svn mplayer
+     audio_mode += ":device=" + gad.dev_path;
+   else if (gad.dev_output == "oss")
+-    audio_mode +=  ":" + gad.dev_path;
++    audio_mode +=  ":" + gad.dev_path; */
+ 
+   // set Channels option
+   if (gad.dev_channels == 2 || gad.dev_channels == 4 || gad.dev_channels == 6)

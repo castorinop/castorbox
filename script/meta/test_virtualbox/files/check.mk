@@ -1,0 +1,1 @@
+../../castorbox/files/check.mk

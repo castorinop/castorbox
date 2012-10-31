@@ -1,0 +1,17 @@
+398e95866794def22b12dfbc15ce89c0  download/linux-3.0.tar.bz2
+2cc13bf5c1b3ae575fba24655b4362d7  download/linux-3.0.patch.gar
+c9e775f51d78f148ee9ab0d9eb675fea  download/linux-3.0-perl.patch.gar
+ab70e4a7e5762c399b4bf1cac0264e2e  download/linux-3.0-ati_remote.patch
+c71f83bd2d9cf2e832b80d8e093e4005  download/linux-3.0-input_io_nr_type.patch
+e14d6549d15d031808c9ea3e1a09e819  download/linux-3.0-posix_types_fd_type.patch
+b12d84e704df7fae824c77ff7f7ec6f7  download/linux-3.0-r8168_8.024.00.patch
+96fcf2374507fe8d992cdca7706203b1  download/linux-3.0-via_rhine_avoid_d3.patch
+c43be0a2aa61099d3dc76336ca3242d1  download/linux-3.0-unionfs_2.5.9.2.patch
+f82c734b79ecaf9fa7be6150986f5ff9  download/linux-3.0-unionfs_2.5.9.2_oops.patch
+4a5aa282d24bbe070c50661f2b44044f  download/linux-3.0-disable_dma_for_cfa.patch
+53a3f3ae993214e75286a23778c67e14  download/linux-3.0-defaults.patch
+8b876c0c63014e52a8a9d2f223f3f09d  download/linux-3.0-i386-c3.config
+18cf91f9ed2b16fce3bb351d73bfcc55  download/linux-3.0-i386-c3-2.config
+ca69257bc0e89149fd90705abae6cf1f  download/linux-3.0-i386-pentium-mmx.config
+bdad210332a733776fe51c6347991dbe  download/linux-3.0-x86_64-atom.config
+c1374954591e63195ac697755ebe09ec  download/linux-3.0-x86_64-x86-64.config

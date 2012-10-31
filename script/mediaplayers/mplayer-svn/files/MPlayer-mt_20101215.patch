@@ -1,0 +1,21 @@
+diff -Naur MPlayer-32716-old/libvo/vo_corevideo.m MPlayer-32716-new/libvo/vo_corevideo.m
+--- MPlayer-32716-old/libvo/vo_corevideo.m	2010-12-16 07:14:00.000000000 -0800
++++ MPlayer-32716-new/libvo/vo_corevideo.m	2010-12-16 07:17:36.000000000 -0800
+@@ -502,6 +502,8 @@
+ 	NSRect visibleFrame;
+ 	CVReturn error = kCVReturnSuccess;
+ 
++        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++
+ 	//config window
+ 	[window setContentSize:NSMakeSize(vo_dwidth, vo_dheight)];
+ 
+@@ -538,6 +540,8 @@
+ 
+ 	if(vo_ontop)
+ 		[mpGLView ontop];
++
++        [pool release];
+ }
+ 
+ /*

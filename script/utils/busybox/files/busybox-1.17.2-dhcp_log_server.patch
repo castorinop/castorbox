@@ -1,0 +1,21 @@
+diff -Naur busybox-1.17.2-old/networking/udhcp/common.c busybox-1.17.2-new/networking/udhcp/common.c
+--- busybox-1.17.2-old/networking/udhcp/common.c	2010-08-23 07:33:33.000000000 -0700
++++ busybox-1.17.2-new/networking/udhcp/common.c	2010-08-23 07:34:39.000000000 -0700
+@@ -26,7 +26,7 @@
+ //	{ OPTION_IP | OPTION_LIST                 , 0x04 }, /* DHCP_TIME_SERVER   */
+ //	{ OPTION_IP | OPTION_LIST                 , 0x05 }, /* DHCP_NAME_SERVER   */
+ 	{ OPTION_IP | OPTION_LIST     | OPTION_REQ, 0x06 }, /* DHCP_DNS_SERVER    */
+-//	{ OPTION_IP | OPTION_LIST                 , 0x07 }, /* DHCP_LOG_SERVER    */
++	{ OPTION_IP | OPTION_LIST                 , 0x07 }, /* DHCP_LOG_SERVER    */
+ //	{ OPTION_IP | OPTION_LIST                 , 0x08 }, /* DHCP_COOKIE_SERVER */
+ 	{ OPTION_IP | OPTION_LIST                 , 0x09 }, /* DHCP_LPR_SERVER    */
+ 	{ OPTION_STRING               | OPTION_REQ, 0x0c }, /* DHCP_HOST_NAME     */
+@@ -84,7 +84,7 @@
+ //	"timesrv" "\0"     /* DHCP_TIME_SERVER    */
+ //	"namesrv" "\0"     /* DHCP_NAME_SERVER    */
+ 	"dns" "\0"         /* DHCP_DNS_SERVER     */
+-//	"logsrv" "\0"      /* DHCP_LOG_SERVER     */
++	"logsrv" "\0"      /* DHCP_LOG_SERVER     */
+ //	"cookiesrv" "\0"   /* DHCP_COOKIE_SERVER  */
+ 	"lprsrv" "\0"      /* DHCP_LPR_SERVER     */
+ 	"hostname" "\0"    /* DHCP_HOST_NAME      */

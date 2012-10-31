@@ -1,0 +1,11 @@
+diff -Naur MPlayer-1.0rc2-old/stream/url.c MPlayer-1.0rc2-new/stream/url.c
+--- MPlayer-1.0rc2-old/stream/url.c	2008-01-31 17:12:05.000000000 -0800
++++ MPlayer-1.0rc2-new/stream/url.c	2008-01-31 17:14:13.000000000 -0800
+@@ -328,6 +328,7 @@
+ 		}
+ 	}
+ 	
++	tmp = NULL;
+ 	while(i < len) {
+ 		// look for the next char that must be kept
+ 		for  (j=i;j<len;j++) {

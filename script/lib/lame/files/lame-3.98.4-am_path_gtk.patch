@@ -1,0 +1,12 @@
+diff -Naur lame-3.98.4-old/configure.in lame-3.98.4-new/configure.in
+--- lame-3.98.4-old/configure.in	2010-03-22 13:40:17.000000000 -0700
++++ lame-3.98.4-new/configure.in	2010-08-13 21:05:57.000000000 -0700
+@@ -385,7 +385,7 @@
+ 
+ dnl configure use of features
+ 
+-AM_PATH_GTK(1.2.0, HAVE_GTK="yes", HAVE_GTK="no")
++AM_PATH_GTK_2_0(1.2.0, HAVE_GTK="yes", HAVE_GTK="no")
+ 
+ dnl ElectricFence malloc debugging
+ AC_MSG_CHECKING(use of ElectricFence malloc debugging)

@@ -1,0 +1,17 @@
+--- boost_1_31_0/tools/build/v1/boost-base.jam.libname	2004-01-29 06:52:25.000000000 +0800
++++ boost_1_31_0/tools/build/v1/boost-base.jam	2004-05-30 00:51:22.065279488 +0800
+@@ -2621,10 +2621,10 @@
+     local version-tag = [ MATCH "^([^.]+).([^.]+)" : $(version-number[1]) ] ;
+     version-tag = $(version-tag:J="_") ;
+     
+-    tags += $(toolset-tag:J=) ;
+-    tags += $(thread-tag:J=) ;
+-    tags += $(runtime-tag:J=) ;
+-    tags += $(version-tag) ;
++#    tags += $(toolset-tag:J=) ;
++#    tags += $(thread-tag:J=) ;
++#    tags += $(runtime-tag:J=) ;
++#    tags += $(version-tag) ;
+     
+     if $(tags)
+     {

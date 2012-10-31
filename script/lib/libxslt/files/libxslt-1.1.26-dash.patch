@@ -1,0 +1,12 @@
+diff -Naur libxslt-1.1.26-old/configure.in libxslt-1.1.26-new/configure.in
+--- libxslt-1.1.26-old/configure.in	2009-09-24 07:27:30.000000000 -0700
++++ libxslt-1.1.26-new/configure.in	2010-08-27 09:53:48.000000000 -0700
+@@ -130,7 +130,7 @@
+ VERSION_SCRIPT_FLAGS=
+ $(/usr/bin/ld --help 2>&1 | grep -- --version-script >/dev/null) && \
+     VERSION_SCRIPT_FLAGS=-Wl,--version-script=
+-test "`uname`" == "SunOS" && \
++test "`uname`" = "SunOS" && \
+     VERSION_SCRIPT_FLAGS="-Wl,-M -Wl,"
+ AC_SUBST(VERSION_SCRIPT_FLAGS)
+ AM_CONDITIONAL([USE_VERSION_SCRIPT], [test -n "$VERSION_SCRIPT_FLAGS"])

@@ -1,0 +1,1061 @@
+diff -Naur lcdproc-0.5.2-old/acinclude.m4 lcdproc-0.5.2-new/acinclude.m4
+--- lcdproc-0.5.2-old/acinclude.m4	2008-04-26 12:30:11.000000000 -0700
++++ lcdproc-0.5.2-new/acinclude.m4	2008-04-26 12:37:56.000000000 -0700
+@@ -10,13 +10,13 @@
+ 	[                    irman,joy,lb216,lcdm001,lcterm,lirc,MD8800,ms6931,]
+ 	[                    mtc_s16209x,MtxOrb,NoritakeVFD,picolcd,pyramid,sed1330]
+ 	[                    sed1520,serialPOS,serialVFD,sli,stv5730,svga,t6963,text,]
+-	[                    tyan,ula200,xosd]
++	[                    tyan,ula200,xosd,irtrans]
+ 	[                  'all' compiles all drivers;]
+ 	[                  'all,!xxx,!yyy' de-selects previously selected drivers],
+ 	drivers="$enableval",
+ 	drivers=[bayrad,CFontz,CFontz633,curses,CwLnx,glk,lb216,lcdm001,MtxOrb,pyramid,text])
+ 
+-allDrivers=[bayrad,CFontz,CFontz633,CFontzPacket,curses,CwLnx,ea65,EyeboxOne,g15,glcdlib,glk,hd44780,icp_a106,imon,imonlcd,IOWarrior,irman,joy,lb216,lcdm001,lcterm,lirc,MD8800,ms6931,mtc_s16209x,MtxOrb,NoritakeVFD,picolcd,pyramid,sed1330,sed1520,serialPOS,serialVFD,sli,stv5730,svga,t6963,text,tyan,ula200,xosd]
++allDrivers=[bayrad,CFontz,CFontz633,CFontzPacket,curses,CwLnx,ea65,EyeboxOne,g15,glcdlib,glk,hd44780,icp_a106,imon,imonlcd,IOWarrior,irman,joy,lb216,lcdm001,lcterm,lirc,MD8800,ms6931,mtc_s16209x,MtxOrb,NoritakeVFD,picolcd,pyramid,sed1330,sed1520,serialPOS,serialVFD,sli,stv5730,svga,t6963,text,tyan,ula200,xosd,irtrans]
+ 
+ drivers=`echo $drivers | sed -e 's/,/ /g'`
+ 
+@@ -402,6 +402,10 @@
+ 				AC_MSG_WARN([The xosd driver needs xosd.h])
+ 			])
+ 			;;
++		irtrans)
++			DRIVERS="$DRIVERS irtrans${SO}"
++			actdrivers="$actdrivers irtrans"
++			;;
+ 		*)
+ 			AC_MSG_ERROR([Unknown driver $driver])
+ 			;;
+diff -Naur lcdproc-0.5.2-old/LCDd.conf lcdproc-0.5.2-new/LCDd.conf
+--- lcdproc-0.5.2-old/LCDd.conf	2007-04-25 12:56:43.000000000 -0700
++++ lcdproc-0.5.2-new/LCDd.conf	2008-04-26 12:30:27.000000000 -0700
+@@ -953,4 +953,13 @@
+ # font to use, in XLFD format, as given by "xfontsel"
+ Font=-*-terminus-*-r-*-*-*-320-*-*-*-*-*
+ 
++[irtrans]
++#IrTrans driver
++
++Arguments="-hostname localhost -lcdw 16 -lcdh 2 -backlight -timeout 1"
++#hostname: IP / Hostname of irserver
++#lcdw: Breite des LCD Displays (default=16)
++#lcdh: Höhe des LCD Displays (default=4)
++
++
+ # EOF
+diff -Naur lcdproc-0.5.2-old/server/drivers/irtrans.c lcdproc-0.5.2-new/server/drivers/irtrans.c
+--- lcdproc-0.5.2-old/server/drivers/irtrans.c	1969-12-31 16:00:00.000000000 -0800
++++ lcdproc-0.5.2-new/server/drivers/irtrans.c	2008-04-26 12:30:27.000000000 -0700
+@@ -0,0 +1,360 @@
++/*
++ * irtrans driver
++ *
++ * Displays LCD screens, one after another; suitable for hard-copy
++ * terminals.
++ *
++ * Copyright (C) 1998-2007 <info@irtrans.de>
++ *
++ * Copyright (C) 2007 Phant0m <phantom@netkeke.com>
++ * porting the LCDproc 0.4.3 code to LCDproc 0.5.1
++ *
++ * Inspired by:
++ *  TextMode driver (LCDproc authors)
++ *  irtrans driver (Irtrans)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <stdlib.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <string.h>
++#include <time.h>
++#include <netdb.h>
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <arpa/inet.h>
++
++#include "lcd.h"
++#include "shared/str.h"
++#include "irtrans.h"
++#include "irtrans_remote.h"
++#include "irtrans_network.h"
++#include "irtrans_errcode.h"
++#include "report.h"
++//#include "drv_base.h"
++
++
++// Variables
++// TODO init
++typedef struct driver_private_data {
++    int width;
++    int height;
++    int socket;
++    int timeout;
++    long last_time;
++    byte backlight;
++    int has_backlight;
++    char hostname[256];
++    char *framebuf;
++    char *shadow_buf;
++} PrivateData;
++
++// Vars for the server core
++MODULE_EXPORT char *api_version = API_VERSION;
++MODULE_EXPORT int stay_in_foreground = 0;
++MODULE_EXPORT int supports_multiple = 0;
++MODULE_EXPORT char *symbol_prefix = "irtrans_";
++
++//////////////////////////////////////////////////////////////////////////
++////////////////////// For Irtrans Output //////////////////////////////
++//////////////////////////////////////////////////////////////////////////
++
++int InitClientSocket(char host[], SOCKET * sock, unsigned long id);
++int SendCommand(Driver * drvthis, LCDCOMMAND * com, STATUSBUFFER * stat);
++
++
++MODULE_EXPORT int irtrans_init(Driver * drvthis)
++{
++    PrivateData *p;
++    char buf[256];
++
++    /* Allocate and store private data */
++    p = (PrivateData *) calloc(1, sizeof(PrivateData));
++    if (p == NULL)
++        return -1;
++    if (drvthis->store_private_ptr(drvthis, p))
++        return -1;
++
++    /* initialize private data */
++    p->has_backlight =
++        drvthis->config_get_bool(drvthis->name, "Backlight", 0, 0);
++    report(RPT_INFO, "%s: Backlight %d", drvthis->name, p->backlight);
++
++    strncpy(p->hostname,
++            drvthis->config_get_string(drvthis->name, "Hostname", 0,
++                                       IRTRANS_DEFAULT_HOSTNAME),
++            sizeof(p->hostname));
++    p->hostname[sizeof(p->hostname) - 1] = '\0';
++    report(RPT_INFO, "%s: Hostname is %s", drvthis->name, p->hostname);
++
++    // Set display sizes
++    if ((drvthis->request_display_width() > 0)
++        && (drvthis->request_display_height() > 0)) {
++        // Use size from primary driver
++        p->width = drvthis->request_display_width();
++        p->height = drvthis->request_display_height();
++    } else {
++        /* Use our own size from config file */
++        strncpy(buf,
++                drvthis->config_get_string(drvthis->name, "Size", 0,
++                                           IRTRANS_DEFAULT_SIZE),
++                sizeof(buf));
++        buf[sizeof(buf) - 1] = '\0';
++        if ((sscanf(buf, "%dx%d", &p->width, &p->height) != 2)
++            || (p->width <= 0) || (p->width > LCD_MAX_WIDTH)
++            || (p->height <= 0) || (p->height > LCD_MAX_HEIGHT)) {
++            report(RPT_WARNING,
++                   "%s: cannot read Size: %s; using default %s",
++                   drvthis->name, buf, IRTRANS_DEFAULT_SIZE);
++            sscanf(IRTRANS_DEFAULT_SIZE, "%dx%d", &p->width, &p->height);
++        }
++    }
++
++    // Allocate the framebuffer and shadow buffer
++    p->framebuf = malloc(p->width * p->height);
++    p->shadow_buf = malloc(p->width * p->height);
++    if (p->framebuf == NULL) {
++        report(RPT_ERR, "%s: unable to create framebuffer", drvthis->name);
++        return -1;
++    }
++    if (p->shadow_buf == NULL) {
++        report(RPT_ERR, "%s: unable to create shadow buffer",
++               drvthis->name);
++        return -1;
++    }
++    memset(p->framebuf, ' ', p->width * p->height);
++    memset(p->shadow_buf, ' ', p->width * p->height);
++
++    // InitClientSocket
++    if (InitClientSocket(p->hostname, &p->socket, 0)) {
++        report(RPT_ERR, "%s: unable to init client socket", drvthis->name);
++        return -1;
++    }
++
++    report(RPT_DEBUG, "%s: init() done", drvthis->name);
++
++    return 1;
++}
++
++/////////////////////////////////////////////////////////////////
++// Closes the device
++//
++MODULE_EXPORT void irtrans_close(Driver * drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    irtrans_clear(drvthis);
++    sleep(5);
++    p->backlight = 0;
++    irtrans_flush(drvthis);
++
++    if (p != NULL) {
++        if (p->framebuf != NULL)
++            free(p->framebuf);
++        free(p);
++    }
++
++    close(p->socket);
++
++    drvthis->store_private_ptr(drvthis, NULL);
++}
++
++/////////////////////////////////////////////////////////////////
++// Returns the display width
++//
++MODULE_EXPORT int irtrans_width(Driver * drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    return p->width;
++}
++
++/////////////////////////////////////////////////////////////////
++// Returns the display height
++//
++MODULE_EXPORT int irtrans_height(Driver * drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    return p->height;
++}
++
++/////////////////////////////////////////////////////////////////
++// Clears the LCD screen
++//
++MODULE_EXPORT void irtrans_clear(Driver * drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    memset(p->framebuf, ' ', p->width * p->height);
++}
++
++//////////////////////////////////////////////////////////////////
++// Flushes all output to the lcd...
++//
++MODULE_EXPORT void irtrans_flush(Driver * drvthis)
++{
++    PrivateData *p = drvthis->private_data;
++
++    LCDCOMMAND buf;
++    STATUSBUFFER stat;
++
++    if (!memcmp(p->shadow_buf, p->framebuf, p->width * p->height))
++        return;
++
++    if ((time(0) - p->last_time) < p->timeout)
++        return;
++
++    memcpy(buf.framebuffer, p->framebuf, p->width * p->height);
++    buf.wid = p->width;
++    buf.hgt = p->height;
++
++    buf.netcommand = COMMAND_LCD;
++    buf.adress = 'L';
++    buf.lcdcommand = LCD_TEXT | p->backlight;
++    buf.protocol_version = IRTRANS_PROTOCOL_VERSION;
++
++    SendCommand(drvthis, &buf, &stat);  // Error Handling
++    memcpy(p->shadow_buf, p->framebuf, p->width * p->height);
++    p->last_time = time(0);
++
++}
++
++/////////////////////////////////////////////////////////////////
++// Prints a string on the lcd display, at position (x,y).  The
++// upper-left is (1,1), and the lower right should be (20,4).
++//
++MODULE_EXPORT void
++irtrans_string(Driver * drvthis, int x, int y, char string[])
++{
++    PrivateData *p = drvthis->private_data;
++    int i;
++
++    x--;
++    y--;                        // Convert 1-based coords to 0-based...
++
++    if ((y < 0) || (y >= p->height))
++        return;
++
++    for (i = 0; (string[i] != '\0') && (x < p->width); i++, x++) {
++        if (x >= 0)             // no write left of left border
++            p->framebuf[(y * p->width) + x] = string[i];
++    }
++}
++
++/////////////////////////////////////////////////////////////////
++// Prints a character on the lcd display, at position (x,y).  The
++// upper-left is (1,1), and the lower right should be (20,4).
++//
++MODULE_EXPORT void irtrans_chr(Driver * drvthis, int x, int y, char c)
++{
++    PrivateData *p = drvthis->private_data;
++
++    y--;
++    x--;
++
++    if ((x >= 0) && (y >= 0) && (x < p->width) && (y < p->height))
++        p->framebuf[(y * p->width) + x] = c;
++}
++
++/////////////////////////////////////////////////////////////////
++// Sets the contrast
++//
++MODULE_EXPORT void irtrans_set_contrast(Driver * drvthis, int promille)
++{
++    //PrivateData *p = drvthis->private_data;
++
++    debug(RPT_DEBUG, "Contrast: %d", promille);
++}
++
++/////////////////////////////////////////////////////////////////
++// Sets the backlight brightness
++//
++MODULE_EXPORT void irtrans_backlight(Driver * drvthis, int on)
++{
++    PrivateData *p = drvthis->private_data;
++    if (on && p->has_backlight)
++        p->backlight = LCD_BACKLIGHT;
++    else
++        p->backlight = 0;
++
++    debug(RPT_DEBUG, "Backlight %s", (on) ? "ON" : "OFF");
++}
++
++int SendCommand(Driver * drvthis, LCDCOMMAND * com, STATUSBUFFER * stat)
++{
++    PrivateData *p = drvthis->private_data;
++    int res;
++
++    res = send(p->socket, (char *) com, sizeof(LCDCOMMAND), 0);
++
++    if (res != sizeof(LCDCOMMAND)) {
++        close(p->socket);
++        return (ERR_SEND);
++    }
++
++    memset(stat, 0, sizeof(STATUSBUFFER));
++
++    do {
++        res = recv(p->socket, (char *) stat, 8, 0);
++        if (stat->statuslen > 8) {
++            res =
++                recv(p->socket, ((char *) stat) + 8, stat->statuslen - 8,
++                     0);
++        } else
++            return (0);
++    } while (stat->statustype == STATUS_RECEIVE);
++    return (0);
++}
++
++int InitClientSocket(char host[], SOCKET * sock, unsigned long id)
++{
++    struct sockaddr_in serv_addr;
++    unsigned long adr;
++    struct hostent *he;
++    struct in_addr addr;
++
++    adr = inet_addr(host);
++    if (adr == INADDR_NONE) {
++        he = gethostbyname(host);
++        if (he == NULL)
++            return (ERR_FINDHOST);
++        memcpy(&addr, he->h_addr_list[0], sizeof(struct in_addr));
++        adr = addr.s_addr;
++    }
++
++
++    *sock = socket(PF_INET, SOCK_STREAM, 0);
++    if (*sock < 0)
++        return (ERR_OPENSOCKET);
++
++    memset(&serv_addr, 0, sizeof(serv_addr));
++    serv_addr.sin_family = AF_INET;
++    serv_addr.sin_addr.s_addr = adr;
++    serv_addr.sin_port = htons(TCP_PORT);
++
++    if (connect(*sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) <
++        0)
++        return (ERR_CONNECT);
++    send(*sock, (char *) &id, 4, 0);
++    return (0);
++}
+diff -Naur lcdproc-0.5.2-old/server/drivers/irtrans_errcode.h lcdproc-0.5.2-new/server/drivers/irtrans_errcode.h
+--- lcdproc-0.5.2-old/server/drivers/irtrans_errcode.h	1969-12-31 16:00:00.000000000 -0800
++++ lcdproc-0.5.2-new/server/drivers/irtrans_errcode.h	2008-04-26 12:30:27.000000000 -0700
+@@ -0,0 +1,65 @@
++/*
++ * irtrans driver
++ *
++ * Displays LCD screens, one after another; suitable for hard-copy
++ * terminals.
++ *
++ * Copyright (C) 1998-2007 <info@irtrans.de>
++ *
++ * Copyright (C) 2007 Phant0m <phantom@netkeke.com>
++ * porting the LCDproc 0.4.3 code to LCDproc 0.5.1
++ *
++ * Inspired by:
++ *  TextMode driver (LCDproc authors)
++ *  irtrans driver (Irtrans)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
++ */
++
++#define ERR_OPEN			1
++#define ERR_RESET			2
++#define ERR_VERSION			3
++#define ERR_TIMEOUT			4
++#define	ERR_READVERSION		5
++
++#define ERR_DBOPENINPUT		11
++#define ERR_REMOTENOTFOUND	12
++#define ERR_COMMANDNOTFOUND	13
++#define ERR_TIMINGNOTFOUND	14
++#define ERR_OPENASCII		15
++#define ERR_NODATABASE		16
++#define ERR_OPENUSB			17
++#define ERR_RESEND			18
++#define ERR_TOGGLE_DUP		19
++#define ERR_DBOPENINCLUDE	20
++#define ERR_NOFILEOPEN		21
++#define	ERR_FLOCK			22
++#define ERR_STTY			23
++#define ERR_HOTCODE			24
++#define ERR_NOTIMING		25
++
++#define ERR_OPENSOCKET		100
++#define ERR_BINDSOCKET		101
++#define ERR_FINDHOST		103
++#define ERR_CONNECT			104
++#define ERR_SEND			105
++#define ERR_RECV			106
++
++
++#define FATAL				1
++#define IR					2
++#define	IRTIMEOUT			3
++
++void GetError(int res, char st[]);
+diff -Naur lcdproc-0.5.2-old/server/drivers/irtrans.h lcdproc-0.5.2-new/server/drivers/irtrans.h
+--- lcdproc-0.5.2-old/server/drivers/irtrans.h	1969-12-31 16:00:00.000000000 -0800
++++ lcdproc-0.5.2-new/server/drivers/irtrans.h	2008-04-26 12:30:27.000000000 -0700
+@@ -0,0 +1,54 @@
++/*
++ * irtrans driver
++ *
++ * Displays LCD screens, one after another; suitable for hard-copy
++ * terminals.
++ *
++ * Copyright (C) 1998-2007 <info@irtrans.de>
++ *
++ * Copyright (C) 2007 Phant0m <phantom@netkeke.com>
++ * porting the LCDproc 0.4.3 code to LCDproc 0.5.1
++ *
++ * Inspired by:
++ *  TextMode driver (LCDproc authors)
++ *  irtrans driver (Irtrans)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
++ */
++
++#ifndef LCD_TEXT_H
++#define LCD_TEXT_H
++
++#include "lcd.h"
++
++MODULE_EXPORT int irtrans_init(Driver * drvthis);
++MODULE_EXPORT void irtrans_close(Driver * drvthis);
++MODULE_EXPORT int irtrans_width(Driver * drvthis);
++MODULE_EXPORT int irtrans_height(Driver * drvthis);
++MODULE_EXPORT void irtrans_clear(Driver * drvthis);
++MODULE_EXPORT void irtrans_flush(Driver * drvthis);
++MODULE_EXPORT void irtrans_string(Driver * drvthis, int x, int y,
++                                  char string[]);
++MODULE_EXPORT void irtrans_chr(Driver * drvthis, int x, int y, char c);
++MODULE_EXPORT void irtrans_set_contrast(Driver * drvthis, int promille);
++MODULE_EXPORT void irtrans_backlight(Driver * drvthis, int on);
++
++typedef int SOCKET;
++typedef int WSAEVENT;
++
++#define IRTRANS_DEFAULT_SIZE "16x2"
++#define IRTRANS_DEFAULT_HOSTNAME "localhost"
++
++#endif
+diff -Naur lcdproc-0.5.2-old/server/drivers/irtrans_network.h lcdproc-0.5.2-new/server/drivers/irtrans_network.h
+--- lcdproc-0.5.2-old/server/drivers/irtrans_network.h	1969-12-31 16:00:00.000000000 -0800
++++ lcdproc-0.5.2-new/server/drivers/irtrans_network.h	2008-04-26 12:30:27.000000000 -0700
+@@ -0,0 +1,302 @@
++/*
++ * irtrans driver
++ *
++ * Displays LCD screens, one after another; suitable for hard-copy
++ * terminals.
++ *
++ * Copyright (C) 1998-2007 <info@irtrans.de>
++ *
++ * Copyright (C) 2007 Phant0m <phantom@netkeke.com>
++ * porting the LCDproc 0.4.3 code to LCDproc 0.5.1
++ *
++ * Inspired by:
++ *  TextMode driver (LCDproc authors)
++ *  irtrans driver (Irtrans)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
++ */
++
++#define IRTRANS_PROTOCOL_VERSION	208
++
++#define COMMAND_SEND		1
++#define COMMAND_LRNREM		2
++#define COMMAND_LRNTIM		3
++#define COMMAND_LRNCOM		4
++#define COMMAND_CLOSE		5
++#define COMMAND_STATUS		6
++#define COMMAND_RESEND		7
++#define COMMAND_LRNRAW		8
++#define COMMAND_LRNRPT		9
++#define COMMAND_LRNTOG		10
++#define COMMAND_SETSTAT		11
++#define COMMAND_LRNLONG		12
++#define COMMAND_LRNRAWRPT	13
++#define COMMAND_RELOAD		14
++#define COMMAND_LCD			15
++#define COMMAND_LEARNSTAT	16
++#define COMMAND_TEMP		17
++#define COMMAND_GETREMOTES	18
++#define COMMAND_GETCOMMANDS	19
++#define COMMAND_STORETRANS	20
++#define COMMAND_LOADTRANS	21
++#define COMMAND_SAVETRANS	22
++#define COMMAND_FLASHTRANS	23
++#define	COMMAND_FUNCTIONS	24
++#define	COMMAND_TESTCOM		25
++#define	COMMAND_LONGSEND	26
++#define	COMMAND_SHUTDOWN	27
++#define COMMAND_SENDCCF		28
++#define COMMAND_LCDINIT		29
++#define COMMAND_SETSWITCH	30
++#define COMMAND_STATUSEX	31
++#define COMMAND_RESET		32
++#define	STATUS_MESSAGE		1
++#define	STATUS_TIMING		2
++#define	STATUS_DEVICEMODE	3
++#define	STATUS_RECEIVE		4
++#define STATUS_LEARN		5
++#define STATUS_REMOTELIST	6
++#define STATUS_COMMANDLIST	7
++#define STATUS_TRANSLATE	8
++#define STATUS_FUNCTION		9
++#define	STATUS_DEVICEMODEEX	10
++#pragma pack(1)
++    typedef struct {
++    uint8_t mode;
++    uint8_t time_cnt;
++    uint8_t ir_repeat;
++    uint8_t repeat_pause;
++    uint16_t pause_len[TIME_LEN];
++    uint16_t pulse_len[TIME_LEN];
++    uint8_t data[CODE_LEN];
++} TIMINGDATA;
++typedef struct {
++    uint8_t netcommand;
++    uint8_t mode;
++    uint16_t timeout;
++    int32_t adress;
++    int8_t remote[80];
++    int8_t command[20];
++    uint8_t trasmit_freq;
++} OLD_NETWORKCOMMAND;
++typedef struct {
++    uint8_t netcommand;
++    uint8_t mode;
++    uint8_t lcdcommand;
++    uint8_t timeout;
++    int32_t adress;
++    uint8_t wid;
++    uint8_t hgt;
++    int8_t framebuffer[200];
++} OLD_LCDCOMMAND;
++typedef struct {
++    uint8_t netcommand;
++    uint8_t mode;
++    uint16_t timeout;
++    int32_t adress;
++    int32_t protocol_version;
++    int8_t remote[80];
++    int8_t command[20];
++    uint8_t trasmit_freq;
++} NETWORKCOMMAND;
++typedef struct {
++    uint8_t netcommand;
++    uint8_t mode;
++    uint16_t timeout;
++    int32_t adress;
++    int32_t protocol_version;
++    uint16_t sendmask[32];
++    uint16_t pronto_data[256];
++} CCFCOMMAND;
++typedef struct {
++    uint8_t netcommand;
++    uint8_t mode;
++    uint8_t lcdcommand;
++    uint8_t timeout;
++    int32_t adress;
++    int32_t protocol_version;
++    uint8_t wid;
++    uint8_t hgt;
++    int8_t framebuffer[200];
++} LCDCOMMAND;
++typedef struct {
++    uint8_t netcommand;
++    uint8_t mode;
++    uint16_t timeout;
++    int32_t adress;
++    int32_t protocol_version;
++    int32_t number;
++    uint8_t setup;
++    uint8_t type;
++    uint8_t accelerator_timeout;
++    uint8_t accelerator_repeat;
++    uint16_t wait_timeout;
++    uint8_t remote_num;
++    uint8_t group_num;
++    int8_t remote[80];
++    int8_t command[20];
++    int32_t source_mask;
++    int32_t target_mask;
++} TRANSLATECOMMAND;
++typedef struct {
++    int32_t send_mask;
++    uint8_t device_mode;
++    uint8_t extended_mode;
++    uint16_t switch_mode;
++    uint16_t features;
++    int8_t version[10];
++    int8_t remote[80];
++    int8_t command[20];
++} MODELINE;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t adress;
++    uint8_t align[2];
++    int8_t data[16384];
++} STATUSBUFFER;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int32_t serno;
++    int32_t functions;
++} FUNCTIONBUFFER;
++typedef struct {
++    int32_t target_mask;
++    int32_t source_mask;
++    int8_t name[80];
++} REMOTELINE;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t offset;
++    int16_t count_buffer;
++    int16_t count_total;
++    int16_t count_remaining;
++    REMOTELINE remotes[40];
++} REMOTEBUFFER;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t offset;
++    int16_t count_buffer;
++    int16_t count_total;
++    int16_t count_remaining;
++    int8_t commands[200][20];
++} COMMANDBUFFER;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t offset;
++    int16_t count_buffer;
++    int16_t count_total;
++    int16_t count_remaining;
++    TRANSLATECOMMAND trdata[30];
++} TRANSLATEBUFFER;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t adress;
++    uint8_t align[2];
++    MODELINE stat[16];
++} NETWORKMODE;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t adress;
++    uint8_t align;
++    uint8_t count;
++    uint8_t dev_adr[8];
++    MODELINE stat[8][16];
++} NETWORKMODEEX;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t adress;
++    uint16_t netstatus;
++    uint16_t statuslevel;
++    uint8_t align[2];
++    int8_t message[256];
++} NETWORKSTATUS;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t adress;
++    uint8_t align[2];
++    TIMINGDATA timing;
++} NETWORKTIMING;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t adress;
++    uint16_t command_num;
++    int8_t remote[80];
++    int8_t command[20];
++    int8_t data[200];
++} NETWORKRECV;
++typedef struct {
++    uint32_t clientid;
++    int16_t statuslen;
++    int16_t statustype;
++    int16_t adress;
++    int16_t learnok;
++    int8_t remote[80];
++    int16_t num_timings;
++    int16_t num_commands;
++    int8_t received[CODE_LEN];
++} NETWORKLEARNSTAT;
++typedef struct {
++    SOCKET fd;
++    int32_t type;
++    uint32_t clientid;
++    uint32_t callno;
++    int8_t ip[20];
++    WSAEVENT event;
++    FILE * fp;
++    int32_t timing;
++    uint8_t resend_load;
++    IRDATA ird;
++    NETWORKLEARNSTAT learnstatus;
++    int8_t restdata[sizeof(LCDCOMMAND)];
++    int32_t restlen;
++    int32_t restread;
++}
++NETWORKCLIENT;
++
++#define TCP_PORT		21000
++#define LIRC_PORT		8765
++#define UDP_PORT		6510
++#define WEB_PORT		80
++#define ALTERNATE_WEB	8080
++
++#ifdef WIN32
++#define CLIENT_COUNT	MAXIMUM_WAIT_OBJECTS - 3
++#endif                          /* 
++ */
++
++#ifdef LINUX
++#define CLIENT_COUNT	64
++#endif                          /* 
++ */
+diff -Naur lcdproc-0.5.2-old/server/drivers/irtrans_remote.h lcdproc-0.5.2-new/server/drivers/irtrans_remote.h
+--- lcdproc-0.5.2-old/server/drivers/irtrans_remote.h	1969-12-31 16:00:00.000000000 -0800
++++ lcdproc-0.5.2-new/server/drivers/irtrans_remote.h	2008-04-26 12:30:27.000000000 -0700
+@@ -0,0 +1,193 @@
++/*
++ * irtrans driver
++ *
++ * Displays LCD screens, one after another; suitable for hard-copy
++ * terminals.
++ *
++ * Copyright (C) 1998-2007 <info@irtrans.de>
++ *
++ * Copyright (C) 2007 Phant0m <phantom@netkeke.com>
++ * porting the LCDproc 0.4.3 code to LCDproc 0.5.1
++ *
++ * Inspired by:
++ *  TextMode driver (LCDproc authors)
++ *  irtrans driver (Irtrans)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
++ */
++
++typedef unsigned char byte;
++typedef unsigned short word;
++
++#define CONTROL_LED		4
++
++#define USB_RXREADY		0
++#define USB_TXENABLE	1
++#define USB_WRITE		6
++#define	USB_READ		7
++
++#define	IR_LED			0
++#define	SBUS_DATA		1
++#define SBUS_INPUT		2
++#define	SBUS_TERM		3
++#define IR_INPUT		7
++
++
++#ifndef AVR
++#pragma pack(1)
++#define CODE_LEN	176     // 2 Byte mehr für String-Ende 0
++#else
++#define CODE_LEN	174
++
++#define	USB
++
++#endif
++
++#define TIME_LEN	6
++#define RAW_EXTRA	TIME_LEN * 4 + 2
++#define CODE_LENRAW	(CODE_LEN + RAW_EXTRA - 2)
++
++
++
++typedef struct {
++    byte len;
++    byte checksumme;
++    byte command;
++
++    byte address;
++    word target_mask;
++
++    byte ir_length;
++    byte transmit_freq;
++    byte mode;
++
++    word pause_len[TIME_LEN];
++    word pulse_len[TIME_LEN];
++    byte time_cnt;
++    byte ir_repeat;
++    byte repeat_pause;
++
++    byte data[CODE_LEN];
++} IRDATA;
++
++
++typedef struct {
++    byte len;
++    byte checksumme;
++    byte command;
++
++    byte address;
++    word target_mask;
++
++    byte ir_length;
++    byte transmit_freq;
++    byte mode;
++
++    byte data[CODE_LENRAW];
++} IRRAW;
++
++
++
++#define DEVMODE_PC			0
++#define DEVMODE_SEND		1
++#define DEVMODE_IR			2
++#define DEVMODE_SBUS		4
++#define DEVMODE_IRCODE		8
++#define DEVMODE_SBUSCODE	16
++
++#define DEVMODE_MASK		31
++
++#define DEVMODE_STATUS		128
++
++
++// IR Commands
++#define SBUS_REPEAT			1
++#define HOST_VERSION		2
++#define HOST_NETWORK_STATUS	3
++
++#define SBUS_SEND			4
++#define SBUS_RESEND			5
++#define HOST_SEND			6
++#define HOST_RESEND			7
++
++
++#define SBUS_LEARN			16
++#define HOST_LEARNIR		18
++
++#define SBUS_QUICKPARM		48
++#define HOST_LEARNIRQUICK	50
++
++#define SBUS_RAWMODE		80
++#define HOST_LEARNIRRAW		82
++
++#define SBUS_REPEATMODE		144
++#define HOST_LEARNIRREPEAT	146
++
++#define SBUS_RAWREPEATMODE		208
++#define HOST_LEARNIRRAWREPEAT	210
++
++#define SBUS_RESET			192
++#define SBUS_PING			193
++#define SBUS_PONG			194
++#define SBUS_PARAMETER		196
++#define HOST_SETMODE		197
++
++
++#define ADRESS_MASK			15
++#define ADRESS_LOCAL		16
++#define ADRESS_ALL			32
++
++
++#define	START_BIT			1
++#define REPEAT_START		2
++#define START_MASK			3
++#define RC5_DATA			4
++#define	RC6_DATA			8
++#define	RAW_DATA			16
++
++#define LCD_DATA			32
++#define LCD_BACKLIGHT		1
++#define LCD_TEXT			2
++#define DEFAULT_FREQ		39
++#define RAW_FREQ			38
++#define IR_CORRECT			8       // Entspricht 64 µs Korrektur
++#define RCX_TOLERANCE		19      // Entspricht 152 µs Toleranz
++#define IR_TOLERANCE		15      // Entspricht 120 µs Toleranz
++#define RAW_TOLERANCE		20
++typedef struct {
++    byte sbus_len;
++    byte sbus_checksumme;
++    byte sbus_command;
++    byte sbus_address;
++    byte mode;
++    word target_mask;
++    byte hotcode_len;
++    byte hotcode[100];
++} MODE_BUFFER;
++
++typedef struct {
++    byte sbus_len;
++    byte sbus_checksumme;
++    byte sbus_command;
++    byte sbus_address;
++    byte device_mode;
++    word send_mask;
++    byte version[10];
++} STATUS_LINE;
++
++typedef struct {
++    byte my_adress;
++    STATUS_LINE stat[16];
++} STATUS_BUFFER;
+diff -Naur lcdproc-0.5.2-old/server/drivers/Makefile.am lcdproc-0.5.2-new/server/drivers/Makefile.am
+--- lcdproc-0.5.2-old/server/drivers/Makefile.am	2008-04-26 12:30:11.000000000 -0700
++++ lcdproc-0.5.2-new/server/drivers/Makefile.am	2008-04-26 12:30:27.000000000 -0700
+@@ -19,7 +19,7 @@
+ #LIBS =
+ 
+ pkglib_PROGRAMS = @DRIVERS@
+-EXTRA_PROGRAMS = bayrad CFontz CFontz633 CFontzPacket curses CwLnx ea65 EyeboxOne g15 glcdlib glk hd44780 icp_a106 imon imonlcd IOWarrior irman joy lb216 lcdm001 lcterm lirc MD8800 ms6931 mtc_s16209x MtxOrb NoritakeVFD picolcd pyramid sed1330 sed1520 serialPOS serialVFD stv5730 svga t6963 text tyan sli ula200 xosd
++EXTRA_PROGRAMS = bayrad CFontz CFontz633 CFontzPacket curses CwLnx ea65 EyeboxOne g15 glcdlib glk hd44780 icp_a106 imon imonlcd IOWarrior irman joy lb216 lcdm001 lcterm lirc MD8800 ms6931 mtc_s16209x MtxOrb NoritakeVFD picolcd pyramid sed1330 sed1520 serialPOS serialVFD stv5730 svga t6963 text tyan sli ula200 xosd irtrans
+ noinst_LIBRARIES = libLCD.a libbignum.a
+ 
+ IOWarrior_CFLAGS =   @libusb_cflags@ $(AM_CFLAGS)
+@@ -103,6 +103,7 @@
+ ula200_SOURCES =     lcd.h lcd_lib.h ula200.h ula200.c report.h
+ sli_SOURCES =        lcd.h lcd_lib.h wirz-sli.h wirz-sli.c report.h
+ xosd_SOURCES =       lcd.h xosdlib_drv.c xosdlib_drv.h report.h
++irtrans_SOURCES =    lcd.h irtrans.c irtrans.h irtrans_network.h irtrans_remote.h irtrans_errcode.h report.h
+ 
+ AM_CPPFLAGS = -I$(top_srcdir)
+ 

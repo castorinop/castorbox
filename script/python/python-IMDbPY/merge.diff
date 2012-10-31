@@ -1,0 +1,17 @@
+--- old/Makefile	2011-07-26 21:24:30.843701014 -0300
++++ new/Makefile	2012-06-09 15:39:23.520666999 -0300
+@@ -1,7 +1,7 @@
+ GARNAME = python-IMDbPY
+-GARVERSION = 4.7
++GARVERSION = 4.8.2
+ CATEGORIES = python
+-MASTER_SITES = http://downloads.sourceforge.net/project/imdbpy/IMDbPY/$(GARVERSION)/
++MASTER_SITES = http://downloads.sourceforge.net/project/imdbpy/IMDbPY/4.8/
+ DISTFILES = $(patsubst python-%,%,$(GARNAME))-$(GARVERSION).tar.gz
+ LICENSE =
+ 
+--- old/checksums	2011-07-26 21:24:30.843701014 -0300
++++ new/checksums	2012-06-09 15:39:23.520666999 -0300
+@@ -1 +1 @@
+-4deaed7b55ba3098af5ac559da7dde1a  download/IMDbPY-4.7.tar.gz
++6644540206c5023cb332637089d5342d  download/IMDbPY-4.8.2.tar.gz

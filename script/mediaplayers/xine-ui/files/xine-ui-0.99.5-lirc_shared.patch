@@ -1,0 +1,22 @@
+diff -Naur xine-ui-0.99.5-old/m4/_xine.m4 xine-ui-0.99.5-new/m4/_xine.m4
+--- xine-ui-0.99.5-old/m4/_xine.m4	2006-06-30 19:26:26.000000000 -0700
++++ xine-ui-0.99.5-new/m4/_xine.m4	2008-11-07 21:45:09.000000000 -0800
+@@ -34,16 +34,8 @@
+      AC_CHECK_LIB(lirc_client,lirc_init,
+            [AC_CHECK_HEADER(lirc/lirc_client.h, true, have_lirc=no)], have_lirc=no)
+      if test "$have_lirc" = "yes"; then
+-
+-        if test x"$LIRC_PREFIX" != "x"; then
+-           lirc_libprefix="$LIRC_PREFIX/lib"
+-  	   LIRC_INCLUDE="-I$LIRC_PREFIX/include"
+-        fi
+-        for llirc in $lirc_libprefix /lib /usr/lib /usr/local/lib; do
+-          AC_CHECK_FILE(["$llirc/liblirc_client.a"],
+-             [LIRC_LIBS="$llirc/liblirc_client.a"]
+-             AC_DEFINE([HAVE_LIRC],,[Define this if you have LIRC (liblir_client) installed]),,)
+-        done
++         [LIRC_LIBS="-llirc_client"]
++         AC_DEFINE([HAVE_LIRC],,[Define this if you have LIRC (liblirc_client) installed])
+      else
+          AC_MSG_RESULT([*** LIRC client support not available, LIRC support will be disabled ***]);
+      fi

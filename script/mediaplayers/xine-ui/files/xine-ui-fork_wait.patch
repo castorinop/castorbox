@@ -1,0 +1,35 @@
+diff -Naur xine-ui-3056-old/src/xitk/videowin.c xine-ui-3056-new/src/xitk/videowin.c
+--- xine-ui-3056-old/src/xitk/videowin.c	2010-08-20 12:51:30.000000000 -0700
++++ xine-ui-3056-new/src/xitk/videowin.c	2010-08-20 12:51:30.000000000 -0700
+@@ -27,6 +27,7 @@
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <string.h>
++#include <sys/wait.h>
+ #include <sys/time.h>
+ #include <X11/Xlib.h>
+ #include <X11/cursorfont.h>
+@@ -2338,9 +2339,20 @@
+ 	      gssaver_path = pbuf;
+ 	  } while(!gssaver_path[0] && *path++);
+ 	}
+-	if(gssaver_path[0] && (fork() == 0)) {
+-	  execv(gssaver_path, gssaver_args);
+-	  exit(0);
++	if(gssaver_path[0])
++        {
++          switch(fork())
++          {
++            case -1:
++              break;
++            case  0:
++	      execv(gssaver_path, gssaver_args);
++	      exit(0);
++              break;
++            default:
++              wait(NULL);
++              break;
++          }
+ 	}
+       }
+ 

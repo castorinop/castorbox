@@ -1,0 +1,6 @@
+# /etc/acpi/events/panasonic-lockbtn
+# This is called when the user presses the lock button and calls
+# /etc/acpi/screenblank.sh for further processing
+
+event=pcc HKEY 00000080 00000088
+action=/etc/acpi/screenblank.sh

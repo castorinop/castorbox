@@ -1,0 +1,12 @@
+diff -Naur make-3.81-old/remake.c make-3.81-new/remake.c
+--- make-3.81-old/remake.c	2006-03-19 18:36:37.000000000 -0800
++++ make-3.81-new/remake.c	2007-11-23 22:42:22.000000000 -0800
+@@ -1454,6 +1454,8 @@
+ #ifndef _AMIGA
+       "/lib",
+       "/usr/lib",
++      "/lib64",
++      "/usr/lib64",
+ #endif
+ #if defined(WINDOWS32) && !defined(LIBDIR)
+ /*

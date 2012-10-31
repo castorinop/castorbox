@@ -1,0 +1,28 @@
+diff -Naur module-init-tools-3.11-old/Makefile.am module-init-tools-3.11-new/Makefile.am
+--- module-init-tools-3.11-old/Makefile.am	2009-10-15 02:59:28.000000000 -0700
++++ module-init-tools-3.11-new/Makefile.am	2009-10-15 15:26:52.000000000 -0700
+@@ -36,8 +36,8 @@
+ modinfo_LDADD = $(LDADD) libmodtools.a
+ modindex_LDADD = $(LDADD) libmodtools.a
+ 
+-MAN5 = modprobe.conf.5 modules.dep.5 depmod.conf.5 modprobe.d.5
+-MAN8 = depmod.8 insmod.8 lsmod.8 rmmod.8 modprobe.8 modinfo.8
++MAN5 =
++MAN8 =
+ SGML = $(addprefix doc/,  $(MAN5:%.5=%.sgml) $(MAN8:%.8=%.sgml))
+ dist_man_MANS = $(MAN5) $(MAN8)
+ # If they haven't overridden mandir, fix it (never /man!)
+diff -Naur module-init-tools-3.11-old/Makefile.in module-init-tools-3.11-new/Makefile.in
+--- module-init-tools-3.11-old/Makefile.in	2009-10-15 03:05:03.000000000 -0700
++++ module-init-tools-3.11-new/Makefile.in	2009-10-15 15:27:14.000000000 -0700
+@@ -294,8 +294,8 @@
+ depmod_LDADD = $(LDADD) libmodtools.a
+ modinfo_LDADD = $(LDADD) libmodtools.a
+ modindex_LDADD = $(LDADD) libmodtools.a
+-MAN5 = modprobe.conf.5 modules.dep.5 depmod.conf.5 modprobe.d.5
+-MAN8 = depmod.8 insmod.8 lsmod.8 rmmod.8 modprobe.8 modinfo.8
++MAN5 =
++MAN8 =
+ SGML = $(addprefix doc/,  $(MAN5:%.5=%.sgml) $(MAN8:%.8=%.sgml))
+ dist_man_MANS = $(MAN5) $(MAN8)
+ TESTSUITE := $(shell test -e @srcdir@/tests && find @srcdir@/tests -type f ! -name '*~')

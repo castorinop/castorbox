@@ -1,0 +1,5 @@
+fc1bb18a09244cd43a998625a6a1b071  download/xorg-server-1.10.3.tar.bz2
+8fe5513ee477ded53eb1091387cd03dd  download/xorg-server-1.10.3-perl.patch.gar
+a9277d9039e269f5c04e0da52e52d305  download/xorg-server-1.10.3-pkg_config.patch
+884677a21b3f31dd01f6f0c1197f7bdd  download/xorg-server-1.10.3-detect_nouveau.patch
+1cf77d08d7be0a0f5a2a615afd097452  download/xorg-server-1.10.3-detect_radeon.patch

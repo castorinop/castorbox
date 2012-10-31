@@ -1,0 +1,13 @@
+=== modified file 'plugins/feature/audio/lyrics_fetch.cpp'
+--- old/plugins/feature/audio/lyrics_fetch.cpp	2008-08-04 21:34:07 +0000
++++ new/plugins/feature/audio/lyrics_fetch.cpp	2008-08-11 19:34:01 +0000
+@@ -99,7 +99,7 @@
+   while (cur_pos != std::string::npos) {
+     start_pos = (cur_pos == 0 ? cur_pos : cur_pos + 1);
+     next_pos = text.find(nsec, start_pos);
+-    buff = text.substr(start_pos , next_pos - cur_pos - 1);
++    buff = text.substr(start_pos , next_pos - cur_pos);
+     addLine(buff);
+     cur_pos = next_pos;
+   }
+

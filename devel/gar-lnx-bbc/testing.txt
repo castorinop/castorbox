@@ -1,0 +1,24 @@
+Testing Releases
+
+As we near a releasable state, we produce beta-quality ISOs that have
+been given at least a cursory wiggle test by one or more developers.
+The following lists contain the URLs and md5sums of these ISO files.
+Note that some older releases may have expired due to inactivity, but
+it is possible to recreate them from a date-based checkout of the GAR
+tree.
+
+If you are looking for an official final release, we recommend looking
+at our <download.html download page>.
+
+If you wish to add a build to this list, simply mail the URL and
+md5sum to <http://zork.net/mailman/listinfo/lnx-bbc-devel
+lnx-bbc-devel@zork.net> and one of the developers will handle it.  We
+encourage people to download the <http://www.lnx-bbc.org/builds/
+automated builds> and give them a wiggle test for possible inclusion
+in this list!
+
+== Pre-2.1 Releases ==
+
+<http://www.lnx-bbc.org/builds/bbc-STABLE-2003-04-25T10:38:19-0700.iso>:
+	* md5 checksum: 7ab1434d11f90f51ddc419651eae074e
+	* torrent file: <http://www.lnx-bbc.org/builds/bbc-STABLE-2003-04-25T10:38:19-0700.iso.torrent>

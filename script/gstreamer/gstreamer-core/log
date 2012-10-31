@@ -1,0 +1,307 @@
+[===== NOW BUILDING:	gstreamer-0.10.20	=====]
+	[fetch] complete for gstreamer.
+	[checksum] complete for gstreamer.
+	[extract] complete for gstreamer.
+	[patch] complete for gstreamer.
+ ==> Running configure in work/main.d/gstreamer-0.10.20
+checking for a BSD-compatible install... //home/pablo/gar-castorbox/images/build/usr/bin/install -c
+checking whether build environment is sane... yes
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking for i586-castorbox-linux-gnu-strip... i586-castorbox-linux-gnu-strip
+checking nano version... 0 (release)
+checking whether to enable maintainer-specific portions of Makefiles... no
+checking build system type... x86_64-manbo-linux-gnu
+checking host system type... i586-castorbox-linux-gnu
+checking for style of include used by make... GNU
+checking for i586-castorbox-linux-gnu-gcc... i586-castorbox-linux-gnu-gcc
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+checking whether we are cross compiling... yes
+checking for suffix of executables... 
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether i586-castorbox-linux-gnu-gcc accepts -g... yes
+checking for i586-castorbox-linux-gnu-gcc option to accept ISO C89... none needed
+checking dependency style of i586-castorbox-linux-gnu-gcc... gcc3
+checking for a sed that does not truncate output... //home/pablo/gar-castorbox/images/build/usr/bin/sed
+checking for grep that handles long lines and -e... //home/pablo/gar-castorbox/images/build/usr/bin/grep
+checking for egrep... //home/pablo/gar-castorbox/images/build/usr/bin/grep -E
+checking for ld used by i586-castorbox-linux-gnu-gcc... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking for i586-castorbox-linux-gnu-ld option to reload object files... -r
+checking for BSD-compatible nm... i586-castorbox-linux-gnu-nm
+checking whether ln -s works... yes
+checking how to recognize dependent libraries... pass_all
+checking how to run the C preprocessor... i586-castorbox-linux-gnu-cpp
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking dlfcn.h usability... yes
+checking dlfcn.h presence... yes
+checking for dlfcn.h... yes
+checking whether we are using the GNU C++ compiler... yes
+checking whether i586-castorbox-linux-gnu-g++ accepts -g... yes
+checking dependency style of i586-castorbox-linux-gnu-g++... gcc3
+checking how to run the C++ preprocessor... i586-castorbox-linux-gnu-g++ -E
+checking for i586-castorbox-linux-gnu-g77... no
+checking for i586-castorbox-linux-gnu-xlf... no
+checking for i586-castorbox-linux-gnu-f77... no
+checking for i586-castorbox-linux-gnu-frt... no
+checking for i586-castorbox-linux-gnu-pgf77... no
+checking for i586-castorbox-linux-gnu-cf77... no
+checking for i586-castorbox-linux-gnu-fort77... no
+checking for i586-castorbox-linux-gnu-fl32... no
+checking for i586-castorbox-linux-gnu-af77... no
+checking for i586-castorbox-linux-gnu-xlf90... no
+checking for i586-castorbox-linux-gnu-f90... no
+checking for i586-castorbox-linux-gnu-pgf90... no
+checking for i586-castorbox-linux-gnu-pghpf... no
+checking for i586-castorbox-linux-gnu-epcf90... no
+checking for i586-castorbox-linux-gnu-gfortran... no
+checking for i586-castorbox-linux-gnu-g95... no
+checking for i586-castorbox-linux-gnu-xlf95... no
+checking for i586-castorbox-linux-gnu-f95... no
+checking for i586-castorbox-linux-gnu-fort... no
+checking for i586-castorbox-linux-gnu-ifort... no
+checking for i586-castorbox-linux-gnu-ifc... no
+checking for i586-castorbox-linux-gnu-efc... no
+checking for i586-castorbox-linux-gnu-pgf95... no
+checking for i586-castorbox-linux-gnu-lf95... no
+checking for i586-castorbox-linux-gnu-ftn... no
+checking for g77... no
+checking for xlf... no
+checking for f77... no
+checking for frt... no
+checking for pgf77... no
+checking for cf77... no
+checking for fort77... no
+checking for fl32... no
+checking for af77... no
+checking for xlf90... no
+checking for f90... no
+checking for pgf90... no
+checking for pghpf... no
+checking for epcf90... no
+checking for gfortran... no
+checking for g95... no
+checking for xlf95... no
+checking for f95... no
+checking for fort... no
+checking for ifort... no
+checking for ifc... no
+checking for efc... no
+checking for pgf95... no
+checking for lf95... no
+checking for ftn... no
+checking whether we are using the GNU Fortran 77 compiler... no
+checking whether  accepts -g... no
+checking the maximum length of command line arguments... 98304
+checking command to parse i586-castorbox-linux-gnu-nm output from i586-castorbox-linux-gnu-gcc object... ok
+checking for objdir... .libs
+checking for i586-castorbox-linux-gnu-ar... i586-castorbox-linux-gnu-ar
+checking for i586-castorbox-linux-gnu-ranlib... i586-castorbox-linux-gnu-ranlib
+checking for i586-castorbox-linux-gnu-strip... (cached) i586-castorbox-linux-gnu-strip
+checking if i586-castorbox-linux-gnu-gcc supports -fno-rtti -fno-exceptions... no
+checking for i586-castorbox-linux-gnu-gcc option to produce PIC... -fPIC
+checking if i586-castorbox-linux-gnu-gcc PIC flag -fPIC works... yes
+checking if i586-castorbox-linux-gnu-gcc static flag -static works... yes
+checking if i586-castorbox-linux-gnu-gcc supports -c -o file.o... yes
+checking whether the i586-castorbox-linux-gnu-gcc linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking for shl_load... no
+checking for shl_load in -ldld... no
+checking for dlopen... no
+checking for dlopen in -ldl... yes
+checking whether a program can dlopen itself... cross
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+configure: creating libtool
+appending configuration tag "CXX" to libtool
+checking for ld used by i586-castorbox-linux-gnu-g++... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking for i586-castorbox-linux-gnu-g++ option to produce PIC... -fPIC
+checking if i586-castorbox-linux-gnu-g++ PIC flag -fPIC works... yes
+checking if i586-castorbox-linux-gnu-g++ static flag -static works... yes
+checking if i586-castorbox-linux-gnu-g++ supports -c -o file.o... yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking dynamic linker characteristics... GNU/Linux ld.so
+(cached) (cached) checking how to hardcode library paths into programs... immediate
+appending configuration tag "F77" to libtool
+checking for msgfmt... //home/pablo/gar-castorbox/images/build/usr/bin/msgfmt
+checking for gmsgfmt... //home/pablo/gar-castorbox/images/build/usr/bin/msgfmt
+checking for xgettext... //home/pablo/gar-castorbox/images/build/usr/bin/xgettext
+checking for msgmerge... //home/pablo/gar-castorbox/images/build/usr/bin/msgmerge
+checking for ld used by GCC... i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... yes
+checking for shared library run path origin... done
+checking whether NLS is requested... yes
+checking for GNU gettext in libc... yes
+checking for i586-castorbox-linux-gnu-pkg-config... no
+checking for pkg-config... //home/pablo/gar-castorbox/images/build/usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for VALGRIND... no
+configure: Using GStreamer source release as package name
+configure: Using Unknown package origin as package origin
+checking whether byte ordering is bigendian... no
+checking if unaligned memory access works correctly... (whitelisted) yes
+checking for special C compiler options needed for large files... no
+checking for _FILE_OFFSET_BITS value needed for large files... 64
+checking for i586-castorbox-linux-gnu-gcc... (cached) i586-castorbox-linux-gnu-gcc
+checking whether we are using the GNU C compiler... (cached) yes
+checking whether i586-castorbox-linux-gnu-gcc accepts -g... (cached) yes
+checking for i586-castorbox-linux-gnu-gcc option to accept ISO C89... (cached) none needed
+checking dependency style of i586-castorbox-linux-gnu-gcc... (cached) gcc3
+checking whether i586-castorbox-linux-gnu-gcc and cc understand -c and -o together... yes
+checking for perl... //home/pablo/gar-castorbox/images/build/usr/bin/perl
+checking for bison... //home/pablo/gar-castorbox/images/build/usr/bin/bison
+checking bison version 2.3 >= 1.875... yes
+checking for flex... //home/pablo/gar-castorbox/images/build/usr/bin/flex
+checking flex version 2.5.33 >= 2.5.31... yes
+checking for valgrind... no
+configure: Looking for Python version >= 2.1
+checking for python... no
+checking for python2.2... no
+checking for python2.1... no
+checking for python2.0... no
+checking for python2... no
+checking for python1.6... no
+checking for python1.5... no
+checking whether to build plugin documentation... no (gtk-doc disabled or not available)
+checking for strerror in -lcposix... no
+checking for cos in -lm... yes
+checking for ANSI C header files... (cached) yes
+checking ucontext.h usability... yes
+checking ucontext.h presence... yes
+checking for ucontext.h... yes
+checking sys/socket.h usability... yes
+checking sys/socket.h presence... yes
+checking for sys/socket.h... yes
+checking sys/times.h usability... yes
+checking sys/times.h presence... yes
+checking for sys/times.h... yes
+checking for unistd.h... (cached) yes
+checking process.h usability... no
+checking process.h presence... no
+checking for process.h... no
+checking sys/utsname.h usability... yes
+checking sys/utsname.h presence... yes
+checking for sys/utsname.h... yes
+checking stdio_ext.h usability... yes
+checking stdio_ext.h presence... yes
+checking for stdio_ext.h... yes
+checking for inline... inline
+checking to see if compiler understands -fno-common... yes
+checking for sigaction... yes
+checking for fork... yes
+checking for _LARGEFILE_SOURCE value needed for large files... no
+checking for ftello... yes
+checking for fgetpos... yes
+checking for fsetpos... yes
+checking for poll... yes
+checking for ppoll... yes
+checking for pselect... yes
+checking for stdlib.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for getpagesize... yes
+checking for working mmap... no
+checking for clock_gettime... no
+checking for clock_gettime in -lrt... yes
+checking for posix timers... yes
+checking for monotonic clock... yes
+checking whether i586-castorbox-linux-gnu-gcc implements __PRETTY_FUNCTION__... yes
+checking whether i586-castorbox-linux-gnu-gcc implements __FUNCTION__... yes
+checking whether i586-castorbox-linux-gnu-gcc implements __func__... yes
+checking for register_printf_function... yes
+checking for dladdr in -ldl... yes
+checking for inet_aton... yes
+checking for GLIB... yes
+checking for GLIB_ONLY... yes
+checking for XML... yes
+configure: Test xml2 program linked
+disabled
+configure: Using //usr/lib/gstreamer-0.10 as the plugin install location
+checking to see if compiler understands -Wall... yes
+configure: set ERROR_CFLAGS to -Wall
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating gst/Makefile
+config.status: creating gst/gstconfig.h
+config.status: creating gst/gstversion.h
+config.status: creating gst/parse/Makefile
+config.status: creating libs/Makefile
+config.status: creating libs/gst/Makefile
+config.status: creating libs/gst/base/Makefile
+config.status: creating libs/gst/check/Makefile
+config.status: creating libs/gst/controller/Makefile
+config.status: creating libs/gst/dataprotocol/Makefile
+config.status: creating libs/gst/net/Makefile
+config.status: creating plugins/Makefile
+config.status: creating plugins/indexers/Makefile
+config.status: creating plugins/elements/Makefile
+config.status: creating po/Makefile.in
+config.status: creating tests/Makefile
+config.status: creating tests/benchmarks/Makefile
+config.status: creating tests/check/Makefile
+config.status: creating tests/misc/Makefile
+config.status: creating tests/examples/Makefile
+config.status: creating tests/examples/adapter/Makefile
+config.status: creating tests/examples/controller/Makefile
+config.status: creating tests/examples/helloworld/Makefile
+config.status: creating tests/examples/launch/Makefile
+config.status: creating tests/examples/manual/Makefile
+config.status: creating tests/examples/metadata/Makefile
+config.status: creating tests/examples/queue/Makefile
+config.status: creating tests/examples/typefind/Makefile
+config.status: creating tests/examples/xml/Makefile
+config.status: creating tools/Makefile
+config.status: creating common/Makefile
+config.status: creating common/m4/Makefile
+config.status: creating docs/Makefile
+config.status: creating docs/design/Makefile
+config.status: creating docs/faq/Makefile
+config.status: creating docs/gst/Makefile
+config.status: creating docs/gst/gstreamer.types
+config.status: creating docs/libs/Makefile
+config.status: creating docs/plugins/Makefile
+config.status: creating docs/manual/Makefile
+config.status: creating docs/pwg/Makefile
+config.status: creating docs/slides/Makefile
+config.status: creating docs/xsl/Makefile
+config.status: creating docs/version.entities
+config.status: creating win32/common/config.h
+config.status: creating pkgconfig/Makefile
+config.status: creating stamp.h
+config.status: creating pkgconfig/gstreamer.pc
+config.status: creating pkgconfig/gstreamer-uninstalled.pc
+config.status: creating pkgconfig/gstreamer-base.pc
+config.status: creating pkgconfig/gstreamer-base-uninstalled.pc
+config.status: creating pkgconfig/gstreamer-check.pc
+config.status: creating pkgconfig/gstreamer-check-uninstalled.pc
+config.status: creating pkgconfig/gstreamer-controller.pc
+config.status: creating pkgconfig/gstreamer-controller-uninstalled.pc
+config.status: creating pkgconfig/gstreamer-dataprotocol.pc
+config.status: creating pkgconfig/gstreamer-dataprotocol-uninstalled.pc
+config.status: creating pkgconfig/gstreamer-net.pc
+config.status: creating pkgconfig/gstreamer-net-uninstalled.pc
+config.status: creating gst-element-check.m4
+config.status: creating gstreamer.spec
+config.status: creating config.h
+config.status: config.h is unchanged
+config.status: executing depfiles commands
+config.status: executing default-1 commands
+config.status: creating po/POTFILES
+config.status: creating po/Makefile
+	[configure] complete for gstreamer.

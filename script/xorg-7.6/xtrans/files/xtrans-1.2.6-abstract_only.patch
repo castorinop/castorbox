@@ -1,0 +1,12 @@
+diff -Naur xtrans-1.2.6-old/Xtranssock.c xtrans-1.2.6-new/Xtranssock.c
+--- xtrans-1.2.6-old/Xtranssock.c	2010-10-29 18:21:40.000000000 -0700
++++ xtrans-1.2.6-new/Xtranssock.c	2010-11-09 10:22:32.000000000 -0800
+@@ -2453,7 +2453,7 @@
+ Xtransport	TRANS(SocketUNIXFuncs) = {
+ 	/* Socket Interface */
+ 	"unix",
+-#if !defined(LOCALCONN) && !defined(HAVE_ABSTRACT_SOCKETS)
++#if !defined(LOCALCONN)
+         TRANS_ALIAS,
+ #else
+ 	0,

@@ -1,0 +1,11 @@
+--- old/general.cc	2010-12-17 22:14:26.984839297 -0300
++++ new/general.cc	2010-12-17 21:48:39.568492858 -0300
+@@ -124,7 +124,7 @@
+   off_t getFileSize (const string& filename)
+     {
+       struct stat64 statbuf ;
+-      if (file_tools::cache_stat(filename.c_str (), &statbuf) != 0)
++      if (stat64(filename.c_str (), &statbuf) != 0)
+ 	return -1 ;	// could not stat file
+ 
+       return statbuf.st_size ;

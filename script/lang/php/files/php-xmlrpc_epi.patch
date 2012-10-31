@@ -1,0 +1,11 @@
+--- old/ext/xmlrpc/xmlrpc-epi-php.c.orig	2009-07-23 19:27:32.000000000 -0300
++++ new/ext/xmlrpc/xmlrpc-epi-php.c	2009-07-23 19:28:00.000000000 -0300
+@@ -70,7 +70,7 @@
+ #include "ext/date/php_date.h"
+ #include "php_ini.h"
+ #include "php_xmlrpc.h"
+-#include "xmlrpc.h"
++#include <xmlrpc-epi/xmlrpc.h>
+ 
+ #define PHP_EXT_VERSION "0.51"
+ 

@@ -1,0 +1,13 @@
+=== modified file 'libfspp.cpp'
+--- old/libfspp.cpp	2008-07-10 22:30:23 +0000
++++ new/libfspp.cpp	2008-07-14 22:50:45 +0000
+@@ -30,7 +30,7 @@
+   } else if (order == "by date") { // order by file attributes
+     struct stat file_lhs, file_rhs;
+     if (stat(lhs_path.c_str(), &file_lhs) == 0 && stat(rhs_path.c_str(), &file_rhs) == 0) {
+-      return file_lhs.st_mtime <= file_rhs.st_mtime;
++      return (file_lhs.st_mtime == file_rhs.st_mtime ? lhs_name <= rhs_name : file_lhs.st_mtime <= file_rhs.st_mtime);
+     } else {
+       return lhs_name <= rhs_name;
+     }
+

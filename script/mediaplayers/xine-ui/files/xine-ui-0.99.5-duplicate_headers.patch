@@ -1,0 +1,11 @@
+diff -Naur xine-ui-0.99.5-old/src/xitk/skins/xinetic/Makefile.am xine-ui-0.99.5-new/src/xitk/skins/xinetic/Makefile.am
+--- xine-ui-0.99.5-old/src/xitk/skins/xinetic/Makefile.am	2006-07-01 05:24:09.000000000 -0700
++++ xine-ui-0.99.5-new/src/xitk/skins/xinetic/Makefile.am	2009-06-24 17:32:20.000000000 -0700
+@@ -15,7 +15,6 @@
+ 	CtlSave.png	   MainNext.png	      MrlDismiss.png	PlPlay.png	Letters.png       \
+ 	MainPause.png      MrlSelect.png      Letters2.png      MrlFlit.png                       \
+ 	MainAutoButton.png MainPlay.png	      Onglet.png	MainNav.png                       \
+-	MainAutoButton.png MainPlay.png	      Onglet.png	                                  \
+ 	BigArrowLeft.png  BigArrowRight.png                                                       \
+ 	PlSlidHBg.png      SliderHPad.png     SkSlidHBg.png     SlidHPad.png	                  \
+ 	SkSlidHPad.png     skinconfig

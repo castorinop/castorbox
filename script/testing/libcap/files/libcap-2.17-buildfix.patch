@@ -1,0 +1,21 @@
+Fix build after applying libcap-2.16-remove-kernel-headers-workaround.patch
+
+diff -p -up libcap-2.16/libcap/include/linux/capability.h.orig libcap-2.16/libcap/include/linux/capability.h
+--- libcap-2.16/libcap/include/linux/capability.h.orig	2009-03-05 11:26:14.000000000 -0300
++++ libcap-2.16/libcap/include/linux/capability.h	2009-03-05 11:26:35.000000000 -0300
+@@ -40,13 +40,13 @@ struct task_struct;
+ typedef struct __user_cap_header_struct {
+ 	__u32 version;
+ 	int pid;
+-} __user *cap_user_header_t;
++} *cap_user_header_t;
+ 
+ typedef struct __user_cap_data_struct {
+         __u32 effective;
+         __u32 permitted;
+         __u32 inheritable;
+-} __user *cap_user_data_t;
++} *cap_user_data_t;
+ 
+ 
+ #define XATTR_CAPS_SUFFIX "capability"

@@ -1,0 +1,12 @@
+diff --speed-large-files --minimal -Nru tmp/dgen-sdl-1.23/musa/m68kmake.c work/main.d/dgen-sdl-1.23/musa/m68kmake.c
+--- dgen-sdl-1.23/musa/m68kmake.c	1999-12-20 00:15:59.000000000 -0300
++++ dgen-sdl-1.23/musa/m68kmake.c	2007-02-10 14:56:26.000000000 -0300
+@@ -1031,7 +1031,7 @@
+ 
+ 	fprintf(filep, "#include \"m68kops.h\"\n");
+ 	fprintf(filep, "#include \"m68kcpu.h\"\n");
+-	fprintf(filep, "#include <stdlib.h>\n\n");
++//	fprintf(filep, "#include <stdlib.h>\n\n");
+ 	fprintf(filep, "#include <string.h>\n\n");
+ 
+ 	fprintf(filep, "extern void  (*m68k_instruction_jump_table[])(void); /* opcode handler jump table */\n\n");

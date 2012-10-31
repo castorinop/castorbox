@@ -1,0 +1,586 @@
+diff -Naur lirc-0.8.5pre2-old/drivers/lirc_mceusb2/lirc_mceusb2.c lirc-0.8.5pre2-new/drivers/lirc_mceusb2/lirc_mceusb2.c
+--- lirc-0.8.5pre2-old/drivers/lirc_mceusb2/lirc_mceusb2.c	2009-03-15 02:34:00.000000000 -0700
++++ lirc-0.8.5pre2-new/drivers/lirc_mceusb2/lirc_mceusb2.c	2009-03-31 19:04:36.000000000 -0700
+@@ -1,6 +1,8 @@
+ /*
+  * LIRC driver for Philips eHome USB Infrared Transceiver
+- * and the Microsoft MCE 2005 Remote Control
++ * and the Microsoft MCE 2005 Remote Control and Keyboard
++ *
++ * (C) by Florian Demski
+  *
+  * (C) by Martin A. Blatter <martin_a_blatter@yahoo.com>
+  *
+@@ -33,10 +35,11 @@
+  *
+  */
+ 
++
+ #include <linux/version.h>
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 5)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 10)
+ #error "*******************************************************"
+-#error "Sorry, this driver needs kernel version 2.6.5 or higher"
++#error "Sorry, this driver needs kernel version 2.6.10 or higher"
+ #error "*******************************************************"
+ #endif
+ #include <linux/autoconf.h>
+@@ -56,6 +59,12 @@
+ #include <linux/usb.h>
+ #include <linux/wait.h>
+ #include <linux/time.h>
++#include <linux/input.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 18)
++#include <linux/usb/input.h>
++#else
++#include <linux/usb_input.h>
++#endif
+ 
+ #include "drivers/lirc.h"
+ #include "drivers/kcompat.h"
+@@ -63,12 +72,16 @@
+ 
+ #define DRIVER_VERSION	"$Revision: 1.80 $"
+ #define DRIVER_AUTHOR	"Daniel Melander <lirc@rajidae.se>, " \
+-			"Martin Blatter <martin_a_blatter@yahoo.com>"
++			"Martin Blatter <martin_a_blatter@yahoo.com>, " \
++			"Florian Demski"
+ #define DRIVER_DESC	"Philips eHome USB IR Transceiver and Microsoft " \
+-			"MCE 2005 Remote Control driver for LIRC"
++			"MCE 2005 Remote Control and Keyboard driver for LIRC"
+ #define DRIVER_NAME	"lirc_mceusb2"
+ 
+-#define USB_BUFLEN	32	/* USB reception buffer length */
++#define PEAK_BUFLEN             10000
++
++/* LIRC constants */
++#define USB_BUFLEN              256 /* USB reception buffer length */
+ #define LIRCBUF_SIZE	256	/* LIRC work buffer length */
+ 
+ /* MCE constants */
+@@ -87,6 +100,52 @@
+ #define MCE_PACKET_LENGTH_MASK  0x7F /* Pulse mask */
+ 
+ 
++/* Keyboard/Mouse constants */
++#define MODE2_PULSE             1
++#define MODE2_SPACE             0
++#define MODE2_NONE              -1
++
++#define SYNC_MIN                52
++#define SYNC_MAX                66
++#define RC6_1_MIN               7
++#define RC6_1_MAX               12
++#define RC6_2_MIN               15
++#define RC6_2_MAX               20
++#define RC6_3_MIN               24
++#define RC6_3_MAX               32
++#define RC5_1_MIN               3
++#define RC5_1_MAX               9
++#define RC5_2_MIN               10
++#define RC5_2_MAX               15
++
++#define RC5_KEY_BUFLEN          74
++#define RC5_MOUSE_BUFLEN        68
++
++#define RC5_KEY_START           42
++#define RC5_MASK_START          58
++
++#define MOUSE_Y_START           26
++#define MOUSE_X_START           40
++#define MOUSE_BTN_START         54
++#define MOUSE_DATA_END          58
++
++#define MASK_KEYS               0xE0
++
++#define PULSE                   2
++#define SPACE                   1
++
++#ifndef BITS_PER_LONG
++#define BITS_PER_LONG (8 * sizeof(long))
++#endif
++
++#ifndef BIT_MASK
++#define BIT_MASK(nr) (1UL << ((nr) % BITS_PER_LONG)) 
++#endif
++
++#ifndef BIT_WORD
++#define BIT_WORD(nr) ((nr) / BITS_PER_LONG)
++#endif
++
+ /* module parameters */
+ #ifdef CONFIG_USB_DEBUG
+ static int debug = 1;
+@@ -215,15 +274,45 @@
+ 	{}
+ };
+ 
++static unsigned char usb_kbd_keycode[256] = {
++      0,   0,   0,   0,  30,  48,  46,  32,  18,  33,  34,  35,  23,  36,  37,  38,
++     50,  49,  24,  25,  16,  19,  31,  20,  22,  47,  17,  45,  21,  44,   2,   3,
++      4,   5,   6,   7,   8,   9,  10,  11,  28,   1,  14,  15,  57,  12,  13,  26,
++     27,  43,  43,  39,  40,  41,  51,  52,  53,  58,  59,  60,  61,  62,  63,  64,
++     65,  66,  67,  68,  87,  88,  99,  70, 119, 110, 102, 104, 111, 107, 109, 106,
++    105, 108, 103,  69,  98,  55,  74,  78,  96,  79,  80,  81,  75,  76,  77,  71,
++     72,  73,  82,  83,  86, 127, 116, 117, 183, 184, 185, 186, 187, 188, 189, 190,
++    191, 192, 193, 194, 134, 138, 130, 132, 128, 129, 131, 137, 133, 135, 136, 113,
++    115, 114,   0,   0,   0, 121,   0,  89,  93, 124,  92,  94,  95,   0,   0,   0,
++    122, 123,  90,  91,  85,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
++      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
++      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
++      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
++      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
++     29,  42,  56, 125,  97,  54, 100, 126, 164, 166, 165, 163, 161, 115, 114, 113,
++    150, 158, 159, 128, 136, 177, 178, 176, 142, 152, 173, 140
++};
++
++typedef struct {
++	int pulse;
++	int duration;
++} peak;
++
++#define is_pressed(a, b) ((a[b/8]) & (1 << (b % 8)))
++#define set_pressed(a, b) a[b/8] |= (1 << (b % 8));
++#define rst_pressed(a, b) a[b/8] &= (~(1 << (b % 8)));
++
+ /* data structure for each usb transceiver */
+ struct mceusb2_dev {
+ 
+ 	/* usb */
++	struct input_dev *idev;
+ 	struct usb_device *usbdev;
+ 	struct urb *urb_in;
+ 	int devnum;
+ 	struct usb_endpoint_descriptor *usb_ep_in;
+ 	struct usb_endpoint_descriptor *usb_ep_out;
++	unsigned char pressed[256/8];
+ 
+ 	/* buffers and dma */
+ 	unsigned char *buf_in;
+@@ -231,9 +320,16 @@
+ 	dma_addr_t dma_in;
+ 	dma_addr_t dma_out;
+ 
++	peak peaks[PEAK_BUFLEN];
++	int peak_index;
++    
++	int in_sync;
++	int sync_pos;
++    
+ 	/* lirc */
+ 	struct lirc_driver *d;
+ 	lirc_t lircdata;
++	int lirccnt;
+ 	unsigned char is_pulse;
+ 	struct {
+ 		u32 connected:1;
+@@ -250,6 +346,9 @@
+ 	wait_queue_head_t wait_out;
+ 
+ 	struct mutex lock;
++	char name[128];
++	char phys[64];
++	char uniq[64];
+ };
+ 
+ /* init strings */
+@@ -374,6 +473,261 @@
+ 		ir->devnum, res);
+ }
+ 
++static void do_rc5_keys(struct mceusb2_dev *ir, peak *peaks, int num_peaks)
++{
++    int step1[1000];
++    unsigned char keycode, mask;
++    int i, j, unknown_bits;
++
++
++
++    for (i=0, j=0; i<num_peaks; i++) {
++        if (RC5_1_MIN <= peaks[i].duration && peaks[i].duration <= RC5_1_MAX) {
++            step1[j++] = peaks[i].pulse;
++            if (j == 1000)
++                return;
++        } else if (RC5_2_MIN <= peaks[i].duration && peaks[i].duration <= RC5_2_MAX) {
++            step1[j++] = peaks[i].pulse;
++            if (j == 1000)
++                return;
++            step1[j++] = peaks[i].pulse;
++            if (j == 1000)
++                return;
++        }
++    }
++
++
++    if (j&1 && j<1000) step1[j++] = SPACE;
++
++    if (j != RC5_KEY_BUFLEN)
++        return;
++
++    unknown_bits = 0;
++    keycode = 0;
++    mask = 0;
++
++    for (i=0; i<RC5_KEY_BUFLEN; i+=2) {
++        if (step1[i] == SPACE && step1[i+1] == PULSE) {
++            if (i < RC5_KEY_START) {
++                unknown_bits <<= 1;
++            } else if (i < RC5_MASK_START) {
++                keycode <<= 1;
++            } else {
++                mask <<= 1;
++            }
++        } else if (step1[i] == PULSE && step1[i+1] == SPACE) {
++            if (i < RC5_KEY_START) {
++                unknown_bits <<= 1;
++                unknown_bits |= 1;
++            } else if (i < RC5_MASK_START) {
++                keycode <<= 1;
++                keycode |= 1;
++            } else {
++                mask <<= 1;
++                mask |= 1;
++            }
++        } else {
++            dprintk(DRIVER_NAME "RC5: junk\n");
++            return;
++        }
++    }
++
++    dprintk(DRIVER_NAME " RC5: key=%02X mask=%02X\n", keycode, mask);
++
++    for (i=0; i<7; i++) {
++        unsigned char tc;
++
++        tc = usb_kbd_keycode[MASK_KEYS + i];
++
++        if (!is_pressed(ir->pressed, tc) && ((mask & (1<<i))>0)) {
++            input_report_key(ir->idev, tc, 1);
++            set_pressed(ir->pressed, tc);
++        } else if (is_pressed(ir->pressed, tc) && ((mask & (1<<i)) == 0)) {
++            input_report_key(ir->idev, tc, 0);
++            rst_pressed(ir->pressed, tc);
++        }
++    }
++
++    if (keycode) {
++        unsigned char tc;
++
++        tc = usb_kbd_keycode[keycode];
++        if (!is_pressed(ir->pressed, tc)) {
++            set_pressed(ir->pressed, tc);
++            input_report_key(ir->idev, tc, 1);
++        }
++    }
++    if (keycode == 0) {
++        for (i=0; i<MASK_KEYS; i++) {
++            if (is_pressed(ir->pressed, usb_kbd_keycode[i])) {
++                input_report_key(ir->idev, usb_kbd_keycode[i], 0);
++            }
++            rst_pressed(ir->pressed, usb_kbd_keycode[i]);
++        }
++    }
++}
++
++static void do_rc5_mouse(struct mceusb2_dev *ir, peak *peaks, int num_peaks)
++{
++    int step1[1000];
++    int i, j;
++    unsigned int pre_data;
++    unsigned char ux, uy, btn;
++    signed char x, y;
++
++    for (i=0, j=0; i<num_peaks; i++) {
++        if (RC5_1_MIN <= peaks[i].duration && peaks[i].duration <= RC5_1_MAX) {
++            step1[j++] = peaks[i].pulse;
++            if (j == 1000)
++                return;
++        } else if (RC5_2_MIN <= peaks[i].duration && peaks[i].duration <= RC5_2_MAX) {
++            step1[j++] = peaks[i].pulse;
++            if (j == 1000)
++                return;
++            step1[j++] = peaks[i].pulse;
++            if (j == 1000)
++                return;
++        }
++    }
++
++
++    if (j&1 && j<1000) step1[j++] = SPACE;
++
++    if (j != RC5_MOUSE_BUFLEN)
++        return;
++
++    pre_data = 0;
++    ux = uy = btn = 0;
++
++    for (i=0; i<MOUSE_DATA_END; i+=2) {
++        if (step1[i] == SPACE && step1[i+1] == PULSE) {
++            if (i < MOUSE_Y_START) {
++                pre_data <<= 1;
++            } else if (i < MOUSE_X_START) {
++                uy <<= 1;
++            } else if (i < MOUSE_BTN_START) {
++                ux <<= 1;
++            } else {
++                btn <<= 1;
++            }
++        } else if (step1[i] == PULSE && step1[i+1] == SPACE) {
++            if (i < MOUSE_Y_START) {
++                pre_data <<= 1;
++                pre_data |= 1;
++            } else if (i < MOUSE_X_START) {
++                uy <<= 1;
++                uy |= 1;
++            } else if (i < MOUSE_BTN_START) {
++                ux <<= 1;
++                ux |= 1;
++            } else {
++                btn <<= 1;
++                btn |= 1;
++            }
++        } else {
++            dprintk(DRIVER_NAME " mouse: junk\n");
++            return;
++        }
++    }
++
++    if (ux & 0x40) {
++        x = -((~ux & 0x7F) + 1);
++    } else {
++        x = ux;
++    }
++
++    if (uy & 0x40) {
++        y = -((~uy & 0x7F) + 1);
++    } else {
++        y = uy;
++    }
++
++    dprintk(DRIVER_NAME " mouse: x=%d, y=%d, btn=%s%s%s\n",
++      x,  y,
++      (btn & 1)  ? "<L>" : "",
++      (btn == 3) ? "+"   : "",
++      (btn & 2)  ? "<R>" : ""); 
++
++    input_report_rel(ir->idev, REL_X, x);
++    input_report_rel(ir->idev, REL_Y, y);
++
++    input_report_key(ir->idev, BTN_LEFT, btn & 1);
++    input_report_key(ir->idev, BTN_RIGHT, btn & 2);
++}
++
++static void do_analyze(struct mceusb2_dev *ir, peak *peaks, int num_peaks)
++{
++    do_rc5_keys(ir, peaks, num_peaks);
++    do_rc5_mouse(ir, peaks, num_peaks);
++}
++
++static void decode_buffer(struct mceusb2_dev *ir, int len)
++{
++    int i;
++    int pulse, length, sync_pos;
++    int offset = 0, data_len = 0;
++
++    sync_pos = -1;
++
++    for (;;) {
++        if (ir->buf_in[offset] == MCE_CONTROL_HEADER)
++          break;
++  
++        data_len = ir->buf_in[offset] & 0x7F;
++        offset++;
++  
++        if (offset + data_len > len)
++          break;
++
++        if (data_len == 0)
++          break;
++  
++        for (i = offset; i<offset + data_len; i++) {
++            pulse  = (ir->buf_in[i] & 0x80) ? PULSE : SPACE;
++            length = (ir->buf_in[i] & 0x7F);
++      
++            if (ir->peaks[ir->peak_index].pulse != pulse) {
++      
++                if ((ir->peaks[ir->peak_index].pulse == PULSE) &&
++                  (SYNC_MIN <= ir->peaks[ir->peak_index].duration) &&
++                  (ir->peaks[ir->peak_index].duration <= SYNC_MAX)) {
++                    if (ir->in_sync) {
++                        do_analyze(ir, &ir->peaks[ir->sync_pos], ir->peak_index - ir->sync_pos + 1);
++                    }
++      
++                    ir->in_sync = 1;
++                    ir->sync_pos = 0;
++                    ir->peak_index = -1;
++                }
++      
++                if ((ir->peaks[ir->peak_index].pulse == SPACE) &&
++                    (ir->peaks[ir->peak_index].duration >= 2000)) {
++
++                    if (ir->in_sync) {
++                        do_analyze(ir, &ir->peaks[ir->sync_pos], ir->peak_index - ir->sync_pos + 1);
++                    }
++
++                    ir->in_sync = 0;
++                    ir->peak_index = -1;
++                    ir->peaks[0].pulse = 0;
++                }
++
++                if (ir->peak_index < 0) {
++                  ir->peak_index = 0;
++                } else {
++                  ir->peak_index = (++ir->peak_index) % PEAK_BUFLEN;
++                  if (ir->peak_index == 0) dprintk(DRIVER_NAME ": buffer overflow\n");
++                }
++                ir->peaks[ir->peak_index].pulse = pulse;
++                ir->peaks[ir->peak_index].duration = length;
++            } else {
++                ir->peaks[ir->peak_index].duration += length;
++            }
++        }
++        offset += data_len;
++    }
++}
++
+ static int unregister_from_lirc(struct mceusb2_dev *ir)
+ {
+ 	struct lirc_driver *d = ir->d;
+@@ -495,6 +849,10 @@
+ 	switch (urb->status) {
+ 	/* success */
+ 	case 0:
++        {
++            decode_buffer(ir, buf_len);
++            input_sync(ir->idev);
++    
+ 		for (i = 0; i < buf_len; i++) {
+ 			/* decode mce packets of the form (84),AA,BB,CC,DD */
+ 			if (ir->buf_in[i] >= 0x80 && ir->buf_in[i] <= 0x9e) {
+@@ -549,6 +907,7 @@
+ 				i = buf_len;
+ 			}
+ 		}
++            }
+ 
+ 		break;
+ 
+@@ -716,6 +1075,15 @@
+ }
+ 
+ 
++static int input_open(struct input_dev *id)
++{
++    return 0;
++}
++
++static void input_close(struct input_dev *id)
++{
++}
++
+ static int lirc_ioctl(struct inode *node, struct file *filep,
+ 		      unsigned int cmd, unsigned long arg)
+ {
+@@ -807,10 +1175,11 @@
+ 	struct lirc_buffer *rbuf = NULL;
+ 	int devnum, pipe, maxp;
+ 	int minor = 0;
+-	int i;
++	int i, len;
+ 	char buf[63], name[128] = "";
+ 	int mem_failure = 0;
+ 	int is_pinnacle;
++	struct input_dev *input_dev;
+ 
+ 	dprintk(DRIVER_NAME ": usb probe called\n");
+ 
+@@ -876,6 +1245,12 @@
+ 		return -ENODEV;
+ 	}
+ 
++	input_dev = input_allocate_device();
++	if (input_dev == NULL) {
++		dprintk(DRIVER_NAME ": could not get input device\n");
++		return -ENODEV;
++	}
++    
+ 	devnum = dev->devnum;
+ 	pipe = usb_rcvintpipe(dev, ep_in->bEndpointAddress);
+ 	maxp = usb_maxpacket(dev, pipe, usb_pipeout(pipe));
+@@ -973,6 +1348,55 @@
+ 	ir->is_pulse = 0;
+ 
+ 	/* ir->flags.transmitter_mask_inverted must be set */
++
++	usb_make_path(dev, ir->phys, sizeof(ir->phys));
++	strlcat(ir->phys, "/input", sizeof(ir->phys));
++	len = strlen(ir->phys);
++	if (len < sizeof(ir->phys) - 1)
++		snprintf(ir->phys + len, sizeof(ir->phys) - len,
++			 "%d", intf->altsetting[0].desc.bInterfaceNumber);
++
++	if (usb_string(dev, dev->descriptor.iSerialNumber, ir->uniq, 64) <= 0)
++		ir->uniq[0] = 0;
++
++	if (dev->manufacturer)
++		strlcpy(ir->name, dev->manufacturer, sizeof(ir->name));
++	if (dev->product)
++		snprintf(ir->name, sizeof(ir->name), "%s %s", ir->name, dev->product);
++	if (!strlen(ir->name))
++		snprintf(ir->name, sizeof(ir->name), DRIVER_DESC "(%04x,%04x)",
++		         dev->descriptor.idVendor, dev->descriptor.idProduct);
++
++	input_dev->open = input_open;
++	input_dev->close = input_close;
++	input_dev->name = ir->name;
++	input_dev->phys = ir->phys;
++	usb_to_input_id(dev, &input_dev->id);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 25)
++	input_dev->cdev.dev = &dev->dev;
++#endif
++	input_dev->dev.parent = ir->d->dev;
++	input_dev->evbit[BIT_WORD(EV_KEY)] |= BIT_MASK(EV_KEY);
++	input_dev->evbit[BIT_WORD(EV_REL)] |= BIT_MASK(EV_REL);
++	input_dev->relbit[BIT_WORD(REL_X)] |= BIT_MASK(REL_X);
++	input_dev->relbit[BIT_WORD(REL_Y)] |= BIT_MASK(REL_Y);
++
++	for (i=0; i<256; i++) {
++		set_bit(usb_kbd_keycode[i], input_dev->keybit);
++	}
++
++	clear_bit(0, input_dev->keybit);
++	input_dev->keybit[BIT_WORD(BTN_LEFT)] |= BIT_MASK(BTN_LEFT);
++	input_dev->keybit[BIT_WORD(BTN_RIGHT)] |= BIT_MASK(BTN_RIGHT);
++
++	input_register_device(input_dev);
++
++	memset(ir->pressed, 0, sizeof(ir->pressed));
++
++	ir->idev = input_dev;
++
++
++    /* ir->usbdev must be set */
+ 	set_transmitter_mask(ir, MCE_DEFAULT_TX_MASK);
+ 	/* Saving usb interface data for use by the transmitter routine */
+ 	ir->usb_ep_in = ep_in;
+@@ -987,6 +1411,7 @@
+ 			  buf, sizeof(buf)) > 0)
+ 		snprintf(name + strlen(name), sizeof(name) - strlen(name),
+ 			 " %s", buf);
++    
+ 	printk(DRIVER_NAME "[%d]: %s on usb%d:%d\n", devnum, name,
+ 	       dev->bus->busnum, devnum);
+ 
+@@ -1065,6 +1490,12 @@
+ 	ir->usbdev = NULL;
+ 	wake_up_all(&ir->wait_out);
+ 
++	if (ir->idev) {
++		input_unregister_device(ir->idev);
++		ir->idev = NULL;
++	}
++
++
+ 	mutex_lock(&ir->lock);
+ 	usb_kill_urb(ir->urb_in);
+ 	usb_free_urb(ir->urb_in);

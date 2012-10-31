@@ -1,0 +1,3259 @@
+files
+diff -ruNP -x '.*' -x '*~' files/SDL-1.2.11.patch.gar new/files/SDL-1.2.11.patch.gar
+--- old/files/SDL-1.2.11.patch.gar	2006-12-04 14:42:37.000000000 -0300
++++ new/files/SDL-1.2.11.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,28 +0,0 @@
+-diff -Naur SDL-1.2.11-old/sdl-config.in SDL-1.2.11-new/sdl-config.in
+---- old/SDL-1.2.11-old/sdl-config.in	2006-06-19 20:33:59.000000000 -0700
+-+++ SDL-1.2.11-new/sdl-config.in	2006-06-30 21:10:18.000000000 -0700
+-@@ -1,5 +1,6 @@
+- #!/bin/sh
+- 
+-+DESTDIR=@GAR_DESTDIR@
+- prefix=@prefix@
+- exec_prefix=@exec_prefix@
+- exec_prefix_set=no
+-@@ -41,14 +42,14 @@
+-       echo @SDL_VERSION@
+-       ;;
+-     --cflags)
+--      echo -I@includedir@/SDL @SDL_CFLAGS@
+-+      echo -I$DESTDIR@includedir@/SDL @SDL_CFLAGS@
+-       ;;
+- @ENABLE_SHARED_TRUE@    --libs)
+--@ENABLE_SHARED_TRUE@      echo -L@libdir@ @SDL_RLD_FLAGS@ @SDL_LIBS@
+-+@ENABLE_SHARED_TRUE@      echo -L$DESTDIR@libdir@ @SDL_RLD_FLAGS@ @SDL_LIBS@
+- @ENABLE_SHARED_TRUE@      ;;
+- @ENABLE_STATIC_TRUE@@ENABLE_SHARED_TRUE@    --static-libs)
+- @ENABLE_STATIC_TRUE@@ENABLE_SHARED_FALSE@    --libs|--static-libs)
+--@ENABLE_STATIC_TRUE@      echo -L@libdir@ @SDL_RLD_FLAGS@ @SDL_STATIC_LIBS@
+-+@ENABLE_STATIC_TRUE@      echo -L$DESTDIR@libdir@ @SDL_RLD_FLAGS@ @SDL_STATIC_LIBS@
+- @ENABLE_STATIC_TRUE@      ;;
+-     *)
+-       echo "${usage}" 1>&2
+diff -ruNP -x '.*' -x '*~' files/SDL-1.2.13.patch.gar new/files/SDL-1.2.13.patch.gar
+--- old/files/SDL-1.2.13.patch.gar	1969-12-31 21:00:00.000000000 -0300
++++ new/files/SDL-1.2.13.patch.gar	2008-05-15 12:13:12.000000000 -0300
+@@ -0,0 +1,28 @@
++diff -Naur SDL-1.2.13-old/sdl-config.in SDL-1.2.13-new/sdl-config.in
++--- old/SDL-1.2.13-old/sdl-config.in	2007-12-30 20:48:39.000000000 -0800
+++++ SDL-1.2.13-new/sdl-config.in	2007-12-31 19:46:02.000000000 -0800
++@@ -1,5 +1,6 @@
++ #!/bin/sh
++ 
+++DESTDIR=@GAR_DESTDIR@
++ prefix=@prefix@
++ exec_prefix=@exec_prefix@
++ exec_prefix_set=no
++@@ -42,14 +43,14 @@
++       echo @SDL_VERSION@
++       ;;
++     --cflags)
++-      echo -I@includedir@/SDL @SDL_CFLAGS@
+++      echo -I$DESTDIR@includedir@/SDL @SDL_CFLAGS@
++       ;;
++ @ENABLE_SHARED_TRUE@    --libs)
++-@ENABLE_SHARED_TRUE@      echo -L@libdir@ @SDL_RLD_FLAGS@ @SDL_LIBS@
+++@ENABLE_SHARED_TRUE@      echo -L$DESTDIR@libdir@ @SDL_RLD_FLAGS@ @SDL_LIBS@
++ @ENABLE_SHARED_TRUE@      ;;
++ @ENABLE_STATIC_TRUE@@ENABLE_SHARED_TRUE@    --static-libs)
++ @ENABLE_STATIC_TRUE@@ENABLE_SHARED_FALSE@    --libs|--static-libs)
++-@ENABLE_STATIC_TRUE@      echo -L@libdir@ @SDL_RLD_FLAGS@ @SDL_STATIC_LIBS@
+++@ENABLE_STATIC_TRUE@      echo -L$DESTDIR@libdir@ @SDL_RLD_FLAGS@ @SDL_STATIC_LIBS@
++ @ENABLE_STATIC_TRUE@      ;;
++     *)
++       echo "${usage}" 1>&2
+checksums
+--- old/checksums	2006-12-04 14:42:37.000000000 -0300
++++ new/checksums	2008-05-15 12:13:13.000000000 -0300
+@@ -1,2 +1,2 @@
+-418b42956b7cd103bfab1b9077ccc149  download/SDL-1.2.11.tar.gz
+-60b57cb276344edb3c540cfae743c10e  download/SDL-1.2.11.patch.gar
++c6660feea2a6834de10bc71b2f8e4d88  download/SDL-1.2.13.tar.gz
++000fc20b90cc9b33d5db26eeb3f513d9  download/SDL-1.2.13.patch.gar
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:19.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = SDL
+-GARVERSION = 1.2.11
++GARVERSION = 1.2.13
+ CATEGORIES = lib
+ MASTER_SITES = http://www.libsdl.org/release/
+ DISTFILES = $(DISTNAME).tar.gz
+@@ -10,11 +10,8 @@
+ define BLURB
+ endef
+ 
+-DEPENDS    = lang/c xorg/xorg
+-ifneq ($(DESTIMG),build)
+-DEPENDS   += lib/alsa-lib
+-endif
+-BUILDDEPS = devel/nasm
++DEPENDS    = lang/c lib/alsa-lib xorg/xorg
++BUILDDEPS  = devel/yasm
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+@@ -100,8 +97,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL_LIBPATH,$(WORKSRC),configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -rf $(DESTDIR)$(libdir)/libSDL.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/sdl.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/sdl.pc
+ 	@$(MAKECOOKIE)
+checksums
+--- old/checksums	2007-07-07 02:44:39.000000000 -0300
++++ new/checksums	2008-07-23 00:35:22.000000000 -0300
+@@ -1 +1 @@
+-72dc63821ce33f2b97a151a909b06ff8  download/alsa-lib-1.0.14a.tar.bz2
++9bbbdc502478cdc75074c9ba42c385b3  download/alsa-lib-1.0.17.tar.bz2
+Makefile
+--- old/Makefile	2008-08-30 10:40:33.000000000 -0300
++++ new/Makefile	2008-07-23 00:35:22.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = alsa-lib
+-GARVERSION = 1.0.14a
++GARVERSION = 1.0.17
+ CATEGORIES = lib
+ MASTER_SITES = ftp://ftp.alsa-project.org/pub/lib/
+ DISTFILES = $(DISTNAME).tar.bz2
+@@ -9,7 +9,7 @@
+ define BLURB
+ endef
+ 
+-DEPENDS = lang/c kernel-$(mm_KERNEL_VERSION)/alsa-driver
++DEPENDS = lang/c
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+@@ -18,6 +18,7 @@
+ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+ 	--enable-static \
+ 	--enable-shared \
++	--disable-python \
+ 	--with-gnu-ld \
+ 	--with-tmpdir="$(rootdir)/tmp" \
+ 	--with-alsa-devdir="$(rootdir)/dev/snd" \
+@@ -26,11 +27,7 @@
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@cd $(WORKSRC) ; ACLOCAL=aclocal-1.9 AUTOMAKE=automake-1.9 autoreconf --verbose --install --force
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+@@ -38,6 +35,4 @@
+ 	@rm -f $(DESTDIR)$(libdir)/alsa-lib/smixer/smixer-sbase.la
+ 	@rm -f $(DESTDIR)$(libdir)/alsa-lib/smixer/smixer-ac97.la
+ 	@rm -f $(DESTDIR)$(libdir)/alsa-lib/smixer/smixer-hda.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/alsa.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/alsa.pc
+ 	@$(MAKECOOKIE)
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:15.000000000 -0300
+@@ -20,6 +20,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libexpat.la
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/faad2-2.0-gcc4.patch new/files/faad2-2.0-gcc4.patch
+--- old/files/faad2-2.0-gcc4.patch	2006-12-04 14:42:38.000000000 -0300
++++ new/files/faad2-2.0-gcc4.patch	1969-12-31 21:00:00.000000000 -0300
+@@ -1,12 +0,0 @@
+-diff -Naur faad2-old/common/mp4ff/mp4ffint.h faad2-new/common/mp4ff/mp4ffint.h
+---- old/faad2-old/common/mp4ff/mp4ffint.h	2004-01-14 12:50:22.000000000 -0800
+-+++ faad2-new/common/mp4ff/mp4ffint.h	2005-12-15 17:58:39.000000000 -0800
+-@@ -301,7 +301,7 @@
+- mp4ff_t *mp4ff_open_edit(mp4ff_callback_t *f);
+- #endif
+- void mp4ff_close(mp4ff_t *ff);
+--void mp4ff_track_add(mp4ff_t *f);
+-+static void mp4ff_track_add(mp4ff_t *f);
+- int32_t parse_sub_atoms(mp4ff_t *f, const uint64_t total_size);
+- int32_t parse_atoms(mp4ff_t *f);
+- 
+diff -ruNP -x '.*' -x '*~' files/faad2-2.0-makefile.patch new/files/faad2-2.0-makefile.patch
+--- old/files/faad2-2.0-makefile.patch	2006-12-04 14:42:38.000000000 -0300
++++ new/files/faad2-2.0-makefile.patch	1969-12-31 21:00:00.000000000 -0300
+@@ -1,15 +0,0 @@
+-diff -Naur faad2-old/Makefile.am faad2-new/Makefile.am
+---- old/faad2-old/Makefile.am	2004-02-06 08:04:39.000000000 -0800
+-+++ faad2-new/Makefile.am	2005-07-21 05:57:44.000000000 -0700
+-@@ -2,7 +2,7 @@
+- 
+- EXTRA_DIST = faad2.spec
+- 
+--rpm:    Makefile
+--       make dist
+--       $(RPMBUILD) -ta $(PACKAGE)-$(VERSION).tar.gz
+--       rm $(PACKAGE)-$(VERSION).tar.gz
+-+rpm: Makefile
+-+	make dist
+-+	$(RPMBUILD) -ta $(PACKAGE)-$(VERSION).tar.gz
+-+	rm $(PACKAGE)-$(VERSION).tar.gz
+diff -ruNP -x '.*' -x '*~' files/faad2-2.6.1-libtool_2.2.x.patch new/files/faad2-2.6.1-libtool_2.2.x.patch
+--- old/files/faad2-2.6.1-libtool_2.2.x.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/faad2-2.6.1-libtool_2.2.x.patch	2008-06-26 14:12:18.000000000 -0300
+@@ -0,0 +1,12 @@
++diff -Naur faad2-old/configure.in faad2-new/configure.in
++--- old/faad2-old/configure.in	2006-09-25 12:52:53.000000000 -0700
+++++ faad2-new/configure.in	2008-06-17 11:35:09.000000000 -0700
++@@ -18,7 +18,7 @@
++ AC_PROG_CC
++ AC_PROG_CPP
++ dnl disable for mpeg4ip plugin
++-dnl AC_PROG_CXX
+++AC_PROG_CXX
++ AC_PROG_INSTALL
++ AC_PROG_LN_S
++ AC_PROG_MAKE_SET
+diff -ruNP -x '.*' -x '*~' files/faad2-2.6.1-mp4ff.patch new/files/faad2-2.6.1-mp4ff.patch
+--- old/files/faad2-2.6.1-mp4ff.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/faad2-2.6.1-mp4ff.patch	2008-06-10 08:57:17.000000000 -0300
+@@ -0,0 +1,11 @@
++diff -Naur faad2-old/common/mp4ff/Makefile.am faad2-new/common/mp4ff/Makefile.am
++--- old/faad2-old/common/mp4ff/Makefile.am	2006-05-07 11:09:00.000000000 -0700
+++++ faad2-new/common/mp4ff/Makefile.am	2008-06-07 08:07:00.000000000 -0700
++@@ -1,5 +1,6 @@
++-noinst_LTLIBRARIES = libmp4ff.la
+++lib_LTLIBRARIES = libmp4ff.la
++ 
+++include_HEADERS = mp4ff.h mp4ff_int_types.h
++ libmp4ff_la_CFLAGS = -DUSE_TAGGING=1
++ 
++ libmp4ff_la_SOURCES = mp4ff.c mp4atom.c mp4meta.c mp4sample.c mp4util.c \
+checksums
+--- old/checksums	2006-12-04 14:42:37.000000000 -0300
++++ new/checksums	2008-06-26 14:12:18.000000000 -0300
+@@ -1,3 +1,3 @@
+-1a6f79365f2934a4888b210ef47a3a07  download/faad2-2.0.tar.gz
+-ca553383940bcb2a888cc3fa9b81ca56  download/faad2-2.0-gcc4.patch
+-c016018cf2184a824567e4e5ed66d0f9  download/faad2-2.0-makefile.patch
++74e92df40c270f216a8305fc87603c8a  download/faad2-2.6.1.tar.gz
++a273408202a838ef16eaad9f38dd6fe8  download/faad2-2.6.1-libtool_2.2.x.patch
++92428ff3e6c6790988643284c2b61447  download/faad2-2.6.1-mp4ff.patch
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:18.000000000 -0300
+@@ -1,9 +1,9 @@
+ GARNAME = faad2
+-GARVERSION = 2.0
++GARVERSION = 2.6.1
+ CATEGORIES = lib
+ MASTER_SITES = http://easynews.dl.sourceforge.net/sourceforge/faac/
+ DISTFILES = $(DISTNAME).tar.gz
+-PATCHFILES = $(DISTNAME)-gcc4.patch $(DISTNAME)-makefile.patch
++PATCHFILES = $(DISTNAME)-libtool_2.2.x.patch $(DISTNAME)-mp4ff.patch
+ LICENSE = GPL2
+ 
+ DESCRIPTION =
+@@ -25,17 +25,10 @@
+ 
+ pre-configure:
+ 	@cd $(WORKSRC) ; autoreconf --verbose --install --force
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libfaad.la
+ 	@rm -f $(DESTDIR)$(libdir)/libmp4ff.la
+-	@cp -f $(WORKSRC)/common/mp4ff/mp4ff_int_types.h $(DESTDIR)$(includedir)
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/ffmpeg-13675.27000.patch.gar new/files/ffmpeg-13675.27000.patch.gar
+--- old/files/ffmpeg-13675.27000.patch.gar	2008-06-11 00:53:09.000000000 -0300
++++ new/files/ffmpeg-13675.27000.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,27 +0,0 @@
+-diff -Naur ffmpeg-13675.27000-old/configure ffmpeg-13675.27000-new/configure
+---- old/ffmpeg-13675.27000-old/configure	2008-06-06 12:11:47.000000000 -0700
+-+++ ffmpeg-13675.27000-new/configure	2008-06-06 12:12:44.000000000 -0700
+-@@ -603,11 +603,11 @@
+-     func=$4
+-     shift 4
+-     disable $cfg
+--    check_cmd ${pkg}-config --version
+-+    check_cmd @GAR_DESTDIR@@GAR_bindir@/${pkg}-config --version
+-     err=$?
+-     if test "$err" = 0; then
+--        temp_cflags `${pkg}-config --cflags`
+--        temp_extralibs `${pkg}-config --libs`
+-+        temp_cflags `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --cflags`
+-+        temp_extralibs `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --libs`
+-         check_lib "$@" $header $func && enable $cfg
+-     fi
+-     return $err
+-@@ -1730,7 +1730,7 @@
+- 
+- disable sdl_too_old
+- disable sdl
+--SDL_CONFIG="${cross_prefix}sdl-config"
+-+SDL_CONFIG="@GAR_DESTDIR@@GAR_bindir@/sdl-config"
+- if "${SDL_CONFIG}" --version > /dev/null 2>&1; then
+-     sdl_cflags=`"${SDL_CONFIG}" --cflags`
+-     temp_cflags $sdl_cflags
+diff -ruNP -x '.*' -x '*~' files/ffmpeg-13775.27074.patch.gar new/files/ffmpeg-13775.27074.patch.gar
+--- old/files/ffmpeg-13775.27074.patch.gar	2008-07-15 18:04:37.000000000 -0300
++++ new/files/ffmpeg-13775.27074.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,46 +0,0 @@
+-diff -Naur ffmpeg-13775.27074-old/configure ffmpeg-13775.27074-new/configure
+---- old/ffmpeg-13775.27074-old/configure	2008-06-15 13:49:45.000000000 -0700
+-+++ ffmpeg-13775.27074-new/configure	2008-06-21 07:57:03.000000000 -0700
+-@@ -603,11 +603,11 @@
+-     func=$4
+-     shift 4
+-     disable $cfg
+--    check_cmd ${pkg}-config --version
+-+    check_cmd @GAR_DESTDIR@@GAR_bindir@/${pkg}-config --version
+-     err=$?
+-     if test "$err" = 0; then
+--        temp_cflags `${pkg}-config --cflags`
+--        temp_extralibs `${pkg}-config --libs`
+-+        temp_cflags `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --cflags`
+-+        temp_extralibs `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --libs`
+-         check_lib "$@" $header $func && enable $cfg
+-     fi
+-     return $err
+-@@ -1730,7 +1730,7 @@
+- 
+- disable sdl_too_old
+- disable sdl
+--SDL_CONFIG="${cross_prefix}sdl-config"
+-+SDL_CONFIG="@GAR_DESTDIR@@GAR_bindir@/sdl-config"
+- if "${SDL_CONFIG}" --version > /dev/null 2>&1; then
+-     sdl_cflags=`"${SDL_CONFIG}" --cflags`
+-     temp_cflags $sdl_cflags
+-diff -Naur ffmpeg-13775.27074-old/Makefile ffmpeg-13775.27074-new/Makefile
+---- old/ffmpeg-13775.27074-old/Makefile	2008-06-15 13:49:45.000000000 -0700
+-+++ ffmpeg-13775.27074-new/Makefile	2008-06-21 07:59:49.000000000 -0700
+-@@ -95,11 +95,11 @@
+- 
+- HOOKS = $(addprefix vhook/, $(addsuffix $(SLIBSUF), $(BASEHOOKS) $(HOOKS-yes)))
+- 
+--VHOOKCFLAGS-$(HAVE_IMLIB2) += `imlib2-config --cflags`
+--LIBS_imlib2$(SLIBSUF)       = `imlib2-config --libs`
+-+VHOOKCFLAGS-$(HAVE_IMLIB2) += `@GAR_DESTDIR@@GAR_bindir@/imlib2-config --cflags`
+-+LIBS_imlib2$(SLIBSUF)       = `@GAR_DESTDIR@@GAR_bindir@/imlib2-config --libs`
+- 
+--VHOOKCFLAGS-$(HAVE_FREETYPE2) += `freetype-config --cflags`
+--LIBS_drawtext$(SLIBSUF)        = `freetype-config --libs`
+-+VHOOKCFLAGS-$(HAVE_FREETYPE2) += `@GAR_DESTDIR@@GAR_bindir@/freetype-config --cflags`
+-+LIBS_drawtext$(SLIBSUF)        = `@GAR_DESTDIR@@GAR_bindir@/freetype-config --libs`
+- 
+- VHOOKCFLAGS += $(VHOOKCFLAGS-yes)
+- 
+diff -ruNP -x '.*' -x '*~' files/ffmpeg-6701.patch.gar new/files/ffmpeg-6701.patch.gar
+--- old/files/ffmpeg-6701.patch.gar	2006-12-08 21:21:59.000000000 -0300
++++ new/files/ffmpeg-6701.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,25 +0,0 @@
+-diff -Naur ffmpeg-6701-old/configure ffmpeg-6701-new/configure
+---- old/ffmpeg-6701-old/configure	2006-10-21 07:36:16.000000000 -0700
+-+++ ffmpeg-6701-new/configure	2006-10-21 07:36:59.000000000 -0700
+-@@ -1410,9 +1410,9 @@
+- 
+- freetype2=no
+- if test "x$targetos" != "xBeOS"; then
+--  if (freetype-config --version) >/dev/null 2>&1 ; then
+--      temp_cflags `freetype-config --cflags`
+--      temp_extralibs `freetype-config --libs`
+-+  if (@GAR_DESTDIR@@GAR_bindir@/freetype-config --version) >/dev/null 2>&1 ; then
+-+      temp_cflags `@GAR_DESTDIR@@GAR_bindir@/freetype-config --cflags`
+-+      temp_extralibs `@GAR_DESTDIR@@GAR_bindir@/freetype-config --libs`
+-       check_ld <<EOF && freetype2=yes
+- #include <ft2build.h>
+- int main( void ) { return (int) FT_Init_FreeType(0); }
+-@@ -1426,7 +1426,7 @@
+- 
+- sdl_too_old=no
+- sdl=no
+--SDL_CONFIG="${cross_prefix}sdl-config"
+-+SDL_CONFIG="@GAR_DESTDIR@@GAR_bindir@/sdl-config"
+- if ("${SDL_CONFIG}" --version) >/dev/null 2>&1 ; then
+-     temp_cflags `"${SDL_CONFIG}" --cflags`
+-     temp_extralibs `"${SDL_CONFIG}" --libs`
+diff -ruNP -x '.*' -x '*~' files/ffmpeg-9633.23777.patch.gar new/files/ffmpeg-9633.23777.patch.gar
+--- old/files/ffmpeg-9633.23777.patch.gar	2007-08-09 10:24:08.000000000 -0300
++++ new/files/ffmpeg-9633.23777.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,32 +0,0 @@
+-diff -Naur ffmpeg-9633.23777-old/configure ffmpeg-9633.23777-new/configure
+---- old/ffmpeg-9633.23777-old/configure	2007-07-13 12:57:45.000000000 -0700
+-+++ ffmpeg-9633.23777-new/configure	2007-07-13 13:02:44.000000000 -0700
+-@@ -546,8 +546,8 @@
+-     check_cmd ${pkg}-config --version
+-     err=$?
+-     if test "$err" = 0; then
+--        temp_cflags `${pkg}-config --cflags`
+--        temp_extralibs `${pkg}-config --libs`
+-+        temp_cflags `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --cflags`
+-+        temp_extralibs `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --libs`
+-         check_lib "$@" $header $func && enable $cfg
+-     fi
+-     return $err
+-@@ -997,7 +997,7 @@
+-   x86_64|amd64)
+-     arch="x86_32"
+-     enable fast_unaligned
+--    canon_arch="`$cc -dumpmachine | sed -e 's,\([^-]*\)-.*,\1,'`"
+-+    canon_arch="`$cross_prefix$cc -dumpmachine | sed -e 's,\([^-]*\)-.*,\1,'`"
+-     if [ x"$canon_arch" = x"x86_64" -o x"$canon_arch" = x"amd64" ]; then
+-       if [ -z "`echo $CFLAGS | grep -- -m32`"  ]; then
+-         arch="x86_64"
+-@@ -1629,7 +1629,7 @@
+- 
+- sdl_too_old=no
+- sdl=no
+--SDL_CONFIG="${cross_prefix}sdl-config"
+-+SDL_CONFIG="@GAR_DESTDIR@@GAR_bindir@/sdl-config"
+- if "${SDL_CONFIG}" --version >/dev/null 2>&1; then
+-     sdl_cflags=`"${SDL_CONFIG}" --cflags`
+-     temp_cflags $sdl_cflags
+diff -ruNP -x '.*' -x '*~' files/ffmpeg-HEAD.HEAD.patch.gar new/files/ffmpeg-HEAD.HEAD.patch.gar
+--- old/files/ffmpeg-HEAD.HEAD.patch.gar	2008-06-11 00:53:09.000000000 -0300
++++ new/files/ffmpeg-HEAD.HEAD.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,27 +0,0 @@
+-diff -Naur ffmpeg-13675.27000-old/configure ffmpeg-13675.27000-new/configure
+---- old/ffmpeg-13675.27000-old/configure	2008-06-06 12:11:47.000000000 -0700
+-+++ ffmpeg-13675.27000-new/configure	2008-06-06 12:12:44.000000000 -0700
+-@@ -603,11 +603,11 @@
+-     func=$4
+-     shift 4
+-     disable $cfg
+--    check_cmd ${pkg}-config --version
+-+    check_cmd @GAR_DESTDIR@@GAR_bindir@/${pkg}-config --version
+-     err=$?
+-     if test "$err" = 0; then
+--        temp_cflags `${pkg}-config --cflags`
+--        temp_extralibs `${pkg}-config --libs`
+-+        temp_cflags `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --cflags`
+-+        temp_extralibs `@GAR_DESTDIR@@GAR_bindir@/${pkg}-config --libs`
+-         check_lib "$@" $header $func && enable $cfg
+-     fi
+-     return $err
+-@@ -1730,7 +1730,7 @@
+- 
+- disable sdl_too_old
+- disable sdl
+--SDL_CONFIG="${cross_prefix}sdl-config"
+-+SDL_CONFIG="@GAR_DESTDIR@@GAR_bindir@/sdl-config"
+- if "${SDL_CONFIG}" --version > /dev/null 2>&1; then
+-     sdl_cflags=`"${SDL_CONFIG}" --cflags`
+-     temp_cflags $sdl_cflags
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-08-26 09:59:05.000000000 -0300
+@@ -13,8 +13,8 @@
+ DEPENDS = lang/c lib/SDL lib/zlib utils/bzip2
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+-BUILD_SCRIPTS     = $(WORKSRC)/Makefile $(WORKSRC)/libswscale/Makefile
+-INSTALL_SCRIPTS   = $(WORKSRC)/Makefile $(WORKSRC)/libswscale/Makefile
++BUILD_SCRIPTS     = $(WORKSRC)/Makefile
++INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
+ 
+ # The headers files are put in a sub-directory so that the libav*/*.h files
+ # do not conflict with the libav*/.h files in MythTV 0.20.
+checksums
+--- old/checksums	2006-12-04 14:42:39.000000000 -0300
++++ new/checksums	2008-05-15 12:13:15.000000000 -0300
+@@ -1 +1,2 @@
+-2bfc127cdda02834d0491ab531a20960  download/flac-1.1.2.tar.gz
++153c8b15a54da428d1f0fadc756c22c7  download/flac-1.2.1.tar.gz
++da17e75db273ea8a261b7518bc3b448e  download/flac-1.2.1-gcc_4.3.patch
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:23.000000000 -0300
+@@ -1,9 +1,10 @@
+ GARNAME = flac
+-GARVERSION = 1.1.2
++GARVERSION = 1.2.1
+ CATEGORIES = lib
+ MASTER_SITES = http://easynews.dl.sourceforge.net/sourceforge/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.gz
+-LICENSE = GPL2/xiph
++PATCHFILES = $(DISTNAME)-gcc_4.3.patch
++LICENSE = GPL2/LGPL2_1/FDL1_2/xiph
+ xiph_LICENSE_TEXT = $(WORKSRC)/COPYING.Xiph
+ 
+ DESCRIPTION =
+@@ -30,13 +31,7 @@
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL_LIBPATH,$(WORKSRC),configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+files
+diff -ruNP -x '.*' -x '*~' files/flac-1.2.1-gcc_4.3.patch new/files/flac-1.2.1-gcc_4.3.patch
+--- old/files/flac-1.2.1-gcc_4.3.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/flac-1.2.1-gcc_4.3.patch	2008-05-15 12:13:15.000000000 -0300
+@@ -0,0 +1,11 @@
++diff -Naur flac-1.2.1-old/examples/cpp/encode/file/main.cpp flac-1.2.1-new/examples/cpp/encode/file/main.cpp
++--- old/flac-1.2.1-old/examples/cpp/encode/file/main.cpp	2007-09-13 08:58:03.000000000 -0700
+++++ flac-1.2.1-new/examples/cpp/encode/file/main.cpp	2008-01-08 17:25:20.000000000 -0800
++@@ -30,6 +30,7 @@
++ 
++ #include <stdio.h>
++ #include <stdlib.h>
+++#include <string.h>
++ #include "FLAC++/metadata.h"
++ #include "FLAC++/encoder.h"
++ 
+files
+diff -ruNP -x '.*' -x '*~' files/fontconfig-2.4.1-build.patch new/files/fontconfig-2.4.1-build.patch
+--- old/files/fontconfig-2.4.1-build.patch	2006-12-17 14:16:04.000000000 -0300
++++ new/files/fontconfig-2.4.1-build.patch	1969-12-31 21:00:00.000000000 -0300
+@@ -1,95 +0,0 @@
+-diff -Naur fontconfig-2.4.1-old/doc/Makefile.am fontconfig-2.4.1-new/doc/Makefile.am
+---- old/fontconfig-2.4.1-old/doc/Makefile.am	2006-09-03 15:37:14.000000000 -0700
+-+++ fontconfig-2.4.1-new/doc/Makefile.am	2006-09-26 11:38:18.000000000 -0700
+-@@ -21,7 +21,15 @@
+- # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+- # PERFORMANCE OF THIS SOFTWARE.
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.1-old/fc-arch/Makefile.am fontconfig-2.4.1-new/fc-arch/Makefile.am
+---- old/fontconfig-2.4.1-old/fc-arch/Makefile.am	2006-09-05 02:05:07.000000000 -0700
+-+++ fontconfig-2.4.1-new/fc-arch/Makefile.am	2006-09-26 11:39:14.000000000 -0700
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.1-old/fc-case/Makefile.am fontconfig-2.4.1-new/fc-case/Makefile.am
+---- old/fontconfig-2.4.1-old/fc-case/Makefile.am	2006-09-05 02:04:31.000000000 -0700
+-+++ fontconfig-2.4.1-new/fc-case/Makefile.am	2006-09-26 11:33:09.000000000 -0700
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.1-old/fc-glyphname/Makefile.am fontconfig-2.4.1-new/fc-glyphname/Makefile.am
+---- old/fontconfig-2.4.1-old/fc-glyphname/Makefile.am	2006-09-05 02:04:47.000000000 -0700
+-+++ fontconfig-2.4.1-new/fc-glyphname/Makefile.am	2006-09-26 11:39:03.000000000 -0700
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.1-old/fc-lang/Makefile.am fontconfig-2.4.1-new/fc-lang/Makefile.am
+---- old/fontconfig-2.4.1-old/fc-lang/Makefile.am	2006-09-05 02:03:45.000000000 -0700
+-+++ fontconfig-2.4.1-new/fc-lang/Makefile.am	2006-09-26 11:38:41.000000000 -0700
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+diff -ruNP -x '.*' -x '*~' files/fontconfig-2.4.2-build.patch new/files/fontconfig-2.4.2-build.patch
+--- old/files/fontconfig-2.4.2-build.patch	2006-12-18 15:35:40.000000000 -0300
++++ new/files/fontconfig-2.4.2-build.patch	1969-12-31 21:00:00.000000000 -0300
+@@ -1,95 +0,0 @@
+-diff -Naur fontconfig-2.4.2-old/doc/Makefile.am fontconfig-2.4.2-new/doc/Makefile.am
+---- old/fontconfig-2.4.2-old/doc/Makefile.am	2006-12-02 14:14:42.000000000 -0800
+-+++ fontconfig-2.4.2-new/doc/Makefile.am	2006-12-09 20:30:36.000000000 -0800
+-@@ -21,7 +21,15 @@
+- # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+- # PERFORMANCE OF THIS SOFTWARE.
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.2-old/fc-arch/Makefile.am fontconfig-2.4.2-new/fc-arch/Makefile.am
+---- old/fontconfig-2.4.2-old/fc-arch/Makefile.am	2006-09-05 02:05:07.000000000 -0700
+-+++ fontconfig-2.4.2-new/fc-arch/Makefile.am	2006-12-09 20:30:36.000000000 -0800
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.2-old/fc-case/Makefile.am fontconfig-2.4.2-new/fc-case/Makefile.am
+---- old/fontconfig-2.4.2-old/fc-case/Makefile.am	2006-09-05 02:04:31.000000000 -0700
+-+++ fontconfig-2.4.2-new/fc-case/Makefile.am	2006-12-09 20:30:36.000000000 -0800
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.2-old/fc-glyphname/Makefile.am fontconfig-2.4.2-new/fc-glyphname/Makefile.am
+---- old/fontconfig-2.4.2-old/fc-glyphname/Makefile.am	2006-09-05 02:04:47.000000000 -0700
+-+++ fontconfig-2.4.2-new/fc-glyphname/Makefile.am	2006-12-09 20:30:36.000000000 -0800
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+-diff -Naur fontconfig-2.4.2-old/fc-lang/Makefile.am fontconfig-2.4.2-new/fc-lang/Makefile.am
+---- old/fontconfig-2.4.2-old/fc-lang/Makefile.am	2006-09-05 02:03:45.000000000 -0700
+-+++ fontconfig-2.4.2-new/fc-lang/Makefile.am	2006-12-09 20:30:36.000000000 -0800
+-@@ -22,7 +22,15 @@
+- # PERFORMANCE OF THIS SOFTWARE.
+- #
+- 
+-+CPP = $(CPP_FOR_BUILD)
+- CC = @CC_FOR_BUILD@
+-+CXX = $(CXX_FOR_BUILD)
+-+AR = $(AR_FOR_BUILD)
+-+AS = $(AS_FOR_BUILD)
+-+CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+CFLAGS = $(CFLAGS_FOR_BUILD)
+-+CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+-+LDFLAGS = $(LDFLAGS_FOR_BUILD)
+- EXEEXT = @EXEEXT_FOR_BUILD@
+- LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+- 
+diff -ruNP -x '.*' -x '*~' files/fontconfig-2.6.0-build.patch new/files/fontconfig-2.6.0-build.patch
+--- old/files/fontconfig-2.6.0-build.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/fontconfig-2.6.0-build.patch	2008-06-10 08:57:17.000000000 -0300
+@@ -0,0 +1,95 @@
++diff -Naur fontconfig-2.6.0-old/doc/Makefile.am fontconfig-2.6.0-new/doc/Makefile.am
++--- old/fontconfig-2.6.0-old/doc/Makefile.am	2007-11-05 16:05:37.000000000 -0800
+++++ fontconfig-2.6.0-new/doc/Makefile.am	2008-06-02 09:44:42.000000000 -0700
++@@ -21,7 +21,15 @@
++ # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
++ # PERFORMANCE OF THIS SOFTWARE.
++ 
+++CPP = $(CPP_FOR_BUILD)
++ CC = @CC_FOR_BUILD@
+++CXX = $(CXX_FOR_BUILD)
+++AR = $(AR_FOR_BUILD)
+++AS = $(AS_FOR_BUILD)
+++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+++CFLAGS = $(CFLAGS_FOR_BUILD)
+++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+++LDFLAGS = $(LDFLAGS_FOR_BUILD)
++ EXEEXT = @EXEEXT_FOR_BUILD@
++ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++ 
++diff -Naur fontconfig-2.6.0-old/fc-arch/Makefile.am fontconfig-2.6.0-new/fc-arch/Makefile.am
++--- old/fontconfig-2.6.0-old/fc-arch/Makefile.am	2008-01-02 08:44:39.000000000 -0800
+++++ fontconfig-2.6.0-new/fc-arch/Makefile.am	2008-06-02 09:44:42.000000000 -0700
++@@ -22,7 +22,15 @@
++ # PERFORMANCE OF THIS SOFTWARE.
++ #
++ 
+++CPP = $(CPP_FOR_BUILD)
++ CC = @CC_FOR_BUILD@
+++CXX = $(CXX_FOR_BUILD)
+++AR = $(AR_FOR_BUILD)
+++AS = $(AS_FOR_BUILD)
+++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+++CFLAGS = $(CFLAGS_FOR_BUILD)
+++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+++LDFLAGS = $(LDFLAGS_FOR_BUILD)
++ EXEEXT = @EXEEXT_FOR_BUILD@
++ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++ 
++diff -Naur fontconfig-2.6.0-old/fc-case/Makefile.am fontconfig-2.6.0-new/fc-case/Makefile.am
++--- old/fontconfig-2.6.0-old/fc-case/Makefile.am	2008-01-02 08:44:39.000000000 -0800
+++++ fontconfig-2.6.0-new/fc-case/Makefile.am	2008-06-02 09:44:42.000000000 -0700
++@@ -22,7 +22,15 @@
++ # PERFORMANCE OF THIS SOFTWARE.
++ #
++ 
+++CPP = $(CPP_FOR_BUILD)
++ CC = @CC_FOR_BUILD@
+++CXX = $(CXX_FOR_BUILD)
+++AR = $(AR_FOR_BUILD)
+++AS = $(AS_FOR_BUILD)
+++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+++CFLAGS = $(CFLAGS_FOR_BUILD)
+++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+++LDFLAGS = $(LDFLAGS_FOR_BUILD)
++ EXEEXT = @EXEEXT_FOR_BUILD@
++ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++ 
++diff -Naur fontconfig-2.6.0-old/fc-glyphname/Makefile.am fontconfig-2.6.0-new/fc-glyphname/Makefile.am
++--- old/fontconfig-2.6.0-old/fc-glyphname/Makefile.am	2008-01-02 08:44:39.000000000 -0800
+++++ fontconfig-2.6.0-new/fc-glyphname/Makefile.am	2008-06-02 09:44:42.000000000 -0700
++@@ -22,7 +22,15 @@
++ # PERFORMANCE OF THIS SOFTWARE.
++ #
++ 
+++CPP = $(CPP_FOR_BUILD)
++ CC = @CC_FOR_BUILD@
+++CXX = $(CXX_FOR_BUILD)
+++AR = $(AR_FOR_BUILD)
+++AS = $(AS_FOR_BUILD)
+++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+++CFLAGS = $(CFLAGS_FOR_BUILD)
+++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+++LDFLAGS = $(LDFLAGS_FOR_BUILD)
++ EXEEXT = @EXEEXT_FOR_BUILD@
++ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++ 
++diff -Naur fontconfig-2.6.0-old/fc-lang/Makefile.am fontconfig-2.6.0-new/fc-lang/Makefile.am
++--- old/fontconfig-2.6.0-old/fc-lang/Makefile.am	2008-01-02 08:44:39.000000000 -0800
+++++ fontconfig-2.6.0-new/fc-lang/Makefile.am	2008-06-02 09:44:42.000000000 -0700
++@@ -22,7 +22,15 @@
++ # PERFORMANCE OF THIS SOFTWARE.
++ #
++ 
+++CPP = $(CPP_FOR_BUILD)
++ CC = @CC_FOR_BUILD@
+++CXX = $(CXX_FOR_BUILD)
+++AR = $(AR_FOR_BUILD)
+++AS = $(AS_FOR_BUILD)
+++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
+++CFLAGS = $(CFLAGS_FOR_BUILD)
+++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
+++LDFLAGS = $(LDFLAGS_FOR_BUILD)
++ EXEEXT = @EXEEXT_FOR_BUILD@
++ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++ 
+diff -ruNP -x '.*' -x '*~' files/fontconfig-2.6.0-parallel.patch new/files/fontconfig-2.6.0-parallel.patch
+--- old/files/fontconfig-2.6.0-parallel.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/fontconfig-2.6.0-parallel.patch	2008-08-06 15:32:28.000000000 -0300
+@@ -0,0 +1,21 @@
++diff -Naur fontconfig-2.6.0-old/fc-case/Makefile.am fontconfig-2.6.0-new/fc-case/Makefile.am
++--- old/fontconfig-2.6.0-old/fc-case/Makefile.am	2008-01-02 08:44:39.000000000 -0800
+++++ fontconfig-2.6.0-new/fc-case/Makefile.am	2008-07-24 20:50:45.000000000 -0700
++@@ -36,6 +36,8 @@
++ 
++ noinst_MANS=fc-case.man
++ 
+++noinst_HEADERS=$(TARG)
+++
++ fc_case_SRCS= \
++ 	fc-case.c \
++ 	fccaseint.h \
++@@ -52,7 +54,7 @@
++ 
++ ALIAS_FILES = fcalias.h fcaliastail.h
++ 
++-BUILT_SOURCES = $(ALIAS_FILES) $(TARG)
+++BUILT_SOURCES = $(ALIAS_FILES)
++ 
++ $(ALIAS_FILES): 
++ 	touch $(ALIAS_FILES)
+checksums
+--- old/checksums	2006-12-10 01:31:20.000000000 -0300
++++ new/checksums	2008-08-06 15:32:28.000000000 -0300
+@@ -1,2 +1,3 @@
+-f035852f521b54677f2b5c9e2f6d54a4  download/fontconfig-2.4.2.tar.gz
+-681b44e72933adaa2176d32c930fb6a6  download/fontconfig-2.4.2-build.patch
++ab54ec1d4ddd836313fdbc0cd5299d6d  download/fontconfig-2.6.0.tar.gz
++9470a0953ebecdbf0bed6ce0e8a6194a  download/fontconfig-2.6.0-parallel.patch
++9e56b9bb323da80558c2a28d2d720950  download/fontconfig-2.6.0-build.patch
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-08-06 15:32:28.000000000 -0300
+@@ -1,9 +1,9 @@
+ GARNAME = fontconfig
+-GARVERSION = 2.4.2
++GARVERSION = 2.6.0
+ CATEGORIES = lib
+ MASTER_SITES = http://www.fontconfig.org/release/
+ DISTFILES = $(DISTNAME).tar.gz
+-PATCHFILES = $(DISTNAME)-build.patch
++PATCHFILES = $(DISTNAME)-parallel.patch $(DISTNAME)-build.patch
+ LICENSE = fontconfig
+ fontconfig_LICENSE_TEXT = $(WORKSRC)/COPYING
+ 
+@@ -44,13 +44,7 @@
+ 
+ pre-configure:
+ 	@cd $(WORKSRC) ; autoreconf --verbose --install --force
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ pre-install:
+@@ -59,6 +53,5 @@
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libfontconfig.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/fontconfig.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/fontconfig.pc
++	@sed -i 's%-L$(DESTDIR)$(libdir)%-L$${libdir}%g' $(DESTDIR)$(libdir)/pkgconfig/fontconfig.pc
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/freetype-2.3.4.patch.gar new/files/freetype-2.3.4.patch.gar
+--- old/files/freetype-2.3.4.patch.gar	2007-07-14 18:02:10.000000000 -0300
++++ new/files/freetype-2.3.4.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,56 +0,0 @@
+-diff -Naur freetype-2.3.4-old/builds/unix/freetype-config.in freetype-2.3.4-new/builds/unix/freetype-config.in
+---- old/freetype-2.3.4-old/builds/unix/freetype-config.in	2006-10-11 21:51:08.000000000 -0700
+-+++ freetype-2.3.4-new/builds/unix/freetype-config.in	2007-07-04 06:42:05.000000000 -0700
+-@@ -9,6 +9,7 @@
+- # indicate that you have read the license and understand and accept it
+- # fully.
+- 
+-+DESTDIR=@GAR_DESTDIR@
+- prefix=@prefix@
+- exec_prefix=@exec_prefix@
+- exec_prefix_set=no
+-@@ -16,7 +17,6 @@
+- libdir=@libdir@
+- enable_shared=@enable_shared@
+- wl=@wl@
+--hardcode_libdir_flag_spec='@hardcode_libdir_flag_spec@'
+- 
+- usage()
+- {
+-@@ -128,9 +128,9 @@
+- fi
+- 
+- if test "$echo_cflags" = "yes" ; then
+--  cflags="-I$includedir/freetype2"
+--  if test "$includedir" != "/usr/include" ; then
+--    echo $cflags -I$includedir
+-+  cflags="-I$DESTDIR/$includedir/freetype2"
+-+  if test "$includedir" != "@GAR_includedir@" ; then
+-+    echo $cflags -I$DESTDIR/$includedir
+-   else
+-     echo $cflags
+-   fi
+-@@ -138,12 +138,9 @@
+- 
+- if test "$echo_libs" = "yes" ; then
+-   rpath=
+--  if test "$enable_shared" = "yes" ; then
+--    eval "rpath=\"$hardcode_libdir_flag_spec\""
+--  fi
+-   libs="-lfreetype @LIBZ@ @FT2_EXTRA_LIBS@"
+--  if test "$libdir" != "/usr/lib" && test "$libdir" != "/usr/lib64"; then
+--    echo -L$libdir $rpath $libs
+-+   if test "$libdir" != "@GAR_libdir@" ; then
+-+     echo -L$DESTDIR/$libdir $libs
+-   else
+-     echo $libs
+-   fi
+-@@ -151,7 +148,7 @@
+- 
+- if test "$echo_libtool" = "yes" ; then
+-   convlib="libfreetype.la"
+--  echo $libdir/$convlib
+-+  echo $DESTDIR/$libdir/$convlib
+- fi
+- 
+- # EOF
+diff -ruNP -x '.*' -x '*~' files/freetype-2.3.5.patch.gar new/files/freetype-2.3.5.patch.gar
+--- old/files/freetype-2.3.5.patch.gar	2007-07-14 18:02:10.000000000 -0300
++++ new/files/freetype-2.3.5.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,56 +0,0 @@
+-diff -Naur freetype-2.3.5-old/builds/unix/freetype-config.in freetype-2.3.5-new/builds/unix/freetype-config.in
+---- old/freetype-2.3.5-old/builds/unix/freetype-config.in	2006-10-11 21:51:08.000000000 -0700
+-+++ freetype-2.3.5-new/builds/unix/freetype-config.in	2007-07-03 19:32:05.000000000 -0700
+-@@ -9,6 +9,7 @@
+- # indicate that you have read the license and understand and accept it
+- # fully.
+- 
+-+DESTDIR=@GAR_DESTDIR@
+- prefix=@prefix@
+- exec_prefix=@exec_prefix@
+- exec_prefix_set=no
+-@@ -16,7 +17,6 @@
+- libdir=@libdir@
+- enable_shared=@enable_shared@
+- wl=@wl@
+--hardcode_libdir_flag_spec='@hardcode_libdir_flag_spec@'
+- 
+- usage()
+- {
+-@@ -128,9 +128,9 @@
+- fi
+- 
+- if test "$echo_cflags" = "yes" ; then
+--  cflags="-I$includedir/freetype2"
+--  if test "$includedir" != "/usr/include" ; then
+--    echo $cflags -I$includedir
+-+  cflags="-I$DESTDIR/$includedir/freetype2"
+-+  if test "$includedir" != "@GAR_includedir@" ; then
+-+    echo $cflags -I$DESTDIR/$includedir
+-   else
+-     echo $cflags
+-   fi
+-@@ -138,12 +138,9 @@
+- 
+- if test "$echo_libs" = "yes" ; then
+-   rpath=
+--  if test "$enable_shared" = "yes" ; then
+--    eval "rpath=\"$hardcode_libdir_flag_spec\""
+--  fi
+-   libs="-lfreetype @LIBZ@ @FT2_EXTRA_LIBS@"
+--  if test "$libdir" != "/usr/lib" && test "$libdir" != "/usr/lib64"; then
+--    echo -L$libdir $rpath $libs
+-+   if test "$libdir" != "@GAR_libdir@" ; then
+-+     echo -L$DESTDIR/$libdir $libs
+-   else
+-     echo $libs
+-   fi
+-@@ -151,7 +148,7 @@
+- 
+- if test "$echo_libtool" = "yes" ; then
+-   convlib="libfreetype.la"
+--  echo $libdir/$convlib
+-+  echo $DESTDIR/$libdir/$convlib
+- fi
+- 
+- # EOF
+diff -ruNP -x '.*' -x '*~' files/freetype-2.3.7.patch.gar new/files/freetype-2.3.7.patch.gar
+--- old/files/freetype-2.3.7.patch.gar	1969-12-31 21:00:00.000000000 -0300
++++ new/files/freetype-2.3.7.patch.gar	2008-07-02 15:38:38.000000000 -0300
+@@ -0,0 +1,56 @@
++diff -Naur freetype-2.3.7-old/builds/unix/freetype-config.in freetype-2.3.7-new/builds/unix/freetype-config.in
++--- old/freetype-2.3.7-old/builds/unix/freetype-config.in	2008-06-09 14:25:37.000000000 -0700
+++++ freetype-2.3.7-new/builds/unix/freetype-config.in	2008-07-01 10:47:35.000000000 -0700
++@@ -9,6 +9,7 @@
++ # indicate that you have read the license and understand and accept it
++ # fully.
++ 
+++DESTDIR=@GAR_DESTDIR@
++ prefix=@prefix@
++ exec_prefix=@exec_prefix@
++ exec_prefix_set=no
++@@ -16,7 +17,6 @@
++ libdir=@libdir@
++ enable_shared=@build_libtool_libs@
++ wl=@wl@
++-hardcode_libdir_flag_spec='@hardcode_libdir_flag_spec@'
++ 
++ usage()
++ {
++@@ -128,9 +128,9 @@
++ fi
++ 
++ if test "$echo_cflags" = "yes" ; then
++-  cflags="-I$includedir/freetype2"
++-  if test "$includedir" != "/usr/include" ; then
++-    echo $cflags -I$includedir
+++  cflags="-I$DESTDIR/$includedir/freetype2"
+++  if test "$includedir" != "@GAR_includedir@" ; then
+++    echo $cflags -I$DESTDIR/$includedir
++   else
++     echo $cflags
++   fi
++@@ -138,12 +138,9 @@
++ 
++ if test "$echo_libs" = "yes" ; then
++   rpath=
++-  if test "$enable_shared" = "yes" ; then
++-    eval "rpath=\"$hardcode_libdir_flag_spec\""
++-  fi
++   libs="-lfreetype @LIBZ@ @FT2_EXTRA_LIBS@"
++-  if test "$libdir" != "/usr/lib" && test "$libdir" != "/usr/lib64"; then
++-    echo -L$libdir $rpath $libs
+++   if test "$libdir" != "@GAR_libdir@" ; then
+++     echo -L$DESTDIR/$libdir $libs
++   else
++     echo $libs
++   fi
++@@ -151,7 +148,7 @@
++ 
++ if test "$echo_libtool" = "yes" ; then
++   convlib="libfreetype.la"
++-  echo $libdir/$convlib
+++  echo $DESTDIR/$libdir/$convlib
++ fi
++ 
++ # EOF
+checksums
+--- old/checksums	2007-07-14 16:08:39.000000000 -0300
++++ new/checksums	2008-07-02 15:38:38.000000000 -0300
+@@ -1,5 +1,2 @@
+-1a6c59a7723d637c78672e7784da865d  download/freetype-2.3.4.tar.bz2
+-6da3006572e2d12988d2dd4cc5130ce5  download/freetype-2.3.4.patch.gar
+-
+-65234327c5ac46ee00ebda15995d4c1c  download/freetype-2.3.5.tar.bz2
+-87f0e9ac2649486933097b1dbf9ae5bc  download/freetype-2.3.5.patch.gar
++83306194817ebdea554133b4232a34aa  download/freetype-2.3.7.tar.bz2
++ce5d6b478aa3955bcd2b4c8884ff1ad0  download/freetype-2.3.7.patch.gar
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-07-02 15:38:38.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = freetype
+-GARVERSION = 2.3.4
++GARVERSION = 2.3.7
+ CATEGORIES = lib
+ MASTER_SITES = http://easynews.dl.sourceforge.net/sourceforge/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.bz2
+@@ -25,9 +25,11 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libfreetype.la
+ 	@ln -sf freetype2/freetype $(DESTDIR)$(includedir)/freetype
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/freetype2.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/freetype2.pc
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/lame-3.97-gtk_m4.patch new/files/lame-3.97-gtk_m4.patch
+--- old/files/lame-3.97-gtk_m4.patch	2006-12-04 14:42:40.000000000 -0300
++++ new/files/lame-3.97-gtk_m4.patch	1969-12-31 21:00:00.000000000 -0300
+@@ -1,211 +0,0 @@
+-diff -Naur lame-3.97-old/configure.in lame-3.97-new/configure.in
+---- old/lame-3.97-old/configure.in	2006-09-24 06:53:31.000000000 -0700
+-+++ lame-3.97-new/configure.in	2006-09-30 17:42:56.000000000 -0700
+-@@ -30,6 +30,9 @@
+- AM_MAINTAINER_MODE
+- AM_MAKE_INCLUDE
+- 
+-+dnl Include m4
+-+sinclude(m4/gtk.m4)
+-+
+- dnl check environment
+- AC_AIX
+- AC_ISC_POSIX
+-diff -Naur lame-3.97-old/m4/gtk.m4 lame-3.97-new/m4/gtk.m4
+---- old/lame-3.97-old/m4/gtk.m4	1969-12-31 16:00:00.000000000 -0800
+-+++ lame-3.97-new/m4/gtk.m4	2006-09-30 17:42:56.000000000 -0700
+-@@ -0,0 +1,194 @@
+-+# Configure paths for GTK+
+-+# Owen Taylor     97-11-3
+-+
+-+dnl AM_PATH_GTK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]]])
+-+dnl Test for GTK, and define GTK_CFLAGS and GTK_LIBS
+-+dnl
+-+AC_DEFUN(AM_PATH_GTK,
+-+[dnl 
+-+dnl Get the cflags and libraries from the gtk-config script
+-+dnl
+-+AC_ARG_WITH(gtk-prefix,[  --with-gtk-prefix=PFX   Prefix where GTK is installed (optional)],
+-+            gtk_config_prefix="$withval", gtk_config_prefix="")
+-+AC_ARG_WITH(gtk-exec-prefix,[  --with-gtk-exec-prefix=PFX Exec prefix where GTK is installed (optional)],
+-+            gtk_config_exec_prefix="$withval", gtk_config_exec_prefix="")
+-+AC_ARG_ENABLE(gtktest, [  --disable-gtktest       Do not try to compile and run a test GTK program],
+-+		    , enable_gtktest=yes)
+-+
+-+  for module in . $4
+-+  do
+-+      case "$module" in
+-+         gthread) 
+-+             gtk_config_args="$gtk_config_args gthread"
+-+         ;;
+-+      esac
+-+  done
+-+
+-+  if test x$gtk_config_exec_prefix != x ; then
+-+     gtk_config_args="$gtk_config_args --exec-prefix=$gtk_config_exec_prefix"
+-+     if test x${GTK_CONFIG+set} != xset ; then
+-+        GTK_CONFIG=$gtk_config_exec_prefix/bin/gtk-config
+-+     fi
+-+  fi
+-+  if test x$gtk_config_prefix != x ; then
+-+     gtk_config_args="$gtk_config_args --prefix=$gtk_config_prefix"
+-+     if test x${GTK_CONFIG+set} != xset ; then
+-+        GTK_CONFIG=$gtk_config_prefix/bin/gtk-config
+-+     fi
+-+  fi
+-+
+-+  AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
+-+  min_gtk_version=ifelse([$1], ,0.99.7,$1)
+-+  AC_MSG_CHECKING(for GTK - version >= $min_gtk_version)
+-+  no_gtk=""
+-+  if test "$GTK_CONFIG" = "no" ; then
+-+    no_gtk=yes
+-+  else
+-+    GTK_CFLAGS=`$GTK_CONFIG $gtk_config_args --cflags`
+-+    GTK_LIBS=`$GTK_CONFIG $gtk_config_args --libs`
+-+    gtk_config_major_version=`$GTK_CONFIG $gtk_config_args --version | \
+-+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
+-+    gtk_config_minor_version=`$GTK_CONFIG $gtk_config_args --version | \
+-+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+-+    gtk_config_micro_version=`$GTK_CONFIG $gtk_config_args --version | \
+-+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+-+    if test "x$enable_gtktest" = "xyes" ; then
+-+      ac_save_CFLAGS="$CFLAGS"
+-+      ac_save_LIBS="$LIBS"
+-+      CFLAGS="$CFLAGS $GTK_CFLAGS"
+-+      LIBS="$GTK_LIBS $LIBS"
+-+dnl
+-+dnl Now check if the installed GTK is sufficiently new. (Also sanity
+-+dnl checks the results of gtk-config to some extent
+-+dnl
+-+      rm -f conf.gtktest
+-+      AC_TRY_RUN([
+-+#include <gtk/gtk.h>
+-+#include <stdio.h>
+-+#include <stdlib.h>
+-+
+-+int 
+-+main ()
+-+{
+-+  int major, minor, micro;
+-+  char *tmp_version;
+-+
+-+  system ("touch conf.gtktest");
+-+
+-+  /* HP/UX 9 (%@#!) writes to sscanf strings */
+-+  tmp_version = g_strdup("$min_gtk_version");
+-+  if (sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
+-+     printf("%s, bad version string\n", "$min_gtk_version");
+-+     exit(1);
+-+   }
+-+
+-+  if ((gtk_major_version != $gtk_config_major_version) ||
+-+      (gtk_minor_version != $gtk_config_minor_version) ||
+-+      (gtk_micro_version != $gtk_config_micro_version))
+-+    {
+-+      printf("\n*** 'gtk-config --version' returned %d.%d.%d, but GTK+ (%d.%d.%d)\n", 
+-+             $gtk_config_major_version, $gtk_config_minor_version, $gtk_config_micro_version,
+-+             gtk_major_version, gtk_minor_version, gtk_micro_version);
+-+      printf ("*** was found! If gtk-config was correct, then it is best\n");
+-+      printf ("*** to remove the old version of GTK+. You may also be able to fix the error\n");
+-+      printf("*** by modifying your LD_LIBRARY_PATH enviroment variable, or by editing\n");
+-+      printf("*** /etc/ld.so.conf. Make sure you have run ldconfig if that is\n");
+-+      printf("*** required on your system.\n");
+-+      printf("*** If gtk-config was wrong, set the environment variable GTK_CONFIG\n");
+-+      printf("*** to point to the correct copy of gtk-config, and remove the file config.cache\n");
+-+      printf("*** before re-running configure\n");
+-+    } 
+-+#if defined (GTK_MAJOR_VERSION) && defined (GTK_MINOR_VERSION) && defined (GTK_MICRO_VERSION)
+-+  else if ((gtk_major_version != GTK_MAJOR_VERSION) ||
+-+	   (gtk_minor_version != GTK_MINOR_VERSION) ||
+-+           (gtk_micro_version != GTK_MICRO_VERSION))
+-+    {
+-+      printf("*** GTK+ header files (version %d.%d.%d) do not match\n",
+-+	     GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
+-+      printf("*** library (version %d.%d.%d)\n",
+-+	     gtk_major_version, gtk_minor_version, gtk_micro_version);
+-+    }
+-+#endif /* defined (GTK_MAJOR_VERSION) ... */
+-+  else
+-+    {
+-+      if ((gtk_major_version > major) ||
+-+        ((gtk_major_version == major) && (gtk_minor_version > minor)) ||
+-+        ((gtk_major_version == major) && (gtk_minor_version == minor) && (gtk_micro_version >= micro)))
+-+      {
+-+        return 0;
+-+       }
+-+     else
+-+      {
+-+        printf("\n*** An old version of GTK+ (%d.%d.%d) was found.\n",
+-+               gtk_major_version, gtk_minor_version, gtk_micro_version);
+-+        printf("*** You need a version of GTK+ newer than %d.%d.%d. The latest version of\n",
+-+	       major, minor, micro);
+-+        printf("*** GTK+ is always available from ftp://ftp.gtk.org.\n");
+-+        printf("***\n");
+-+        printf("*** If you have already installed a sufficiently new version, this error\n");
+-+        printf("*** probably means that the wrong copy of the gtk-config shell script is\n");
+-+        printf("*** being found. The easiest way to fix this is to remove the old version\n");
+-+        printf("*** of GTK+, but you can also set the GTK_CONFIG environment to point to the\n");
+-+        printf("*** correct copy of gtk-config. (In this case, you will have to\n");
+-+        printf("*** modify your LD_LIBRARY_PATH enviroment variable, or edit /etc/ld.so.conf\n");
+-+        printf("*** so that the correct libraries are found at run-time))\n");
+-+      }
+-+    }
+-+  return 1;
+-+}
+-+],, no_gtk=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+-+       CFLAGS="$ac_save_CFLAGS"
+-+       LIBS="$ac_save_LIBS"
+-+     fi
+-+  fi
+-+  if test "x$no_gtk" = x ; then
+-+     AC_MSG_RESULT(yes)
+-+     ifelse([$2], , :, [$2])     
+-+  else
+-+     AC_MSG_RESULT(no)
+-+     if test "$GTK_CONFIG" = "no" ; then
+-+       echo "*** The gtk-config script installed by GTK could not be found"
+-+       echo "*** If GTK was installed in PREFIX, make sure PREFIX/bin is in"
+-+       echo "*** your path, or set the GTK_CONFIG environment variable to the"
+-+       echo "*** full path to gtk-config."
+-+     else
+-+       if test -f conf.gtktest ; then
+-+        :
+-+       else
+-+          echo "*** Could not run GTK test program, checking why..."
+-+          CFLAGS="$CFLAGS $GTK_CFLAGS"
+-+          LIBS="$LIBS $GTK_LIBS"
+-+          AC_TRY_LINK([
+-+#include <gtk/gtk.h>
+-+#include <stdio.h>
+-+],      [ return ((gtk_major_version) || (gtk_minor_version) || (gtk_micro_version)); ],
+-+        [ echo "*** The test program compiled, but did not run. This usually means"
+-+          echo "*** that the run-time linker is not finding GTK or finding the wrong"
+-+          echo "*** version of GTK. If it is not finding GTK, you'll need to set your"
+-+          echo "*** LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf to point"
+-+          echo "*** to the installed location  Also, make sure you have run ldconfig if that"
+-+          echo "*** is required on your system"
+-+	  echo "***"
+-+          echo "*** If you have an old version installed, it is best to remove it, although"
+-+          echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"
+-+          echo "***"
+-+          echo "*** If you have a RedHat 5.0 system, you should remove the GTK package that"
+-+          echo "*** came with the system with the command"
+-+          echo "***"
+-+          echo "***    rpm --erase --nodeps gtk gtk-devel" ],
+-+        [ echo "*** The test program failed to compile or link. See the file config.log for the"
+-+          echo "*** exact error that occured. This usually means GTK was incorrectly installed"
+-+          echo "*** or that you have moved GTK since it was installed. In the latter case, you"
+-+          echo "*** may want to edit the gtk-config script: $GTK_CONFIG" ])
+-+          CFLAGS="$ac_save_CFLAGS"
+-+          LIBS="$ac_save_LIBS"
+-+       fi
+-+     fi
+-+     GTK_CFLAGS=""
+-+     GTK_LIBS=""
+-+     ifelse([$3], , :, [$3])
+-+  fi
+-+  AC_SUBST(GTK_CFLAGS)
+-+  AC_SUBST(GTK_LIBS)
+-+  rm -f conf.gtktest
+-+])
+checksums
+--- old/checksums	2006-12-04 14:42:39.000000000 -0300
++++ new/checksums	2008-07-11 14:34:01.000000000 -0300
+@@ -1,4 +1,3 @@
+-90a4acbb730d150dfe80de145126eef7  download/lame-3.97.tar.gz
+-934a79b5745b01e19bf83a32cdbeccee  download/lame-3.97-gtk_m4.patch
++f44b9f8e1b5d8835d0a77f9cc9cedd1c  download/lame-398.tar.gz
+ 465c6d2053427be7710094140ab8c098  download/config.cache.i386
+ 465c6d2053427be7710094140ab8c098  download/config.cache.x86_64
+Makefile
+--- old/Makefile	2008-08-30 09:43:00.000000000 -0300
++++ new/Makefile	2008-07-11 14:34:01.000000000 -0300
+@@ -1,9 +1,8 @@
+ GARNAME = lame
+-GARVERSION = 3.97
++GARVERSION = 398
+ CATEGORIES = lib
+ MASTER_SITES = http://easynews.dl.sourceforge.net/sourceforge/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.gz config.cache.$(GARCH_FAMILY)
+-PATCHFILES = $(DISTNAME)-gtk_m4.patch
+ LICENSE = LGPL2
+ 
+ DESCRIPTION = 
+@@ -22,9 +21,11 @@
+ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+ 	--cache-file=config.cache \
+ 	--enable-nasm \
+-	--with-gnu-ld \
+-	--with-gtk-prefix="$(DESTDIR)$(prefix)"
+-	--with-gtk-exec-prefix="$(DESTDIR)$(exec_prefix)"
++	--disable-cpml \
++	--with-gnu-ld
++
++CONFIGURE_ENV = \
++	GTK_CONFIG='no'
+ 
+ include ../../gar.mk
+ 
+@@ -35,7 +36,7 @@
+ 	@$(MAKECOOKIE)
+ 
+ pre-configure:
+-	@cd $(WORKSRC) ; autoreconf --verbose --install --force
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+files
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:17.000000000 -0300
+@@ -22,8 +22,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libcdaudio.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libcdaudio.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libcdaudio.pc
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/libdvdnav-0.1.10.patch.gar new/files/libdvdnav-0.1.10.patch.gar
+--- old/files/libdvdnav-0.1.10.patch.gar	2006-06-21 02:09:07.000000000 -0300
++++ new/files/libdvdnav-0.1.10.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,23 +0,0 @@
+-diff -Naur libdvdnav-0.1.10-old/misc/dvdnav-config.in libdvdnav-0.1.10-new/misc/dvdnav-config.in
+---- old/libdvdnav-0.1.10-old/misc/dvdnav-config.in	2003-04-26 18:26:17.000000000 -0700
+-+++ libdvdnav-0.1.10-new/misc/dvdnav-config.in	2006-06-20 22:08:53.000000000 -0700
+-@@ -2,6 +2,7 @@
+- #
+- #
+- 
+-+DESTDIR=@GAR_DESTDIR@
+- prefix=@prefix@
+- exec_prefix=@exec_prefix@
+- exec_prefix_set=no
+-@@ -72,9 +73,9 @@
+- fi
+- 
+- if test "$echo_cflags" = "yes"; then
+--      echo -I@includedir@ -I@includedir@/dvdnav @THREAD_CFLAGS@
+-+      echo -I$DESTDIR@includedir@ -I$DESTDIR@includedir@/dvdnav @THREAD_CFLAGS@
+- fi
+- 
+- if test "$echo_libs" = "yes"; then
+--      echo -L@libdir@ -ldvdnav @THREAD_LIBS@
+-+      echo -L$DESTDIR@libdir@ -ldvdnav @THREAD_LIBS@
+- fi      
+checksums
+Makefile
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:16.000000000 -0300
+@@ -25,8 +25,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL_LIBPATH,$(WORKSRC),configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libexif.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libexif.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libexif.pc
+ 	@$(MAKECOOKIE)
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-05-15 12:13:10.000000000 -0300
+@@ -21,15 +21,25 @@
+ 
+ install-custom:
+ 	@mkdir -p $(DESTDIR)$(elibdir)
+-	@$(if $(wildcard $(CROSS_GCC_LIBDIR)), \
+-		cp -af $(CROSS_GCC_LIBDIR)/libgcc*    $(DESTDIR)$(elibdir) ; \
+-	)
+-	@$(if $(wildcard $(CROSS_GCC_DIR)/lib32), \
+-		cp -af $(CROSS_GCC_DIR)/lib32/libgcc* $(DESTDIR)$(elibdir) ; \
+-	)
+-	@$(if $(wildcard $(CROSS_GCC_DIR)/lib64), \
+-		cp -af $(CROSS_GCC_DIR)/lib64/libgcc* $(DESTDIR)$(elibdir) ; \
+-	)
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgcc.a        ),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgcc_s.so     ),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgcc_s.so.*   ),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgcc.a     ),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgcc_s.so  ),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgcc_s.so.*),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgcc.a     ),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgcc_s.so  ),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgcc_s.so.*),cp -af $(file) $(DESTDIR)$(elibdir) ; )
++	@mkdir -p $(DESTDIR)$(libdir)
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgomp.a      ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgomp.so     ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgomp.so.*   ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgomp.a   ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgomp.so  ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgomp.so.*),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgomp.a   ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgomp.so  ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgomp.so.*),cp -af $(file) $(DESTDIR)$(libdir) ; )
+ 	@$(MAKECOOKIE)
+ 
+ CROSSIMG = $(DESTIMG)
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:20.000000000 -0300
+@@ -21,6 +21,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libid3tag.la
+ 	@$(MAKECOOKIE)
+checksums
+--- old/checksums	2006-12-04 14:42:42.000000000 -0300
++++ new/checksums	2008-05-15 12:13:12.000000000 -0300
+@@ -1 +1,2 @@
+ dbd5f3b47ed13132f04c685d608a7547  download/jpegsrc.v6b.tar.gz
++01976d0d600e844979fb2161e6d10022  download/jpeg-6b-jconfig_h.patch
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:18.000000000 -0300
+@@ -3,6 +3,7 @@
+ CATEGORIES = lib
+ MASTER_SITES = ftp://ftp.uu.net/graphics/$(GARNAME)/
+ DISTFILES = jpegsrc.v$(GARVERSION).tar.gz
++PATCHFILES = $(DISTNAME)-jconfig_h.patch
+ LICENSE = jpeg
+ jpeg_LICENSE_TEXT = $(WORKSRC)/README
+ DESCRIPTION = 
+@@ -26,15 +27,10 @@
+ mandir := $(mandir)/man1
+ 
+ pre-configure:
+-	@cp -f $(build_DESTDIR)$(build_datadir)/libtool/config.sub $(WORKSRC)
++	@cp -f $(build_DESTDIR)$(build_datadir)/libtool/config/config.sub $(WORKSRC)
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(call FIX_LIBTOOL,$(WORKSRC)/ltconfig)
+ 	@sed -i 's%^host=.*%host=$(GARHOST)%' $(WORKSRC)/ltconfig
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/ltconfig
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/ltconfig
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
+ 	@$(MAKECOOKIE)
+ 
+ install-custom:
+files
+diff -ruNP -x '.*' -x '*~' files/jpeg-6b-jconfig_h.patch new/files/jpeg-6b-jconfig_h.patch
+--- old/files/jpeg-6b-jconfig_h.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/jpeg-6b-jconfig_h.patch	2008-05-15 12:13:12.000000000 -0300
+@@ -0,0 +1,61 @@
++diff -Naur jpeg-6b-old/configure jpeg-6b-new/configure
++--- old/jpeg-6b-old/configure	1998-03-21 11:08:57.000000000 -0800
+++++ jpeg-6b-new/configure	2008-01-16 03:44:33.000000000 -0800
++@@ -776,7 +776,7 @@
++ echo "$ac_t""$ijg_cv_have_prototypes" 1>&6
++ if test $ijg_cv_have_prototypes = yes; then
++   cat >> confdefs.h <<\EOF
++-#define HAVE_PROTOTYPES 
+++#define HAVE_PROTOTYPES 1
++ EOF
++ 
++ else
++@@ -815,7 +815,7 @@
++ if eval "test \"`echo '$ac_cv_header_'$ac_safe`\" = yes"; then
++   echo "$ac_t""yes" 1>&6
++   cat >> confdefs.h <<\EOF
++-#define HAVE_STDDEF_H 
+++#define HAVE_STDDEF_H 1
++ EOF
++ 
++ else
++@@ -851,7 +851,7 @@
++ if eval "test \"`echo '$ac_cv_header_'$ac_safe`\" = yes"; then
++   echo "$ac_t""yes" 1>&6
++   cat >> confdefs.h <<\EOF
++-#define HAVE_STDLIB_H 
+++#define HAVE_STDLIB_H 1
++ EOF
++ 
++ else
++@@ -901,10 +901,10 @@
++ #line 902 "configure"
++ #include "confdefs.h"
++ 
++-#ifdef HAVE_STDDEF_H
+++#ifdef HAVE_STDDEF_H 1
++ #include <stddef.h>
++ #endif
++-#ifdef HAVE_STDLIB_H
+++#ifdef HAVE_STDLIB_H 1
++ #include <stdlib.h>
++ #endif
++ #include <stdio.h>
++@@ -1003,7 +1003,7 @@
++   rm -rf conftest*
++   echo "$ac_t""yes" 1>&6
++ cat >> confdefs.h <<\EOF
++-#define HAVE_UNSIGNED_CHAR 
+++#define HAVE_UNSIGNED_CHAR 1
++ EOF
++ 
++ else
++@@ -1027,7 +1027,7 @@
++   rm -rf conftest*
++   echo "$ac_t""yes" 1>&6
++ cat >> confdefs.h <<\EOF
++-#define HAVE_UNSIGNED_SHORT 
+++#define HAVE_UNSIGNED_SHORT 1
++ EOF
++ 
++ else
+files
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:16.000000000 -0300
+@@ -27,10 +27,9 @@
+ 	@touch $(WORKSRC)/ChangeLog
+ 	@touch $(WORKSRC)/NEWS
+ 	@cd $(WORKSRC) ; autoreconf --verbose --install --force
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libmad.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/mad.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/mad.pc
+ 	@$(MAKECOOKIE)
+checksums
+--- old/checksums	2006-12-04 14:42:42.000000000 -0300
++++ new/checksums	2007-11-19 15:10:27.000000000 -0300
+@@ -1 +1 @@
+-ff1205ef70855a75c098ea09690413c6  download/libmng-1.0.9.tar.gz
++a464ae7d679781beebdf7440d144b7bd  download/libmng-1.0.10.tar.gz
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:23.000000000 -0300
+@@ -10,7 +10,7 @@
+ define BLURB
+ endef
+ 
+-#DEPENDS = lang/c lib/libjpeg lib/zlib
++DEPENDS = lang/c lib/libjpeg lib/zlib
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+@@ -28,6 +28,7 @@
+ 	@cp $(WORKSRC)/makefiles/configure.in $(WORKSRC)
+ 	@cp $(WORKSRC)/makefiles/Makefile.am $(WORKSRC)
+ 	@cd $(WORKSRC) ; autoreconf --verbose --install --force
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+package-api.mk
+--- old/package-api.mk	2006-12-04 14:42:42.000000000 -0300
++++ new/package-api.mk	2007-11-19 15:10:27.000000000 -0300
+@@ -1 +1 @@
+-LIBMNG_VERSION = 1.0.9
++LIBMNG_VERSION = 1.0.10
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:18.000000000 -0300
+@@ -21,8 +21,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libogg.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/ogg.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/ogg.pc
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/libpng-1.2.18.patch.gar new/files/libpng-1.2.18.patch.gar
+--- old/files/libpng-1.2.18.patch.gar	2007-06-16 13:48:01.000000000 -0300
++++ new/files/libpng-1.2.18.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,21 +0,0 @@
+-diff -Naur libpng-1.2.18-old/scripts/libpng-config.in libpng-1.2.18-new/scripts/libpng-config.in
+---- old/libpng-1.2.18-old/scripts/libpng-config.in	2007-01-04 11:00:25.000000000 -0800
+-+++ libpng-1.2.18-new/scripts/libpng-config.in	2007-06-15 20:40:25.000000000 -0700
+-@@ -9,14 +9,15 @@
+- # Modeled after libxml-config.
+- 
+- version="@PNGLIB_VERSION@"
+-+DESTDIR=@GAR_DESTDIR@
+- prefix="@prefix@"
+- exec_prefix="@exec_prefix@"
+- libdir="@libdir@"
+- includedir="@includedir@/libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
+- libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
+- all_libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@ -lz -lm"
+--I_opts="-I${includedir}"
+--L_opts="-L${libdir}"
+-+I_opts="-I$DESTDIR${includedir}"
+-+L_opts="-L$DESTDIR${libdir}"
+- R_opts=""
+- cppflags=""
+- ccopts="@LIBPNG_NO_MMX@"
+diff -ruNP -x '.*' -x '*~' files/libpng-1.2.29.patch.gar new/files/libpng-1.2.29.patch.gar
+--- old/files/libpng-1.2.29.patch.gar	1969-12-31 21:00:00.000000000 -0300
++++ new/files/libpng-1.2.29.patch.gar	2008-05-15 12:13:16.000000000 -0300
+@@ -0,0 +1,21 @@
++diff -Naur libpng-1.2.29-old/scripts/libpng-config.in libpng-1.2.29-new/scripts/libpng-config.in
++--- old/libpng-1.2.29-old/scripts/libpng-config.in	2007-01-04 11:00:25.000000000 -0800
+++++ libpng-1.2.29-new/scripts/libpng-config.in	2008-05-08 19:51:29.000000000 -0700
++@@ -9,14 +9,15 @@
++ # Modeled after libxml-config.
++ 
++ version="@PNGLIB_VERSION@"
+++DESTDIR=@GAR_DESTDIR@
++ prefix="@prefix@"
++ exec_prefix="@exec_prefix@"
++ libdir="@libdir@"
++ includedir="@includedir@/libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
++ libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
++ all_libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@ -lz -lm"
++-I_opts="-I${includedir}"
++-L_opts="-L${libdir}"
+++I_opts="-I$DESTDIR${includedir}"
+++L_opts="-L$DESTDIR${libdir}"
++ R_opts=""
++ cppflags=""
++ ccopts="@LIBPNG_NO_MMX@"
+checksums
+--- old/checksums	2007-07-14 16:08:39.000000000 -0300
++++ new/checksums	2008-05-15 12:13:16.000000000 -0300
+@@ -1,4 +1,4 @@
+-25a7f2f101eaaf2eb18c4987e0fbe39d  download/libpng-1.2.18.tar.bz2
+-85a50e679fc698fc63d399d9cca357d9  download/libpng-1.2.18.patch.gar
++f588cb4ee39e3a333604096f937ea157  download/libpng-1.2.29.tar.bz2
++8ff472987ef6aec26195ca61ae27206a  download/libpng-1.2.29.patch.gar
+ ad8b4e63457c11ecebd9e07e0495e2e6  download/config.cache.i386
+ ad8b4e63457c11ecebd9e07e0495e2e6  download/config.cache.x86_64
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:23.000000000 -0300
+@@ -1,11 +1,11 @@
+ GARNAME = libpng
+-GARVERSION = 1.2.18
++GARVERSION = 1.2.29
+ CATEGORIES = lib
+ MASTER_SITES = http://easynews.dl.sourceforge.net/sourceforge/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.bz2 config.cache.$(GARCH_FAMILY)
+ PATCHFILES = $(DISTNAME).patch.gar
+-LICENSE = png
+-png_LICENSE_TEXT = $(WORKSRC)/LICENSE
++LICENSE = $(GARNAME)
++$(GARNAME)_LICENSE_TEXT = $(WORKSRC)/LICENSE
+ 
+ DESCRIPTION = 
+ define BLURB
+@@ -27,11 +27,11 @@
+ 	@cp $(DOWNLOADDIR)/config.cache.$(GARCH_FAMILY) $(WORKSRC)/config.cache
+ 	@$(MAKECOOKIE)
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libpng12.la
+ 	@rm -f $(DESTDIR)$(libdir)/libpng.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libpng12.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libpng12.pc
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libpng.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libpng.pc
+ 	@$(MAKECOOKIE)
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-05-15 12:13:11.000000000 -0300
+@@ -21,9 +21,15 @@
+ 
+ install-custom:
+ 	@mkdir -p $(DESTDIR)$(libdir)
+-	@$(if $(wildcard $(CROSS_GCC_LIBDIR)), \
+-		cp -af $(CROSS_GCC_LIBDIR)/lib*c++* $(DESTDIR)$(libdir) ; \
+-	)
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libstdc++.a      ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libstdc++.so     ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libstdc++.so.*   ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libstdc++.a   ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libstdc++.so  ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libstdc++.so.*),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libstdc++.a   ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libstdc++.so  ),cp -af $(file) $(DESTDIR)$(libdir) ; )
++	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libstdc++.so.*),cp -af $(file) $(DESTDIR)$(libdir) ; )
+ 	@$(MAKECOOKIE)
+ 
+ CROSSIMG = $(DESTIMG)
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:15.000000000 -0300
+@@ -25,13 +25,7 @@
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+files
+diff -ruNP -x '.*' -x '*~' files/libusb-0.1.12-libtool_2.2.x.patch new/files/libusb-0.1.12-libtool_2.2.x.patch
+--- old/files/libusb-0.1.12-libtool_2.2.x.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/libusb-0.1.12-libtool_2.2.x.patch	2008-06-26 14:12:19.000000000 -0300
+@@ -0,0 +1,11 @@
++diff -Naur libusb-0.1.12-old/configure.in libusb-0.1.12-new/configure.in
++--- old/libusb-0.1.12-old/configure.in	2006-03-03 18:53:04.000000000 -0800
+++++ libusb-0.1.12-new/configure.in	2008-06-17 07:34:02.000000000 -0700
++@@ -149,6 +149,7 @@
++ fi
++ 
++ # Checks for programs.
+++AC_PROG_CXX
++ AC_LANG_CPLUSPLUS
++ AC_PROG_CC
++ AM_PROG_CC_C_O
+checksums
+--- old/checksums	2006-12-04 14:42:43.000000000 -0300
++++ new/checksums	2008-06-26 14:12:19.000000000 -0300
+@@ -1,3 +1,4 @@
+ caf182cbc7565dac0fd72155919672e6  download/libusb-0.1.12.tar.gz
++cfb43283c88638b48325de49c827e678  files/libusb-0.1.12-libtool_2.2.x.patch
+ a6f8875cb30708104d1fe7f63ab18a7a  download/libusb-0.1.12-bugfixes.patch
+ eafebc039f2563c10be1d38451d7d937  download/libusb-0.1.12.patch.gar
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:19.000000000 -0300
+@@ -3,7 +3,7 @@
+ CATEGORIES = lib
+ MASTER_SITES = http://easynews.dl.sourceforge.net/sourceforge/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.gz
+-PATCHFILES = $(DISTNAME)-bugfixes.patch $(DISTNAME).patch.gar
++PATCHFILES = $(DISTNAME)-libtool_2.2.x.patch $(DISTNAME)-bugfixes.patch $(DISTNAME).patch.gar
+ LICENSE = LGPL2_1
+ 
+ DESCRIPTION = 
+@@ -24,19 +24,10 @@
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@cd $(WORKSRC) ; autoreconf --verbose --install --force
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libusb.la
+ 	@rm -f $(DESTDIR)$(libdir)/libusbpp.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libusb.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libusb.pc
+ 	@$(MAKECOOKIE)
+checksums
+--- old/checksums	2006-12-04 14:42:43.000000000 -0300
++++ new/checksums	2007-11-19 15:10:21.000000000 -0300
+@@ -1 +1 @@
+-37847626b8e1b53ae79a34714c7b3211  download/libvorbis-1.1.2.tar.gz
++478646358c49f34aedcce58948793619  download/libvorbis-1.2.0.tar.gz
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:17.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = libvorbis
+-GARVERSION = 1.1.2
++GARVERSION = 1.2.0
+ CATEGORIES = lib
+ MASTER_SITES = http://downloads.xiph.org/releases/vorbis/
+ DISTFILES = $(DISTNAME).tar.gz
+@@ -24,23 +24,11 @@
+ include ../../gar.mk
+ 
+ post-patch:
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	rm -f $(DESTDIR)$(libdir)/libvorbis.la
+ 	rm -f $(DESTDIR)$(libdir)/libvorbisenc.la
+ 	rm -f $(DESTDIR)$(libdir)/libvorbisfile.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/vorbisenc.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/vorbisenc.pc
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/vorbisfile.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/vorbisfile.pc
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/vorbis.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/vorbis.pc
+ 	@$(MAKECOOKIE)
+checksums
+--- old/checksums	2007-07-14 15:39:08.000000000 -0300
++++ new/checksums	2008-05-15 12:13:11.000000000 -0300
+@@ -1 +1 @@
+-8b99b6e8b08e838438d9e6b639d79ebd  download/libxml2-2.6.29.tar.gz
++2621d322c16f0257e30f0ff2b13384de  download/libxml2-2.6.32.tar.gz
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-08-20 15:52:43.000000000 -0300
+@@ -1,11 +1,11 @@
+ GARNAME = libxml2
+-GARVERSION = 2.6.29
++GARVERSION = 2.6.32
+ CATEGORIES = lib
+ MASTER_SITES = ftp://xmlsoft.org/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.gz
+-LICENSE =
++LICENSE = MIT/MIT_Modified
+ 
+-DESCRIPTION =
++DESCRIPTION = 
+ define BLURB
+ endef
+ 
+@@ -21,21 +21,9 @@
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libxml2.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libxml-2.0.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libxml-2.0.pc
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(bindir)/xml2-config
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(bindir)/xml2-config
+-	@sed -i 's%-L${libdir}%-L$(DESTDIR)${libdir}%g'           $(DESTDIR)$(libdir)/xml2Conf.sh
+-	@sed -i 's%-I${includedir}%-I$(DESTDIR)${includedir}%g'   $(DESTDIR)$(libdir)/xml2Conf.sh
+ 	@$(MAKECOOKIE)
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:20.000000000 -0300
+@@ -9,8 +9,7 @@
+ define BLURB
+ endef
+ 
+-DEPENDS   = lang/c lib/SDL xorg/xorg
+-BUILDDEPS = devel/nasm
++DEPENDS = lang/c lib/SDL xorg/xorg
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+@@ -31,20 +30,10 @@
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	rm -f $(DESTDIR)$(libdir)/libmpeg2.la
+ 	rm -f $(DESTDIR)$(libdir)/libmpeg2convert.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libmpeg2.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libmpeg2.pc
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libmpeg2convert.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libmpeg2convert.pc
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/ncurses-5.6.patch new/files/ncurses-5.6.patch
+--- old/files/ncurses-5.6.patch	2006-12-23 22:21:49.000000000 -0300
++++ new/files/ncurses-5.6.patch	2007-11-19 15:10:18.000000000 -0300
+@@ -1,6 +1,6 @@
+ diff -Naur ncurses-5.6-old/aclocal.m4 ncurses-5.6-new/aclocal.m4
+ --- old/ncurses-5.6-old/aclocal.m4	2006-12-17 08:12:38.000000000 -0800
+-+++ ncurses-5.6-new/aclocal.m4	2006-12-23 17:19:42.000000000 -0800
+++++ ncurses-5.6-new/aclocal.m4	2007-11-09 10:48:22.000000000 -0800
+ @@ -73,14 +73,14 @@
+  	ACPPFLAGS="-I\${srcdir}/../../include $ACPPFLAGS"
+  fi
+@@ -39,7 +39,7 @@
+  AC_SUBST(CPPFLAGS)
+ diff -Naur ncurses-5.6-old/configure ncurses-5.6-new/configure
+ --- old/ncurses-5.6-old/configure	2006-12-17 08:33:38.000000000 -0800
+-+++ ncurses-5.6-new/configure	2006-12-23 17:20:53.000000000 -0800
+++++ ncurses-5.6-new/configure	2007-11-09 10:48:22.000000000 -0800
+ @@ -15000,14 +15000,14 @@
+  	CPPFLAGS="-I\${srcdir}/../include $CPPFLAGS"
+  fi
+@@ -76,3 +76,38 @@
+  	fi
+  fi
+  
++diff -Naur ncurses-5.6-old/misc/ncurses-config.in ncurses-5.6-new/misc/ncurses-config.in
++--- old/ncurses-5.6-old/misc/ncurses-config.in	2006-10-28 13:22:52.000000000 -0700
+++++ ncurses-5.6-new/misc/ncurses-config.in	2007-11-09 11:49:53.000000000 -0800
++@@ -30,6 +30,7 @@
++ #
++ # Author: Thomas E. Dickey, 2006
++ 
+++DESTDIR="@DESTDIR@"
++ prefix="@prefix@"
++ exec_prefix="@exec_prefix@"
++ 
++@@ -70,11 +71,11 @@
++ 	# compile/link
++ 	--cflags)
++ 		INCS=
++-		if test "${prefix}/include" != /usr/include ; then
++-			INCS="-I${prefix}/include"
+++		if test "${includedir}" != /usr/include ; then
+++			INCS="-I${includedir}"
++ 		fi
++ 		if test "@WITH_OVERWRITE@" != no ; then
++-			INCS="$INCS -I${prefix}/include/${THIS}"
+++			INCS="$INCS -I${DESTDIR}${includedir}/${THIS}"
++ 		fi
++ 		sed -e 's,^[ ]*,,' -e 's, [ ]*, ,g' -e 's,[ ]*$,,' <<-ENDECHO
++ 			$INCS
++@@ -82,7 +83,7 @@
++ 		;;
++ 	--libs)
++ 		sed -e 's,^[ ]*,,' -e 's, [ ]*, ,g' -e 's,[ ]*$,,' <<-ENDECHO
++-			-L${exec_prefix}/lib @EXTRA_LDFLAGS@ -l${THIS} @LIBS@
+++			-L${DESTDIR}${libdir} @EXTRA_LDFLAGS@ -l${THIS} @LIBS@
++ ENDECHO
++ 		;;
++ 	# identification
+diff -ruNP -x '.*' -x '*~' files/ncurses-5.6-perl.patch.gar new/files/ncurses-5.6-perl.patch.gar
+--- old/files/ncurses-5.6-perl.patch.gar	1969-12-31 21:00:00.000000000 -0300
++++ new/files/ncurses-5.6-perl.patch.gar	2008-05-15 12:13:10.000000000 -0300
+@@ -0,0 +1,9 @@
++diff -Naur ncurses-5.6-old/test/tracemunch ncurses-5.6-new/test/tracemunch
++--- old/ncurses-5.6-old/test/tracemunch	2005-03-12 13:48:23.000000000 -0800
+++++ ncurses-5.6-new/test/tracemunch	2008-02-21 11:35:13.000000000 -0800
++@@ -1,4 +1,4 @@
++-#!/usr/bin/perl -w
+++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
++ # $Id: tracemunch,v 1.6 2005/03/12 21:48:23 tom Exp $
++ ##############################################################################
++ # Copyright (c) 1998-2002,2005 Free Software Foundation, Inc.                #
+checksums
+--- old/checksums	2006-12-23 22:22:35.000000000 -0300
++++ new/checksums	2008-05-15 12:13:10.000000000 -0300
+@@ -1,2 +1,3 @@
+ b6593abe1089d6aab1551c105c9300e3  download/ncurses-5.6.tar.gz
+-dbbc291dde1722fc37a50a25b6b841ae  download/ncurses-5.6.patch
++26a5e83176c81f9a96bce0db7a181d89  download/ncurses-5.6-perl.patch.gar
++dbc275b35dee47d91ca6b4df519a3acd  download/ncurses-5.6.patch
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-05-15 12:13:10.000000000 -0300
+@@ -1,10 +1,10 @@
+ GARNAME = ncurses
+-GARVERSION = 5.6
++GARVERSION = $(NCURSES_VERSION)
+ CATEGORIES = lib
+ MASTER_SITES = ftp://ftp.gnu.org/gnu/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.gz
+-PATCHFILES = $(DISTNAME).patch
+-LICENSE = MIT
++PATCHFILES = $(DISTNAME)-perl.patch.gar $(DISTNAME).patch
++LICENSE = MIT_Modified
+ 
+ DESCRIPTION =
+ define BLURB
+@@ -16,18 +16,23 @@
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+ INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
+ 
+-CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
++CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
++	--without-cxx-binding \
++	--without-ada \
++	--without-ada-compiler \
+ 	--with-build-cc="$(build_CC)" \
+ 	--with-build-cppflags="$(build_CPPFLAGS)" \
+ 	--with-build-cflags="$(build_CFLAGS)" \
+ 	--with-build-ldflags="$(build_LDFLAGS)" \
+ 	--with-build-libs="" \
+-	--disable-static \
+-	--enable-termcap \
+ 	--with-shared \
+-	--without-cxx-binding \
+-	--without-ada \
+-	--without-ada-compiler
++	--disable-rpath \
++	--disable-widec \
++	--enable-termcap
++ifneq ($(DESTIMG),build)
++CONFIGURE_ARGS += \
++	--without-progs
++endif
+ 
+ include ../../gar.mk
+ 
+package-api.mk
+--- old/package-api.mk	1969-12-31 21:00:00.000000000 -0300
++++ new/package-api.mk	2007-11-19 15:10:19.000000000 -0300
+@@ -0,0 +1 @@
++NCURSES_VERSION=5.6
+files
+diff -ruNP -x '.*' -x '*~' files/pcre-7.2-cross.patch new/files/pcre-7.2-cross.patch
+--- old/files/pcre-7.2-cross.patch	2007-06-25 13:10:40.000000000 -0300
++++ new/files/pcre-7.2-cross.patch	1969-12-31 21:00:00.000000000 -0300
+@@ -1,12 +0,0 @@
+-diff -Naur pcre-7.2-old/Makefile.in pcre-7.2-new/Makefile.in
+---- old/pcre-7.2-old/Makefile.in	2007-06-23 18:24:38.000000000 -0700
+-+++ pcre-7.2-new/Makefile.in	2007-06-23 18:25:43.000000000 -0700
+-@@ -1392,7 +1392,7 @@
+- 	cp -p pcre.h $@
+- 
+- @WITH_REBUILD_CHARTABLES_TRUE@pcre_chartables.c: dftables$(EXEEXT)
+--@WITH_REBUILD_CHARTABLES_TRUE@	./dftables$(EXEEXT) $@
+-+@WITH_REBUILD_CHARTABLES_TRUE@	pcre-dftables$(EXEEXT) $@
+- 
+- @WITH_REBUILD_CHARTABLES_FALSE@pcre_chartables.c: $(srcdir)/pcre_chartables.c.dist
+- @WITH_REBUILD_CHARTABLES_FALSE@	rm -f $@
+diff -ruNP -x '.*' -x '*~' files/pcre-7.2.patch.gar new/files/pcre-7.2.patch.gar
+--- old/files/pcre-7.2.patch.gar	2007-06-25 13:10:40.000000000 -0300
++++ new/files/pcre-7.2.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,31 +0,0 @@
+-diff -Naur pcre-7.2-old/pcre-config.in pcre-7.2-new/pcre-config.in
+---- old/pcre-7.2-old/pcre-config.in	2007-03-08 03:30:55.000000000 -0800
+-+++ pcre-7.2-new/pcre-config.in	2007-06-23 18:24:55.000000000 -0700
+-@@ -15,7 +15,7 @@
+- libR=
+- case `uname -s` in
+-   *SunOS*)
+--  libR=" -R@libdir@"
+-+  libR=" -R@GAR_DESTDIR@@libdir@"
+-   ;;
+-   *BSD*)
+-   libR=" -Wl,-R@libdir@"
+-@@ -50,15 +50,15 @@
+-       ;;
+-     --cflags | --cflags-posix)
+-       if test @includedir@ != /usr/include ; then
+--        includes=-I@includedir@
+-+        includes=-I@GAR_DESTDIR@@includedir@
+-       fi
+-       echo $includes
+-       ;;
+-     --libs-posix)
+--      echo -L@libdir@$libR -lpcreposix -lpcre
+-+      echo -L@GAR_DESTDIR@@libdir@$libR -lpcreposix -lpcre
+-       ;;
+-     --libs)
+--      echo -L@libdir@$libR -lpcre
+-+      echo -L@GAR_DESTDIR@@libdir@$libR -lpcre
+-       ;;
+-     *)
+-       echo "${usage}" 1>&2
+diff -ruNP -x '.*' -x '*~' files/pcre-7.7-cross.patch new/files/pcre-7.7-cross.patch
+--- old/files/pcre-7.7-cross.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/pcre-7.7-cross.patch	2008-05-15 12:13:13.000000000 -0300
+@@ -0,0 +1,12 @@
++diff -Naur pcre-7.7-old/Makefile.in pcre-7.7-new/Makefile.in
++--- old/pcre-7.7-old/Makefile.in	2008-05-07 17:35:25.000000000 -0700
+++++ pcre-7.7-new/Makefile.in	2008-05-07 17:36:42.000000000 -0700
++@@ -1417,7 +1417,7 @@
++ 	cp -p pcre.h $@
++ 
++ @WITH_REBUILD_CHARTABLES_TRUE@pcre_chartables.c: dftables$(EXEEXT)
++-@WITH_REBUILD_CHARTABLES_TRUE@	./dftables$(EXEEXT) $@
+++@WITH_REBUILD_CHARTABLES_TRUE@	pcre-dftables$(EXEEXT) $@
++ 
++ @WITH_REBUILD_CHARTABLES_FALSE@pcre_chartables.c: $(srcdir)/pcre_chartables.c.dist
++ @WITH_REBUILD_CHARTABLES_FALSE@	rm -f $@
+diff -ruNP -x '.*' -x '*~' files/pcre-7.7.patch.gar new/files/pcre-7.7.patch.gar
+--- old/files/pcre-7.7.patch.gar	1969-12-31 21:00:00.000000000 -0300
++++ new/files/pcre-7.7.patch.gar	2008-05-15 12:13:13.000000000 -0300
+@@ -0,0 +1,31 @@
++diff -Naur pcre-7.7-old/pcre-config.in pcre-7.7-new/pcre-config.in
++--- old/pcre-7.7-old/pcre-config.in	2007-03-08 03:30:55.000000000 -0800
+++++ pcre-7.7-new/pcre-config.in	2008-05-07 17:35:34.000000000 -0700
++@@ -15,7 +15,7 @@
++ libR=
++ case `uname -s` in
++   *SunOS*)
++-  libR=" -R@libdir@"
+++  libR=" -R@GAR_DESTDIR@@libdir@"
++   ;;
++   *BSD*)
++   libR=" -Wl,-R@libdir@"
++@@ -50,15 +50,15 @@
++       ;;
++     --cflags | --cflags-posix)
++       if test @includedir@ != /usr/include ; then
++-        includes=-I@includedir@
+++        includes=-I@GAR_DESTDIR@@includedir@
++       fi
++       echo $includes
++       ;;
++     --libs-posix)
++-      echo -L@libdir@$libR -lpcreposix -lpcre
+++      echo -L@GAR_DESTDIR@@libdir@$libR -lpcreposix -lpcre
++       ;;
++     --libs)
++-      echo -L@libdir@$libR -lpcre
+++      echo -L@GAR_DESTDIR@@libdir@$libR -lpcre
++       ;;
++     *)
++       echo "${usage}" 1>&2
+checksums
+--- old/checksums	2007-07-14 16:08:39.000000000 -0300
++++ new/checksums	2008-05-15 12:13:13.000000000 -0300
+@@ -1,3 +1,3 @@
+-53305db73855f1ff155dcd2c05d448d3  download/pcre-7.2.tar.bz2
+-389ee06ec49858c46e88a913e1b73fa7  download/pcre-7.2.patch.gar
+-f1b89c50d86d08c90a5b874de5dbe14a  download/pcre-7.2-cross.patch
++4b2e9cde1f7227448dddba59843efa0b  download/pcre-7.7.tar.bz2
++776fea7c1ffa675f9576088a2666f8fb  download/pcre-7.7.patch.gar
++2c7273c6978485e6ff9cce0c678d18f4  download/pcre-7.7-cross.patch
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:20.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = pcre
+-GARVERSION = 7.2
++GARVERSION = 7.7
+ CATEGORIES = lib
+ MASTER_SITES = ftp://ftp.csx.cam.ac.uk/pub/software/programming/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.bz2
+@@ -7,9 +7,9 @@
+ ifneq ($(DESTIMG),build)
+ PATCHFILES += $(DISTNAME)-cross.patch
+ endif
+-LICENSE = BSD
++LICENSE = BSD_3_Clause
+ 
+-DESCRIPTION =
++DESCRIPTION = 
+ define BLURB
+ endef
+ 
+@@ -18,9 +18,9 @@
+ BUILDDEPS = lib/pcre
+ endif
+ 
+-CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+-BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+-INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
++CONFIGURE_SCRIPTS  = $(WORKSRC)/configure
++BUILD_SCRIPTS      = $(WORKSRC)/Makefile
++INSTALL_SCRIPTS    = $(WORKSRC)/Makefile
+ ifeq ($(DESTIMG),build)
+ INSTALL_SCRIPTS   += cross
+ endif
+@@ -32,6 +32,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ install-cross:
+ 	@if test -e $(WORKSRC)/dftables ; then cp -f $(WORKSRC)/dftables $(DESTDIR)$(bindir)/pcre-dftables ; fi
+ 	@$(MAKECOOKIE)
+@@ -40,8 +44,4 @@
+ 	@rm -f $(DESTDIR)$(libdir)/libpcre.la
+ 	@rm -f $(DESTDIR)$(libdir)/libpcrecpp.la
+ 	@rm -f $(DESTDIR)$(libdir)/libpcreposix.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libpcre.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libpcre.pc
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libpcrecpp.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libpcrecpp.pc
+ 	@$(MAKECOOKIE)
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:16.000000000 -0300
+@@ -21,13 +21,7 @@
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@# Libtool wants to hardcode library paths. This stops that unwanted behavior.
+-	@sed -i 's%^hardcode_libdir_flag_spec=.*%hardcode_libdir_flag_spec=%' $(WORKSRC)/configure
+-	@# Libtool wants to modify the library run path. This stops that unwanted behavior.
+-	@sed -i 's%^runpath_var=.*%runpath_var=%' $(WORKSRC)/configure
+-	@# Libtool wants search system directories rather than DESTIMG directories. This stops that unwanted behavior.
+-	@sed -i 's%^sys_lib_dlsearch_path_spec=.*%sys_lib_dlsearch_path_spec=%' $(WORKSRC)/configure
+-	@sed -i 's%^sys_lib_search_path_spec=.*%sys_lib_search_path_spec=%' $(WORKSRC)/configure
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+files
+diff -ruNP -x '.*' -x '*~' files/taglib-1.4.patch.gar new/files/taglib-1.4.patch.gar
+--- old/files/taglib-1.4.patch.gar	2007-03-31 18:44:41.000000000 -0300
++++ new/files/taglib-1.4.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,24 +0,0 @@
+-diff -Naur taglib-1.4-old/taglib/taglib-config.in taglib-1.4-new/taglib/taglib-config.in
+---- old/taglib-1.4-old/taglib/taglib-config.in	2005-07-25 14:16:32.000000000 -0700
+-+++ taglib-1.4-new/taglib/taglib-config.in	2007-03-31 13:17:24.000000000 -0700
+-@@ -14,6 +14,7 @@
+- 	exit 1;
+- }
+- 
+-+DESTDIR=@GAR_DESTDIR@
+- prefix=@prefix@
+- exec_prefix=@exec_prefix@
+- libdir=@libdir@
+-@@ -29,10 +30,10 @@
+- do
+-   case $1 in
+-     --libs)
+--	  flags="$flags -L$libdir -ltag"
+-+	  flags="$flags -L${DESTDIR}$libdir -ltag"
+- 	  ;;
+-     --cflags)
+--	  flags="$flags -I$includedir/taglib"
+-+	  flags="$flags -I${DESTDIR}$includedir/taglib"
+- 	  ;;
+-     --version)
+- 	  echo @VERSION@ 
+checksums
+Makefile
+files
+diff -ruNP -x '.*' -x '*~' files/xvidcore-1.1.3.patch new/files/xvidcore-1.1.3.patch
+--- old/files/xvidcore-1.1.3.patch	1969-12-31 21:00:00.000000000 -0300
++++ new/files/xvidcore-1.1.3.patch	2007-11-19 15:10:23.000000000 -0300
+@@ -0,0 +1,121 @@
++diff -Naur xvidcore-1.1.3-old/build/generic/Makefile xvidcore-1.1.3-new/build/generic/Makefile
++--- old/xvidcore-1.1.3-old/build/generic/Makefile	2005-05-23 02:29:43.000000000 -0700
+++++ xvidcore-1.1.3-new/build/generic/Makefile	2007-06-28 16:33:07.000000000 -0700
++@@ -45,6 +45,8 @@
++ 
++ RM = rm -rf
++ 
+++AR ?= ar
+++
++ ##############################################################################
++ #
++ # Build rules
++@@ -83,7 +85,7 @@
++ 
++ $(BUILD_DIR):
++ 	@echo "  D: $(BUILD_DIR)"
++-	@$(INSTALL) -d $(BUILD_DIR)
+++	$(INSTALL) -d $(BUILD_DIR)
++ 
++ #-----------------------------------------------------------------------------
++ # Generic assembly rule
++@@ -91,8 +93,8 @@
++ 
++ .$(ASSEMBLY_EXTENSION).$(OBJECT_EXTENSION):
++ 	@echo "  A: $(@D)/$(<F)"
++-	@$(INSTALL) -d $(BUILD_DIR)/$(@D)
++-	@$(AS) $(AFLAGS) $< -o $(BUILD_DIR)/$@
+++	$(INSTALL) -d $(BUILD_DIR)/$(@D)
+++	$(AS) $(AFLAGS) $< -o $(BUILD_DIR)/$@
++ 
++ #-----------------------------------------------------------------------------
++ # Generic C rule
++@@ -100,8 +102,8 @@
++ 
++ .c.$(OBJECT_EXTENSION):
++ 	@echo "  C: $(@D)/$(<F)"
++-	@$(INSTALL) -d $(BUILD_DIR)/$(@D)
++-	@$(CC) -c $(ARCHITECTURE) $(BUS) $(ENDIANNESS) $(FEATURES) $(SPECIFIC_CFLAGS) $(CFLAGS) $< -o $(BUILD_DIR)/$@
+++	$(INSTALL) -d $(BUILD_DIR)/$(@D)
+++	$(CC) -c $(ARCHITECTURE) $(BUS) $(ENDIANNESS) $(FEATURES) $(SPECIFIC_CFLAGS) $(CFLAGS) $< -o $(BUILD_DIR)/$@
++ 
++ #-----------------------------------------------------------------------------
++ # Static Library
++@@ -109,7 +111,7 @@
++ 
++ $(STATIC_LIB): $(BUILD_DIR) $(OBJECTS)
++ 	@echo "  L: $(@F)"
++-	@cd $(BUILD_DIR) && ar rc $(@F) $(OBJECTS) && $(RANLIB) $(@F)
+++	cd $(BUILD_DIR) && $(AR) rc $(@F) $(OBJECTS) && $(RANLIB) $(@F)
++ 
++ #-----------------------------------------------------------------------------
++ # Shared Library
++@@ -128,9 +130,9 @@
++ 
++ $(SHARED_LIB): $(BUILD_DIR) $(OBJECTS)
++ 	@echo "  L: $(@F)"
++-	@$(INSTALL) -m 644 libxvidcore.def $(BUILD_DIR)/libxvidcore.def
++-	@$(INSTALL) -m 644 libxvidcore.ld $(BUILD_DIR)/libxvidcore.ld
++-	@cd $(BUILD_DIR) && $(CC) $(LDFLAGS) $(OBJECTS) -o $(PRE_SHARED_LIB) $(SPECIFIC_LDFLAGS)
+++	$(INSTALL) -m 644 libxvidcore.def $(BUILD_DIR)/libxvidcore.def
+++	$(INSTALL) -m 644 libxvidcore.ld $(BUILD_DIR)/libxvidcore.ld
+++	cd $(BUILD_DIR) && $(CC) $(LDFLAGS) $(OBJECTS) -o $(PRE_SHARED_LIB) $(SPECIFIC_LDFLAGS)
++ 
++ #-----------------------------------------------------------------------------
++ # Installation
++@@ -138,15 +140,15 @@
++ 
++ install: $(BUILD_DIR)/$(STATIC_LIB) $(BUILD_DIR)/$(SHARED_LIB)
++ 	@echo "  D: $(libdir)"
++-	@$(INSTALL) -d $(DESTDIR)$(libdir)
+++	$(INSTALL) -d $(DESTDIR)$(libdir)
++ 	@echo "  I: $(libdir)/$(SHARED_LIB)"
++-	@$(INSTALL) -m 644 $(BUILD_DIR)/$(SHARED_LIB) $(DESTDIR)$(libdir)/$(SHARED_LIB)
+++	$(INSTALL) -m 644 $(BUILD_DIR)/$(SHARED_LIB) $(DESTDIR)$(libdir)/$(SHARED_LIB)
++ 	@echo "  I: $(libdir)/$(STATIC_LIB)"
++-	@$(INSTALL) -m 644 $(BUILD_DIR)/$(STATIC_LIB) $(DESTDIR)$(libdir)/$(STATIC_LIB)
+++	$(INSTALL) -m 644 $(BUILD_DIR)/$(STATIC_LIB) $(DESTDIR)$(libdir)/$(STATIC_LIB)
++ 	@echo "  D: $(includedir)"
++-	@$(INSTALL) -d $(DESTDIR)$(includedir)
+++	$(INSTALL) -d $(DESTDIR)$(includedir)
++ 	@echo "  I: $(includedir)/xvid.h"
++-	@$(INSTALL) -m 644 $(SRC_DIR)/xvid.h $(DESTDIR)$(includedir)/xvid.h
+++	$(INSTALL) -m 644 $(SRC_DIR)/xvid.h $(DESTDIR)$(includedir)/xvid.h
++ 
++ #-----------------------------------------------------------------------------
++ # Platorm specific file -- dumb rules for people executing make before
++@@ -168,23 +170,23 @@
++ 
++ clean:
++ 	@echo "  Cl: Build directory"
++-	@$(RM) $(BUILD_DIR)
+++	$(RM) $(BUILD_DIR)
++ 
++ distclean: clean
++ 	@echo "  Cl: Generated build files"
++-	@$(RM) platform.inc
++-	@$(RM) config.log
++-	@$(RM) config.status
++-	@$(RM) autom4te.cache
+++	$(RM) platform.inc
+++	$(RM) config.log
+++	$(RM) config.status
+++	$(RM) autom4te.cache
++ 
++ mrproper: distclean
++ 	@echo "  Cl: Bootstrapped build files"
++-	@$(RM) configure
++-	@$(RM) install-sh
++-	@$(RM) missing
++-	@$(RM) config.guess
++-	@$(RM) mkinstalldirs
++-	@$(RM) config.sub
+++	$(RM) configure
+++	$(RM) install-sh
+++	$(RM) missing
+++	$(RM) config.guess
+++	$(RM) mkinstalldirs
+++	$(RM) config.sub
++ 
++ list-objects:
++ 	@echo
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2007-11-19 15:10:23.000000000 -0300
+@@ -1,7 +1,7 @@
+ GARNAME = xvidcore
+ GARVERSION = 1.1.3
+ CATEGORIES = lib
+-MASTER_SITES  = http://downloads.xvid.org/downloads/
++MASTER_SITES = http://downloads.xvid.org/downloads/
+ DISTFILES = $(DISTNAME).tar.bz2
+ PATCHFILES = $(DISTNAME).patch
+ LICENSE = GPL2
+@@ -11,7 +11,7 @@
+ endef
+ 
+ DEPENDS   = lang/c
+-BUILDDEPS = devel/nasm
++BUILDDEPS = devel/yasm
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/build/generic/configure
+ BUILD_SCRIPTS     = $(WORKSRC)/build/generic/Makefile
+files
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2007-11-19 15:10:21.000000000 -0300
+@@ -3,8 +3,8 @@
+ CATEGORIES = lib
+ MASTER_SITES = http://easynews.dl.sourceforge.net/sourceforge/libpng/
+ DISTFILES = $(DISTNAME).tar.gz license
+-LICENSE = zlib
+-zlib_LICENSE_TEXT = $(WORKDIR)/license
++LICENSE = $(GARNAME)
++$(GARNAME)_LICENSE_TEXT = $(WORKDIR)/license
+ 
+ DESCRIPTION =
+ define BLURB
+files
+checksums
+Makefile
+checksums
+--- old/checksums	2007-04-25 20:48:59.000000000 -0300
++++ new/checksums	2007-11-19 15:10:21.000000000 -0300
+@@ -1 +1 @@
+-7be5b9ef36129ee187ace96906cd264c  download/SDL_net-1.2.6.tar.gz
++6bd4662d1423810f3140d4da21b6d912  download/SDL_net-1.2.7.tar.gz
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:17.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = SDL_net
+-GARVERSION = 1.2.6
++GARVERSION = 1.2.7
+ CATEGORIES = lib
+ MASTER_SITES = http://www.libsdl.org/projects/$(GARNAME)/release/
+ DISTFILES = $(DISTNAME).tar.gz
+@@ -25,6 +25,10 @@
+ 
+ include ../../gar.mk
+ 
++pre-configure:
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
++	@$(MAKECOOKIE)
++
+ post-install:
+ 	@rm -rf $(DESTDIR)$(libdir)/libSDL_net.la
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/gar-base.diff new/files/gar-base.diff
+--- old/files/gar-base.diff	2007-08-04 11:24:27.000000000 -0300
++++ new/files/gar-base.diff	1969-12-31 21:00:00.000000000 -0300
+@@ -1,12 +0,0 @@
+-diff --speed-large-files --minimal -Nru tmp/openssl-0.9.6j/Configure work/main.d/openssl-0.9.6j/Configure
+---- old/old/Configure	Fri Nov 15 02:28:38 2002
+-+++ new/Configure	Thu Mar 13 14:57:02 2003
+-@@ -336,7 +336,7 @@
+- 
+- # The intel boxes :-), It would be worth seeing if bsdi-gcc can use the
+- # bn86-elf.o file file since it is hand tweaked assembler.
+--"linux-elf",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -m486 -Wall::-D_REENTRANT:-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+-+"linux-elf",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -m486 -Wall \$(CFLAGS)::-D_REENTRANT:-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+- "debug-linux-elf","gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DL_ENDIAN -DTERMIO -g -m486 -Wall::-D_REENTRANT:-lefence -ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+- "debug-linux-elf-noefence","gcc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DBN_CTX_DEBUG -DCRYPTO_MDEBUG -DL_ENDIAN -DTERMIO -g -m486 -Wall::-D_REENTRANT:-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn",
+- "linux-aout",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -m486 -Wall::(unknown)::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}",
+diff -ruNP -x '.*' -x '*~' files/openssl-0.9.8e.patch.gar new/files/openssl-0.9.8e.patch.gar
+--- old/files/openssl-0.9.8e.patch.gar	2007-08-04 11:24:27.000000000 -0300
++++ new/files/openssl-0.9.8e.patch.gar	1969-12-31 21:00:00.000000000 -0300
+@@ -1,133 +0,0 @@
+-diff -Naur openssl-0.9.8e-old/Configure openssl-0.9.8e-new/Configure
+---- old/openssl-0.9.8e-old/Configure	2006-11-30 06:01:38.000000000 -0800
+-+++ openssl-0.9.8e-new/Configure	2007-04-03 20:10:19.000000000 -0700
+-@@ -317,7 +317,7 @@
+- "linux-ppc",	"gcc:-DB_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL::linux_ppc32.o::::::::::dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+- #### IA-32 targets...
+- "linux-ia32-icc",	"icc:-DL_ENDIAN -DTERMIO -O2 -no_cpprt::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-KPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+--"linux-elf",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+-+"linux-elf",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall @GAR_CFLAGS@::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+- "linux-aout",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i486 -Wall::(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}",
+- ####
+- "linux-generic64","gcc:-DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+-@@ -326,7 +326,7 @@
+- "linux-ia64",	"gcc:-DL_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+- "linux-ia64-ecc","ecc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+- "linux-ia64-icc","icc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+--"linux-x86_64",	"gcc:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+-+"linux-x86_64",	"gcc:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int @GAR_CFLAGS@::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+- #### SPARC Linux setups
+- # Ray Miller <ray.miller@computing-services.oxford.ac.uk> has patiently
+- # assisted with debugging of following two configs.
+-diff -Naur openssl-0.9.8e-old/Makefile openssl-0.9.8e-new/Makefile
+---- old/openssl-0.9.8e-old/Makefile	2007-02-23 04:44:42.000000000 -0800
+-+++ openssl-0.9.8e-new/Makefile	2007-04-03 20:27:07.000000000 -0700
+-@@ -301,7 +301,8 @@
+- 	done
+- 
+- libcrypto.pc: Makefile
+--	@ ( echo 'prefix=$(INSTALLTOP)'; \
+-+	@ ( echo 'DESTDIR=@GAR_DESTDIR@'; \
+-+	    echo 'prefix=$(INSTALLTOP)'; \
+- 	    echo 'exec_prefix=$${prefix}'; \
+- 	    echo 'libdir=$${exec_prefix}/lib'; \
+- 	    echo 'includedir=$${prefix}/include'; \
+-@@ -310,11 +311,12 @@
+- 	    echo 'Description: OpenSSL cryptography library'; \
+- 	    echo 'Version: '$(VERSION); \
+- 	    echo 'Requires: '; \
+--	    echo 'Libs: -L$${libdir} -lcrypto $(EX_LIBS)'; \
+--	    echo 'Cflags: -I$${includedir} $(KRB5_INCLUDES)' ) > libcrypto.pc
+-+	    echo 'Libs: -L$${DESTDIR}$${libdir} -lcrypto $(EX_LIBS)'; \
+-+	    echo 'Cflags: -I$${DESTDIR}$${includedir} $(KRB5_INCLUDES)' ) > libcrypto.pc
+- 
+- libssl.pc: Makefile
+--	@ ( echo 'prefix=$(INSTALLTOP)'; \
+-+	@ ( echo 'DESTDIR=@GAR_DESTDIR@'; \
+-+	    echo 'prefix=$(INSTALLTOP)'; \
+- 	    echo 'exec_prefix=$${prefix}'; \
+- 	    echo 'libdir=$${exec_prefix}/lib'; \
+- 	    echo 'includedir=$${prefix}/include'; \
+-@@ -323,11 +325,12 @@
+- 	    echo 'Description: Secure Sockets Layer and cryptography libraries'; \
+- 	    echo 'Version: '$(VERSION); \
+- 	    echo 'Requires: '; \
+--	    echo 'Libs: -L$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+--	    echo 'Cflags: -I$${includedir} $(KRB5_INCLUDES)' ) > libssl.pc
+-+	    echo 'Libs: -L$${DESTDIR}$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+-+	    echo 'Cflags: -I$${DESTDIR}$${includedir} $(KRB5_INCLUDES)' ) > libssl.pc
+- 
+- openssl.pc: Makefile
+--	@ ( echo 'prefix=$(INSTALLTOP)'; \
+-+	@ ( echo 'DESTDIR=@GAR_DESTDIR@'; \
+-+	    echo 'prefix=$(INSTALLTOP)'; \
+- 	    echo 'exec_prefix=$${prefix}'; \
+- 	    echo 'libdir=$${exec_prefix}/lib'; \
+- 	    echo 'includedir=$${prefix}/include'; \
+-@@ -336,8 +339,8 @@
+- 	    echo 'Description: Secure Sockets Layer and cryptography libraries and tools'; \
+- 	    echo 'Version: '$(VERSION); \
+- 	    echo 'Requires: '; \
+--	    echo 'Libs: -L$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+--	    echo 'Cflags: -I$${includedir} $(KRB5_INCLUDES)' ) > openssl.pc
+-+	    echo 'Libs: -L$${DESTDIR}$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+-+	    echo 'Cflags: -I$${DESTDIR}$${includedir} $(KRB5_INCLUDES)' ) > openssl.pc
+- 
+- Makefile: Makefile.org Configure config
+- 	@echo "Makefile is older than Makefile.org, Configure or config."
+-diff -Naur openssl-0.9.8e-old/Makefile.org openssl-0.9.8e-new/Makefile.org
+---- old/openssl-0.9.8e-old/Makefile.org	2006-06-09 08:42:08.000000000 -0700
+-+++ openssl-0.9.8e-new/Makefile.org	2007-04-03 20:26:45.000000000 -0700
+-@@ -299,7 +299,8 @@
+- 	done
+- 
+- libcrypto.pc: Makefile
+--	@ ( echo 'prefix=$(INSTALLTOP)'; \
+-+	@ ( echo 'DESTDIR=@GAR_DESTDIR@'; \
+-+	    echo 'prefix=$(INSTALLTOP)'; \
+- 	    echo 'exec_prefix=$${prefix}'; \
+- 	    echo 'libdir=$${exec_prefix}/lib'; \
+- 	    echo 'includedir=$${prefix}/include'; \
+-@@ -308,11 +309,12 @@
+- 	    echo 'Description: OpenSSL cryptography library'; \
+- 	    echo 'Version: '$(VERSION); \
+- 	    echo 'Requires: '; \
+--	    echo 'Libs: -L$${libdir} -lcrypto $(EX_LIBS)'; \
+--	    echo 'Cflags: -I$${includedir} $(KRB5_INCLUDES)' ) > libcrypto.pc
+-+	    echo 'Libs: -L$${DESTDIR}$${libdir} -lcrypto $(EX_LIBS)'; \
+-+	    echo 'Cflags: -I$${DESTDIR}$${includedir} $(KRB5_INCLUDES)' ) > libcrypto.pc
+- 
+- libssl.pc: Makefile
+--	@ ( echo 'prefix=$(INSTALLTOP)'; \
+-+	@ ( echo 'DESTDIR=@GAR_DESTDIR@'; \
+-+	    echo 'prefix=$(INSTALLTOP)'; \
+- 	    echo 'exec_prefix=$${prefix}'; \
+- 	    echo 'libdir=$${exec_prefix}/lib'; \
+- 	    echo 'includedir=$${prefix}/include'; \
+-@@ -321,11 +323,12 @@
+- 	    echo 'Description: Secure Sockets Layer and cryptography libraries'; \
+- 	    echo 'Version: '$(VERSION); \
+- 	    echo 'Requires: '; \
+--	    echo 'Libs: -L$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+--	    echo 'Cflags: -I$${includedir} $(KRB5_INCLUDES)' ) > libssl.pc
+-+	    echo 'Libs: -L$${DESTDIR}$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+-+	    echo 'Cflags: -I$${DESTDIR}$${includedir} $(KRB5_INCLUDES)' ) > libssl.pc
+- 
+- openssl.pc: Makefile
+--	@ ( echo 'prefix=$(INSTALLTOP)'; \
+-+	@ ( echo 'DESTDIR=@GAR_DESTDIR@'; \
+-+	    echo 'prefix=$(INSTALLTOP)'; \
+- 	    echo 'exec_prefix=$${prefix}'; \
+- 	    echo 'libdir=$${exec_prefix}/lib'; \
+- 	    echo 'includedir=$${prefix}/include'; \
+-@@ -334,8 +337,8 @@
+- 	    echo 'Description: Secure Sockets Layer and cryptography libraries and tools'; \
+- 	    echo 'Version: '$(VERSION); \
+- 	    echo 'Requires: '; \
+--	    echo 'Libs: -L$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+--	    echo 'Cflags: -I$${includedir} $(KRB5_INCLUDES)' ) > openssl.pc
+-+	    echo 'Libs: -L$${DESTDIR}$${libdir} -lssl -lcrypto $(EX_LIBS)'; \
+-+	    echo 'Cflags: -I$${DESTDIR}$${includedir} $(KRB5_INCLUDES)' ) > openssl.pc
+- 
+- Makefile: Makefile.org Configure config
+- 	@echo "Makefile is older than Makefile.org, Configure or config."
+diff -ruNP -x '.*' -x '*~' files/openssl-0.9.8h.patch.gar new/files/openssl-0.9.8h.patch.gar
+--- old/files/openssl-0.9.8h.patch.gar	1969-12-31 21:00:00.000000000 -0300
++++ new/files/openssl-0.9.8h.patch.gar	2008-06-10 08:57:17.000000000 -0300
+@@ -0,0 +1,106 @@
++diff -Naur openssl-0.9.8h-old/Configure openssl-0.9.8h-new/Configure
++--- old/openssl-0.9.8h-old/Configure	2008-05-01 16:11:30.000000000 -0700
+++++ openssl-0.9.8h-new/Configure	2008-05-28 19:39:59.000000000 -0700
++@@ -322,7 +322,7 @@
++ "linux-ppc",	"gcc:-DB_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL::linux_ppc32.o::::::::::dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++ #### IA-32 targets...
++ "linux-ia32-icc",	"icc:-DL_ENDIAN -DTERMIO -O2 -no_cpprt::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-KPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++-"linux-elf",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+++"linux-elf",	"@GAR_CC@:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall @GAR_CFLAGS@::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:@GAR_LDFLAGS@ -fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++ "linux-aout",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i486 -Wall::(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}",
++ ####
++ "linux-generic64","gcc:-DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++@@ -330,7 +330,7 @@
++ "linux-ia64",	"gcc:-DL_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++ "linux-ia64-ecc","ecc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++ "linux-ia64-icc","icc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++-"linux-x86_64",	"gcc:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+++"linux-x86_64",	"@GAR_CC@:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int @GAR_CFLAGS@::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:@GAR_LDFLAGS@ -fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++ #### SPARC Linux setups
++ # Ray Miller <ray.miller@computing-services.oxford.ac.uk> has patiently
++ # assisted with debugging of following two configs.
++@@ -1358,7 +1358,7 @@
++ 	s/^OPTIONS=.*$/OPTIONS=$options/;
++ 	s/^CONFIGURE_ARGS=.*$/CONFIGURE_ARGS=$argvstring/;
++ 	s/^CC=.*$/CC= $cc/;
++-	s/^MAKEDEPPROG=.*$/MAKEDEPPROG= $cc/ if $cc eq "gcc";
+++	s/^MAKEDEPPROG=.*$/MAKEDEPPROG= $cc/ if $cc eq "@GAR_CC@";
++ 	s/^CFLAG=.*$/CFLAG= $cflags/;
++ 	s/^DEPFLAG=.*$/DEPFLAG= $depflags/;
++ 	s/^PEX_LIBS=.*$/PEX_LIBS= $prelflags/;
++diff -Naur openssl-0.9.8h-old/Makefile openssl-0.9.8h-new/Makefile
++--- old/openssl-0.9.8h-old/Makefile	2008-05-28 01:48:27.000000000 -0700
+++++ openssl-0.9.8h-new/Makefile	2008-05-28 19:41:53.000000000 -0700
++@@ -59,19 +59,19 @@
++ # equal 4.
++ # PKCS1_CHECK - pkcs1 tests.
++ 
++-CC= cc
+++CC= @GAR_CC@
++ CFLAG= -O
++ DEPFLAG= -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CMS -DOPENSSL_NO_GMP -DOPENSSL_NO_MDC2 -DOPENSSL_NO_RC5 -DOPENSSL_NO_RFC3779 -DOPENSSL_NO_SEED -DOPENSSL_NO_TLSEXT 
++ PEX_LIBS= 
++ EX_LIBS= 
++ EXE_EXT= 
++ ARFLAGS= 
+++AR=@GAR_AR@ $(ARFLAGS) r
+++RANLIB= @GAR_RANLIB@
+++PERL= perl
++ AR=ar $(ARFLAGS) r
++-RANLIB= /usr/bin/ranlib
++-PERL= /usr/bin/perl
++-TAR= tar
++ TARFLAGS= --no-recursion
++-MAKEDEPPROG=makedepend
+++MAKEDEPPROG=@GAR_CC@
++ 
++ # We let the C compiler driver to take care of .s files. This is done in
++ # order to be excused from maintaining a separate set of architecture
++diff -Naur openssl-0.9.8h-old/Makefile.org openssl-0.9.8h-new/Makefile.org
++--- old/openssl-0.9.8h-old/Makefile.org	2008-04-03 16:03:39.000000000 -0700
+++++ openssl-0.9.8h-new/Makefile.org	2008-05-28 19:39:59.000000000 -0700
++@@ -57,19 +57,19 @@
++ # equal 4.
++ # PKCS1_CHECK - pkcs1 tests.
++ 
++-CC= cc
+++CC= @GAR_CC@
++ CFLAG= -O
++ DEPFLAG= 
++ PEX_LIBS= 
++ EX_LIBS= 
++ EXE_EXT= 
++ ARFLAGS=
++-AR=ar $(ARFLAGS) r
++-RANLIB= ranlib
+++AR=@GAR_AR@ $(ARFLAGS) r
+++RANLIB= @GAR_RANLIB@
++ PERL= perl
++ TAR= tar
++ TARFLAGS= --no-recursion
++-MAKEDEPPROG=makedepend
+++MAKEDEPPROG=@GAR_CC@
++ 
++ # We let the C compiler driver to take care of .s files. This is done in
++ # order to be excused from maintaining a separate set of architecture
++diff -Naur openssl-0.9.8h-old/util/domd openssl-0.9.8h-new/util/domd
++--- old/openssl-0.9.8h-old/util/domd	2005-03-30 06:44:50.000000000 -0800
+++++ openssl-0.9.8h-new/util/domd	2008-05-28 19:39:59.000000000 -0700
++@@ -14,7 +14,7 @@
++ cp Makefile Makefile.save
++ # fake the presence of Kerberos
++ touch $TOP/krb5.h
++-if [ "$MAKEDEPEND" = "gcc" ]; then
+++if [ "$MAKEDEPEND" = "@GAR_CC@" ]; then
++     args=""
++     while [ $# -gt 0 ]; do
++ 	if [ "$1" != "--" ]; then args="$args $1"; fi
++@@ -22,7 +22,7 @@
++     done
++     sed -e '/^# DO NOT DELETE.*/,$d' < Makefile > Makefile.tmp
++     echo '# DO NOT DELETE THIS LINE -- make depend depends on it.' >> Makefile.tmp
++-    gcc -D OPENSSL_DOING_MAKEDEPEND -M $args >> Makefile.tmp
+++    @GAR_CC@ -D OPENSSL_DOING_MAKEDEPEND -M $args >> Makefile.tmp
++     ${PERL} $TOP/util/clean-depend.pl < Makefile.tmp > Makefile.new
++     rm -f Makefile.tmp
++ else
+checksums
+--- old/checksums	2007-08-04 11:24:39.000000000 -0300
++++ new/checksums	2008-06-10 08:57:17.000000000 -0300
+@@ -1,2 +1,2 @@
+-3a7ff24f6ea5cd711984722ad654b927  download/openssl-0.9.8e.tar.gz
+-00f0dcba3899e8267ad2990bb1c7fd7b  download/openssl-0.9.8e.patch.gar
++7d3d41dafc76cf2fcb5559963b5783b3  download/openssl-0.9.8h.tar.gz
++ad1770275400e2b26543c163d40abd74  download/openssl-0.9.8h.patch.gar
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-10 08:57:17.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = openssl
+-GARVERSION = 0.9.8e
++GARVERSION = 0.9.8h
+ CATEGORIES = lib
+ MASTER_SITES = http://www.openssl.org/source/
+ DISTFILES = $(DISTNAME).tar.gz
+@@ -11,7 +11,7 @@
+ define BLURB
+ endef
+ 
+-DEPENDS = lang/c
++DEPENDS = lang/c lib/zlib
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/Configure
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+@@ -20,16 +20,24 @@
+ CONFIGURE_ARGS = \
+ 	--prefix=$(prefix) \
+ 	--install_prefix=$(DESTDIR) \
++	--openssldir=$(sysconfdir)/ssl \
+ 	shared \
+ 	no-krb5 \
+-	zlib-dynamic \
+-	$(if $(filter i386,  $(GARCH_FAMILY)),linux-elf) \
+-	$(if $(filter x86_64,$(GARCH_FAMILY)),linux-x86_64)
++	zlib \
++	no-idea \
++	no-mdc2 \
++	no-rc5 \
++	no-ec \
++	no-ecdh \
++	no-ecdsa \
++	$(if $(filter i386,  $(GARCH_FAMILY)),no-asm 386 linux-elf) \
++	$(if $(filter x86_64,$(GARCH_FAMILY)),           linux-x86_64)
+ 
+ BUILD_ARGS = \
+ 	CC="$(CC)" \
+ 	AR="$(AR) r" \
+-	RANLIB="$(RANLIB)"
++	RANLIB="$(RANLIB)" \
++	depend all build-shared
+ 
+ include ../../gar.mk
+ 
+files
+diff -ruNP -x '.*' -x '*~' files/libcdio-0.78.2.patch new/files/libcdio-0.78.2.patch
+--- old/files/libcdio-0.78.2.patch	2007-04-27 17:01:54.000000000 -0300
++++ new/files/libcdio-0.78.2.patch	1969-12-31 21:00:00.000000000 -0300
+@@ -1,107 +0,0 @@
+-diff -Naur libcdio-0.78.2-old/configure.ac libcdio-0.78.2-new/configure.ac
+---- old/libcdio-0.78.2-old/configure.ac	2006-10-30 05:02:37.000000000 -0800
+-+++ libcdio-0.78.2-new/configure.ac	2007-04-26 11:02:43.000000000 -0700
+-@@ -265,33 +265,8 @@
+- 
+- dnl bitfield order
+- AC_MSG_CHECKING(bitfield ordering in structs)
+--AC_TRY_RUN([
+--int
+-- main() {
+--  struct { char bit_0:1, bit_12:2, bit_345:3, bit_67:2; }
+--#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+--  __attribute__((packed))
+--#endif
+--  bf = { 1,1,1,1 };
+--  if (sizeof (bf) != 1) return 1;
+--  return *((unsigned char*) &bf) != 0x4b; }
+--], bf_lsbf=1, AC_TRY_RUN([ 
+--int
+--main() {
+--  struct { char bit_0:1, bit_12:2, bit_345:3, bit_67:2; }
+--#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+--  __attribute__((packed))
+--#endif
+--  bf = { 1,1,1,1 };
+--  if (sizeof (bf) != 1) return 1;
+--  return *((unsigned char*) &bf) != 0xa5; }
+--], bf_lsbf=0, AC_MSG_ERROR([unsupported bitfield ordering])))
+--if test "x$bf_lsbf" = "x1"; then
+-- AC_MSG_RESULT(LSBF)
+-- AC_DEFINE(BITFIELD_LSBF, [], [compiler does least-significant bit first in struct bitfields])
+--else
+-- AC_MSG_RESULT(MSBF)
+--fi
+-+AC_MSG_RESULT(LSBF)
+-+AC_DEFINE(BITFIELD_LSBF, [], [compiler does least-significant bit first in struct bitfields])
+- dnl
+- 
+- dnl AM_PROG_LIBTOOL tests whether we have GNU ld
+-@@ -447,21 +422,8 @@
+- esac
+- 
+- AC_MSG_CHECKING(extern long timezone variable)
+--AC_TRY_RUN([
+--#ifdef NEED_TIMEZONEVAR
+--#define timezonevar 1
+--#endif
+--
+--#include <time.h>
+--extern long timezone;
+--int main(int argc, char **argv) {
+--  long test_timezone = timezone;
+--  return 0; 
+--}
+--], [AC_MSG_RESULT(yes); 
+--   AC_DEFINE([HAVE_TIMEZONE_VAR], 1, 
+--	[Define if you have an extern long timenzone variable.])],
+--   [AC_MSG_RESULT(no)])
+-+AC_MSG_RESULT(yes) 
+-+AC_DEFINE([HAVE_TIMEZONE_VAR], 1, [Define if you have an extern long timenzone variable.])
+- dnl
+- 
+- AC_SUBST(LINUX_CDROM_TIMEOUT)
+-@@ -490,39 +452,12 @@
+- 
+- if test $ac_cv_member_struct_tm_tm_gmtoff = yes ; then
+-   AC_MSG_CHECKING([whether time.h defines daylight and timezone variables])
+--  AC_TRY_RUN([
+--#include <time.h>
+--
+--
+--       extern char *tzname[2];
+--       extern long timezone;
+--       extern int daylight;
+--
+--int
+-- main() {
+--  return (timezone != 0) + daylight;
+--}
+--  ],[AC_DEFINE(HAVE_DAYLIGHT, 1,
+--   [Define if time.h defines extern long timezone and int daylight vars.])
+--   has_daylight=yes
+--   ],[has_daylight=no])
+-+  AC_DEFINE(HAVE_DAYLIGHT, 1, [Define if time.h defines extern long timezone and int daylight vars.])
+-+  has_daylight=yes
+-   AC_MSG_RESULT($has_daylight)
+-   AC_MSG_CHECKING([whether time.h defines tzname variable])
+--  AC_TRY_RUN([
+--#include <time.h>
+--
+--
+--       extern char *tzname[2];
+--
+--int
+-- main() {
+--  return (tzname != NULL);
+--}
+--  ],[AC_DEFINE(HAVE_TZNAME, 1,
+--   [Define if time.h defines extern extern char *tzname[2] variable])
+--   has_tzname=yes
+--   ],[has_tzname=no])
+--   AC_MSG_RESULT($has_tzname)
+-+  has_tzname=no
+-+  AC_MSG_RESULT($has_tzname)
+- fi
+- 
+- if test x$enable_joliet = x; then
+checksums
+Makefile
+package-api.mk
+Makefile
+files
+diff -ruNP -x '.*' -x '*~' files/vcdimager-0.7.23-cross.patch new/files/vcdimager-0.7.23-cross.patch
+--- old/files/vcdimager-0.7.23-cross.patch	2007-04-27 17:01:54.000000000 -0300
++++ new/files/vcdimager-0.7.23-cross.patch	2008-06-26 14:12:20.000000000 -0300
+@@ -1,15 +1,3 @@
+-diff -Naur vcdimager-0.7.23-old/configure vcdimager-0.7.23-new/configure
+---- old/vcdimager-0.7.23-old/configure	2005-07-11 05:43:27.000000000 -0700
+-+++ vcdimager-0.7.23-new/configure	2007-04-27 10:23:08.000000000 -0700
+-@@ -23704,7 +23704,7 @@
+- rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+-         if test "$cross_compiling" = yes; then
+-   case "$host" in
+--     *-*-mingw32* | *-*-cygwin*)
+-+     i?86-* | x86_64-* | *-*-mingw32* | *-*-cygwin*)
+-        bf_lsbf=1
+-      ;;
+-      *)
+ diff -Naur vcdimager-0.7.23-old/configure.ac vcdimager-0.7.23-new/configure.ac
+ --- old/vcdimager-0.7.23-old/configure.ac	2005-07-11 05:43:02.000000000 -0700
+ +++ vcdimager-0.7.23-new/configure.ac	2007-04-27 10:23:47.000000000 -0700
+diff -ruNP -x '.*' -x '*~' files/vcdimager-0.7.23-nm.patch new/files/vcdimager-0.7.23-nm.patch
+--- old/files/vcdimager-0.7.23-nm.patch	2007-04-27 17:01:54.000000000 -0300
++++ new/files/vcdimager-0.7.23-nm.patch	2008-06-26 14:12:20.000000000 -0300
+@@ -21,15 +21,3 @@
+  	echo '};' >> $@
+  
+  MOSTLYCLEANFILES = libvcdinfo.la.ver
+-diff -Naur vcdimager-0.7.23-old/lib/Makefile.in vcdimager-0.7.23-new/lib/Makefile.in
+---- old/vcdimager-0.7.23-old/lib/Makefile.in	2005-07-11 05:46:58.000000000 -0700
+-+++ vcdimager-0.7.23-new/lib/Makefile.in	2007-04-27 10:29:45.000000000 -0700
+-@@ -635,7 +635,7 @@
+- @BUILD_VERSIONED_LIBS_TRUE@	echo 'VCDINFO_$(libvcdinfo_la_MAJOR) {' > $@
+- @BUILD_VERSIONED_LIBS_TRUE@	echo "  global:" >> $@
+- @BUILD_VERSIONED_LIBS_TRUE@	objs=`for obj in $(libvcdinfo_la_OBJECTS); do sed -ne "s/^pic_object='\(.*\)'$$/\1/p" $$obj; done`; \
+--@BUILD_VERSIONED_LIBS_TRUE@	nm $${objs} | sed -n -e 's/^.*[ 	][ABCDGIRSTW][ABCDGIRSTW]*[ 	][ 	]*\([_A-Za-z][_A-Za-z0-9]*\)$$/    \1;/p' | sort | uniq >> $@
+-+@BUILD_VERSIONED_LIBS_TRUE@	$(NM) $${objs} | sed -n -e 's/^.*[ 	][ABCDGIRSTW][ABCDGIRSTW]*[ 	][ 	]*\([_A-Za-z][_A-Za-z0-9]*\)$$/    \1;/p' | sort | uniq >> $@
+- @BUILD_VERSIONED_LIBS_TRUE@	echo '};' >> $@
+- 
+- # EOF
+checksums
+--- old/checksums	2007-04-27 17:01:54.000000000 -0300
++++ new/checksums	2008-06-26 14:12:20.000000000 -0300
+@@ -1,3 +1,3 @@
+ 5e7d80fdbf0037ad20e438f2a9573253  download/vcdimager-0.7.23.tar.gz
+-3a84ea914e7edb08f78182797703395c  download/vcdimager-0.7.23-nm.patch
+-cd2fac96731a8dc75cea4ef8407129b5  download/vcdimager-0.7.23-cross.patch
++dbc5ab0004c8f79321fc174ac0e21327  download/vcdimager-0.7.23-nm.patch
++939e56c0cc5241a09252dea7df493998  download/vcdimager-0.7.23-cross.patch
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:20.000000000 -0300
+@@ -10,7 +10,8 @@
+ define BLURB
+ endef
+ 
+-DEPENDS = lang/c lib/libcdio-mini
++DEPENDS   = lang/c lib/libcdio-mini
++BUILDDEPS = lib/libxml2
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+@@ -26,10 +27,9 @@
+ 
+ pre-configure:
+ 	@cd $(WORKSRC) ; autoreconf --verbose --install --force
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libvcdinfo.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libvcdinfo.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libvcdinfo.pc
+ 	@$(MAKECOOKIE)
+files
+diff -ruNP -x '.*' -x '*~' files/libdca-0.0.5-configure_optimization.patch new/files/libdca-0.0.5-configure_optimization.patch
+--- old/files/libdca-0.0.5-configure_optimization.patch	2007-04-27 18:25:16.000000000 -0300
++++ new/files/libdca-0.0.5-configure_optimization.patch	2008-06-26 14:12:24.000000000 -0300
+@@ -1,15 +1,3 @@
+-diff -Naur libdca-0.0.5-old/configure libdca-0.0.5-new/configure
+---- old/libdca-0.0.5-old/configure	2007-04-10 05:31:19.000000000 -0700
+-+++ libdca-0.0.5-new/configure	2007-04-27 14:20:08.000000000 -0700
+-@@ -4242,7 +4242,7 @@
+-     fi
+- 
+- 
+--    TRY_CFLAGS=`echo "$OPT_CFLAGS $CFLAGS"|sed "s/-O[0-9]*//g"`
+-+    TRY_CFLAGS=`echo "$OPT_CFLAGS $CFLAGS"|sed "s/-O[s0-9]*//g"`
+- 
+-     TRY_CFLAGS="$TRY_CFLAGS -O3"
+-     { echo "$as_me:$LINENO: checking if $CC supports $TRY_CFLAGS flags" >&5
+ diff -Naur libdca-0.0.5-old/configure.ac libdca-0.0.5-new/configure.ac
+ --- old/libdca-0.0.5-old/configure.ac	2007-04-10 05:28:07.000000000 -0700
+ +++ libdca-0.0.5-new/configure.ac	2007-04-27 14:19:38.000000000 -0700
+checksums
+--- old/checksums	2007-04-27 18:25:16.000000000 -0300
++++ new/checksums	2008-06-26 14:12:24.000000000 -0300
+@@ -1,4 +1,4 @@
+ dab6b2795c66a82a6fcd4f8343343021  download/libdca-0.0.5.tar.bz2
+-19ef37e9d333d4bdce57927e26f00642  download/libdca-0.0.5-configure_optimization.patch
++ffca45a544002af6d1a825643408b391  download/libdca-0.0.5-configure_optimization.patch
+ 10848a0919096e345798e189f39fdd49  download/libdca-0.0.5-configure_c++.patch
+ dab6b2795c66a82a6fcd4f8343343021  download/libdca-0.0.5.tar.bz2
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:24.000000000 -0300
+@@ -32,14 +32,11 @@
+ 
+ pre-configure:
+ 	@cd $(WORKSRC) ; autoreconf --verbose --install --force
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libdca.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libdca.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libdca.pc
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/libdts.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/libdts.pc
+ 	@rm -f $(DESTDIR)$(libdir)/libdts.a
+ 	@ln -sf "libdca.a" "$(DESTDIR)$(libdir)/libdts.a"
+ 	@rm -f $(DESTDIR)$(libdir)/libdts.so
+checksums
+--- old/checksums	2008-07-02 23:03:20.000000000 -0300
++++ new/checksums	2008-08-11 14:25:13.000000000 -0300
+@@ -1 +1 @@
+-2ab79b3c93258827cc6ea8ee50128e49  download/glib-2.16.4.tar.bz2
++039f02d47d4071322a3f00abf031e5d9  download/glib-2.16.5.tar.bz2
+Makefile
+--- old/Makefile	2008-08-30 09:43:01.000000000 -0300
++++ new/Makefile	2008-08-11 14:25:13.000000000 -0300
+@@ -1,57 +1,52 @@
+ GARNAME = glib
+-GARVERSION = 2.16.4
+-CATEGORIES = devel
++GARVERSION = 2.16.5
++CATEGORIES = lib
+ MASTER_SITES = http://ftp.gnome.org/pub/gnome/sources/glib/2.16/
+-DISTFILES = $(GARNAME)-$(GARVERSION).tar.bz2 
+-#PATCHFILES = gar-base.diff
+-#PATCHFILES = $(DISTNAME)-gcc34.patch
+-LICENSE = LGPL2_1
++DISTFILES = $(DISTNAME).tar.bz2
++LICENSE = LGPL2
+ 
+-DESCRIPTION = glib2
++DESCRIPTION =
+ define BLURB
+- GLib package blurb goes here.
+ endef
+ 
+-LIBDEPS = devel/glibc
+-BUILDDEPS = lib/glib
+-
+-CONFIGURE_SCRIPTS = $(WORKSRC)/configure 
+-BUILD_SCRIPTS = $(WORKSRC)/Makefile
+-INSTALL_SCRIPTS = $(WORKSRC)/Makefile
+-
++DEPENDS    = lang/c
++BUILDDEPS  =
++ifneq ($(DESTIMG),build)
++BUILDDEPS += lib/glib
++endif
++
++CONFIGURE_SCRIPTS = $(WORKSRC)/configure
++BUILD_SCRIPTS     = $(WORKSRC)/Makefile
++INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
+ 
+ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+ 	--cache-file=config.cache \
+ 	--with-gnu-ld
+ 
++CONFIGURE_ENV  =
++ifneq ($(DESTIMG),build)
++CONFIGURE_ENV += \
++	ac_cv_func_mmap_fixed_mapped='yes' \
++	ac_cv_func_posix_getpwuid_r='yes' \
++	ac_cv_func_posix_getgrgid_r='yes' \
++	ac_cv_func_printf_unix98='yes' \
++	ac_cv_func_snprintf_c99='yes' \
++	ac_cv_func_vsnprintf_c99='yes' \
++	glib_cv_stack_grows='no' \
++	glib_cv_uscore='no' \
++	glib_cv_va_val_copy='no'
++endif
+ 
+ include ../../gar.mk
+ 
+-$(DESTIMG)_NODEPEND += lib/glib
+-export $(DESTIMG)_NODEPEND
+-
+ pre-configure:
+-	@echo "glib_cv_stack_grows=yes" >  $(WORKSRC)/config.cache
+-	@echo "glib_cv_uscore=no" >>  $(WORKSRC)/config.cache
+-	@echo "ac_cv_func_posix_getpwuid_r=yes" >>  $(WORKSRC)/config.cache
+-	@echo "ac_cv_func_posix_getgrgid_r=yes" >>  $(WORKSRC)/config.cache
++	@$(call FIX_LIBTOOL,$(WORKSRC),configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+-	@rm -f $(DESTDIR)$(libdir)/libglib-2.0.la
+-	@rm -f $(DESTDIR)$(libdir)/libgmodule-2.0.la
+-	@rm -f $(DESTDIR)$(libdir)/libgthread-2.0.la
+-	@rm -f $(DESTDIR)$(libdir)/libgobject-2.0.la
+-	@sed -i 's%$${libdir}%$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/glib-2.0.pc
+-	@sed -i 's%$${includedir}%$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/glib-2.0.pc
+-	@sed -i 's%$${libdir}%$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/gobject-2.0.pc
+-	@sed -i 's%$${includedir}%$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/gobject-2.0.pc
+-	@sed -i 's%$${libdir}%$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/gmodule-2.0.pc
+-	@sed -i 's%$${includedir}%$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/gmodule-2.0.pc
+-	@sed -i 's%$${libdir}%$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/gmodule-export-2.0.pc
+-	@sed -i 's%$${includedir}%$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/gmodule-export-2.0.pc
+-	@sed -i 's%$${libdir}%$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/gmodule-no-export-2.0.pc
+-	@sed -i 's%$${includedir}%$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/gmodule-no-export-2.0.pc
+-	@sed -i 's%$${libdir}%$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/gthread-2.0.pc
+-	@sed -i 's%$${includedir}%$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/gthread-2.0.pc
++	@rm -rf $(DESTDIR)$(libdir)/libgio-2.0.la
++	@rm -rf $(DESTDIR)$(libdir)/libglib-2.0.la
++	@rm -rf $(DESTDIR)$(libdir)/libgmodule-2.0.la
++	@rm -rf $(DESTDIR)$(libdir)/libgobject-2.0.la
++	@rm -rf $(DESTDIR)$(libdir)/libgthread-2.0.la
+ 	@$(MAKECOOKIE)
+checksums
+--- old/checksums	2008-07-23 11:26:12.000000000 -0300
++++ new/checksums	2008-08-11 14:25:12.000000000 -0300
+@@ -1 +1 @@
+-b57aa1ba0834cbbb1e7502dc2cbfacc2  download/dbus-1.2.1.tar.gz
++f71641385768e99361bd298568207cee  download/dbus-1.2.3.tar.gz
+Makefile
+--- old/Makefile	2008-08-30 09:43:02.000000000 -0300
++++ new/Makefile	2008-08-11 14:25:12.000000000 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = dbus
+-GARVERSION = 1.2.1
++GARVERSION = 1.2.3
+ CATEGORIES = lib
+ MASTER_SITES = http://dbus.freedesktop.org/releases/dbus/
+ DISTFILES = $(DISTNAME).tar.gz
+@@ -37,6 +37,4 @@
+ 
+ post-install:
+ 	@rm -f $(DESTDIR)$(libdir)/libdbus-1.la
+-	@sed -i 's%$${libdir}%$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/dbus-1.pc
+-	@sed -i 's%$${includedir}%$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/dbus-1.pc
+ 	@$(MAKECOOKIE)
+checksums
+Makefile
+--- old/Makefile	2008-08-30 09:43:02.000000000 -0300
++++ new/Makefile	2008-06-26 14:12:18.000000000 -0300
+@@ -1,33 +1,31 @@
+ GARNAME = libsndfile
+ GARVERSION = 1.0.17
+ CATEGORIES = lib
+-MASTER_SITES =http://www.mega-nerd.com/libsndfile/
++MASTER_SITES = http://www.mega-nerd.com/libsndfile/
+ DISTFILES = $(DISTNAME).tar.gz
+-#LICENSE = LGPL2_1
++LICENSE = LGPL2_1
+ 
+-DESCRIPTION =
++DESCRIPTION = 
+ define BLURB
+ endef
+ 
+-DEPENDS = lang/c 
++DEPENDS = lang/c lib/alsa-lib
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+ INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
+ 
+ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+-	--cache-file=config.cache \
++	--disable-sqlite \
++	--disable-flac \
+ 	--with-gnu-ld
+ 
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@echo "ac_cv_func_malloc_0_nonnull=yes" >  $(WORKSRC)/config.cache
+-	@echo "ac_cv_func_realloc_0_nonnull=yes" >>  $(WORKSRC)/config.cache
++	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+ 	@$(MAKECOOKIE)
+ 
+ post-install:
+-	@rm -f $(DESTDIR)$(libdir)/sndfile.la
+-	@sed -i 's%-L$${libdir}%-L$(DESTDIR)$${libdir}%g'         $(DESTDIR)$(libdir)/pkgconfig/sndfile.pc
+-	@sed -i 's%-I$${includedir}%-I$(DESTDIR)$${includedir}%g' $(DESTDIR)$(libdir)/pkgconfig/sndfile.pc
++	@rm -f $(DESTDIR)$(libdir)/libsndfile.la
+ 	@$(MAKECOOKIE)

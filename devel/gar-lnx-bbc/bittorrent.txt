@@ -1,0 +1,178 @@
+Sharing LNX-BBC Files with Bittorrent
+
+Bittorrent is a swarm file transfer system in which downloaders help
+share pieces of a file with other downloaders in a tit-for-tat
+exchange.  It helps alleviate network load on servers that have
+popular files.  The LNX-BBC project offers its ISO images and snapshot
+tarballs as bittorrent files, and encourages others to help share and
+mirror them with bittorrent.
+
+This document will explain how to set up bittorrent for various
+situations, and help the reader understand the way in which bittorrent
+functions.
+
+= How it works =
+
+Bittorrent isn't your typical "put file up on server, wait for people
+to download" sort of protocol.  It's more of a peer to peer protocol,
+but one that's designed for reliability and load balancing.
+
+== The Tracker ==
+
+The .torrent files contain the location of a /tracker/, which is a
+brokering server that connects users with other users who have pieces
+of files that can be swapped.  It deals entirely in sha1 hashes, and
+thus has no concept of "filenames".  The contents of the files never
+pass through the tracker. 
+
+== The Downloader ==
+
+The key is that users grab pieces from *each other*.  This means that
+to put a file up available for download, you actually start a
+/downloader/ process, but with the file already completely in place!
+This can be confusing when you are used to HTTP and FTP servers, but
+realize that once you have completed a download, the tracker will know
+that you have /all/ pieces of the file available for others to grab.
+
+This is why often you'll see torrent sites admonishing users to keep
+their clients open after downloads are complete.  The more people do
+this, the more widely available a file is.  BitTorrent rewards
+popularity, unlike HTTP and FTP servers, which punish popularity by
+their susceptibility to bandwidth bottlenecks.
+
+The clients decide whether or not to provide pieces of a file to
+another client by using a tit-for-tat strategy.  That means that the
+more you upload to people, the faster your download gets.  It also
+means that your client will tend toward the closer (in the network
+sense, i.e. faster) peer.  
+
+= How to set it up =
+
+We here at the LNX-BBC project have already set up and installed a
+tracker, and all our .torrent files point to it.  You can see a brief
+statistics page by visiting <http://www.lnx-bbc.org:3623/>.  All you
+need to do to help us mirror is to run a downloader!  How you choose
+to do that depends on your preference.  
+
+== The one-file downloader ==
+
+The <http://bitconjurer.org/BitTorrent/download.html stock BitTorrent
+package> comes with a few different python scripts for downloading:
+ptdownloadgui, which uses wxgtk (but requires a ridiculously recent
+version, so beware); btdownloadcurses, which uses a nice curses
+readout; and btdownloadheadless, which spits to stdout, but falls
+silent if started in the background.  There are also "launchmany"
+versions of these programs available, which we will discuss shortly.
+
+The most user-friendly way to use bittorrent is to follow the
+instructions in the docs for associating the downloaders with the
+application/x-bittorrent MIME type.  This way, you can just select a
+.torrent file in your Web browser and let the MIME handler take care
+of the rest.  You'll see a torrent window pop up, and start connecting
+to peers.  Couldn't be simpler, right?
+
+You may also wish to run your downloader in a screen session or
+something, in which case you could run the downloader at the command
+line:
+
+----8<----
+$ btdownloadcurses.py --url http://www.lnx-bbc.org/images/bbc-2.0.iso.torrent
+----8<----
+
+== The launchmany ==
+
+But if you want to really help out, you'll mirror more than just one
+file.  For this, there is the launchmany program.  The launchmany
+versions of the programs accept as their parameters the path to a
+directory full of .torrent files.  They regularly poll the directory
+for new or removed .torrents and update their actions appropriately.
+As you may guess, this makes them useful as daemons.
+
+=== btlaunchmanycurses.py ===
+
+For starters, let's look at the curses version, which I typically use
+when I'm keeping my downloads in a screen session and want to be able
+to check up on their status.
+
+----8<----
+[zork(~/torrent)] wget http://www.lnx-bbc.org/images/bbc-2.0.iso.torrent
+[zork(~/torrent)] wget http://www.lnx-bbc.org/images/bbc-2.0-src.iso.torrent
+[zork(~)] btlaunchmanycurses.py ~/torrent/
+----8<----
+
+Now I end up with a curses readout showing me the download progress,
+as well as the upload speed and running totals of my bandwidth use.  I
+can throw in .torrent files or take them out of my ~/torrent
+directory, and torrent downloads will begin and end as needed.
+
+=== btlaunchmany.py ===
+
+But for real long-term use, it's best to keep things headless.  To
+this end, we have btlaunchmany.py.  This script will fall silent if
+run in the background, and is ideal for keeping a mirror going
+long-term.
+
+For one of our Debian GNU/Linux systems, I have an
+<http://build.lnx-bbc.org/~nick/bittorrent.init init script> that I
+use.  It ensures that bittorrent starts and stops at the appropriate
+runlevels, and keeps these files available in the client space.
+
+For yet another of our systems, we use a simple crontab entry to make
+sure that bittorrent is run on startup:
+
+----8<----
+@reboot		nohup btlaunchmany.py /var/www/lnx-bbc.org/images/
+----8<----
+
+This method may work best if you lack root access to the machine you
+wish to use.
+
+=== After your launchmany is running ===
+
+You may wish to set up regular cron jobs to wget all files of the mime
+type application/x-bittorrent, or to grab all files ending in .torrent
+from <http://www.lnx-bbc.org/images/> or
+<http://www.lnx-bbc.org/builds/>.  Whatever you do, it is helpful to
+make sure that the .torrent files in your launchmany directory are
+up-to-date, so that you are serving recent files.
+
+= Frequently Asked Questions =
+
+== So this is like some warez thing, right?  Does this mean people are
+going to swap bootlegged software and music through me? ==
+
+Absolutely not.  You only transmit the files for which you have chosen
+.torrent files.  We here at the LNX-BBC project only put up images
+that have passed at least a cursory test of license integrity, similar
+to that of Debian's.  All of the torrents we provide are freely
+modifiable and redistributable.
+
+== I'm behind NAT.  How can I serve anything? ==
+
+The tracker attempts to compensate for this by notifying your machine
+to connect to the downloader.  This means that you can't upload
+anything to anyone who is also behind NAT, but you can still do your
+part.
+
+== So do I need to run the tracker? ==
+
+No.  The .torrent files we provide have the lnx-bbc tracker hard-coded
+into them.  You just need to download in a "file and forget" fashion,
+and you'll be helping Join Us Now And Share The Software!
+
+== I'm using Debian's packages, and I get an ImportError when I try to
+run any of the downloaders! ==
+
+The default python for Debian is 2.1 in Testing, but the latest
+packages seem to have been built against 2.2.  Fortunately there's no
+real compatability issue.  You can safely solve this one by doing:
+
+----8<----
+$ cd /usr/local/lib/python2.1/site-packages/
+$ ln -sf /usr/lib/python2.2/site-packages/BitTorrent/
+----8<----
+
+This is the most robust solution, since it won't interfere with any
+future upgrades (unless you muck about in /usr/local/lib/python2.1 a
+lot).
+

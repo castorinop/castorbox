@@ -1,0 +1,177 @@
+diff --speed-large-files --minimal -Nru tmp/SDL_perl-1.20.0/Makefile.linux work/main.d/SDL_perl-1.20.0/Makefile.linux
+--- tmp/SDL_perl-1.20.0/Makefile.linux	2002-10-15 00:30:18.000000000 -0300
++++ work/main.d/SDL_perl-1.20.0/Makefile.linux	2007-02-15 19:29:29.000000000 -0300
+@@ -14,9 +14,9 @@
+ # Configuration detection of Linux / Unix
+ #
+ 
+-$sdl_cflags = `sdl-config --cflags`;
++$sdl_cflags = `"@SDL_CONFIG_PATH@sdl-config --cflags`;
+ chomp($sdl_cflags);
+-$sdl_libs = "-L/usr/X11R6/lib " . `sdl-config --libs`;
++$sdl_libs = "-L@DESTDIR@/usr/lib " . `@SDL_CONFIG_PATH@sdl-config --libs`;
+ $sdl_libs =~ s/-Wl,-rpath,\S*lib//; # suppress the insanity
+ 
+ #
+@@ -24,16 +24,16 @@
+ #
+ 
+ @dirs=(
+-	'/usr/local/include/SDL', 
+-	'/usr/local/include',
+-	'/usr/local/include/smpeg',
+-	'/usr/include/SDL',
+-	'/usr/include',
+-	'/usr/include/smpeg',
+-	'/usr/local/include/GL',
+-	'/usr/local/include/gl',
+-	'/usr/include/GL', 
+-	'/usr/include/gl', 
++	'@DESTDIR@/usr/local/include/SDL', 
++	'@DESTDIR@/usr/local/include',
++	'@DESTDIR@/usr/local/include/smpeg',
++	'@DESTDIR@/usr/include/SDL',
++	'@DESTDIR@/usr/include',
++	'@DESTDIR@/usr/include/smpeg',
++	'@DESTDIR@/usr/local/include/GL',
++	'@DESTDIR@/usr/local/include/gl',
++	'@DESTDIR@/usr/include/GL', 
++	'@DESTDIR@/usr/include/gl', 
+ );
+ 
+ $inc_flags = "-ggdb " . $ENV{DEBUG};
+diff --speed-large-files --minimal -Nru tmp/SDL_perl-1.20.0/Makefile.linux~ work/main.d/SDL_perl-1.20.0/Makefile.linux~
+--- tmp/SDL_perl-1.20.0/Makefile.linux~	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/SDL_perl-1.20.0/Makefile.linux~	2002-10-15 00:30:18.000000000 -0300
+@@ -0,0 +1,131 @@
++#!/usr/bin/env perl 
++
++use strict;
++use ExtUtils::MakeMaker;
++use Getopt::Long;
++
++#
++# Configure SDL proper
++#
++
++use vars qw/ $sdl_cflags $sdl_libs @dirs $inc_flags %ext @defs /;
++
++#
++# Configuration detection of Linux / Unix
++#
++
++$sdl_cflags = `sdl-config --cflags`;
++chomp($sdl_cflags);
++$sdl_libs = "-L/usr/X11R6/lib " . `sdl-config --libs`;
++$sdl_libs =~ s/-Wl,-rpath,\S*lib//; # suppress the insanity
++
++#
++# Search paths
++#
++
++@dirs=(
++	'/usr/local/include/SDL', 
++	'/usr/local/include',
++	'/usr/local/include/smpeg',
++	'/usr/include/SDL',
++	'/usr/include',
++	'/usr/include/smpeg',
++	'/usr/local/include/GL',
++	'/usr/local/include/gl',
++	'/usr/include/GL', 
++	'/usr/include/gl', 
++);
++
++$inc_flags = "-ggdb " . $ENV{DEBUG};
++
++#
++# Registed extensions
++#
++
++%ext = ( 
++	SDL_image => { inc => 'HAVE_SDL_IMAGE', test => 'SDL_image.h' },
++	SDL_mixer => { inc => 'HAVE_SDL_MIXER', test => 'SDL_mixer.h' },
++	SDL_net => { inc => 'HAVE_SDL_NET', test => 'SDL_net.h' },
++	SDL_ttf => { inc => 'HAVE_SDL_TTF', test => 'SDL_ttf.h' },
++	SDL_gfx => { inc => 'HAVE_SDL_GFX', test => 'SDL_gfxPrimitives.h' },
++	SDL_console => { inc => 'HAVE_SDL_CONSOLE', test => 'CON_console.h' },
++	png => { inc => 'HAVE_PNG', test => 'png.h' },
++	jpeg => { inc => 'HAVE_JPEG', test => 'jpeglib.h' },
++	GL => { inc => 'HAVE_GL', test => 'gl.h' },
++	GLU => { inc => 'HAVE_GLU', test => 'glu.h' },
++	smpeg => { inc => 'HAVE_SMPEG', test => 'smpeg.h' },
++);
++
++#
++# Locate optional packages
++#
++
++my ($e,$d);
++for $e ( keys %ext ) {
++	for $d (@dirs) {
++		$ext{$e}{exists} ||= -e "$d/$ext{$e}{test}" 
++	}
++}
++
++my $usage;
++for $e ( keys %ext ) {
++	$usage .= "\n\t-$e disables $e support";
++}
++
++for $e ( @ARGV ) {
++	my $o;
++	($o = $e) =~ s/^-*//g;
++	if (exists $ext{$o}) {
++		print "Disabling $o\n";
++		$ext{$o}{exists} = 0;
++	}
++}
++	
++sub found_mod {
++	printf "%-24s%s\n", "Enabled $_[0]",  ( $_[1] ? "yes" : "no" );
++}
++
++for $e ( sort keys %ext ) {
++	found_mod ($e,$ext{$e}{exists});
++}
++
++#
++# Get GLU version
++#
++
++if  ( $ext{GLU}{exists} ) {
++	print "Detecting GLU Version\n";
++	system ("gcc -o detect detect.c -lGLU -lGL $sdl_libs");
++	my $version = `./detect` * 10;
++	push @defs, "-DHAVE_GLU_VERSION=$version";
++	system ("rm detect");
++}
++
++
++#
++# Specify Makefile options
++#
++
++my %options = (
++    'NAME'	=> 'SDL_perl',
++    'VERSION_FROM' => 'SDL.pm', 
++    'LIBS'	=> [ join( " ",	"$sdl_libs", 
++			map { $ext{$_}{exists} ? "-l$_" : '' } (sort keys %ext),
++			)
++		],  
++    'DEFINE'	=> join ( " ", @defs, map { $ext{$_}{exists} ? "-D$ext{$_}{inc}" : '' } sort keys %ext),
++    'INC'	=> "$inc_flags $sdl_cflags " . join(" ", map { "-I$_" } @dirs),
++    'OBJECT'	=> (	
++			 ($ext{SDL_image}{exists} ? 'SFont.o ' : "") .
++			 'SDL_perl.o ' .
++			 ($ext{GL}{exists} ? 'OpenGL.o ' : "") 
++		),
++);
++    
++#
++# Write Makefile 
++#
++
++WriteMakefile(%options );
++
++

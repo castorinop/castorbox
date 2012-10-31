@@ -1,0 +1,21 @@
+diff -Naur linux-3.0-old/drivers/net/via-rhine.c linux-3.0-new/drivers/net/via-rhine.c
+--- linux-3.0-old/drivers/net/via-rhine.c	2011-07-22 08:46:17.000000000 -0700
++++ linux-3.0-new/drivers/net/via-rhine.c	2011-07-22 08:48:01.000000000 -0700
+@@ -55,7 +55,7 @@
+ 
+ /* Work-around for broken BIOSes: they are unable to get the chip back out of
+    power state D3 so PXE booting fails. bootparam(7): via-rhine.avoid_D3=1 */
+-static int avoid_D3;
++static int avoid_D3 = 0;
+ 
+ /*
+  * In case you are looking for 'options[]' or 'full_duplex[]', they
+@@ -130,7 +130,7 @@
+ module_param(max_interrupt_work, int, 0);
+ module_param(debug, int, 0);
+ module_param(rx_copybreak, int, 0);
+-module_param(avoid_D3, bool, 0);
++module_param(avoid_D3, bool, 0644);
+ MODULE_PARM_DESC(max_interrupt_work, "VIA Rhine maximum events handled per interrupt");
+ MODULE_PARM_DESC(debug, "VIA Rhine debug level (0-7)");
+ MODULE_PARM_DESC(rx_copybreak, "VIA Rhine copy breakpoint for copy-only-tiny-frames");

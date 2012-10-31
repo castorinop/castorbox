@@ -1,0 +1,13 @@
+################################################################################
+# minimyth.script
+#
+# The optional MiniMyth configuration script.
+#
+# This script is run early in the init process. This is done so that you can
+# change much of the init process using this script. However, this means that if
+# this script relies on actions performed by the init scripts that have yet to
+# run (e.g. waking the backend), then you must perform these actions from within
+# this script.
+################################################################################
+
+. /etc/rc.d/functions

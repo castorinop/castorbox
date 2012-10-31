@@ -1,0 +1,12 @@
+diff -Naur gtk+-2.20.1-old/configure.in gtk+-2.20.1-new/configure.in
+--- gtk+-2.20.1-old/configure.in	2010-05-02 16:33:18.000000000 -0700
++++ gtk+-2.20.1-new/configure.in	2010-08-12 13:50:04.000000000 -0700
+@@ -202,7 +202,7 @@
+ AC_SYS_LARGEFILE
+ 
+ AM_PROG_AS
+-AC_PATH_PROG(NM, nm, nm)
++AC_PATH_TOOL(NM, nm, nm)
+ 
+ dnl Initialize maintainer mode
+ AM_MAINTAINER_MODE

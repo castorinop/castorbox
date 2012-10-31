@@ -1,0 +1,65 @@
+diff -Naurp php-5.2.6/ext/imap/php_imap.c php-5.2.6.oden/ext/imap/php_imap.c
+--- php-5.2.6/ext/imap/php_imap.c	2008-09-11 12:21:08.000000000 +0200
++++ php-5.2.6.oden/ext/imap/php_imap.c	2008-09-11 12:20:46.000000000 +0200
+@@ -129,6 +129,7 @@ zend_function_entry imap_functions[] = {
+ 	PHP_FE(imap_binary,								NULL)
+ 	PHP_FE(imap_utf8,								NULL)
+ 	PHP_FE(imap_status,								NULL)
++	PHP_FE(imap_status_current,							NULL)
+ 	PHP_FE(imap_mailboxmsginfo,						NULL)
+ 	PHP_FE(imap_setflag_full,						NULL)
+ 	PHP_FE(imap_clearflag_full,						NULL)
+@@ -2851,6 +2852,42 @@ PHP_FUNCTION(imap_msgno)
+ }
+ /* }}} */
+ 
++/* {{{ proto object imap_status_current(resource stream_id, int options)
++   Get (cached) status info from current mailbox */
++PHP_FUNCTION(imap_status_current)
++{
++ 	zval **streamind, **pflags;
++	pils *imap_le_struct;
++	long flags = 0L;
++
++ 	if (ZEND_NUM_ARGS() != 2 || zend_get_parameters_ex(2, &streamind, &pflags) == FAILURE) {
++ 		ZEND_WRONG_PARAM_COUNT();
++ 	}
++
++	ZEND_FETCH_RESOURCE(imap_le_struct, pils *, streamind, -1, "imap", le_imap);
++
++	convert_to_long_ex(pflags);
++	flags = Z_LVAL_PP(pflags);
++
++	if (object_init(return_value) == FAILURE) {
++		RETURN_FALSE;
++	}
++
++	if (flags & SA_MESSAGES) {
++		add_property_long(return_value, "messages", imap_le_struct->imap_stream->nmsgs);
++	}
++	if (flags & SA_RECENT) {
++		add_property_long(return_value, "recent", imap_le_struct->imap_stream->recent);
++	}
++	if (flags & SA_UIDNEXT) {
++		add_property_long(return_value, "uidnext", imap_le_struct->imap_stream->uid_last+1);
++	}
++	if (flags & SA_UIDVALIDITY) {
++		add_property_long(return_value, "uidvalidity", imap_le_struct->imap_stream->uid_validity);
++	}
++}
++/* }}} */
++
+ /* {{{ proto object imap_status(resource stream_id, string mailbox, int options)
+    Get status info from a mailbox */
+ PHP_FUNCTION(imap_status)
+diff -Naurp php-5.2.6/ext/imap/php_imap.h php-5.2.6.oden/ext/imap/php_imap.h
+--- php-5.2.6/ext/imap/php_imap.h	2008-09-11 12:21:08.000000000 +0200
++++ php-5.2.6.oden/ext/imap/php_imap.h	2008-09-11 12:20:46.000000000 +0200
+@@ -152,6 +152,7 @@ PHP_FUNCTION(imap_lsub);
+ PHP_FUNCTION(imap_lsub_full);
+ PHP_FUNCTION(imap_create);
+ PHP_FUNCTION(imap_rename);
++PHP_FUNCTION(imap_status_current);
+ PHP_FUNCTION(imap_status);
+ PHP_FUNCTION(imap_bodystruct);
+ PHP_FUNCTION(imap_fetch_overview);

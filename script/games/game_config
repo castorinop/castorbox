@@ -1,0 +1,2 @@
+export HOME=/config
+export LD_LIBRARY_PATH=/lib:/usr/lib:/games/lib

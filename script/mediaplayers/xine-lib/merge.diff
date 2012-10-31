@@ -1,0 +1,42 @@
+--- old/checksums	2010-10-01 17:16:08.105204529 -0300
++++ new/checksums	2010-12-09 15:27:12.048128944 -0300
+@@ -1,2 +1,2 @@
+-f75f08a2d0f434de2c12d815adc3f9e4  download/xine-lib-ffmpeg_cflags.patch
+-6b1146ae0ce10bb5f06434f6562d0c9e  download/xine-lib-vdpau_avutil_cflags.patch
++09bd0cde94737cfc29b3cd8692287572  download/xine-lib-ffmpeg_cflags.patch
++e5558039b00d968ae732d5a6b48ce0ea  download/xine-lib-vdpau_avutil_cflags.patch
+diff -ruP -x '.*' -x '*~' ./files/xine-lib-ffmpeg_cflags.patch new/files/xine-lib-ffmpeg_cflags.patch
+--- old/files/xine-lib-ffmpeg_cflags.patch	2010-10-01 17:16:08.105204529 -0300
++++ new/files/xine-lib-ffmpeg_cflags.patch	2010-12-09 15:27:12.008009871 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-lib-11590-old/src/combined/ffmpeg/Makefile.am xine-lib-11590-new/src/combined/ffmpeg/Makefile.am
+---- xine-lib-11590-old/src/combined/ffmpeg/Makefile.am	2010-09-23 14:13:53.000000000 -0700
+-+++ xine-lib-11590-new/src/combined/ffmpeg/Makefile.am	2010-09-23 14:14:58.000000000 -0700
++diff -Naur xine-lib-11592-old/src/combined/ffmpeg/Makefile.am xine-lib-11592-new/src/combined/ffmpeg/Makefile.am
++--- xine-lib-11592-old/src/combined/ffmpeg/Makefile.am	2010-12-08 13:09:09.000000000 -0800
+++++ xine-lib-11592-new/src/combined/ffmpeg/Makefile.am	2010-12-08 13:09:18.000000000 -0800
+ @@ -28,7 +28,7 @@
+  
+  # Generation of ffmpeg->xine codec mapping lists (see xine_*.list).
+diff -ruP -x '.*' -x '*~' ./files/xine-lib-vdpau_avutil_cflags.patch new/files/xine-lib-vdpau_avutil_cflags.patch
+--- old/files/xine-lib-vdpau_avutil_cflags.patch	2010-10-01 17:16:08.107189745 -0300
++++ new/files/xine-lib-vdpau_avutil_cflags.patch	2010-12-09 15:27:12.007558114 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-lib-11590-old/src/video_out/Makefile.am xine-lib-11590-new/src/video_out/Makefile.am
+---- xine-lib-11590-old/src/video_out/Makefile.am	2010-09-23 14:14:58.000000000 -0700
+-+++ xine-lib-11590-new/src/video_out/Makefile.am	2010-09-23 14:14:58.000000000 -0700
++diff -Naur xine-lib-11592-old/src/video_out/Makefile.am xine-lib-11592-new/src/video_out/Makefile.am
++--- xine-lib-11592-old/src/video_out/Makefile.am	2010-12-08 13:09:18.000000000 -0800
+++++ xine-lib-11592-new/src/video_out/Makefile.am	2010-12-08 13:09:18.000000000 -0800
+ @@ -121,7 +121,7 @@
+  
+  xineplug_vo_out_vdpau_la_SOURCES = video_out_vdpau.c
+--- old/Makefile	2010-10-01 17:16:08.108305277 -0300
++++ new/Makefile	2010-12-09 15:27:12.048128944 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = xine-lib
+-GARVERSION = 11590
++GARVERSION = 11592
+ CATEGORIES = mediaplayers
+ MASTER_SITES = hg://hg.debian.org/hg/xine-lib/$(GARNAME)-1.2/
+ DISTFILES = $(DISTNAME).tar.bz2

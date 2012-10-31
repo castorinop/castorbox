@@ -1,0 +1,12 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mediatomb-0.11.0/configure work/main.d/mediatomb-0.11.0/configure
+--- old-mediatomb-0.11.0/configure	2008-03-01 20:49:10.000000000 -0200
++++ new-mediatomb-0.11.0/configure	2009-07-04 14:32:18.000000000 -0300
+@@ -29707,7 +29707,7 @@
+     CXXFLAGS="$CXXFLAGS $INOTIFY_CXXFLAGS"
+     { echo "$as_me:$LINENO: checking whether sys/inotify.h works" >&5
+ echo $ECHO_N "checking whether sys/inotify.h works... $ECHO_C" >&6; }
+-    if test "$cross_compiling" = yes; then
++    if test "$cross_compiling" = zyes; then
+   { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling
+ See \`config.log' for more details." >&5
+ echo "$as_me: error: cannot run test program while cross compiling

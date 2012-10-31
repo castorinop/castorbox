@@ -1,0 +1,8 @@
+# /etc/acpi/events/ibmvideobtn
+# This is called when the user presses Fn-F8. On ThinkPads this
+# toggles the stretching of the display; On LenovoPads this toggles
+# the touchpad on and off.
+
+event=ibm/hotkey HKEY 00000080 00001008
+action=/etc/acpi/thinkpad-stretchortouchpad.sh
+

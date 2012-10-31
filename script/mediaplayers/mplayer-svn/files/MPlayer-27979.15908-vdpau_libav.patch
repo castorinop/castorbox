@@ -1,0 +1,1177 @@
+diff -Naur MPlayer-27979.15908-old/libavcodec/allcodecs.c MPlayer-27979.15908-new/libavcodec/allcodecs.c
+--- MPlayer-27979.15908-old/libavcodec/allcodecs.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/allcodecs.c	2008-11-22 12:09:55.000000000 -0800
+@@ -98,6 +98,7 @@
+     REGISTER_DECODER (H263I, h263i);
+     REGISTER_ENCODER (H263P, h263p);
+     REGISTER_DECODER (H264, h264);
++    REGISTER_DECODER (H264_VDPAU, h264_vdpau);
+     REGISTER_ENCDEC  (HUFFYUV, huffyuv);
+     REGISTER_DECODER (IDCIN, idcin);
+     REGISTER_DECODER (INDEO2, indeo2);
+@@ -114,6 +115,7 @@
+     REGISTER_DECODER (MMVIDEO, mmvideo);
+     REGISTER_DECODER (MOTIONPIXELS, motionpixels);
+     REGISTER_DECODER (MPEG_XVMC, mpeg_xvmc);
++    REGISTER_DECODER (MPEG_VDPAU, mpeg_vdpau);
+     REGISTER_ENCDEC  (MPEG1VIDEO, mpeg1video);
+     REGISTER_ENCDEC  (MPEG2VIDEO, mpeg2video);
+     REGISTER_ENCDEC  (MPEG4, mpeg4);
+@@ -162,6 +164,7 @@
+     REGISTER_DECODER (ULTI, ulti);
+     REGISTER_DECODER (VB, vb);
+     REGISTER_DECODER (VC1, vc1);
++    REGISTER_DECODER (VC1_VDPAU, vc1_vdpau);
+     REGISTER_DECODER (VCR1, vcr1);
+     REGISTER_DECODER (VMDVIDEO, vmdvideo);
+     REGISTER_DECODER (VMNC, vmnc);
+@@ -174,6 +177,7 @@
+     REGISTER_ENCDEC  (WMV1, wmv1);
+     REGISTER_ENCDEC  (WMV2, wmv2);
+     REGISTER_DECODER (WMV3, wmv3);
++    REGISTER_DECODER (WMV3_VDPAU, wmv3_vdpau);
+     REGISTER_DECODER (WNV1, wnv1);
+     REGISTER_DECODER (XAN_WC3, xan_wc3);
+     REGISTER_DECODER (XL, xl);
+diff -Naur MPlayer-27979.15908-old/libavcodec/avcodec.h MPlayer-27979.15908-new/libavcodec/avcodec.h
+--- MPlayer-27979.15908-old/libavcodec/avcodec.h	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/avcodec.h	2008-11-22 12:09:55.000000000 -0800
+@@ -190,6 +190,10 @@
+     CODEC_ID_MOTIONPIXELS,
+     CODEC_ID_TGV,
+     CODEC_ID_TGQ,
++    CODEC_ID_MPEGVIDEO_VDPAU,
++    CODEC_ID_H264_VDPAU,
++    CODEC_ID_VC1_VDPAU,
++    CODEC_ID_WMV3_VDPAU,
+ 
+     /* various PCM "codecs" */
+     CODEC_ID_PCM_S16LE= 0x10000,
+@@ -526,6 +530,8 @@
+  * This can be used to prevent truncation of the last audio samples.
+  */
+ #define CODEC_CAP_SMALL_LAST_FRAME 0x0040
++/* Codec can export data for HW decoding (VDPAU). */
++#define CODEC_CAP_HWACCEL_VDPAU    0x0080
+ 
+ //The following defines may change, don't expect compatibility if you use them.
+ #define MB_TYPE_INTRA4x4   0x0001
+@@ -1736,6 +1742,13 @@
+     int xvmc_acceleration;
+ 
+     /**
++     * VDPAU Acceleration
++     * - encoding: forbidden
++     * - decoding: set by decoder
++     */
++    int vdpau_acceleration;
++
++    /**
+      * macroblock decision mode
+      * - encoding: Set by user.
+      * - decoding: unused
+diff -Naur MPlayer-27979.15908-old/libavcodec/h263dec.c MPlayer-27979.15908-new/libavcodec/h263dec.c
+--- MPlayer-27979.15908-old/libavcodec/h263dec.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/h263dec.c	2008-11-22 12:09:55.000000000 -0800
+@@ -92,6 +92,8 @@
+         break;
+     case CODEC_ID_VC1:
+     case CODEC_ID_WMV3:
++    case CODEC_ID_VC1_VDPAU:
++    case CODEC_ID_WMV3_VDPAU:
+         s->h263_msmpeg4 = 1;
+         s->h263_pred = 1;
+         s->msmpeg4_version=6;
+diff -Naur MPlayer-27979.15908-old/libavcodec/h264.c MPlayer-27979.15908-new/libavcodec/h264.c
+--- MPlayer-27979.15908-old/libavcodec/h264.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/h264.c	2008-11-22 12:09:55.000000000 -0800
+@@ -72,6 +72,10 @@
+ static VLC_TYPE run7_vlc_table[96][2];
+ static const int run7_vlc_table_size = 96;
+ 
++extern int ff_VDPAU_h264_set_reference_frames(H264Context *h);
++extern int ff_VDPAU_h264_picture_complete(H264Context *h, const uint8_t *buf, int buf_size);
++extern void ff_VDPAU_h264_set_reference_frames_count(H264Context *h);
++
+ static void svq3_luma_dc_dequant_idct_c(DCTELEM *block, int qp);
+ static void svq3_add_idct_c(uint8_t *dst, DCTELEM *block, int stride, int qp, int dc);
+ static void filter_mb( H264Context *h, int mb_x, int mb_y, uint8_t *img_y, uint8_t *img_cb, uint8_t *img_cr, unsigned int linesize, unsigned int uvlinesize);
+@@ -101,6 +105,16 @@
+     {0,2,0,2,7,10,7,10}
+ };
+ 
++static const enum PixelFormat pixfmt_vdpau_h264_baseline_420[] = {
++                                           PIX_FMT_VDPAU_H264_BASELINE,
++                                           PIX_FMT_NONE};
++static const enum PixelFormat pixfmt_vdpau_h264_main_420[] = {
++                                           PIX_FMT_VDPAU_H264_MAIN,
++                                           PIX_FMT_NONE};
++static const enum PixelFormat pixfmt_vdpau_h264_high_420[] = {
++                                           PIX_FMT_VDPAU_H264_HIGH,
++                                           PIX_FMT_NONE};
++
+ static void fill_caches(H264Context *h, int mb_type, int for_deblock){
+     MpegEncContext * const s = &h->s;
+     const int mb_xy= h->mb_xy;
+@@ -2221,10 +2235,8 @@
+     s->quarter_sample = 1;
+     s->low_delay= 1;
+ 
+-    if(avctx->codec_id == CODEC_ID_SVQ3)
+-        avctx->pix_fmt= PIX_FMT_YUVJ420P;
+-    else
+-        avctx->pix_fmt= PIX_FMT_YUV420P;
++    // Set in decode_postinit() once initial parsing is complete
++    avctx->pix_fmt = PIX_FMT_NONE;
+ 
+     decode_init_vlc();
+ 
+@@ -2242,10 +2254,43 @@
+     return 0;
+ }
+ 
++static int decode_postinit(H264Context *h, SPS *sps){
++    AVCodecContext * const avctx= h->s.avctx;
++
++    if (avctx->pix_fmt != PIX_FMT_NONE){
++        return 0;
++    }
++
++    if (avctx->vdpau_acceleration) {
++        if(h->s.chroma_format >= 2) {
++            return -2;
++        }
++        if (sps->profile_idc == 66) {
++            avctx->pix_fmt = avctx->get_format(avctx, pixfmt_vdpau_h264_baseline_420);
++        } else if (sps->profile_idc == 77) {
++            avctx->pix_fmt = avctx->get_format(avctx, pixfmt_vdpau_h264_main_420);
++        } else if (sps->profile_idc == 100) {
++            avctx->pix_fmt = avctx->get_format(avctx, pixfmt_vdpau_h264_high_420);
++        } else {
++            return -2;
++        }
++    } else if (avctx->codec_id == CODEC_ID_SVQ3) {
++        avctx->pix_fmt= PIX_FMT_YUVJ420P;
++    } else {
++        avctx->pix_fmt= PIX_FMT_YUV420P;
++    }
++
++    return 0;
++}
++
+ static int frame_start(H264Context *h){
+     MpegEncContext * const s = &h->s;
+     int i;
+ 
++#ifdef HAVE_VDPAU
++    ff_VDPAU_h264_set_reference_frames_count(h);
++#endif
++
+     if(MPV_frame_start(s, s->avctx) < 0)
+         return -1;
+     ff_er_frame_start(s);
+@@ -7205,6 +7250,10 @@
+                ((const char*[]){"Gray","420","422","444"})[sps->chroma_format_idc]
+                );
+     }
++
++    if (decode_postinit(h, sps) < 0)
++        return -1;
++
+     return 0;
+ }
+ 
+@@ -7337,6 +7386,9 @@
+     H264Context *hx;
+     int i;
+ 
++    if(avctx->vdpau_acceleration) {
++        return;
++    } else
+     if(context_count == 1) {
+         decode_slice(avctx, &h);
+     } else {
+@@ -7660,6 +7712,12 @@
+         s->current_picture_ptr->qscale_type= FF_QSCALE_TYPE_H264;
+         s->current_picture_ptr->pict_type= s->pict_type;
+ 
++#ifdef HAVE_VDPAU
++        if (avctx->vdpau_acceleration) {
++            ff_VDPAU_h264_set_reference_frames(h);
++        }
++#endif
++
+         if(!s->dropable) {
+             execute_ref_pic_marking(h, h->mmco, h->mmco_index);
+             h->prev_poc_msb= h->poc_msb;
+@@ -7668,6 +7726,12 @@
+         h->prev_frame_num_offset= h->frame_num_offset;
+         h->prev_frame_num= h->frame_num;
+ 
++#ifdef HAVE_VDPAU
++        if (avctx->vdpau_acceleration) {
++            ff_VDPAU_h264_picture_complete(h, buf, buf_size);
++        }
++#endif
++
+         /*
+          * FIXME: Error handling code does not seem to support interlaced
+          * when slices span multiple rows
+@@ -7680,6 +7744,9 @@
+          * past end by one (callers fault) and resync_mb_y != 0
+          * causes problems for the first MB line, too.
+          */
++#ifdef HAVE_VDPAU
++        if (!avctx->vdpau_acceleration)
++#endif
+         if (!FIELD_PICTURE)
+             ff_er_frame_end(s);
+ 
+@@ -8053,4 +8120,35 @@
+     .long_name = NULL_IF_CONFIG_SMALL("H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10"),
+ };
+ 
++#ifdef HAVE_VDPAU
++static av_cold int h264_vdpau_decode_init(AVCodecContext *avctx){
++    if( avctx->thread_count > 1)
++        return -1;
++    if( !(avctx->slice_flags & SLICE_FLAG_CODED_ORDER) )
++        return -1;
++    if( !(avctx->slice_flags & SLICE_FLAG_ALLOW_FIELD) ){
++        dprintf(avctx, "h264.c: VDPAU decoder does not set SLICE_FLAG_ALLOW_FIELD\n");
++    }
++    decode_init(avctx);
++
++    avctx->vdpau_acceleration = 1;
++
++    return 0;
++}
++
++AVCodec h264_vdpau_decoder = {
++    "h264_vdpau",
++    CODEC_TYPE_VIDEO,
++    CODEC_ID_H264_VDPAU,
++    sizeof(H264Context),
++    h264_vdpau_decode_init,
++    NULL,
++    decode_end,
++    decode_frame,
++    CODEC_CAP_DR1 | CODEC_CAP_DELAY | CODEC_CAP_HWACCEL_VDPAU,
++    .flush= flush_dpb,
++    .long_name = NULL_IF_CONFIG_SMALL("H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10 (VDPAU acceleration)"),
++};
++#endif
++
+ #include "svq3.c"
+diff -Naur MPlayer-27979.15908-old/libavcodec/imgconvert.c MPlayer-27979.15908-new/libavcodec/imgconvert.c
+--- MPlayer-27979.15908-old/libavcodec/imgconvert.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/imgconvert.c	2008-11-22 12:09:55.000000000 -0800
+@@ -266,6 +266,33 @@
+     [PIX_FMT_XVMC_MPEG2_IDCT] = {
+         .name = "xvmcidct",
+     },
++    [PIX_FMT_VDPAU_MPEG1] = {
++        .name = "vdpau_mpeg1",
++    },
++    [PIX_FMT_VDPAU_MPEG2_SIMPLE] = {
++        .name = "vdpau_mpeg2_simple",
++    },
++    [PIX_FMT_VDPAU_MPEG2_MAIN] = {
++        .name = "vdpau_mpeg2_main",
++    },
++    [PIX_FMT_VDPAU_H264_BASELINE] = {
++        .name = "vdpau_h264_baseline",
++    },
++    [PIX_FMT_VDPAU_H264_MAIN] = {
++        .name = "vdpau_h264_main",
++    },
++    [PIX_FMT_VDPAU_H264_HIGH] = {
++        .name = "vdpau_h264_high",
++    },
++    [PIX_FMT_VDPAU_VC1_SIMPLE] = {
++        .name = "vdpau_vc1_simple",
++    },
++    [PIX_FMT_VDPAU_VC1_MAIN] = {
++        .name = "vdpau_vc1_main",
++    },
++    [PIX_FMT_VDPAU_VC1_ADVANCED] = {
++        .name = "vdpau_vc1_advanced",
++    },
+     [PIX_FMT_UYYVYY411] = {
+         .name = "uyyvyy411",
+         .nb_channels = 1,
+diff -Naur MPlayer-27979.15908-old/libavcodec/Makefile MPlayer-27979.15908-new/libavcodec/Makefile
+--- MPlayer-27979.15908-old/libavcodec/Makefile	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/Makefile	2008-11-22 12:09:55.000000000 -0800
+@@ -387,6 +387,7 @@
+ OBJS-$(HAVE_W32THREADS)                += w32thread.o
+ 
+ OBJS-$(HAVE_XVMC)                      += xvmcvideo.o
++OBJS-$(HAVE_VDPAU)                     += vdpauvideo.o
+ 
+ # processor-specific code
+ MMX-OBJS-$(CONFIG_CAVS_DECODER)        += i386/cavsdsp_mmx.o
+diff -Naur MPlayer-27979.15908-old/libavcodec/mpeg12.c MPlayer-27979.15908-new/libavcodec/mpeg12.c
+--- MPlayer-27979.15908-old/libavcodec/mpeg12.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/mpeg12.c	2008-11-22 12:09:55.000000000 -0800
+@@ -68,10 +68,22 @@
+ extern void XVMC_pack_pblocks(MpegEncContext *s,int cbp);
+ extern void XVMC_init_block(MpegEncContext *s);//set s->block
+ 
++extern int ff_VDPAU_mpeg_field_start(MpegEncContext *s);
++extern void ff_VDPAU_mpeg_picture_complete(MpegEncContext *s, const uint8_t *buf, int buf_size, int slice_count);
++
+ static const enum PixelFormat pixfmt_xvmc_mpg2_420[] = {
+                                            PIX_FMT_XVMC_MPEG2_IDCT,
+                                            PIX_FMT_XVMC_MPEG2_MC,
+                                            PIX_FMT_NONE};
++static const enum PixelFormat pixfmt_vdpau_mpg1_420[] = {
++                                           PIX_FMT_VDPAU_MPEG1,
++                                           PIX_FMT_NONE};
++static const enum PixelFormat pixfmt_vdpau_mpg2simple_420[] = {
++                                           PIX_FMT_VDPAU_MPEG2_SIMPLE,
++                                           PIX_FMT_NONE};
++static const enum PixelFormat pixfmt_vdpau_mpg2main_420[] = {
++                                           PIX_FMT_VDPAU_MPEG2_MAIN,
++                                           PIX_FMT_NONE};
+ 
+ uint8_t ff_mpeg12_static_rl_table_store[2][2][2*MAX_RUN + MAX_LEVEL + 3];
+ 
+@@ -1212,6 +1224,22 @@
+     }
+ }
+ 
++static int vdpau_fill_pix_fmt(MpegEncContext *s, AVCodecContext *avctx){
++    if(s->chroma_format >= 2)
++        return -1;
++    if(avctx->sub_id == 1)
++        avctx->pix_fmt = avctx->get_format(avctx,pixfmt_vdpau_mpg1_420);
++    else
++        if(avctx->profile == 5)
++            avctx->pix_fmt = avctx->get_format(avctx,pixfmt_vdpau_mpg2simple_420);
++        else if(avctx->profile == 4)
++            avctx->pix_fmt = avctx->get_format(avctx,pixfmt_vdpau_mpg2main_420);
++        else
++            return -1;
++    return 0;
++}
++
++
+ /* Call this function when we know all parameters.
+  * It may be called in different places for MPEG-1 and MPEG-2. */
+ static int mpeg_decode_postinit(AVCodecContext *avctx){
+@@ -1288,6 +1316,10 @@
+             }
+         }//MPEG-2
+ 
++        if(avctx->vdpau_acceleration){
++            if(vdpau_fill_pix_fmt(s, avctx)<0)
++                return -2;
++        }else
+         if(avctx->xvmc_acceleration){
+             avctx->pix_fmt = avctx->get_format(avctx,pixfmt_xvmc_mpg2_420);
+         }else{
+@@ -1646,6 +1678,11 @@
+          XVMC_field_start(s,avctx);
+ #endif
+ 
++#ifdef HAVE_VDPAU
++    if(s->avctx->vdpau_acceleration)
++         ff_VDPAU_mpeg_field_start(s);
++#endif
++
+     return 0;
+ }
+ 
+@@ -1922,6 +1959,9 @@
+ 
+         s->current_picture_ptr->qscale_type= FF_QSCALE_TYPE_MPEG2;
+ 
++#ifdef HAVE_VDPAU
++        if(!s->avctx->vdpau_acceleration)
++#endif
+         ff_er_frame_end(s);
+ 
+         MPV_frame_end(s);
+@@ -2069,6 +2109,10 @@
+     avctx->has_b_frames= 0; //true?
+     s->low_delay= 1;
+ 
++    if(avctx->vdpau_acceleration){
++        if(vdpau_fill_pix_fmt(s, avctx)<0)
++            return -2;
++    }else
+     if(avctx->xvmc_acceleration){
+         avctx->pix_fmt = avctx->get_format(avctx,pixfmt_xvmc_mpg2_420);
+     }else{
+@@ -2303,6 +2347,14 @@
+                     for(i=0; i<s->slice_count; i++)
+                         s2->error_count += s2->thread_context[i]->error_count;
+                 }
++
++#ifdef HAVE_VDPAU
++                if (avctx->vdpau_acceleration) {
++                    /* Fills mpeg12 picture informations before returing from libavcodec. */
++                    ff_VDPAU_mpeg_picture_complete(s2, buf, buf_size, s->slice_count);
++                }
++#endif
++
+                 if (slice_end(avctx, picture)) {
+                     if(s2->last_picture_ptr || s2->low_delay) //FIXME merge with the stuff in mpeg_decode_slice
+                         *data_size = sizeof(AVPicture);
+@@ -2388,6 +2440,11 @@
+                     return -1;
+                 }
+ 
++                if (avctx->vdpau_acceleration) {
++                    s->slice_count++;
++                    break;                
++                }
++
+                 if(avctx->thread_count > 1){
+                     int threshold= (s2->mb_height*s->slice_count + avctx->thread_count/2) / avctx->thread_count;
+                     if(threshold <= mb_y){
+@@ -2507,3 +2564,36 @@
+ };
+ 
+ #endif
++
++#ifdef HAVE_VDPAU
++static av_cold int mpeg_vdpau_decode_init(AVCodecContext *avctx){
++    if( avctx->thread_count > 1)
++        return -1;
++    if( !(avctx->slice_flags & SLICE_FLAG_CODED_ORDER) )
++        return -1;
++    if( !(avctx->slice_flags & SLICE_FLAG_ALLOW_FIELD) ){
++        dprintf(avctx, "mpeg12.c: VDPAU decoder does not set SLICE_FLAG_ALLOW_FIELD\n");
++    }
++    mpeg_decode_init(avctx);
++
++    // Set in mpeg_decode_postinit() once initial parsing is complete
++    avctx->pix_fmt = PIX_FMT_NONE;
++    avctx->vdpau_acceleration = 1;
++
++    return 0;
++}
++
++AVCodec mpeg_vdpau_decoder = {
++    "mpegvideo_vdpau",
++    CODEC_TYPE_VIDEO,
++    CODEC_ID_MPEGVIDEO_VDPAU,
++    sizeof(Mpeg1Context),
++    mpeg_vdpau_decode_init,
++    NULL,
++    mpeg_decode_end,
++    mpeg_decode_frame,
++    CODEC_CAP_DR1 | CODEC_CAP_TRUNCATED | CODEC_CAP_HWACCEL_VDPAU | CODEC_CAP_DELAY,
++    .flush= ff_mpeg_flush,
++    .long_name = NULL_IF_CONFIG_SMALL("MPEG-1/2 video (VDPAU acceleration)"),
++};
++#endif
+diff -Naur MPlayer-27979.15908-old/libavcodec/mpegvideo.c MPlayer-27979.15908-new/libavcodec/mpegvideo.c
+--- MPlayer-27979.15908-old/libavcodec/mpegvideo.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/mpegvideo.c	2008-11-22 12:09:55.000000000 -0800
+@@ -58,6 +58,7 @@
+ extern void XVMC_field_end(MpegEncContext *s);
+ extern void XVMC_decode_mb(MpegEncContext *s);
+ 
++extern int VDPAU_mpeg_field_start(MpegEncContext *s);
+ 
+ /* enable all paranoid tests for rounding, overflows, etc... */
+ //#define PARANOID
+@@ -954,6 +955,10 @@
+         XVMC_field_end(s);
+     }else
+ #endif
++#ifdef HAVE_VDPAU
++    if(s->avctx->vdpau_acceleration){
++    }else
++#endif
+     if(s->unrestricted_mv && s->current_picture.reference && !s->intra_only && !(s->flags&CODEC_FLAG_EMU_EDGE)) {
+             s->dsp.draw_edges(s->current_picture.data[0], s->linesize  , s->h_edge_pos   , s->v_edge_pos   , EDGE_WIDTH  );
+             s->dsp.draw_edges(s->current_picture.data[1], s->uvlinesize, s->h_edge_pos>>1, s->v_edge_pos>>1, EDGE_WIDTH/2);
+diff -Naur MPlayer-27979.15908-old/libavcodec/utils.c MPlayer-27979.15908-new/libavcodec/utils.c
+--- MPlayer-27979.15908-old/libavcodec/utils.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/utils.c	2008-11-22 12:09:55.000000000 -0800
+@@ -644,6 +644,7 @@
+ {"context", "context model", OFFSET(context_model), FF_OPT_TYPE_INT, DEFAULT, INT_MIN, INT_MAX, V|E},
+ {"slice_flags", NULL, OFFSET(slice_flags), FF_OPT_TYPE_INT, DEFAULT, INT_MIN, INT_MAX},
+ {"xvmc_acceleration", NULL, OFFSET(xvmc_acceleration), FF_OPT_TYPE_INT, DEFAULT, INT_MIN, INT_MAX},
++{"vdpau_acceleration", NULL, OFFSET(vdpau_acceleration), FF_OPT_TYPE_INT, DEFAULT, INT_MIN, INT_MAX},
+ {"mbd", "macroblock decision algorithm (high quality mode)", OFFSET(mb_decision), FF_OPT_TYPE_INT, DEFAULT, INT_MIN, INT_MAX, V|E, "mbd"},
+ {"simple", "use mbcmp (default)", 0, FF_OPT_TYPE_CONST, FF_MB_DECISION_SIMPLE, INT_MIN, INT_MAX, V|E, "mbd"},
+ {"bits", "use fewest bits", 0, FF_OPT_TYPE_CONST, FF_MB_DECISION_BITS, INT_MIN, INT_MAX, V|E, "mbd"},
+diff -Naur MPlayer-27979.15908-old/libavcodec/vc1.c MPlayer-27979.15908-new/libavcodec/vc1.c
+--- MPlayer-27979.15908-old/libavcodec/vc1.c	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/vc1.c	2008-11-22 12:09:55.000000000 -0800
+@@ -41,8 +41,22 @@
+ #define MB_INTRA_VLC_BITS 9
+ #define DC_VLC_BITS 9
+ #define AC_VLC_BITS 9
++
++extern int ff_VDPAU_vc1_decode_picture(MpegEncContext *s, AVCodecContext *avctx, VC1Context *v, const uint8_t *buf, int buf_size);
++
+ static const uint16_t table_mb_intra[64][2];
+ 
++#ifdef HAVE_VDPAU
++static const enum PixelFormat pixfmt_vdpau_vc1_simple_420[] = {
++                                           PIX_FMT_VDPAU_VC1_SIMPLE,
++                                           PIX_FMT_NONE};
++static const enum PixelFormat pixfmt_vdpau_vc1_main_420[] = {
++                                           PIX_FMT_VDPAU_VC1_MAIN,
++                                           PIX_FMT_NONE};
++static const enum PixelFormat pixfmt_vdpau_vc1_advanced_420[] = {
++                                           PIX_FMT_VDPAU_VC1_ADVANCED,
++                                           PIX_FMT_NONE};
++#endif
+ 
+ /**
+  * Init VC-1 specific tables and VC1Context members
+@@ -828,6 +842,29 @@
+     }
+ }
+ 
++#ifdef HAVE_VDPAU
++static int decode_postinit(VC1Context *v, AVCodecContext *avctx)
++{
++    if (avctx->pix_fmt != PIX_FMT_NONE){
++        return 0;
++    }
++
++    if (avctx->vdpau_acceleration) { // VC1
++        if (v->profile == 0) {
++            avctx->pix_fmt = avctx->get_format(avctx, pixfmt_vdpau_vc1_simple_420);
++        } else if (v->profile == 1) {
++            avctx->pix_fmt = avctx->get_format(avctx, pixfmt_vdpau_vc1_main_420);
++        } else if (v->profile == 3) {
++            avctx->pix_fmt = avctx->get_format(avctx, pixfmt_vdpau_vc1_advanced_420);
++        } else {
++            return -2;
++        }            
++    } 
++
++    return 0;
++}
++#endif
++
+ static int decode_sequence_header_adv(VC1Context *v, GetBitContext *gb);
+ 
+ /**
+@@ -1007,8 +1044,24 @@
+     if(get_bits1(gb)) { //Display Info - decoding is not affected by it
+         int w, h, ar = 0;
+         av_log(v->s.avctx, AV_LOG_DEBUG, "Display extended info:\n");
+-        v->s.avctx->width  = v->s.width  = w = get_bits(gb, 14) + 1;
+-        v->s.avctx->height = v->s.height = h = get_bits(gb, 14) + 1;
++        // FIXME: The w/h parsed here are the *display* width/height, not the
++        // coded width/height. Ideally, we should make the commented
++        // assignments below, but that causes problems:
++        // * The SW decoder in this file experiences errors, because it
++        //   assumes these assigned values are the coded size:
++        //   [vc1 @ 0x86f2130]concealing 150 DC, 150 AC, 150 MV errors
++        // * VDPAU also assumes these are the coded size, since this is the
++        //   only size passed to vo_vdpau.c:config(). This causes errors
++        //   during the decode process.
++        // However, simply removing these assignments is not the complete fix,
++        // because without them, the stream is displayed at its coded size,
++        // not this requested display size. Ideally, setting:
++        // sample_aspect_ratio = (AVRational){w, h}
++        // in the case when ar is not present/set would persuade other modules
++        // to scale to this requested size. However, sample_aspect_ratio
++        // appears to be completely ignored elsewhere.
++        /*v->s.avctx->width  = v->s.width  =*/ w = get_bits(gb, 14) + 1;
++        /*v->s.avctx->height = v->s.height =*/ h = get_bits(gb, 14) + 1;
+         av_log(v->s.avctx, AV_LOG_DEBUG, "Display dimensions: %ix%i\n", w, h);
+         if(get_bits1(gb))
+             ar = get_bits(gb, 4);
+@@ -1059,13 +1112,13 @@
+ static int decode_entry_point(AVCodecContext *avctx, GetBitContext *gb)
+ {
+     VC1Context *v = avctx->priv_data;
+-    int i, blink, clentry, refdist;
++    int i, blink, clentry;
+ 
+     av_log(avctx, AV_LOG_DEBUG, "Entry point: %08X\n", show_bits_long(gb, 32));
+     blink = get_bits1(gb); // broken link
+     clentry = get_bits1(gb); // closed entry
+     v->panscanflag = get_bits1(gb);
+-    refdist = get_bits1(gb); // refdist flag
++    v->refdist_flag = get_bits1(gb);
+     v->s.loop_filter = get_bits1(gb);
+     v->fastuvmc = get_bits1(gb);
+     v->extended_mv = get_bits1(gb);
+@@ -1086,20 +1139,22 @@
+     }
+     if(v->extended_mv)
+         v->extended_dmv = get_bits1(gb);
+-    if(get_bits1(gb)) {
++    v->range_mapy_flag = get_bits1(gb);
++    if(v->range_mapy_flag) {
+         av_log(avctx, AV_LOG_ERROR, "Luma scaling is not supported, expect wrong picture\n");
+-        skip_bits(gb, 3); // Y range, ignored for now
++        v->range_mapy = get_bits(gb, 3);
+     }
+-    if(get_bits1(gb)) {
++    v->range_mapuv_flag = get_bits1(gb);
++    if(v->range_mapuv_flag) {
+         av_log(avctx, AV_LOG_ERROR, "Chroma scaling is not supported, expect wrong picture\n");
+-        skip_bits(gb, 3); // UV range, ignored for now
++        v->range_mapuv = get_bits(gb, 3);
+     }
+ 
+     av_log(avctx, AV_LOG_DEBUG, "Entry point info:\n"
+         "BrokenLink=%i, ClosedEntry=%i, PanscanFlag=%i\n"
+         "RefDist=%i, Postproc=%i, FastUVMC=%i, ExtMV=%i\n"
+         "DQuant=%i, VSTransform=%i, Overlap=%i, Qmode=%i\n",
+-        blink, clentry, v->panscanflag, refdist, v->s.loop_filter,
++        blink, clentry, v->panscanflag, v->refdist_flag, v->s.loop_filter,
+         v->fastuvmc, v->extended_mv, v->dquant, v->vstransform, v->overlap, v->quantizer_mode);
+ 
+     return 0;
+@@ -1399,6 +1454,9 @@
+ 
+     if(v->s.pict_type == FF_I_TYPE || v->s.pict_type == FF_P_TYPE) v->use_ic = 0;
+ 
++    if(v->postprocflag)
++        v->postproc = get_bits(gb, 2);
++
+     switch(v->s.pict_type) {
+     case FF_I_TYPE:
+     case FF_BI_TYPE:
+@@ -3996,7 +4054,7 @@
+ 
+     avctx->coded_width = avctx->width;
+     avctx->coded_height = avctx->height;
+-    if (avctx->codec_id == CODEC_ID_WMV3)
++    if ((avctx->codec_id == CODEC_ID_WMV3) || (avctx->codec_id == CODEC_ID_WMV3_VDPAU))
+     {
+         int count = 0;
+ 
+@@ -4111,6 +4169,9 @@
+     MpegEncContext *s = &v->s;
+     AVFrame *pict = data;
+     uint8_t *buf2 = NULL;
++#ifdef HAVE_VDPAU
++    const uint8_t *buf_vdpau = buf;
++#endif
+ 
+     /* no supplementary picture */
+     if (buf_size == 0) {
+@@ -4132,8 +4193,14 @@
+         s->current_picture_ptr= &s->picture[i];
+     }
+ 
++#ifdef HAVE_VDPAU
++    // pxt_fmt calculation for VDPAU.
++    if (decode_postinit(v, avctx) < 0)
++        return -1;
++#endif
++
+     //for advanced profile we may need to parse and unescape data
+-    if (avctx->codec_id == CODEC_ID_VC1) {
++    if ((avctx->codec_id == CODEC_ID_VC1) || (avctx->codec_id == CODEC_ID_VC1_VDPAU)) {
+         int buf_size2 = 0;
+         buf2 = av_mallocz(buf_size + FF_INPUT_BUFFER_PADDING_SIZE);
+ 
+@@ -4148,6 +4215,9 @@
+                 if(size <= 0) continue;
+                 switch(AV_RB32(start)){
+                 case VC1_CODE_FRAME:
++#ifdef HAVE_VDPAU
++                    buf_vdpau = start;
++#endif
+                     buf_size2 = vc1_unescape_buffer(start + 4, size, buf2);
+                     break;
+                 case VC1_CODE_ENTRYPOINT: /* it should be before frame data */
+@@ -4233,9 +4303,25 @@
+         return -1;
+     }
+ 
++#ifdef HAVE_VDPAU
++    // MPV_frame_start() calls to  get_buffer/videoSurfaces. Now we call
++    // VDPAU_vc1_field_start where picture-parameters are filled.
++    // VDPAU_vc1_picture_complete calls to vdpau_decoder_render.
++
++    if (avctx->vdpau_acceleration) {
++        if (ff_VDPAU_vc1_decode_picture(s, avctx, v, buf_vdpau, (buf + buf_size) - buf_vdpau) < 0) {
++            av_free(buf2);
++            return -1;
++        }
++    }
++#endif
++
+     s->me.qpel_put= s->dsp.put_qpel_pixels_tab;
+     s->me.qpel_avg= s->dsp.avg_qpel_pixels_tab;
+ 
++#ifdef HAVE_VDPAU
++    if (!avctx->vdpau_acceleration) {
++#endif
+     ff_er_frame_start(s);
+ 
+     v->bits = buf_size * 8;
+@@ -4244,6 +4330,9 @@
+ //  if(get_bits_count(&s->gb) > buf_size * 8)
+ //      return -1;
+     ff_er_frame_end(s);
++#ifdef HAVE_VDPAU
++    }
++#endif
+ 
+     MPV_frame_end(s);
+ 
+@@ -4317,3 +4406,48 @@
+     NULL,
+     .long_name = NULL_IF_CONFIG_SMALL("Windows Media Video 9"),
+ };
++
++#ifdef HAVE_VDPAU
++static av_cold int vc1_vdpau_decode_init(AVCodecContext *avctx){
++    if( avctx->thread_count > 1)
++        return -1;
++    if( !(avctx->slice_flags & SLICE_FLAG_CODED_ORDER) )
++        return -1;
++    if( !(avctx->slice_flags & SLICE_FLAG_ALLOW_FIELD) ){
++        dprintf(avctx, "vc1.c: VDPAU decoder does not set SLICE_FLAG_ALLOW_FIELD\n");
++    }
++    avctx->vdpau_acceleration = 1;
++    vc1_decode_init(avctx);
++    avctx->pix_fmt = PIX_FMT_NONE;
++
++    return 0;
++}
++
++AVCodec wmv3_vdpau_decoder = {
++    "wmv3_vdpau",
++    CODEC_TYPE_VIDEO,
++    CODEC_ID_WMV3_VDPAU,
++    sizeof(VC1Context),
++    vc1_vdpau_decode_init,
++    NULL,
++    vc1_decode_end,
++    vc1_decode_frame,
++    CODEC_CAP_DR1 | CODEC_CAP_DELAY | CODEC_CAP_HWACCEL_VDPAU,
++    NULL,
++    .long_name = NULL_IF_CONFIG_SMALL("Windows Media Video 9 VDPAU"),
++};
++
++AVCodec vc1_vdpau_decoder = {
++    "vc1_vdpau",
++    CODEC_TYPE_VIDEO,
++    CODEC_ID_VC1_VDPAU,
++    sizeof(VC1Context),
++    vc1_vdpau_decode_init,
++    NULL,
++    vc1_decode_end,
++    vc1_decode_frame,
++    CODEC_CAP_DR1 | CODEC_CAP_DELAY | CODEC_CAP_HWACCEL_VDPAU,
++    NULL,
++    .long_name = NULL_IF_CONFIG_SMALL("SMPTE VC-1 VDPAU"),
++};
++#endif
+diff -Naur MPlayer-27979.15908-old/libavcodec/vc1.h MPlayer-27979.15908-new/libavcodec/vc1.h
+--- MPlayer-27979.15908-old/libavcodec/vc1.h	2008-11-22 12:00:18.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/vc1.h	2008-11-22 12:09:55.000000000 -0800
+@@ -180,6 +180,7 @@
+     int interlace;        ///< Progressive/interlaced (RPTFTM syntax element)
+     int tfcntrflag;       ///< TFCNTR present
+     int panscanflag;      ///< NUMPANSCANWIN, TOPLEFT{X,Y}, BOTRIGHT{X,Y} present
++    int refdist_flag;     ///<
+     int extended_dmv;     ///< Additional extended dmv range at P/B frame-level
+     int color_prim;       ///< 8bits, chroma coordinates of the color primaries
+     int transfer_char;    ///< 8bits, Opto-electronic transfer characteristics
+diff -Naur MPlayer-27979.15908-old/libavcodec/vdpau_render.h MPlayer-27979.15908-new/libavcodec/vdpau_render.h
+--- MPlayer-27979.15908-old/libavcodec/vdpau_render.h	1969-12-31 16:00:00.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/vdpau_render.h	2008-11-22 12:09:55.000000000 -0800
+@@ -0,0 +1,28 @@
++#ifndef FFMPEG_VDPAU_RENDER_H
++#define FFMPEG_VDPAU_RENDER_H
++
++#include "vdpau/vdpau.h"
++#include "vdpau/vdpau_x11.h"
++
++///The surface is used for render.
++#define MP_VDPAU_STATE_USED_FOR_RENDER 1
++///The surface is needed for reference/prediction, codec manipulates this.
++#define MP_VDPAU_STATE_USED_FOR_REFERENCE 2
++
++typedef struct {
++    int magic;
++
++    VdpVideoSurface surface; ///Used as rendered surface, never changed.
++
++    int state; ///Holds MP_VDPAU_STATE_* values
++
++    union _VdpPictureInfo {
++        VdpPictureInfoMPEG1Or2 mpeg;
++        VdpPictureInfoH264     h264;
++        VdpPictureInfoVC1       vc1;
++    } info;
++
++    VdpBitstreamBuffer bitstreamBuffer;
++} vdpau_render_state_t;
++
++#endif /* FFMPEG_VDPAU_RENDER_H */
+diff -Naur MPlayer-27979.15908-old/libavcodec/vdpauvideo.c MPlayer-27979.15908-new/libavcodec/vdpauvideo.c
+--- MPlayer-27979.15908-old/libavcodec/vdpauvideo.c	1969-12-31 16:00:00.000000000 -0800
++++ MPlayer-27979.15908-new/libavcodec/vdpauvideo.c	2008-11-22 12:09:55.000000000 -0800
+@@ -0,0 +1,341 @@
++#include <limits.h>
++
++#include "avcodec.h"
++#include "dsputil.h"
++#include "mpegvideo.h"
++#include "h264.h"
++#include "vc1.h"
++
++#undef NDEBUG
++#include <assert.h>
++
++#include "vdpau_render.h"
++
++uint32_t num_reference_surfaces;
++
++int ff_VDPAU_mpeg_field_start(MpegEncContext *s)
++{
++    vdpau_render_state_t * render,* last, * next;
++    int i;
++    
++    render = (vdpau_render_state_t*)s->current_picture.data[2];
++    assert(render != NULL);
++    if (render == NULL) {
++        return -1; //make sure that this is render packet
++    }
++
++    /*  fill VdpPictureInfoMPEG1Or2 struct */
++    render->info.mpeg.picture_structure = s->picture_structure;
++    render->info.mpeg.picture_coding_type = s->pict_type;
++    render->info.mpeg.intra_dc_precision = s->intra_dc_precision;
++    render->info.mpeg.frame_pred_frame_dct = s->frame_pred_frame_dct;
++    render->info.mpeg.concealment_motion_vectors = s->concealment_motion_vectors;
++    render->info.mpeg.intra_vlc_format = s->intra_vlc_format;
++    render->info.mpeg.alternate_scan = s->alternate_scan;
++    render->info.mpeg.q_scale_type = s->q_scale_type;
++    render->info.mpeg.top_field_first = s->top_field_first;
++    render->info.mpeg.full_pel_forward_vector = s->full_pel[0];  // MPEG-1 only.  Set 0 for MPEG-2
++    render->info.mpeg.full_pel_backward_vector = s->full_pel[1]; // MPEG-1 only.  Set 0 for MPEG-2
++    render->info.mpeg.f_code[0][0] = s->mpeg_f_code[0][0];             // For MPEG-1 fill both horiz. & vert.
++    render->info.mpeg.f_code[0][1] = s->mpeg_f_code[0][1];
++    render->info.mpeg.f_code[1][0] = s->mpeg_f_code[1][0];
++    render->info.mpeg.f_code[1][1] = s->mpeg_f_code[1][1];
++    for (i = 0; i < 64; ++i) {
++        render->info.mpeg.intra_quantizer_matrix[i] =  s->intra_matrix[i];
++        render->info.mpeg.non_intra_quantizer_matrix[i] = s->inter_matrix[i];
++    }
++
++    render->info.mpeg.forward_reference = VDP_INVALID_HANDLE;
++    render->info.mpeg.backward_reference = VDP_INVALID_HANDLE;
++
++    switch(s->pict_type){
++    case  FF_I_TYPE:
++        return 0; // no prediction from other frames
++    case  FF_B_TYPE:
++        next = (vdpau_render_state_t*)s->next_picture.data[2];
++        assert(next!=NULL);
++        if (next == NULL) {
++            return -1;
++        }
++        render->info.mpeg.backward_reference = next->surface;
++        // no return here, going to set forward prediction
++    case  FF_P_TYPE:
++        last = (vdpau_render_state_t*)s->last_picture.data[2];
++        if (last == NULL) { // FIXME: Does this test make sense?
++            last = render; // predict second field from the first
++        }
++        render->info.mpeg.forward_reference = last->surface;
++        return 0;
++    }
++
++    return -1;
++}
++
++int ff_VDPAU_mpeg_picture_complete(MpegEncContext *s, const uint8_t *buf, int buf_size, int slice_count)
++{
++    vdpau_render_state_t * render;
++
++    render = (vdpau_render_state_t*)s->current_picture_ptr->data[2];
++    assert(render != NULL);
++    if (render == NULL) {
++        return -1; // make sure that this is render packet
++    }
++
++    render->bitstreamBuffer.struct_version = VDP_BITSTREAM_BUFFER_VERSION;
++    render->bitstreamBuffer.bitstream_bytes = buf_size;
++    render->bitstreamBuffer.bitstream = buf;
++    render->info.mpeg.slice_count = slice_count;
++
++    if (slice_count > 0) {
++        ff_draw_horiz_band(s, 0, s->avctx->height);
++    }
++
++    return 0;
++}
++
++int ff_VDPAU_h264_set_reference_frames(H264Context *h)
++{
++    MpegEncContext * s = &h->s;
++    vdpau_render_state_t * render, * render_ref;
++    VdpReferenceFrameH264 * rf, * rf2;
++    Picture * pic;
++    int i, list;
++
++    render = (vdpau_render_state_t*)s->current_picture_ptr->data[2];
++    assert(render != NULL);
++    if (render == NULL)
++        return -1; //make sure that this is render packet
++
++    rf = &render->info.h264.referenceFrames[0];
++#define H264_RF_COUNT FF_ARRAY_ELEMS(render->info.h264.referenceFrames)
++
++    for (list = 0; list < 2; ++list) {
++        Picture **lp = list ? h->long_ref : h->short_ref;
++        int ls = list ? h->long_ref_count : h->short_ref_count;
++
++        for (i = 0; i < ls; ++i) {
++            pic = lp[i];
++            if (!pic || !pic->reference) {
++                continue;
++            }
++
++            render_ref = (vdpau_render_state_t*)pic->data[2];
++            assert(render_ref != NULL);
++            if (render_ref == NULL)
++                return -1; //make sure that this is render packet
++
++            rf2 = &render->info.h264.referenceFrames[0];
++            while (rf2 != rf) {
++                if (
++                    (rf2->surface == render_ref->surface)
++                    && (rf2->is_long_term == pic->long_ref)
++                    && (rf2->frame_idx == pic->frame_num)
++                ) {
++                    break;
++                }
++                ++rf2;
++            }
++            if (rf2 != rf) {
++                rf2->top_is_reference |= (pic->reference & PICT_TOP_FIELD) ? VDP_TRUE : VDP_FALSE;
++                rf2->bottom_is_reference |= (pic->reference & PICT_BOTTOM_FIELD) ? VDP_TRUE : VDP_FALSE;
++                continue;
++            }
++
++            if (rf >= &render->info.h264.referenceFrames[H264_RF_COUNT]) {
++                continue;
++            }
++
++            rf->surface = render_ref->surface;
++            rf->is_long_term = pic->long_ref;
++            rf->top_is_reference = (pic->reference & PICT_TOP_FIELD) ? VDP_TRUE : VDP_FALSE;
++            rf->bottom_is_reference = (pic->reference & PICT_BOTTOM_FIELD) ? VDP_TRUE : VDP_FALSE;
++            rf->field_order_cnt[0] = pic->field_poc[0];
++            rf->field_order_cnt[1] = pic->field_poc[1];
++            rf->frame_idx = pic->frame_num;
++
++            ++rf;
++        }
++    }
++
++    for (; rf < &render->info.h264.referenceFrames[H264_RF_COUNT]; ++rf) {
++        rf->surface = VDP_INVALID_HANDLE;
++        rf->is_long_term = 0;
++        rf->top_is_reference = 0;
++        rf->bottom_is_reference = 0;
++        rf->field_order_cnt[0] = 0;
++        rf->field_order_cnt[1] = 0;
++        rf->frame_idx = 0;
++    }
++
++    return 0;
++}
++
++int ff_VDPAU_h264_picture_complete(H264Context *h, const uint8_t *buf, int buf_size)
++{
++    MpegEncContext * s = &h->s;
++    vdpau_render_state_t * render;
++    int i;
++
++    render = (vdpau_render_state_t*)s->current_picture_ptr->data[2];
++    assert(render != NULL);
++    if (render == NULL)
++        return -1; //make sure that this is render packet
++
++    render->info.h264.slice_count = h->slice_num;
++
++    if (render->info.h264.slice_count < 1)
++        return 0;
++
++    for (i = 0; i < 2; ++i) {
++        int foc = s->current_picture_ptr->field_poc[i];
++        if (foc == INT_MAX) {
++            foc = 0;
++        }
++        render->info.h264.field_order_cnt[i] = foc;
++    }
++
++    render->info.h264.is_reference = s->current_picture_ptr->reference ? VDP_TRUE : VDP_FALSE;
++    render->info.h264.frame_num = h->frame_num;
++    render->info.h264.field_pic_flag = (s->picture_structure != PICT_FRAME) ? 1 : 0;
++    render->info.h264.bottom_field_flag = (s->picture_structure == PICT_BOTTOM_FIELD) ? 1 : 0;
++    render->info.h264.num_ref_frames = h->sps.ref_frame_count;
++    render->info.h264.mb_adaptive_frame_field_flag = h->sps.mb_aff;
++    render->info.h264.constrained_intra_pred_flag = h->pps.constrained_intra_pred;
++    render->info.h264.weighted_pred_flag = h->pps.weighted_pred;
++    render->info.h264.weighted_bipred_idc = h->pps.weighted_bipred_idc;
++    render->info.h264.frame_mbs_only_flag = h->sps.frame_mbs_only_flag;
++    render->info.h264.transform_8x8_mode_flag = h->pps.transform_8x8_mode;
++    render->info.h264.chroma_qp_index_offset = h->pps.chroma_qp_index_offset[0];
++    render->info.h264.second_chroma_qp_index_offset = h->pps.chroma_qp_index_offset[1];
++    render->info.h264.pic_init_qp_minus26 = h->pps.init_qp - 26;
++    render->info.h264.num_ref_idx_l0_active_minus1 = h->pps.ref_count[0] - 1;
++    render->info.h264.num_ref_idx_l1_active_minus1 = h->pps.ref_count[1] - 1;
++    render->info.h264.log2_max_frame_num_minus4 = h->sps.log2_max_frame_num - 4;
++    render->info.h264.pic_order_cnt_type = h->sps.poc_type;
++    render->info.h264.log2_max_pic_order_cnt_lsb_minus4 = h->sps.log2_max_poc_lsb - 4;
++    render->info.h264.delta_pic_order_always_zero_flag = h->sps.delta_pic_order_always_zero_flag;
++    render->info.h264.direct_8x8_inference_flag = h->sps.direct_8x8_inference_flag;
++    render->info.h264.entropy_coding_mode_flag = h->pps.cabac;
++    render->info.h264.pic_order_present_flag = h->pps.pic_order_present;
++    render->info.h264.deblocking_filter_control_present_flag = h->pps.deblocking_filter_parameters_present;
++    render->info.h264.redundant_pic_cnt_present_flag = h->pps.redundant_pic_cnt_present;
++    memcpy(render->info.h264.scaling_lists_4x4, h->pps.scaling_matrix4, sizeof(render->info.h264.scaling_lists_4x4));
++    memcpy(render->info.h264.scaling_lists_8x8, h->pps.scaling_matrix8, sizeof(render->info.h264.scaling_lists_8x8));
++
++    render->bitstreamBuffer.struct_version = VDP_BITSTREAM_BUFFER_VERSION;
++    render->bitstreamBuffer.bitstream_bytes = buf_size;
++    render->bitstreamBuffer.bitstream = buf;
++
++    ff_draw_horiz_band(s, 0, s->avctx->height);
++
++    return 0;
++}
++
++void ff_VDPAU_h264_set_reference_frames_count(H264Context *h)
++{
++    num_reference_surfaces = h->sps.ref_frame_count;
++}
++
++int ff_VDPAU_vc1_decode_picture(MpegEncContext *s, AVCodecContext *avctx, VC1Context *v, const uint8_t *buf, int buf_size)
++{
++   // VC1Context *v = avctx->priv_data;
++    vdpau_render_state_t * render,* last, * next;
++
++    render = (vdpau_render_state_t*)s->current_picture.data[2];
++    assert(render != NULL);
++    if (render == NULL) {
++        return -1; //make sure that this is render packet
++    }
++    memset(&(render->info), 0 , sizeof(VdpPictureInfoVC1));
++    memset(&(render->bitstreamBuffer), 0, sizeof(VdpBitstreamBuffer));
++
++    /*  fill LvPictureInfoVC1 struct */
++    render->info.vc1.frame_coding_mode = v->fcm;
++    render->info.vc1.postprocflag = v->postprocflag;
++    render->info.vc1.pulldown = v->broadcast;
++    render->info.vc1.interlace = v->interlace;
++    render->info.vc1.tfcntrflag = v->tfcntrflag;
++    render->info.vc1.finterpflag = v->finterpflag;
++    render->info.vc1.psf = v->psf;
++    render->info.vc1.dquant = v->dquant;
++    render->info.vc1.panscan_flag = v->panscanflag;
++    render->info.vc1.refdist_flag = v->refdist_flag;
++    render->info.vc1.quantizer = v->quantizer_mode;
++    render->info.vc1.extended_mv = v->extended_mv;
++    render->info.vc1.extended_dmv = v->extended_dmv;
++    render->info.vc1.overlap = v->overlap;
++    render->info.vc1.vstransform = v->vstransform;
++    render->info.vc1.loopfilter = v->s.loop_filter;
++    render->info.vc1.fastuvmc = v->fastuvmc;
++    render->info.vc1.range_mapy_flag = v->range_mapy_flag;
++    render->info.vc1.range_mapy = v->range_mapy;
++    render->info.vc1.range_mapuv_flag = v->range_mapuv_flag;
++    render->info.vc1.range_mapuv = v->range_mapuv;
++    /* Specific to simple/main profile only */
++    render->info.vc1.multires = v->multires;
++    render->info.vc1.syncmarker = v->s.resync_marker;
++    render->info.vc1.rangered = v->rangered;
++    render->info.vc1.maxbframes = v->s.max_b_frames;
++    /* Presently, making these as 0 */
++    render->info.vc1.deblockEnable = 0;
++    render->info.vc1.pquant = 0;
++
++    render->info.vc1.forward_reference = VDP_INVALID_HANDLE;
++    render->info.vc1.backward_reference = VDP_INVALID_HANDLE;
++
++    switch(s->pict_type){
++    case  FF_I_TYPE:
++        render->info.vc1.picture_type = 0;
++        break;
++    case  FF_B_TYPE:
++        if (v->bi_type) {
++            render->info.vc1.picture_type = 4;
++        }
++        else {
++            render->info.vc1.picture_type = 3;
++        }
++        break;
++    case  FF_P_TYPE:
++        render->info.vc1.picture_type = 1;
++        break;
++    case  FF_BI_TYPE:
++        render->info.vc1.picture_type = 4;
++        break;
++    default:
++        return -1;
++    }
++
++    switch(s->pict_type){
++    case  FF_I_TYPE:
++    case  FF_BI_TYPE:
++        break;
++    case  FF_B_TYPE:
++        next = (vdpau_render_state_t*)s->next_picture.data[2];
++        assert(next!=NULL);
++        if (next == NULL) {
++            return -1;
++        }
++        render->info.vc1.backward_reference = next->surface;
++        // no break here, going to set forward prediction
++    case  FF_P_TYPE:
++        last = (vdpau_render_state_t*)s->last_picture.data[2];
++        if (last == NULL) { // FIXME: Does this test make sense?
++            last = render; // predict second field from the first
++        }
++        render->info.vc1.forward_reference = last->surface;
++        break;
++    default:
++        return -1;
++    }
++
++    render->bitstreamBuffer.struct_version = VDP_BITSTREAM_BUFFER_VERSION;
++    render->bitstreamBuffer.bitstream_bytes = buf_size;
++    render->bitstreamBuffer.bitstream = buf;
++    // FIXME: I am not sure about how MPlayer calculates slice number.
++    render->info.vc1.slice_count = 1;
++
++    ff_draw_horiz_band(s, 0, s->avctx->height);  
++
++    return 0;
++}
++
+diff -Naur MPlayer-27979.15908-old/libavutil/avutil.h MPlayer-27979.15908-new/libavutil/avutil.h
+--- MPlayer-27979.15908-old/libavutil/avutil.h	2008-11-22 12:00:10.000000000 -0800
++++ MPlayer-27979.15908-new/libavutil/avutil.h	2008-11-22 12:09:55.000000000 -0800
+@@ -121,6 +121,15 @@
+     PIX_FMT_YUV440P,   ///< Planar YUV 4:4:0 (1 Cr & Cb sample per 1x2 Y samples)
+     PIX_FMT_YUVJ440P,  ///< Planar YUV 4:4:0 full scale (jpeg)
+     PIX_FMT_YUVA420P,  ///< Planar YUV 4:2:0, 20bpp, (1 Cr & Cb sample per 2x2 Y & A samples)
++    PIX_FMT_VDPAU_MPEG1,        ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_MPEG2_SIMPLE, ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_MPEG2_MAIN,   ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_H264_BASELINE,///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_H264_MAIN,    ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_H264_HIGH,    ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_VC1_SIMPLE,   ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_VC1_MAIN,     ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
++    PIX_FMT_VDPAU_VC1_ADVANCED, ///< VDPAU acceleration via common packet passing(vdpau_remder.h)
+     PIX_FMT_NB,        ///< number of pixel formats, DO NOT USE THIS if you want to link with shared libav* because the number of formats might differ between versions
+ };
+ 

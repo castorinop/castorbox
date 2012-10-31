@@ -1,0 +1,21 @@
+diff --speed-large-files --minimal -Nru tmp/boost_1_34_1/configure work/main.d/boost_1_34_1/configure
+--- tmp/boost_1_34_1/configure	2007-05-09 19:09:39.000000000 -0300
++++ boost_1_34_1/configure	2007-09-06 17:30:50.000000000 -0300
+@@ -37,7 +37,7 @@
+       PREFIX=`expr "x$option" : "x-*prefix=\(.*\)"`
+       ;;
+ 
+-    -exec-prefix=* | --exec-prefix=*)
++    -exec_prefix=* | --exec_prefix=*)
+       EPREFIX=`expr "x$option" : "x-*exec-prefix=\(.*\)"`
+       ;;
+ 
+@@ -125,7 +125,7 @@
+     -*)
+       { echo "error: unrecognized option: $option
+ Try \`$0 --help' for more information." >&2
+-      { (exit 1); exit 1; }; }
++      }
+       ;; 
+ 
+     esac

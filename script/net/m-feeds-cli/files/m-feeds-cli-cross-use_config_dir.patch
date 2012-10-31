@@ -1,0 +1,7 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/m-feeds-cli work/main.d/m-feeds-cli
+--- tmp/m-feeds-cli	1969-12-31 21:00:00.000000000 -0300
++++ new-m-feeds-cli	2012-08-01 13:55:52.276545998 -0300
+@@ -0,0 +1,3 @@
++#!/bin/sh
++mkdir -p /config/m-feeds
++HOME=/config/m-feeds python /usr/share/m-feeds-cli/m-feeds-cli.py

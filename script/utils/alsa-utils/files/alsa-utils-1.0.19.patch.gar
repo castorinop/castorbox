@@ -1,0 +1,80 @@
+diff -Naur alsa-utils-1.0.19-old/configure alsa-utils-1.0.19-new/configure
+--- alsa-utils-1.0.19-old/configure	2009-01-19 03:24:24.000000000 -0800
++++ alsa-utils-1.0.19-new/configure	2009-01-19 11:03:27.000000000 -0800
+@@ -7411,8 +7411,8 @@
+ fi
+ 
+   if test "$curseslib" = "ncursesw"; then
+-    # Extract the first word of "ncursesw5-config", so it can be a program name with args.
+-set dummy ncursesw5-config; ac_word=$2
++    # Extract the first word of "@GAR_DESTDIR@@GAR_bindir@/ncursesw5-config", so it can be a program name with args.
++set dummy @GAR_DESTDIR@@GAR_bindir@/ncursesw5-config; ac_word=$2
+ { echo "$as_me:$LINENO: checking for $ac_word" >&5
+ echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+ if test "${ac_cv_prog_ncursesw5_config+set}" = set; then
+@@ -7450,8 +7450,8 @@
+ 
+     if test "$ncursesw5_config" = "yes"; then
+       CURSESINC="<ncurses.h>"
+-      CURSESLIB=`ncursesw5-config --libs`
+-      CURSES_CFLAGS=`ncursesw5-config --cflags`
++      CURSESLIB=`@GAR_DESTDIR@@GAR_bindir@/ncursesw5-config --libs`
++      CURSES_CFLAGS=`@GAR_DESTDIR@@GAR_bindir@/ncursesw5-config --cflags`
+       curseslib="ncursesw"
+     else
+       { echo "$as_me:$LINENO: checking for initscr in -lncursesw" >&5
+@@ -7538,8 +7538,8 @@
+     fi
+   fi
+   if test "$curseslib" = "ncurses" -o "$curseslib" = "auto"; then
+-    # Extract the first word of "ncurses5-config", so it can be a program name with args.
+-set dummy ncurses5-config; ac_word=$2
++    # Extract the first word of "@GAR_DESTDIR@@GAR_bindir@/ncurses5-config", so it can be a program name with args.
++set dummy @GAR_DESTDIR@@GAR_bindir@/ncurses5-config; ac_word=$2
+ { echo "$as_me:$LINENO: checking for $ac_word" >&5
+ echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+ if test "${ac_cv_prog_ncurses5_config+set}" = set; then
+@@ -7577,8 +7577,8 @@
+ 
+     if test "$ncurses5_config" = "yes"; then
+       CURSESINC="<ncurses.h>"
+-      CURSESLIB=`ncurses5-config --libs`
+-      CURSES_CFLAGS=`ncurses5-config --cflags`
++      CURSESLIB=`@GAR_DESTDIR@@GAR_bindir@/ncurses5-config --libs`
++      CURSES_CFLAGS=`@GAR_DESTDIR@@GAR_bindir@/ncurses5-config --cflags`
+       curseslib="ncurses"
+     else
+       { echo "$as_me:$LINENO: checking for initscr in -lncurses" >&5
+diff -Naur alsa-utils-1.0.19-old/configure.in alsa-utils-1.0.19-new/configure.in
+--- alsa-utils-1.0.19-old/configure.in	2009-01-19 03:24:19.000000000 -0800
++++ alsa-utils-1.0.19-new/configure.in	2009-01-19 11:03:27.000000000 -0800
+@@ -71,11 +71,11 @@
+     curseslib="$withval",
+     curseslib="auto")
+   if test "$curseslib" = "ncursesw"; then
+-    AC_CHECK_PROG([ncursesw5_config], [ncursesw5-config], [yes])
++    AC_CHECK_PROG([ncursesw5_config], [@GAR_DESTDIR@@GAR_bindir@/ncursesw5-config], [yes])
+     if test "$ncursesw5_config" = "yes"; then
+       CURSESINC="<ncurses.h>"
+-      CURSESLIB=`ncursesw5-config --libs`
+-      CURSES_CFLAGS=`ncursesw5-config --cflags`
++      CURSESLIB=`@GAR_DESTDIR@@GAR_bindir@/ncursesw5-config --libs`
++      CURSES_CFLAGS=`@GAR_DESTDIR@@GAR_bindir@/ncursesw5-config --cflags`
+       curseslib="ncursesw"
+     else
+       AC_CHECK_LIB(ncursesw, initscr, 
+@@ -83,11 +83,11 @@
+     fi
+   fi
+   if test "$curseslib" = "ncurses" -o "$curseslib" = "auto"; then
+-    AC_CHECK_PROG([ncurses5_config], [ncurses5-config], [yes])
++    AC_CHECK_PROG([ncurses5_config], [@GAR_DESTDIR@@GAR_bindir@/ncurses5-config], [yes])
+     if test "$ncurses5_config" = "yes"; then
+       CURSESINC="<ncurses.h>"
+-      CURSESLIB=`ncurses5-config --libs`
+-      CURSES_CFLAGS=`ncurses5-config --cflags`
++      CURSESLIB=`@GAR_DESTDIR@@GAR_bindir@/ncurses5-config --libs`
++      CURSES_CFLAGS=`@GAR_DESTDIR@@GAR_bindir@/ncurses5-config --cflags`
+       curseslib="ncurses"
+     else
+       AC_CHECK_LIB(ncurses, initscr, 

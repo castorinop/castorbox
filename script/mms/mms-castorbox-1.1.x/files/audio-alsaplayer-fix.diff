@@ -1,0 +1,80 @@
+=== modified file 'plugins/feature/audio/audio.cpp'
+--- plugins/feature/audio/audio.cpp	2008-09-14 20:47:55 +0000
++++ new/plugins/feature/audio/audio.cpp	2008-09-28 02:07:45 +0000
+@@ -49,7 +49,8 @@
+     was_playing(false), was_started(false),
+     radio_stations_downloaded(false),
+     disabled_busy_indicator(false), display_message(true),
+-    exit_choose_playlist_loop(false), in_choose_playlist(false), navigating_media(false)
++    exit_choose_playlist_loop(false), in_choose_playlist(false),
++    navigating_media(false), buffering_time_end(-1)
+ {
+   audio_conf = S_AudioConfig::get_instance();
+   radio_conf = S_RadioConfig::get_instance();
+
+=== modified file 'plugins/feature/audio/audio.hpp'
+--- plugins/feature/audio/audio.hpp	2008-09-14 22:45:18 +0000
++++ new/plugins/feature/audio/audio.hpp	2008-09-28 02:12:15 +0000
+@@ -106,6 +106,8 @@
+     Option *reload_p, *dir_order_p, *repeat_p, *shuffle_p, *shutdown_p, *lyrics_p, *time_mode_p, *extract_meta_p, *bitrate_p;
+   };
+ 
++  long buffering_time_end;
++
+   // list of folders from config, the names are normalized to have / at the end
+   std::list<std::string> audio_folders;
+   void set_folders();
+@@ -2105,11 +2107,25 @@
+ 
+       audio_state->p->gather_info();
+ 
++      bool is_buffering = buffering_time_end != -1 && buffering_time_end - time(0) > 0;
++
++      if (is_buffering && audio_state->p->is_playing() && audio_state->p_playing())
++	buffering_time_end = -1;
++
+       // should we play the next track?
+       if (!audio_state->p->streaming() &&
+ 	  (audio_state->p->play_next() ||
+ 	   !audio_state->p->is_playing() && audio_state->p_playing() &&
+-	   !audio_state->p_pause() && !audio_state->p->is_buffering())) {
++	   !audio_state->p_pause() && !is_buffering)) {
++
++	buffering_time_end = time(0);
++
++	Simplefile s = audio_state->p->p_cur_nr();
++
++	if (s.path.find("http://") != -1 || s.path.find("rtp://") != -1)
++	  buffering_time_end += 15; // secs
++	else
++	  buffering_time_end += 2; // secs
+ 
+ 	if (audio_state->suspended_playback())
+ 	  audio_state->restore_playback();
+
+=== modified file 'plugins/feature/audio/players/audio_player.hpp'
+--- plugins/feature/audio/players/audio_player.hpp	2007-11-11 16:26:33 +0000
++++ new/plugins/feature/audio/players/audio_player.hpp	2008-09-27 22:20:10 +0000
+@@ -31,6 +31,8 @@
+     is_streaming = s;
+   }
+ 
++  virtual bool supports_buffering() { return true; }
++
+   virtual std::string cd_track_path(int track_nr) = 0;
+ 
+   // helper function
+
+=== modified file 'plugins/feature/audio/players/gstreamer/gstreamer.hpp'
+--- plugins/feature/audio/players/gstreamer/gstreamer.hpp	2008-03-02 21:06:29 +0000
++++ new/plugins/feature/audio/players/gstreamer/gstreamer.hpp	2008-09-27 22:20:10 +0000
+@@ -10,6 +10,8 @@
+ public:
+   std::string cd_track_path(int track_nr);
+ 
++  virtual bool supports_buffering() { return false; }
++
+   int is_playing();
+   int is_buffering();
+   int is_mute();
+

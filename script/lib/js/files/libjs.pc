@@ -1,0 +1,11 @@
+prefix=@GAR_prefix@
+exec_prefix=@GAR_prefix@
+libdir=@GAR_libdir@
+includedir=@GAR_includedir@
+
+Name: libjs
+Description: JavaScript engine
+Version: @GARVERSION@
+Libs: -L${libdir} -ljs
+Cflags: -I${includedir}/js-@GARVERSION@ -DXP_UNIX
+

@@ -1,0 +1,770 @@
+ ==> Running configure php in work/main.d/php-5.3.2
+configure: loading cache config.cache
+checking for grep that handles long lines and -e... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/grep
+checking for egrep... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/grep -E
+checking for a sed that does not truncate output... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/sed
+checking build system type... (cached) x86_64-manbo-linux-gnu
+checking host system type... (cached) i586-castorbox-linux-gnu
+checking target system type... (cached) i586-castorbox-linux-gnu
+checking for i586-castorbox-linux-gnu-cc... (cached) i586-castorbox-linux-gnu-gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... yes
+checking for suffix of object files... (cached) o
+checking whether we are using the GNU C compiler... (cached) yes
+checking whether i586-castorbox-linux-gnu-gcc accepts -g... (cached) yes
+checking for i586-castorbox-linux-gnu-gcc option to accept ISO C89... (cached) none needed
+checking how to run the C preprocessor... i586-castorbox-linux-gnu-cpp
+checking for icc... no
+checking for suncc... no
+checking whether i586-castorbox-linux-gnu-gcc and cc understand -c and -o together... (cached) yes
+checking how to run the C preprocessor... i586-castorbox-linux-gnu-cpp
+checking for ANSI C header files... (cached) yes
+checking for sys/types.h... (cached) yes
+checking for sys/stat.h... (cached) yes
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking for memory.h... (cached) yes
+checking for strings.h... (cached) yes
+checking for inttypes.h... (cached) yes
+checking for stdint.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for minix/config.h... (cached) no
+checking whether it is safe to define __EXTENSIONS__... (cached) yes
+checking whether ln -s works... yes
+checking for system library directory... lib
+checking whether to enable runpaths... yes
+checking if compiler supports -R... (cached) no
+checking if compiler supports -Wl,-rpath,... (cached) yes
+checking for gawk... (cached) gawk
+checking for bison... (cached) bison -y
+checking for bison version... (cached) invalid
+configure: WARNING: bison versions supported for regeneration of the Zend/PHP parsers: 1.28 1.35 1.75 1.875 2.0 2.1 2.2 2.3 2.4 2.4.1 (found: none).
+checking for re2c... no
+configure: WARNING: You will need re2c 0.13.4 or later if you want to regenerate PHP parsers.
+checking whether to enable computed goto gcc extension with re2c... no
+checking whether to force non-PIC code in shared modules... yes
+checking whether /dev/urandom exists... yes
+checking for pthreads_cflags... (cached) 
+checking for pthreads_lib... (cached) 
+
+[1mConfiguring SAPI modules[m
+checking for AOLserver support... no
+checking for Apache 1.x module support via DSO through APXS... no
+checking for Apache 1.x module support... no
+checking whether to enable Apache charset compatibility option... yes
+checking for Apache 2.0 filter-module support via DSO through APXS... no
+checking for Apache 2.0 handler-module support via DSO through APXS... no
+checking for Apache 1.x (hooks) module support via DSO through APXS... no
+checking for Apache 1.x (hooks) module support... no
+checking whether to enable Apache charset compatibility option... yes
+checking for Caudium support... no
+checking for CLI build... yes
+checking for Continuity support... no
+checking for embedded SAPI library support... no
+checking for Zeus ISAPI support... no
+checking for LiteSpeed support... no
+checking for Milter support... no
+checking for NSAPI support... no
+checking for PHTTPD support... no
+checking for Pi3Web support... no
+checking whether Roxen module is build using ZTS... no
+checking for Roxen/Pike support... 
+checking for thttpd... no
+checking for TUX... no
+checking for webjames... no
+checking whether to build CGI binary... no
+checking for chosen SAPI module... cli
+
+[1mRunning system checks[m
+checking for sendmail... no
+checking whether system uses EBCDIC... (cached) no
+checking whether byte ordering is bigendian... (cached) unknown
+checking whether writing to stdout works... (cached) no
+checking for socket... yes
+checking for socketpair... yes
+checking for htonl... yes
+checking for gethostname... yes
+checking for gethostbyaddr... yes
+checking for yp_get_default_domain... no
+checking for __yp_get_default_domain... no
+checking for yp_get_default_domain in -lnsl... yes
+checking for dlopen... no
+checking for __dlopen... no
+checking for dlopen in -ldl... yes
+LDCONFIG=yes
+LDCONFIG=yes
+LDCONFIG=no
+checking for sin in -lm... (cached) yes
+checking for inet_aton... yes
+checking for ANSI C header files... (cached) yes
+checking for dirent.h that defines DIR... (cached) yes
+checking for library containing opendir... (cached) none required
+checking for inttypes.h... (cached) yes
+checking for stdint.h... (cached) yes
+checking for dirent.h... (cached) yes
+checking for ApplicationServices/ApplicationServices.h... (cached) no
+checking for sys/param.h... (cached) yes
+checking for sys/types.h... (cached) yes
+checking for sys/time.h... (cached) yes
+checking for netinet/in.h... (cached) yes
+checking for alloca.h... (cached) yes
+checking for arpa/inet.h... (cached) yes
+checking for arpa/nameser.h... (cached) yes
+checking for assert.h... (cached) yes
+checking for crypt.h... (cached) yes
+checking for dns.h... (cached) no
+checking for fcntl.h... (cached) yes
+checking for grp.h... (cached) yes
+checking for ieeefp.h... (cached) no
+checking for langinfo.h... (cached) yes
+checking for limits.h... (cached) yes
+checking for locale.h... (cached) yes
+checking for monetary.h... (cached) yes
+checking for netdb.h... (cached) yes
+checking for pwd.h... (cached) yes
+checking for resolv.h... (cached) yes
+checking for signal.h... (cached) yes
+checking for stdarg.h... (cached) yes
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking for syslog.h... (cached) yes
+checking for sysexits.h... (cached) yes
+checking for sys/ioctl.h... (cached) yes
+checking for sys/file.h... (cached) yes
+checking for sys/mman.h... (cached) yes
+checking for sys/mount.h... (cached) yes
+checking for sys/poll.h... (cached) yes
+checking for sys/resource.h... (cached) yes
+checking for sys/select.h... (cached) yes
+checking for sys/socket.h... (cached) yes
+checking for sys/stat.h... (cached) yes
+checking for sys/statfs.h... (cached) yes
+checking for sys/statvfs.h... (cached) yes
+checking for sys/vfs.h... (cached) yes
+checking for sys/sysexits.h... (cached) no
+checking for sys/varargs.h... (cached) no
+checking for sys/wait.h... (cached) yes
+checking for sys/loadavg.h... (cached) no
+checking for termios.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for unix.h... (cached) no
+checking for utime.h... (cached) yes
+checking for sys/utsname.h... (cached) yes
+checking for sys/ipc.h... (cached) yes
+checking for dlfcn.h... (cached) yes
+checking for assert.h... (cached) yes
+checking for fopencookie... (cached) yes
+checking for broken getcwd... no
+checking for broken libc stdio... (cached) yes
+checking whether struct tm is in sys/time.h or time.h... (cached) time.h
+checking for struct tm.tm_zone... (cached) yes
+checking for missing declarations of reentrant functions... done
+checking for fclose declaration... ok
+checking for tm_gmtoff in struct tm... (cached) yes
+checking for struct flock... (cached) yes
+checking for socklen_t... (cached) yes
+checking size of size_t... (cached) 4
+checking size of long long... (cached) 8
+checking size of long long int... (cached) 8
+checking size of long... (cached) 4
+checking size of int... (cached) 4
+checking size of intmax_t... (cached) 0
+checking size of ssize_t... (cached) 8
+checking size of ptrdiff_t... (cached) 8
+checking for struct stat.st_blksize... (cached) yes
+checking for struct stat.st_blocks... (cached) yes
+checking for struct stat.st_rdev... (cached) yes
+checking for size_t... (cached) yes
+checking for uid_t in sys/types.h... (cached) yes
+checking for struct sockaddr_storage... (cached) yes
+checking for field sa_len in struct sockaddr... (cached) no
+checking for IPv6 support... (cached) yes
+checking for vprintf... (cached) yes
+checking for _doprnt... (cached) no
+checking for alphasort... (cached) yes
+checking for asctime_r... (cached) yes
+checking for chroot... (cached) yes
+checking for ctime_r... (cached) yes
+checking for cuserid... (cached) yes
+checking for crypt... (cached) no
+checking for flock... (cached) yes
+checking for ftok... (cached) yes
+checking for funopen... (cached) no
+checking for gai_strerror... (cached) yes
+checking for gcvt... (cached) yes
+checking for getloadavg... (cached) yes
+checking for getlogin... (cached) yes
+checking for getprotobyname... (cached) yes
+checking for getprotobynumber... (cached) yes
+checking for getservbyname... (cached) yes
+checking for getservbyport... (cached) yes
+checking for gethostname... (cached) yes
+checking for getrusage... (cached) yes
+checking for gettimeofday... (cached) yes
+checking for gmtime_r... (cached) yes
+checking for getpwnam_r... (cached) yes
+checking for getgrnam_r... (cached) yes
+checking for getpwuid_r... (cached) yes
+checking for grantpt... (cached) yes
+checking for inet_ntoa... (cached) yes
+checking for inet_ntop... (cached) yes
+checking for inet_pton... (cached) yes
+checking for isascii... (cached) yes
+checking for link... (cached) yes
+checking for localtime_r... (cached) yes
+checking for lockf... (cached) yes
+checking for lchown... (cached) yes
+checking for lrand48... (cached) yes
+checking for memcpy... (cached) yes
+checking for memmove... (cached) yes
+checking for mkstemp... (cached) yes
+checking for mmap... (cached) yes
+checking for nl_langinfo... (cached) yes
+checking for perror... (cached) yes
+checking for poll... (cached) yes
+checking for ptsname... (cached) yes
+checking for putenv... (cached) yes
+checking for realpath... (cached) yes
+checking for random... (cached) yes
+checking for rand_r... (cached) yes
+checking for scandir... (cached) yes
+checking for setitimer... (cached) yes
+checking for setlocale... (cached) yes
+checking for localeconv... (cached) yes
+checking for setenv... (cached) yes
+checking for setpgid... (cached) yes
+checking for setsockopt... (cached) yes
+checking for setvbuf... (cached) yes
+checking for shutdown... (cached) yes
+checking for sin... (cached) yes
+checking for snprintf... (cached) yes
+checking for srand48... (cached) yes
+checking for srandom... (cached) yes
+checking for statfs... (cached) yes
+checking for statvfs... (cached) yes
+checking for std_syslog... (cached) no
+checking for strcasecmp... (cached) yes
+checking for strcoll... (cached) yes
+checking for strdup... (cached) yes
+checking for strerror... (cached) yes
+checking for strftime... (cached) yes
+checking for strnlen... (cached) yes
+checking for strptime... (cached) yes
+checking for strstr... (cached) yes
+checking for strtok_r... (cached) yes
+checking for symlink... (cached) yes
+checking for tempnam... (cached) yes
+checking for tzset... (cached) yes
+checking for unlockpt... (cached) yes
+checking for unsetenv... (cached) yes
+checking for usleep... (cached) yes
+checking for utime... (cached) yes
+checking for vsnprintf... (cached) yes
+checking for vasprintf... (cached) yes
+checking for asprintf... (cached) yes
+checking for nanosleep... checking for nanosleep in -lrt... yes
+
+checking for getaddrinfo... (cached) no
+checking for strlcat... (cached) no
+checking for strlcpy... (cached) no
+checking for getopt... (cached) yes
+checking for utime.h... (cached) yes
+checking whether utime accepts a null argument... (cached) yes
+checking for working alloca.h... (cached) yes
+checking for alloca... (cached) yes
+checking for declared timezone... (cached) yes
+checking for type of reentrant time-related functions... (cached) POSIX
+checking for readdir_r... (cached) yes
+checking for type of readdir_r... (cached) none
+checking for in_addr_t... (cached) yes
+checking for crypt_r... (cached) no
+checking whether flush should be called explicitly after a buffered io... (cached) no
+checking for crypt in -lcrypt... (cached) yes
+checking for standard DES crypt... (cached) yes
+checking for extended DES crypt... (cached) no
+checking for MD5 crypt... (cached) no
+checking for Blowfish crypt... (cached) no
+checking for SHA512 crypt... (cached) no
+checking for SHA256 crypt... (cached) no
+checking whether the compiler supports __alignof__... (cached) yes
+checking whether the compiler supports aligned attribute... (cached) yes
+checking for getcwd... (cached) yes
+checking for getwd... (cached) yes
+checking for asinh... (cached) yes
+checking for acosh... (cached) yes
+checking for atanh... (cached) yes
+checking for log1p... (cached) yes
+checking for hypot... (cached) yes
+checking for glob... (cached) yes
+checking for strfmon... (cached) yes
+checking for nice... (cached) yes
+checking for fpclass... (cached) no
+checking for isinf... (cached) yes
+checking for isnan... (cached) yes
+checking for mempcpy... (cached) yes
+checking for strpncpy... (cached) no
+checking for working POSIX fnmatch... (cached) cross
+
+[1mGeneral settings[m
+checking whether to include gcov symbols... no
+checking whether to include debugging symbols... no
+checking layout of installed files... PHP
+checking path to configuration file... /etc
+checking where to scan for configuration files... /etc/php.d
+checking whether to enable safe mode by default... yes
+checking for safe mode exec dir... /usr/bin
+checking whether to enable PHP's own SIGCHLD handler... no
+checking whether to enable magic quotes by default... yes
+checking whether to explicitly link against libgcc... no
+checking whether to enable short tags by default... yes
+checking whether to enable dmalloc... no
+checking whether to enable IPv6 support... yes
+checking how big to make fd sets... using system default
+
+[1mConfiguring extensions[m
+checking size of long... (cached) 4
+checking size of int... (cached) 4
+checking for int32_t... (cached) yes
+checking for uint32_t... (cached) yes
+checking for sys/types.h... (cached) yes
+checking for inttypes.h... (cached) yes
+checking for stdint.h... (cached) yes
+checking for string.h... (cached) yes
+checking for stdlib.h... (cached) yes
+checking for strtoll... (cached) yes
+checking for atoll... (cached) yes
+checking for strftime... (cached) yes
+checking which regex library to use... system
+checking whether field re_magic exists in struct regex_t... (cached) no
+checking whether to enable LIBXML support... yes
+checking libxml2 install dir... /home/pablo/gar-castorbox/images/main/usr
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking for OpenSSL support... yes, shared
+checking for Kerberos support... no
+checking for DSA_get_default_method in -lssl... (cached) no
+checking for pkg-config... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/pkg-config
+checking for OpenSSL version... >= 0.9.6
+checking for CRYPTO_free in -lcrypto... (cached) yes
+checking for SSL_CTX_set_ssl_version in -lssl... (cached) yes
+checking for PCRE headers location... /home/pablo/gar-castorbox/images/main/usr/include
+checking for PCRE library location... /home/pablo/gar-castorbox/images/main/usr/lib
+checking whether to enable the SQLite3 extension... yes, shared
+checking for sqlite3 files in default path... found in /home/pablo/gar-castorbox/images/main/usr
+checking for SQLite 3.3.9+... checking for sqlite3_prepare_v2 in -lsqlite3... (cached) yes
+found
+checking for sqlite3_key in -lsqlite3... no
+checking for sqlite3_load_extension in -lsqlite3... no
+checking for ZLIB support... yes, shared
+checking if the location of ZLIB install directory is defined... /home/pablo/gar-castorbox/images/main/usr
+checking for gzgets in -lz... (cached) yes
+checking whether to enable bc style precision math functions... yes, shared
+checking for BZip2 support... yes, shared
+checking for BZ2_bzerror in -lbz2... (cached) yes
+checking whether to enable calendar conversion support... yes, shared
+checking whether to enable ctype functions... yes, shared
+checking for cURL support... yes, shared
+checking if we should use cURL for url streams... no
+checking for cURL 7.10.5 or greater... libcurl 7.19.6
+checking for SSL support in libcurl... yes
+checking how to run the C preprocessor... i586-castorbox-linux-gnu-cpp
+checking for openssl support in libcurl... no
+checking for gnutls support in libcurl... no
+checking for curl_easy_perform in -lcurl... (cached) yes
+checking for curl_version_info in -lcurl... (cached) yes
+checking for curl_easy_strerror in -lcurl... (cached) yes
+checking for curl_multi_strerror in -lcurl... (cached) yes
+checking for QDBM support... no
+checking for GDBM support... no
+checking for NDBM support... no
+checking for Berkeley DB4 support... no
+checking for Berkeley DB3 support... no
+checking for Berkeley DB2 support... no
+checking for DB1 support... no
+checking for DBM support... no
+checking for CDB support... no
+checking for INI File support... no
+checking for FlatFile support... no
+checking whether to enable DBA interface... no
+checking whether to enable DOM support... yes, shared
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking for ENCHANT support... no
+checking whether to enable EXIF (metadata from images) support... yes, shared
+checking for fileinfo support... yes
+checking for utimes... (cached) yes
+checking for strndup... (cached) yes
+checking whether to enable input filter support... yes, shared
+checking pcre install prefix... /home/pablo/gar-castorbox/images/main/usr
+checking whether to enable FTP support... yes, shared
+checking OpenSSL dir for FTP... /home/pablo/gar-castorbox/images/main/usr
+checking for OpenSSL version... >= 0.9.6
+checking for CRYPTO_free in -lcrypto... (cached) yes
+checking for SSL_CTX_set_ssl_version in -lssl... (cached) yes
+checking for GD support... no
+checking for the location of libjpeg... no
+checking for the location of libpng... /home/pablo/gar-castorbox/images/main/usr
+checking for the location of libXpm... no
+checking for FreeType 2... /home/pablo/gar-castorbox/images/main/usr
+checking for T1lib support... no
+checking whether to enable truetype string function in GD... no
+checking whether to enable JIS-mapped Japanese font support in GD... no
+checking for GNU gettext support... yes, shared
+checking for bindtextdomain in -lintl... (cached) no
+checking for bindtextdomain in -lc... (cached) yes
+checking for ngettext in -lc... (cached) yes
+checking for dngettext in -lc... (cached) yes
+checking for dcngettext in -lc... (cached) yes
+checking for bind_textdomain_codeset in -lc... (cached) yes
+checking for GNU MP support... no
+checking for mhash support... yes, shared
+checking whether to enable hash support... yes, shared
+checking whether byte ordering is bigendian... (cached) unknown
+checking size of short... (cached) 2
+checking size of int... (cached) 4
+checking size of long... (cached) 4
+checking size of long long... (cached) 8
+checking for iconv support... yes, shared
+checking for iconv... (cached) yes
+checking if iconv is glibc's... yes
+checking if iconv supports errno... no
+checking if your cpp allows macro usage in include lines... yes
+checking for IMAP support... no
+checking for IMAP Kerberos support... no
+checking for IMAP SSL support... no
+checking for InterBase support... no
+checking whether to enable internationalization support... no
+checking whether to enable JavaScript Object Serialization support... yes, shared
+checking for ANSI C header files... (cached) yes
+checking for LDAP support... no
+checking for LDAP Cyrus SASL support... no
+checking whether to enable multibyte string support... yes, shared
+checking whether to enable multibyte regex support... yes
+checking whether to check multibyte regex backtrack... yes
+checking for external libmbfl... no
+checking for external oniguruma... no
+checking for variable length prototypes and stdarg.h... (cached) no
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking for strings.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for sys/time.h... (cached) yes
+checking for sys/times.h... (cached) yes
+checking for stdarg.h... (cached) yes
+checking size of int... (cached) 4
+checking size of short... (cached) 2
+checking size of long... (cached) 4
+checking for an ANSI C-conforming const... (cached) yes
+checking whether time.h and sys/time.h may both be included... (cached) yes
+checking for working alloca.h... (cached) yes
+checking for alloca... (cached) yes
+checking for working memcmp... (cached) no
+checking for stdarg.h... (cached) yes
+checking for mcrypt support... no
+checking for MSSQL support via FreeTDS... no
+checking for MySQL support... no
+checking for specified location of the MySQL UNIX socket... no
+checking for MySQLi support... no
+checking whether to enable embedded MySQLi support... no
+checking for Oracle (OCI8) support... no
+checking whether to enable pcntl support... yes, shared
+checking for fork... (cached) yes
+checking for waitpid... (cached) yes
+checking for sigaction... (cached) yes
+checking for getpriority... (cached) yes
+checking for setpriority... (cached) yes
+checking for wait3... (cached) yes
+checking for sigprocmask... (cached) yes
+checking for sigwaitinfo... (cached) yes
+checking for sigtimedwait... (cached) yes
+checking whether to enable PDO support... yes, shared
+checking for PDO_DBLIB support via FreeTDS... no
+checking for Firebird support for PDO... no
+checking for MySQL support for PDO... no
+checking Oracle OCI support for PDO... no
+checking for ODBC v3 support for PDO... no
+checking for PostgreSQL support for PDO... no
+checking for sqlite 3 support for PDO... yes, shared
+checking for PDO includes... checking for PDO includes... /home/pablo/gar-castorbox/script/lang/php/work/main.d/php-5.3.2/ext
+checking for sqlite3_open in -lsqlite3... (cached) yes
+checking for sqlite3_key in -lsqlite3... no
+checking for fdatasync in -lrt... (cached) yes
+checking for PostgreSQL support... no
+checking for phar archive support... no
+checking whether to enable POSIX-like functions... yes, shared
+checking for sys/mkdev.h... (cached) no
+checking for seteuid... (cached) yes
+checking for setegid... (cached) yes
+checking for setsid... (cached) yes
+checking for getsid... (cached) yes
+checking for setpgid... (cached) yes
+checking for getpgid... (cached) yes
+checking for ctermid... (cached) yes
+checking for mkfifo... (cached) yes
+checking for mknod... (cached) yes
+checking for getrlimit... (cached) yes
+checking for getlogin... (cached) yes
+checking for getgroups... (cached) yes
+checking for makedev... (cached) no
+checking for initgroups... (cached) yes
+checking for getpwuid_r... (cached) yes
+checking for getgrgid_r... (cached) yes
+checking for working ttyname_r() implementation... no, cannot detect working ttyname_r() when cross compiling. posix_ttyname() will be thread-unsafe
+checking for utsname.domainname... (cached) yes
+checking for PSPELL support... no
+checking for libedit readline replacement... no
+checking for readline support... yes, shared
+checking for tgetent in -lncurses... (cached) yes
+checking for readline in -lreadline... (cached) yes
+checking for rl_pending_input in -lreadline... (cached) yes
+checking for rl_callback_read_char in -lreadline... (cached) yes
+checking for rl_completion_matches... (cached) no
+checking for recode support... no
+checking whether to enable PHP sessions... yes, shared
+checking for mm support... no
+checking whether pwrite works... (cached) no
+checking whether pread works... (cached) no
+checking whether to enable shmop support... yes, shared
+checking whether to enable SimpleXML support... yes
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking for SNMP support... no
+checking OpenSSL dir for SNMP... /home/pablo/gar-castorbox/images/main/usr
+checking whether to enable UCD SNMP hack... no
+checking whether to enable SOAP support... yes, shared
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking whether to enable sockets support... yes, shared
+checking for struct cmsghdr... (cached) yes
+checking for hstrerror... (cached) yes
+checking for socketpair... (cached) yes
+checking for netdb.h... (cached) yes
+checking for netinet/tcp.h... (cached) yes
+checking for sys/un.h... (cached) yes
+checking for errno.h... (cached) yes
+checking whether zend_object_value is packed... no
+checking for sqlite support... no
+checking whether to enable UTF-8 support in sqlite (default: ISO-8859-1)... no
+checking for fork... (cached) yes
+checking if your OS can spawn processes with inherited handles... yes
+checking for res_nsearch... no
+checking for __res_nsearch... no
+checking for res_nsearch in -lresolv... no
+checking for __res_nsearch in -lresolv... yes
+checking for res_nsearch in -lbind... no
+checking for __res_nsearch in -lbind... no
+checking for res_nsearch in -lsocket... no
+checking for __res_nsearch in -lsocket... no
+checking for dns_search... no
+checking for __dns_search... no
+checking for dns_search in -lresolv... no
+checking for __dns_search in -lresolv... no
+checking for dns_search in -lbind... no
+checking for __dns_search in -lbind... no
+checking for dns_search in -lsocket... no
+checking for __dns_search in -lsocket... no
+checking for dn_expand... no
+checking for __dn_expand... no
+checking for dn_expand in -lresolv... yes
+checking for dn_expand in -lbind... no
+checking for __dn_expand in -lbind... no
+checking for dn_expand in -lsocket... no
+checking for __dn_expand in -lsocket... no
+checking for dn_skipname... no
+checking for __dn_skipname... no
+checking for dn_skipname in -lresolv... no
+checking for __dn_skipname in -lresolv... yes
+checking for dn_skipname in -lbind... no
+checking for __dn_skipname in -lbind... no
+checking for dn_skipname in -lsocket... no
+checking for __dn_skipname in -lsocket... no
+checking for res_search... no
+checking for __res_search... no
+checking for res_search in -lresolv... yes
+checking for res_search in -lbind... no
+checking for __res_search in -lbind... no
+checking for res_search in -lsocket... no
+checking for __res_search in -lsocket... no
+checking whether atof() accepts NAN... (cached) no
+checking whether atof() accepts INF... (cached) no
+checking whether HUGE_VAL == INF... (cached) yes
+checking whether HUGE_VAL + -HUGEVAL == NAN... (cached) yes
+checking whether strptime() declaration fails... (cached) yes
+checking for wchar.h... (cached) yes
+checking for mblen... (cached) yes
+checking for mbrlen... (cached) yes
+checking for mbsinit... (cached) yes
+checking for mbstate_t... (cached) yes
+checking for Sybase-CT support... no
+checking whether to enable System V IPC support... yes, shared
+checking for sys/msg.h... (cached) yes
+checking whether to enable System V semaphore support... yes, shared
+checking for union semun... (cached) no
+checking whether to enable System V shared memory support... yes, shared
+checking for TIDY support... no
+checking whether to enable tokenizer support... yes, shared
+checking whether to enable WDDX support... yes, shared
+checking libexpat dir for WDDX... no
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking whether to enable XML support... yes, shared
+checking libexpat install dir... no
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking whether to enable XMLReader support... yes, shared
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking for XMLRPC-EPI support... no
+checking libexpat dir for XMLRPC-EPI... no
+checking iconv dir for XMLRPC-EPI... no
+checking whether to enable XMLWriter support... yes, shared
+checking for xml2-config path... (cached) /home/pablo/gar-castorbox/images/main/usr/bin-config/xml2-config
+checking whether libxml build works... 
+checking for XSL support... no
+checking for zip archive read/writesupport... no
+checking pcre install prefix... /home/pablo/gar-castorbox/images/main/usr
+checking whether to disable compressed protocol support in mysqlnd... yes
+
+[1mConfiguring PEAR[m
+checking whether to install PEAR... no
+
+[1mConfiguring Zend[m
+checking for bison version... (cached) invalid
+configure: WARNING: bison versions supported for regeneration of the Zend/PHP parsers: 1.28 1.35 1.75 1.875 2.0 2.1 2.2 2.3 2.4 2.4.1 (found: none).
+checking for inttypes.h... (cached) yes
+checking for stdint.h... (cached) yes
+checking for limits.h... (cached) yes
+checking for malloc.h... (cached) yes
+checking for string.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for stdarg.h... (cached) yes
+checking for sys/types.h... (cached) yes
+checking for sys/time.h... (cached) yes
+checking for signal.h... (cached) yes
+checking for unix.h... (cached) no
+checking for stdlib.h... (cached) yes
+checking for dlfcn.h... (cached) yes
+checking for size_t... (cached) yes
+checking return type of signal handlers... (cached) void
+checking for uint... (cached) yes
+checking for ulong... (cached) yes
+checking for int32_t... yes
+checking for uint32_t... yes
+checking for vprintf... (cached) yes
+checking for _doprnt... (cached) no
+checking for working memcmp... (cached) no
+checking for working alloca.h... (cached) yes
+checking for alloca... (cached) yes
+checking for memcpy... (cached) yes
+checking for strdup... (cached) yes
+checking for getpid... (cached) yes
+checking for kill... (cached) yes
+checking for strtod... (cached) yes
+checking for strtol... (cached) yes
+checking for finite... (cached) yes
+checking for fpclass... (cached) no
+checking for sigsetjmp... (cached) no
+checking whether sprintf is broken... (cached) no
+checking for finite... (cached) yes
+checking for isfinite... (cached) no
+checking for isinf... (cached) yes
+checking for isnan... (cached) yes
+checking whether fp_except is defined... (cached) no
+checking for usable _FPU_SETCW... yes
+checking for usable fpsetprec... no
+checking for usable _controlfp... no
+checking for usable _controlfp_s... no
+checking whether FPU control word can be manipulated by inline assembler... yes
+checking whether double cast to long preserves least significant bits... no
+checking whether dlsym() requires a leading underscore in symbol names... checking virtual machine dispatch method... CALL
+checking whether to enable thread-safety... no
+checking whether to enable inline optimization for GCC... yes
+checking whether to enable Zend debugging... no
+checking whether to enable Zend multibyte... no
+checking for inline... (cached) inline
+checking target system is Darwin... no
+checking for MM alignment and log values... done
+checking for memory allocation using mmap(MAP_ANON)... no
+checking for memory allocation using mmap("/dev/zero")... no
+checking for mremap... (cached) yes
+
+[1mConfiguring TSRM[m
+checking for i586-castorbox-linux-gnu-ranlib... (cached) i586-castorbox-linux-gnu-ranlib
+checking for stdarg.h... (cached) yes
+
+[1mConfiguring libtool[m
+checking for a sed that does not truncate output... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/sed
+checking for fgrep... (cached) //home/pablo/gar-castorbox/images/build/usr/bin/grep -F
+checking for ld used by i586-castorbox-linux-gnu-gcc... (cached) i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... (cached) yes
+checking for BSD- or MS-compatible name lister (nm)... (cached) i586-castorbox-linux-gnu-nm
+checking the name lister (i586-castorbox-linux-gnu-nm) interface... (cached) BSD nm
+checking the maximum length of command line arguments... (cached) 3458764513820540925
+checking whether the shell understands some XSI constructs... yes
+checking whether the shell understands "+="... yes
+checking for i586-castorbox-linux-gnu-ld option to reload object files... (cached) -r
+checking for i586-castorbox-linux-gnu-objdump... (cached) i586-castorbox-linux-gnu-objdump
+checking how to recognize dependent libraries... (cached) pass_all
+checking for i586-castorbox-linux-gnu-ar... (cached) i586-castorbox-linux-gnu-ar
+checking for i586-castorbox-linux-gnu-strip... (cached) i586-castorbox-linux-gnu-strip
+checking for i586-castorbox-linux-gnu-ranlib... (cached) i586-castorbox-linux-gnu-ranlib
+checking command to parse i586-castorbox-linux-gnu-nm output from i586-castorbox-linux-gnu-gcc object... (cached) ok
+checking for dlfcn.h... (cached) yes
+checking whether we are using the GNU C++ compiler... (cached) yes
+checking whether i586-castorbox-linux-gnu-g++ accepts -g... (cached) yes
+checking how to run the C++ preprocessor... (cached) i586-castorbox-linux-gnu-g++ -E
+checking for objdir... (cached) .libs
+checking if i586-castorbox-linux-gnu-gcc supports -fno-rtti -fno-exceptions... (cached) no
+checking for i586-castorbox-linux-gnu-gcc option to produce PIC... -fPIC -DPIC
+checking if i586-castorbox-linux-gnu-gcc PIC flag -fPIC -DPIC works... (cached) yes
+checking if i586-castorbox-linux-gnu-gcc static flag -static works... (cached) yes
+checking if i586-castorbox-linux-gnu-gcc supports -c -o file.o... (cached) yes
+checking if i586-castorbox-linux-gnu-gcc supports -c -o file.o... (cached) yes
+checking whether the i586-castorbox-linux-gnu-gcc linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+checking for ld used by i586-castorbox-linux-gnu-g++... (cached) i586-castorbox-linux-gnu-ld
+checking if the linker (i586-castorbox-linux-gnu-ld) is GNU ld... (cached) yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking for i586-castorbox-linux-gnu-g++ option to produce PIC... -fPIC -DPIC
+checking if i586-castorbox-linux-gnu-g++ PIC flag -fPIC -DPIC works... (cached) yes
+checking if i586-castorbox-linux-gnu-g++ static flag -static works... (cached) yes
+checking if i586-castorbox-linux-gnu-g++ supports -c -o file.o... (cached) yes
+checking if i586-castorbox-linux-gnu-g++ supports -c -o file.o... (cached) yes
+checking whether the i586-castorbox-linux-gnu-g++ linker (i586-castorbox-linux-gnu-ld) supports shared libraries... yes
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+
+[1mGenerating files[m
+configure: creating ./config.status
+creating main/internal_functions.c
+creating main/internal_functions_cli.c
++--------------------------------------------------------------------+
+| License:                                                           |
+| This software is subject to the PHP License, available in this     |
+| distribution in the file LICENSE.  By continuing this installation |
+| process, you are bound by the terms of this license agreement.     |
+| If you do not agree with the terms of this license, you must abort |
+| the installation process at this point.                            |
++--------------------------------------------------------------------+
+
+Thank you for using PHP.
+
+config.status: creating php5.spec
+config.status: creating main/build-defs.h
+config.status: creating scripts/phpize
+config.status: creating scripts/man1/phpize.1
+config.status: creating scripts/php-config
+config.status: creating scripts/man1/php-config.1
+config.status: creating sapi/cli/php.1
+config.status: creating main/php_config.h
+config.status: main/php_config.h is unchanged
+config.status: executing libtool commands
+config.status: executing default commands

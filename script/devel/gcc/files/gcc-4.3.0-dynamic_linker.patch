@@ -1,0 +1,135 @@
+diff -Naur gcc-4.3.0-old/gcc/config/i386/linux64.h gcc-4.3.0-new/gcc/config/i386/linux64.h
+--- gcc-4.3.0-old/gcc/config/i386/linux64.h	2008-03-05 23:39:25.000000000 -0800
++++ gcc-4.3.0-new/gcc/config/i386/linux64.h	2008-03-05 23:41:26.000000000 -0800
+@@ -54,7 +54,7 @@
+    done.  */
+ 
+ #define GLIBC_DYNAMIC_LINKER32 "/lib/ld-linux.so.2"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld-linux-x86-64.so.2"
++#define GLIBC_DYNAMIC_LINKER64 "/lib/ld-linux-x86-64.so.2"
+ 
+ #if TARGET_64BIT_DEFAULT
+ #define SPEC_32 "m32"
+diff -Naur gcc-4.3.0-old/gcc/config/mips/iris6.h gcc-4.3.0-new/gcc/config/mips/iris6.h
+--- gcc-4.3.0-old/gcc/config/mips/iris6.h	2008-03-05 23:39:29.000000000 -0800
++++ gcc-4.3.0-new/gcc/config/mips/iris6.h	2008-03-05 23:41:26.000000000 -0800
+@@ -61,19 +61,19 @@
+      %{mabi=32:%{pg:gcrt1.o%s} \
+        %{!pg:%{p:mcrt1.o%s libprof1.a%s}%{!p:crt1.o%s}}} \
+      %{mabi=n32: \
+-       %{mips4:%{pg:/usr/lib32/mips4/gcrt1.o%s} \
+-         %{!pg:%{p:/usr/lib32/mips4/mcrt1.o%s /usr/lib32/mips4/libprof1.a%s} \
+-           %{!p:/usr/lib32/mips4/crt1.o%s}}} \
+-       %{!mips4:%{pg:/usr/lib32/mips3/gcrt1.o%s} \
+-         %{!pg:%{p:/usr/lib32/mips3/mcrt1.o%s /usr/lib32/mips3/libprof1.a%s} \
+-           %{!p:/usr/lib32/mips3/crt1.o%s}}}} \
++       %{mips4:%{pg:/usr/lib/mips4/gcrt1.o%s} \
++         %{!pg:%{p:/usr/lib/mips4/mcrt1.o%s /usr/lib/mips4/libprof1.a%s} \
++           %{!p:/usr/lib/mips4/crt1.o%s}}} \
++       %{!mips4:%{pg:/usr/lib/mips3/gcrt1.o%s} \
++         %{!pg:%{p:/usr/lib/mips3/mcrt1.o%s /usr/lib/mips3/libprof1.a%s} \
++           %{!p:/usr/lib/mips3/crt1.o%s}}}} \
+      %{mabi=64: \
+-       %{mips4:%{pg:/usr/lib64/mips4/gcrt1.o} \
+-         %{!pg:%{p:/usr/lib64/mips4/mcrt1.o /usr/lib64/mips4/libprof1.a} \
+-           %{!p:/usr/lib64/mips4/crt1.o}}} \
+-       %{!mips4:%{pg:/usr/lib64/mips3/gcrt1.o} \
+-         %{!pg:%{p:/usr/lib64/mips3/mcrt1.o /usr/lib64/mips3/libprof1.a} \
+-           %{!p:/usr/lib64/mips3/crt1.o}}}}} \
++       %{mips4:%{pg:/usr/lib/mips4/gcrt1.o} \
++         %{!pg:%{p:/usr/lib/mips4/mcrt1.o /usr/lib/mips4/libprof1.a} \
++           %{!p:/usr/lib/mips4/crt1.o}}} \
++       %{!mips4:%{pg:/usr/lib/mips3/gcrt1.o} \
++         %{!pg:%{p:/usr/lib/mips3/mcrt1.o /usr/lib/mips3/libprof1.a} \
++           %{!p:/usr/lib/mips3/crt1.o}}}}} \
+   irix-crti.o%s crtbegin.o%s"
+ 
+ #ifdef IRIX_USING_GNU_LD
+@@ -86,10 +86,10 @@
+ 
+ #undef LIB_SPEC
+ #define LIB_SPEC \
+-  "%{mabi=n32: %{mips4:-L/usr/lib32/mips4} %{!mips4:-L/usr/lib32/mips3} \
+-     -L/usr/lib32} \
+-   %{mabi=64: %{mips4:-L/usr/lib64/mips4} %{!mips4:-L/usr/lib64/mips3} \
+-     -L/usr/lib64} \
++  "%{mabi=n32: %{mips4:-L/usr/lib/mips4} %{!mips4:-L/usr/lib/mips3} \
++     -L/usr/lib} \
++   %{mabi=64: %{mips4:-L/usr/lib/mips4} %{!mips4:-L/usr/lib/mips3} \
++     -L/usr/lib} \
+    %{!shared:" \
+      SUBTARGET_DONT_WARN_UNUSED_SPEC \
+      " %{pthread:-lpthread} %{p:libprof1.a%s}%{pg:libprof1.a%s} -lc " \
+@@ -106,10 +106,10 @@
+   "crtend.o%s irix-crtn.o%s \
+    %{!shared: \
+      %{mabi=32:crtn.o%s}\
+-     %{mabi=n32:%{mips4:/usr/lib32/mips4/crtn.o%s}\
+-       %{!mips4:/usr/lib32/mips3/crtn.o%s}}\
+-     %{mabi=64:%{mips4:/usr/lib64/mips4/crtn.o%s}\
+-       %{!mips4:/usr/lib64/mips3/crtn.o%s}}}"
++     %{mabi=n32:%{mips4:/usr/lib/mips4/crtn.o%s}\
++       %{!mips4:/usr/lib/mips3/crtn.o%s}}\
++     %{mabi=64:%{mips4:/usr/lib/mips4/crtn.o%s}\
++       %{!mips4:/usr/lib/mips3/crtn.o%s}}}"
+ 
+ #define MIPS_TFMODE_FORMAT mips_extended_format
+ 
+diff -Naur gcc-4.3.0-old/gcc/config/mips/linux64.h gcc-4.3.0-new/gcc/config/mips/linux64.h
+--- gcc-4.3.0-old/gcc/config/mips/linux64.h	2008-03-05 23:39:29.000000000 -0800
++++ gcc-4.3.0-new/gcc/config/mips/linux64.h	2008-03-05 23:41:26.000000000 -0800
+@@ -39,9 +39,9 @@
+   %{profile:-lc_p} %{!profile:-lc}}"
+ 
+ #define GLIBC_DYNAMIC_LINKER32 "/lib/ld.so.1"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld.so.1"
+-#define GLIBC_DYNAMIC_LINKERN32 "/lib32/ld.so.1"
+-#define UCLIBC_DYNAMIC_LINKERN32 "/lib32/ld-uClibc.so.0"
++#define GLIBC_DYNAMIC_LINKER64 "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKERN32 "/lib/ld.so.1"
++#define UCLIBC_DYNAMIC_LINKERN32 "/lib/ld-uClibc.so.0"
+ #define LINUX_DYNAMIC_LINKERN32 \
+   CHOOSE_DYNAMIC_LINKER (GLIBC_DYNAMIC_LINKERN32, UCLIBC_DYNAMIC_LINKERN32)
+ 
+diff -Naur gcc-4.3.0-old/gcc/config/rs6000/linux64.h gcc-4.3.0-new/gcc/config/rs6000/linux64.h
+--- gcc-4.3.0-old/gcc/config/rs6000/linux64.h	2008-03-05 23:39:29.000000000 -0800
++++ gcc-4.3.0-new/gcc/config/rs6000/linux64.h	2008-03-05 23:41:26.000000000 -0800
+@@ -340,7 +340,7 @@
+ #define LINK_OS_DEFAULT_SPEC "%(link_os_linux)"
+ 
+ #define GLIBC_DYNAMIC_LINKER32 "/lib/ld.so.1"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld64.so.1"
++#define GLIBC_DYNAMIC_LINKER64 "/lib/ld64.so.1"
+ #define UCLIBC_DYNAMIC_LINKER32 "/lib/ld-uClibc.so.0"
+ #define UCLIBC_DYNAMIC_LINKER64 "/lib/ld64-uClibc.so.0"
+ #if UCLIBC_DEFAULT
+diff -Naur gcc-4.3.0-old/gcc/config/sparc/linux64.h gcc-4.3.0-new/gcc/config/sparc/linux64.h
+--- gcc-4.3.0-old/gcc/config/sparc/linux64.h	2008-03-05 23:39:29.000000000 -0800
++++ gcc-4.3.0-new/gcc/config/sparc/linux64.h	2008-03-05 23:41:26.000000000 -0800
+@@ -145,7 +145,7 @@
+ /* If ELF is the default format, we should not use /lib/elf.  */
+ 
+ #define GLIBC_DYNAMIC_LINKER32 "/lib/ld-linux.so.2"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER64 "/lib/ld-linux.so.2"
+ #define UCLIBC_DYNAMIC_LINKER32 "/lib/ld-uClibc.so.0"
+ #define UCLIBC_DYNAMIC_LINKER64 "/lib/ld64-uClibc.so.0"
+ #if UCLIBC_DEFAULT
+@@ -176,7 +176,7 @@
+         %{static:-static}}} \
+ "
+ 
+-#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/usr/lib %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+@@ -257,7 +257,7 @@
+ #else /* !SPARC_BI_ARCH */
+ 
+ #undef LINK_SPEC
+-#define LINK_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_SPEC "-m elf64_sparc -Y P,/usr/lib %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \

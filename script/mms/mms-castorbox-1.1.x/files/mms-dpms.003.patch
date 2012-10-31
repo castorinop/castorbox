@@ -1,0 +1,590 @@
+=== modified file 'plugins/feature/audio/audio.hpp'
+--- old/plugins/feature/audio/audio.hpp	2009-12-18 16:13:41 +0000
++++ new/plugins/feature/audio/audio.hpp	2010-01-27 01:02:00 +0000
+@@ -2286,6 +2289,7 @@
+ 	saverrunning = true;
+ 	was_saverrunning = true;
+ 	prepare_audio_fullscreen();
++	render->device->dpms_off();
+       }
+ 
+       if (!saverrunning) {
+@@ -2375,6 +2379,7 @@
+     saverrunning = false;
+     pthread_cond_broadcast(&ssaver_switch); /* wakes thread up */
+     pthread_mutex_unlock(&ssaver_mut);
++    render->device->dpms_on();
+   }
+   
+   void start_ssaver(){
+@@ -2383,6 +2388,7 @@
+     S_Config::get_instance()->s_last_key(0); /* TODO: find a better way, this can't be called by an input hook */
+     pthread_cond_broadcast(&ssaver_switch); /* wakes thread up */
+     pthread_mutex_unlock(&ssaver_mut);
++    render->device->dpms_off();
+   }
+ 
+   virtual std::vector<T> rdir(const std::string& argv) = 0;
+
+=== modified file 'plugins/feature/clock/clock.cpp'
+--- old/plugins/feature/clock/clock.cpp	2008-10-23 22:45:07 +0000
++++ new/plugins/feature/clock/clock.cpp	2010-01-21 18:50:43 +0000
+@@ -239,6 +239,8 @@
+     if (!ringing) {
+       ringing = true;
+       std::cout << "Clock: RIIIIIIIIIINGGGGGGGGGGGGGGGGGGGGGGGGGGGGG!!!!" << std::endl;
++      render->device->dpms_wake();
++      mmsSleep(5);
+ 
+       Audio *audio = get_class<Audio>(dgettext("mms-audio", "Audio"));
+      
+
+=== modified file 'plugins/feature/movie/movie.cpp'
+--- old/plugins/feature/movie/movie.cpp	2009-02-26 18:17:49 +0000
++++ new/plugins/feature/movie/movie.cpp	2010-01-21 18:50:14 +0000
+@@ -501,6 +501,22 @@
+     mmsUsleep(100*1000);
+   }
+ 
++/*  render->device->animation_section_begin(true);
++  int curlayer = render->device->get_current_layer();
++  render->device->switch_to_layer(curlayer+1);
++  render->device->reset_layout_attribs_nowait();
++  render->device->set_layout_alpha(0.0, curlayer+1);
++  //render->device->animation_zoom(3,3,1,1,40,curlayer+1);
++  render->device->animation_fade(0,1,50,curlayer+1);
++  render->device->animation_fade(1,0,50,curlayer);
++  render->device->animation_section_end();
++
++  render->prepare_new_image();  
++  render->current.add(new RObj(0, 0, conf->p_h_res(), conf->p_v_res(), 0, 0, 0, 255, 2));
++  render->draw_and_release("movie startplaying"); */
++
++  render->device->dpms_off();
++
+   if (file.filetype == "dvd")
+     active_player->play_dvd(file.filenames.front());
+   else if (file.filetype == "vcd")
+@@ -526,9 +542,19 @@
+   // make sure the screensaver doesn't kick in right after movie finishes
+   conf->s_last_key(time(0));
+ 
++  render->device->dpms_on();
++
+   if (!active_player->wants_exclusivity())
+     render->complete_redraw();
+ 
++  /* render->device->animation_section_begin();
++  render->device->switch_to_layer(curlayer);
++  render->device->reset_layout_attribs_nowait();
++  render->device->animation_fade(0,1,80,curlayer);
++  render->device->animation_fade(1,0,40,curlayer+1);
++  render->device->animation_section_end(); */
++
++
+   S_BusyIndicator::get_instance()->enable();
+ }
+ 
+
+=== modified file 'plugins/input/lirc/lirc.cpp'
+--- old/plugins/input/lirc/lirc.cpp	2008-10-20 22:15:40 +0000
++++ new/plugins/input/lirc/lirc.cpp	2010-01-22 12:41:29 +0000
+@@ -3,6 +3,7 @@
+ #include "config.h"
+ 
+ #include "lirc_config.hpp"
++#include "renderer.hpp"
+ 
+ #include "gettext.hpp"
+ #include "config.hpp"
+@@ -264,6 +265,8 @@
+       else
+ 	continue;
+     }
++
++    S_Render::get_instance()->device->dpms_wake(); // Wake screen at any input
+     input_master->add_input(input, "lirc");
+ 
+     gettimeofday(&tv,NULL);
+
+=== added file 'plugins/output/dpms.cpp'
+--- old/plugins/output/dpms.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/output/dpms.cpp	2010-01-27 00:59:54 +0000
+@@ -0,0 +1,102 @@
++#include "dpms.hpp"
++
++#include <iostream>
++
++DPMS::DPMS() : extension(false)
++{}
++
++void DPMS::DPMS_Init()
++{
++  std::cout << "DPMS Init" << std::endl;
++  SDL_VERSION(&wm.version);
++  if (SDL_GetWMInfo(&wm) > 0) {
++    extension = checkExtension();
++  } else {
++    std::cout << "DPMS::Init wrong!" << std::endl;
++    extension = false;
++  }
++
++  std::cout << "DPMS test" << std::endl;
++  off();
++  on();
++  wake();
++
++}
++
++bool DPMS::checkExtension()
++{
++	std::cout << "DPMS::checkExtension" << std::endl;
++	int nothing;
++        wm.info.x11.lock_func();
++        if (DPMSQueryExtension(wm.info.x11.display, &nothing, &nothing)) {
++          wm.info.x11.unlock_func();
++	  std::cout << "DPMS::check DPMS checked extension" << std::endl;
++	  return true;
++	}
++        wm.info.x11.unlock_func();   
++	std::cout << "DPMS::check DPMS cant check" << std::endl;
++	return false;
++}
++
++void DPMS::getinfo()
++{
++   if (extension) {
++     wm.info.x11.lock_func();
++     DPMSInfo(wm.info.x11.display, &state, &onoff);
++     wm.info.x11.unlock_func();
++     std::cout << "DPMS::getinfo" << " onoff:" <<  (onoff ? " ok" : " no") << std::endl;
++   }
++}
++
++void DPMS::on() 
++{
++ std::cout << "DPMS::on" << std::endl;
++  getinfo();
++  if (extension && !onoff) {
++	wm.info.x11.lock_func();
++        if (!DPMSEnable(wm.info.x11.display)) {
++          // restoring power saving settings
++		std::cout << "DPMS::on DPMS not available?" << std::endl;
++        } else {
++         	getinfo();
++                if (onoff) {
++		    std::cout << "DPMS::on Successfully enabled DPMS" << std::endl;
++		    flag_wake = true;
++		} else
++		    std::cout << "DPMS::on Could not enable DPMS" << std::endl;
++        }
++	wm.info.x11.unlock_func();
++	wake();
++    }
++}
++
++void DPMS::off()
++{
++  std::cout << "DPMS::off" << std::endl;
++  getinfo();
++  if (extension && onoff) {
++	flag_wake = false;
++	Status stat;
++	std::cout << "DPMS::off Disabling DPMS" << std::endl;
++	wm.info.x11.lock_func();
++        stat = DPMSDisable(wm.info.x11.display);       // monitor powersave off
++	wm.info.x11.unlock_func();
++        std::cout << "DPMS::off DPMSDisable stat: " << stat << std::endl;
++  }
++}
++
++void DPMS::wake()
++{
++  std::cout << "DPMS::wake" << std::endl;
++  if (extension && flag_wake) {
++      wm.info.x11.lock_func();
++      DPMSForceLevel(wm.info.x11.display, DPMSModeOn);
++      wm.info.x11.unlock_func();
++      std::cout << "DPMS::wake DPMS should be wake screen" << std::endl;
++  }
++}
++
++void DPMS::autoWake(bool& _wake)
++{
++  flag_wake = _wake;
++}
+
+=== added file 'plugins/output/dpms.hpp'
+--- old/plugins/output/dpms.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/output/dpms.hpp	2010-01-27 00:59:11 +0000
+@@ -0,0 +1,34 @@
++#ifndef DPMS_HPP
++#define DPMS_HPP
++
++#include <SDL/SDL.h>
++#include <SDL/SDL_syswm.h>
++#include <X11/extensions/dpms.h>
++
++class DPMS {
++
++public:
++
++  DPMS();
++  void DPMS_Init();
++  void on();
++  void off();
++  void wake();
++  void autoWake(bool& _wake);
++
++private:
++
++  SDL_SysWMinfo wm;
++
++  BOOL onoff;
++  CARD16 state;
++  bool extension;
++  bool flag_wake;
++
++  bool checkExtension();
++
++  void getinfo();
++
++};
++
++#endif
+
+=== modified file 'plugins/output/opengl/Makefile'
+--- old/plugins/output/opengl/Makefile	2008-11-28 13:53:25 +0000
++++ new/plugins/output/opengl/Makefile	2010-01-21 23:10:39 +0000
+@@ -12,6 +12,11 @@
+ SRCS = SDL_GLout.cpp  openglout_plugin.cpp opengl_config.cpp opengl.cpp
+ OBJS = SDL_GLout.o openglout_plugin.o opengl_config.o opengl.o
+ 
++ifeq ($(DPMS),yes)
++SRCS += ../dpms.cpp
++OBJS += ../dpms.o
++endif
++
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../feature/ -I../../input/ \
+ 	 -fPIC -shared
+ 
+@@ -19,6 +24,9 @@
+ 	$(DO_MAKE)
+ 	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `sdl-config --libs`  -lGL
+ 
++../dpms.o:
++	$(MAKE) -C ../ CXXFLAGS="$(CXXFLAGS)" dpms.o
++
+ install:
+ 	$(INSTALL) $(PLUGIN_NAME) $(DESTDIR)$(PLUGINDIR)/$(PLUGIN_NAME)
+ 
+
+=== modified file 'plugins/output/opengl/SDL_GLout.cpp'
+--- old/plugins/output/opengl/SDL_GLout.cpp	2009-05-13 15:30:49 +0000
++++ new/plugins/output/opengl/SDL_GLout.cpp	2010-01-27 00:54:59 +0000
+@@ -20,11 +20,13 @@
+ 
+ 
+ 
++#include "config.h";
+ #include "SDL_GLout.h"
+ #include <sys/time.h>
+ #include <ctime>
+ #include <errno.h>
+ #include <cstdio>
++
+ #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+ 
+ #define RMASK 0xff000000
+@@ -240,6 +242,10 @@
+     }
+   }
+ 
++#ifdef use_dpms
++  DPMS_Init();
++#endif
++
+   screeninfo = SDL_GetVideoInfo();
+   bpp = screeninfo->vfmt->BitsPerPixel;
+   original_screen_bpp = bpp;
+@@ -1415,4 +1421,4 @@
+   struct timespec ts;
+   clock_gettime(CLOCK_REALTIME, &ts);
+   return static_cast<uint64_t>(ts.tv_sec)*1000L + ts.tv_nsec/1000000L - bench_timer;
+-} 
++}
+
+=== modified file 'plugins/output/opengl/SDL_GLout.h'
+--- old/plugins/output/opengl/SDL_GLout.h	2008-10-25 08:44:05 +0000
++++ new/plugins/output/opengl/SDL_GLout.h	2010-01-27 00:54:48 +0000
+@@ -25,7 +25,7 @@
+ 
+ #define GLX_GLXEXT_PROTOTYPES
+ 
+-
++#include "config.h"
+ #include <SDL/SDL.h>
+ #include <SDL/SDL_syswm.h> 
+ #include <GL/gl.h>
+@@ -37,6 +37,10 @@
+ #include <string>
+ #include <vector>
+ #include <assert.h>
++#ifdef use_dpms
++#include "dpms.hpp"
++#endif
++
+ 
+ #define NUM_OF_LAYOUTS 20
+ #define SHADER_LAYOUT NUM_OF_LAYOUTS -1
+@@ -146,6 +150,9 @@
+ };
+ 
+ class SDL_GLout
++#ifdef use_dpms
++: public DPMS
++#endif
+ {
+ 
+ private:
+@@ -271,7 +278,6 @@
+   void SetLayoutFitScreen(unsigned int layoutnum, bool fits);
+   void ForceInputHandling();
+ 
+-
+   void HoldDrawing(){
+     if (!quit){
+       pthread_mutex_lock(&needsdrawing_mutex);
+
+=== modified file 'plugins/output/opengl/opengl.cpp'
+--- old/plugins/output/opengl/opengl.cpp	2009-05-13 15:30:49 +0000
++++ new/plugins/output/opengl/opengl.cpp	2010-01-27 00:51:43 +0000
+@@ -2,6 +2,7 @@
+ #include <cassert>
+ #include <cstdio>
+ #include "opengl_config.hpp"
++
+ OpenGLdev::OpenGLdev(){
+ }
+ 
+@@ -227,6 +228,25 @@
+ 
+ }
+ 
++void OpenGLdev::dpms_on(){
++  SDLGL->on();
++}
++
++void OpenGLdev::dpms_off()
++{
++  SDLGL->off();
++}
++
++void OpenGLdev::dpms_wake()
++{
++  SDLGL->wake();
++}
++
++void OpenGLdev::dpms_autoWake(bool& _wake)
++{
++  SDLGL->autoWake(_wake);
++}
++
+ void OpenGLdev::make_actions_expire(int layoutnum) {
+   SDLGL->MakeActionsExpire(layoutnum);
+ }
+
+=== modified file 'plugins/output/opengl/opengl.hpp'
+--- old/plugins/output/opengl/opengl.hpp	2008-10-25 08:44:05 +0000
++++ new/plugins/output/opengl/opengl.hpp	2010-01-27 00:50:24 +0000
+@@ -86,6 +86,10 @@
+   unsigned int convert_ymouse(int y);
+   void sdlpump();
+ 
++  void dpms_on();
++  void dpms_off();
++  void dpms_wake();
++  void dpms_autoWake(bool& _wake);
+ 
+  protected:
+ // Config *conf;
+
+=== modified file 'plugins/output/render_device.hpp'
+--- old/plugins/output/render_device.hpp	2008-10-25 08:44:05 +0000
++++ new/plugins/output/render_device.hpp	2010-01-27 00:48:05 +0000
+@@ -109,6 +109,11 @@
+   virtual void refresh_screen(){};
+   virtual void set_layout_alpha(float, int = -1) {};
+ 
++  /* External DPMS methods */
++  virtual void dpms_on() {};
++  virtual void dpms_off() {};
++  virtual void dpms_wake() {};
++  virtual void dpms_autoWake(bool& wake) {};
+ 
+ protected:
+   Config *conf;
+
+=== modified file 'plugins/output/sdl/Makefile'
+--- old/plugins/output/sdl/Makefile	2008-12-29 03:36:10 +0000
++++ new/plugins/output/sdl/Makefile	2010-01-22 00:06:58 +0000
+@@ -12,6 +12,12 @@
+ SRCS = sdlout.cpp sdlout_plugin.cpp
+ OBJS = sdlout.o sdlout_plugin.o
+ 
++ifeq ($(DPMS),yes)
++SRCS += ../dpms.cpp
++OBJS += ../dpms.o
++endif
++
++
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../feature/ -I../../input/ \
+ 	 -fPIC -shared
+ 
+@@ -26,6 +32,9 @@
+ 	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `sdl-config --libs`
+ endif
+ 
++../dpms.o:
++	$(MAKE) -C ../ CXXFLAGS="$(CXXFLAGS)" dpms.o
++
+ install:
+ 	$(INSTALL) $(PLUGIN_NAME) $(DESTDIR)$(PLUGINDIR)/$(PLUGIN_NAME)
+ 	make -C po install
+
+=== modified file 'plugins/output/sdl/sdlout.cpp'
+--- old/plugins/output/sdl/sdlout.cpp	2009-05-10 12:29:22 +0000
++++ new/plugins/output/sdl/sdlout.cpp	2010-01-27 00:54:02 +0000
+@@ -139,6 +139,10 @@
+     XFixesHideCursor(display, sdl_window_id);
+ #endif
+ 
++#ifdef use_dpms
++  DPMS_Init();
++#endif
++
+   if(conf->p_fullscreen())
+     switch_fullscreen();
+ 
+@@ -529,3 +533,23 @@
+   render->new_resolution();
+ 
+ }
++
++void SDLdev::dpms_on(){
++  on();
++}
++
++void SDLdev::dpms_off()
++{
++  off();
++}
++
++void SDLdev::dpms_wake()
++{
++  wake();
++}
++
++void SDLdev::dpms_autoWake(bool& _wake)
++{
++  autoWake(_wake);
++}
++
+
+=== modified file 'plugins/output/sdl/sdlout.hpp'
+--- old/plugins/output/sdl/sdlout.hpp	2008-07-15 14:15:00 +0000
++++ new/plugins/output/sdl/sdlout.hpp	2010-01-27 00:54:13 +0000
+@@ -7,7 +7,16 @@
+ #include <SDL/SDL.h>
+ #include <SDL/SDL_syswm.h>
+ 
++#include "config.h"
++#ifdef use_dpms
++#include "dpms.hpp"
++#endif
++
++
+ class SDLdev : public RenderDevice
++#ifdef use_dpms
++, public DPMS
++#endif
+ {
+ private:
+   int bpp;
+@@ -96,6 +105,11 @@
+ 
+   void switch_mode();
+ 
++  void dpms_on();
++  void dpms_off();
++  void dpms_wake();
++  void dpms_autoWake(bool& _wake);
++
+  private:
+   void run();
+ };
+=== modified file 'configure'
+--- old/configure	2010-02-23 18:48:45 +0000
++++ new/configure	2010-06-14 22:52:10 +0000
+@@ -107,6 +107,7 @@
+   --enable-dvb	         Enable dvb output
+   --enable-mpeg	         Enable writing the output to a mpeg file on disc
+   --enable-lcd	         Enable LCD display output
++  --enable-dpms		 Enable DPMS support
+ 
+   --use-internal-ffmpeg  Uses internal ffmpeg instead of external ffmpeg
+ 
+@@ -1076,6 +1088,7 @@
+ _vo_dvb=no
+ _vo_mpeg=no
+ _vo_lcd=no
++_vo_dpms=no
+ _x11=yes
+ 
+ _inotify=yes
+@@ -1200,6 +1213,9 @@
+   --enable-lcd)
+     _vo_lcd=yes
+     ;;
++  --enable-dpms)
++    _vo_dpms=yes
++    ;;
+   --enable-mpeg)
+     _vo_mpeg=yes
+     ;;
+@@ -1538,6 +1590,10 @@
+  lcd='#define use_lcd 1'
+ fi
+ 
++if test $_vo_dpms = "yes"; then
++ dpms='#define use_dpms 1'
++fi
++
+ if test $_fpython = "yes"; then
+  fpython='#define use_python 1'
+ fi
+@@ -1691,6 +1747,7 @@
+ $dvb
+ $mpeg_out
+ $lcd
++$dpms
+ $ffmpeg_type
+ $mpeg
+ 
+@@ -1826,6 +1897,8 @@
+ VO_DVB = $_vo_dvb
+ VO_LCD = $_vo_lcd
+ VO_MPEG = $_vo_mpeg
++
++DPMS = $_vo_dpms
+ 
+ X11 = $_x11
+ @@ -1940,6 +2011,7 @@
+ dvb: $_vo_dvb
+ lcd: $_vo_lcd
+ mpeg: $_vo_mpeg
++dpms: $_vo_dpms
+ EOF
+ if test $_mpeg = "yes"; then
+ cat << EOF
+

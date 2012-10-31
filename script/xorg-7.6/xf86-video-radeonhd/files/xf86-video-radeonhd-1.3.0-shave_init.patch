@@ -1,0 +1,12 @@
+diff -Naur xf86-video-radeonhd-1.3.0-old/configure.ac xf86-video-radeonhd-1.3.0-new/configure.ac
+--- xf86-video-radeonhd-1.3.0-old/configure.ac	2009-10-09 08:41:06.000000000 -0700
++++ xf86-video-radeonhd-1.3.0-new/configure.ac	2009-10-10 08:14:22.000000000 -0700
+@@ -372,7 +372,7 @@
+ 		[Patchlevel Version])
+ fi
+ 
+-SHAVE_INIT(.,enable)
++dnl SHAVE_INIT(.,enable)
+ 
+ AC_OUTPUT([
+ 	Makefile

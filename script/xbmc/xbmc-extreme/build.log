@@ -1,0 +1,667 @@
+[===== NOW BUILDING:	xbmc-extreme	=====]
+	[fetch] complete for xbmc.
+	[checksum] complete for xbmc.
+	[extract] complete for xbmc.
+	[patch] complete for xbmc.
+	[configure] complete for xbmc.
+ ==> Running make in work/main.d/xbmc-extreme
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+make xbmc/cores/DllLoader/exports/exports.a
+make -C lib/cpluff/libcpluff
+make -C xbmc
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cpluff/libcpluff'
+Making all in docsrc
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cpluff/libcpluff/docsrc'
+make[3]: Nothing to be done for `all'.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cpluff/libcpluff/docsrc'
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+make -C xbmc/cores/DllLoader/exports
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cpluff/libcpluff'
+make[3]: Nothing to be done for `all-am'.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cpluff/libcpluff'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cpluff/libcpluff'
+make -C xbmc/addons
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports'
+make[3]: `exports.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+make xbmc/cores/DllLoader/exports/util/exports_utils.a
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+make -C xbmc/cores/DllLoader/exports/util
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/util'
+make[3]: `exports_utils.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/util'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+make -C xbmc/cores/DllLoader/exports wrapper.def
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports'
+make[2]: `wrapper.def' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports'
+make -C xbmc/cores/playercorefactory
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/addons'
+make[2]: `addons.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/addons'
+make -C xbmc/cores/dvdplayer
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc'
+make[2]: `xbmc.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc'
+make -C xbmc/cores/VideoRenderers
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/playercorefactory'
+make[2]: `playercorefactory.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/playercorefactory'
+make -C xbmc/cores/VideoRenderers/VideoShaders
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/VideoRenderers'
+make[2]: `VideoRenderer.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/VideoRenderers'
+make -C lib/tinyXML
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/VideoRenderers/VideoShaders'
+make[2]: `VideoShaders.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/VideoRenderers/VideoShaders'
+make -C xbmc/cores
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer'
+make[2]: `DVDPlayer.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer'
+make -C xbmc/interfaces/python
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/python'
+make[2]: `python.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/python'
+make -C xbmc/cores/DllLoader/
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/tinyXML'
+make[2]: `tinyxml.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/tinyXML'
+make -C xbmc/cores/dvdplayer/DVDCodecs
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores'
+make[2]: `cores.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores'
+make -C xbmc/cores/dvdplayer/DVDCodecs/Audio
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs'
+make[2]: `DVDCodecs.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs'
+make -C xbmc/cores/dvdplayer/DVDCodecs/Overlay
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader'
+make[2]: `dllloader.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader'
+make -C xbmc/cores/dvdplayer/DVDCodecs/Video
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs/Audio'
+make[2]: `Audio.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs/Audio'
+make -C xbmc/cores/dvdplayer/DVDDemuxers
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs/Overlay'
+make[2]: `Overlay.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs/Overlay'
+make -C xbmc/cores/dvdplayer/DVDInputStreams
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs/Video'
+make[2]: `Video.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDCodecs/Video'
+make -C xbmc/cores/dvdplayer/DVDSubtitles
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDDemuxers'
+make[2]: `DVDDemuxers.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDDemuxers'
+make -C xbmc/cores/AudioRenderers
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDInputStreams'
+make[2]: `DVDInputStreams.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDInputStreams'
+make -C xbmc/cores/ExternalPlayer
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDSubtitles'
+make[2]: `DVDSubtitles.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/dvdplayer/DVDSubtitles'
+make -C xbmc/filesystem
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/AudioRenderers'
+make[2]: `audiorenderers.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/AudioRenderers'
+make -C xbmc/filesystem/MusicDatabaseDirectory
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/ExternalPlayer'
+make[2]: `ExternalPlayer.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/ExternalPlayer'
+make -C xbmc/filesystem/VideoDatabaseDirectory
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/filesystem/MusicDatabaseDirectory'
+make[2]: `musicdatabasedirectory.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/filesystem/MusicDatabaseDirectory'
+make -C xbmc/input
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/filesystem/VideoDatabaseDirectory'
+make[2]: `videodatabasedirectory.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/filesystem/VideoDatabaseDirectory'
+make -C xbmc/dialogs
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/input'
+make[2]: `input.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/input'
+make -C xbmc/music/karaoke
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/karaoke'
+make[2]: `karaoke.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/karaoke'
+make -C xbmc/music
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/filesystem'
+make[2]: `filesystem.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/filesystem'
+make -C xbmc/music/dialogs
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/dialogs'
+make[2]: `dialogs.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/dialogs'
+make -C xbmc/music/infoscanner
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/infoscanner'
+make[2]: `musicscanner.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/infoscanner'
+make -C xbmc/music/tags
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music'
+make[2]: `music.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music'
+make -C xbmc/music/windows
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/dialogs'
+make[2]: `musicdialogs.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/dialogs'
+make -C xbmc/video/dialogs
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/windows'
+make[2]: `musicwindows.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/windows'
+make -C xbmc/pictures
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/video/dialogs'
+make[2]: `videodialogs.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/video/dialogs'
+make -C xbmc/playlists
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/tags'
+make[2]: `musictags.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/music/tags'
+make -C xbmc/programs
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/pictures'
+make[2]: `pictures.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/pictures'
+make -C xbmc/powermanagement
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/playlists'
+make[2]: `playlists.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/playlists'
+make -C xbmc/storage
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/programs'
+make[2]: `programs.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/programs'
+make -C xbmc/threads
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/powermanagement'
+make[2]: `powermanagement.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/powermanagement'
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/threads'
+make[2]: `threads.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/threads'
+make -C xbmc/windows
+make -C xbmc/interfaces/python/xbmcmodule
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/storage'
+make[2]: `storage.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/storage'
+make -C xbmc/network/libscrobbler
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/network/libscrobbler'
+make[2]: `scrobbler.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/network/libscrobbler'
+make -C lib/libRTV
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libRTV'
+make[2]: `librtv.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libRTV'
+make -C lib/libUPnP
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/windows'
+make[2]: `windows.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/windows'
+make -C lib/libXDAAP
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libXDAAP'
+make[2]: `libxdaap.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libXDAAP'
+make -C xbmc/interfaces
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libUPnP'
+make[2]: `libupnp.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libUPnP'
+make -C xbmc/cdrip
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces'
+make[2]: `interfaces.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces'
+make -C xbmc/interfaces/json-rpc
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/json-rpc'
+make[2]: `json-rpc.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/json-rpc'
+make -C xbmc/interfaces/http-api
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/http-api'
+make[2]: `http-api.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/http-api'
+make -C xbmc/dbwrappers
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/python/xbmcmodule'
+make[2]: `xbmcmodule.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/interfaces/python/xbmcmodule'
+make -C lib/libsquish
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libsquish'
+make[2]: `libsquish.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libsquish'
+make -C lib/SlingboxLib
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/SlingboxLib'
+make[2]: `SlingboxLib.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/SlingboxLib'
+make -C lib/libapetag
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libapetag'
+make  all-am
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cdrip'
+make[2]: `cdrip.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cdrip'
+make -C lib/xbmc-dll-symbols
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libapetag'
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/xbmc-dll-symbols'
+make[2]: `dll-symbols.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/xbmc-dll-symbols'
+make -C xbmc/rendering
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libapetag'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libapetag'
+make -C xbmc/windowing
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/dbwrappers'
+make[2]: `dbwrappers.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/dbwrappers'
+make -C xbmc/rendering/gl
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/rendering'
+make[2]: `rendering.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/rendering'
+make -C lib/libhts
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libhts'
+make[2]: `libhts.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libhts'
+make -C xbmc/input/linux
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/windowing'
+make[2]: `windowing.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/windowing'
+make -C xbmc/network/linux
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/rendering/gl'
+make[2]: `rendering_gl.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/rendering/gl'
+make -C xbmc/powermanagement/linux
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/input/linux'
+make[2]: `input_linux.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/input/linux'
+make -C xbmc/storage/linux
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/powermanagement/linux'
+make[2]: `powermanagement_linux.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/powermanagement/linux'
+make -C xbmc/windowing/X11
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/network/linux'
+make[2]: `network_linux.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/network/linux'
+make -C xbmc/linux
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/storage/linux'
+make[2]: `storage_linux.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/storage/linux'
+make -C xbmc/network
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/windowing/X11'
+make[2]: `windowing_X11.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/windowing/X11'
+make -C xbmc/video/windows
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/linux'
+make[2]: `linux.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/linux'
+make -C xbmc/utils
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/network'
+make[2]: `network.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/network'
+make -C xbmc/cores/DllLoader/exports/util
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/video/windows'
+make[2]: `videowindows.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/video/windows'
+make -C xbmc/cores/DllLoader/exports
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/util'
+make[2]: `exports_utils.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/util'
+make -C xbmc/settings
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports'
+make[2]: `exports.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports'
+make -C xbmc/video
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/settings'
+make[2]: `settings.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/settings'
+make -C xbmc/guilib
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/video'
+make[2]: `video.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/video'
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/utils'
+make[2]: `utils.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/utils'
+make xbmc/cores/DllLoader/dllloader.a
+for d in  xbmc/visualizations/OpenGLSpectrum xbmc/visualizations/WaveForm xbmc/visualizations/XBMCProjectM ; do make -C $d; done
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/visualizations/OpenGLSpectrum'
+make[2]: `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/addons/visualization.glspectrum/opengl_spectrum.vis' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/visualizations/OpenGLSpectrum'
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/visualizations/WaveForm'
+make[2]: `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/addons/visualization.waveform/Waveform.vis' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/visualizations/WaveForm'
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/visualizations/XBMCProjectM'
+make[2]: `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/addons/visualization.projectm/projectM.vis' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/visualizations/XBMCProjectM'
+make -C xbmc/screensavers/rsxs-0.9/xbmc
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/xbmc'
+make -C ..
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+make -C xbmc/cores/DllLoader/
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9'
+make  all-recursive
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9'
+Making all in lib
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/lib'
+make  all-am
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/lib'
+make[6]: Nothing to be done for `all-am'.
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/lib'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/lib'
+Making all in libltdl
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/libltdl'
+make[5]: Nothing to be done for `all'.
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/libltdl'
+Making all in src
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/src'
+Making all in euphoria
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/src/euphoria'
+depbase=`echo ../common.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+	x86_64-castorbox-linux-gnu-g++ -DHAVE_CONFIG_H -I. -I../..  -DPKGDATADIR=\"/usr/share/rsxs\" -I./.. -I../../lib  -D_LINUX -DXBMC -I/home/pablo/gar-castorbox/images/main/usr/include/libpng14   -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -MT ../common.o -MD -MP -MF $depbase.Tpo -c -o ../common.o ../common.cc &&\
+	mv -f $depbase.Tpo $depbase.Po
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader'
+make[3]: `dllloader.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme'
+make -C lib 
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib'
+make[2]: Nothing to be done for `codecs'.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib'
+make -C lib/libdvd
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd'
+make -C libdvdcss
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss'
+make  all-recursive
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss'
+Making all in src
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/src'
+Making all in dvdcss
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/src/dvdcss'
+make[6]: Nothing to be done for `all'.
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/src/dvdcss'
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/src'
+make[6]: Nothing to be done for `all-am'.
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/src'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/src'
+Making all in test
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/test'
+make[5]: Nothing to be done for `all'.
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/test'
+Making all in doc
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/doc'
+make[5]: Nothing to be done for `all'.
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss/doc'
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdcss'
+make -C libdvdread
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdread'
+make[3]: Nothing to be done for `all'.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdread'
+make -C libdvdnav
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdnav'
+make[3]: Nothing to be done for `all'.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd/libdvdnav'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libdvd'
+make -C lib/cmyth
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cmyth'
+make -C libcmyth
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cmyth/libcmyth'
+make[3]: `libcmyth.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cmyth/libcmyth'
+make -C librefmem
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cmyth/librefmem'
+make[3]: `librefmem.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cmyth/librefmem'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cmyth'
+make -C lib/libhdhomerun
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libhdhomerun'
+make[2]: `../../system/hdhomerun-x86_64-linux.so' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libhdhomerun'
+make -C lib/libid3tag
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag'
+make -C libid3tag
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag/libid3tag'
+make  all-recursive
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag/libid3tag'
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag/libid3tag'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag/libid3tag'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag/libid3tag'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag/libid3tag'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libid3tag'
+make -C lib/cximage-6.0
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0'
+make -C CxImage ARCH=x86_64-linux
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0/CxImage'
+make[3]: `cximage.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0/CxImage'
+make -C raw
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0/raw'
+make[3]: `raw.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0/raw'
+make -C jbig
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/guilib'
+make[2]: `guilib.a' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/guilib'
+make -C lib/libexif
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0/jbig'
+make[3]: `jbig.a' is up to date.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0/jbig'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/cximage-6.0'
+test -d system/players/paplayer || mkdir system/players/paplayer
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libexif'
+make[2]: `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/system/libexif-x86_64-linux.so' is up to date.
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/libexif'
+depbase=`echo ../color.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+	x86_64-castorbox-linux-gnu-g++ -DHAVE_CONFIG_H -I. -I../..  -DPKGDATADIR=\"/usr/share/rsxs\" -I./.. -I../../lib  -D_LINUX -DXBMC -I/home/pablo/gar-castorbox/images/main/usr/include/libpng14   -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -MT ../color.o -MD -MP -MF $depbase.Tpo -c -o ../color.o ../color.cc &&\
+	mv -f $depbase.Tpo $depbase.Po
+make -C lib/xbadpcm
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/xbadpcm'
+CC      uXboxAdpcmDecoder.o
+CPP     ADPCMDll.o
+x86_64-castorbox-linux-gnu-gcc -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -D_LINUX -fPIC -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -flto -fuse-linker-plugin -fuse-ld=gold -Wl,--as-needed -flto -fuse-linker-plugin -fuse-ld=gold -Wl,--as-needed -flto -fuse-linker-plugin -fuse-ld=gold -Wl,--as-needed -shared -o /home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/system/players/paplayer/adpcm-x86_64-linux.so *.o `cat /home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/wrapper.def` /home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/wrapper.o
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/xbadpcm'
+make -C lib/vgmstream
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/vgmstream'
+CC      src/coding/acm_decoder.o
+CC      src/coding/adx_decoder.o
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/src/euphoria'
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/src'
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9'
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9'
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/screensavers/rsxs-0.9/xbmc'
+CC      src/coding/aica_decoder.o
+CC      src/coding/eaxa_decoder.o
+CC      src/coding/g721_decoder.o
+CC      src/coding/ima_decoder.o
+CC      src/coding/l5_555_decoder.o
+CC      src/coding/mpeg_decoder.o
+CC      src/coding/msadpcm_decoder.o
+CC      src/coding/nds_procyon_decoder.o
+CC      src/coding/ngc_afc_decoder.o
+CC      src/coding/ngc_dsp_decoder.o
+CC      src/coding/ngc_dtk_decoder.o
+CC      src/coding/nwa_decoder.o
+CC      src/coding/ogg_vorbis_decoder.o
+CC      src/coding/pcm_decoder.o
+CC      src/coding/psx_decoder.o
+CC      src/coding/sdx2_decoder.o
+CC      src/coding/ws_decoder.o
+CC      src/coding/xa_decoder.o
+CC      src/layout/aax_layout.o
+CC      src/layout/aix_layout.o
+CC      src/layout/ast_blocked.o
+CC      src/layout/blocked.o
+CC      src/layout/caf_blocked.o
+CC      src/layout/de2_blocked.o
+CC      src/layout/ea_block.o
+CC      src/layout/emff_blocked.o
+CC      src/layout/filp_blocked.o
+CC      src/layout/gsb_blocked.o
+CC      src/layout/halpst_blocked.o
+CC      src/layout/ims_block.o
+CC      src/layout/interleave.o
+CC      src/layout/interleave_byte.o
+CC      src/layout/mus_acm_layout.o
+CC      src/layout/nolayout.o
+CC      src/layout/thp_blocked.o
+CC      src/layout/str_snds_blocked.o
+CC      src/layout/vs_blocked.o
+CC      src/layout/ws_aud_blocked.o
+CC      src/layout/wsi_blocked.o
+CC      src/layout/xa_blocked.o
+CC      src/layout/xvas_block.o
+CC      src/meta/aax.o
+CC      src/meta/acm.o
+CC      src/meta/adx_header.o
+CC      src/meta/afc_header.o
+CC      src/meta/agsc.o
+CC      src/meta/ahx.o
+CC      src/meta/aifc.o
+CC      src/meta/aix.o
+CC      src/meta/ast.o
+CC      src/meta/bgw.o
+CC      src/meta/brstm.o
+CC      src/meta/capdsp.o
+CC      src/meta/Cstr.o
+CC      src/meta/dc_asd.o
+CC      src/meta/dc_idvi.o
+CC      src/meta/dc_kcey.o
+CC      src/meta/dc_str.o
+CC      src/meta/dc_wav_dcs.o
+CC      src/meta/de2.o
+CC      src/meta/ea_header.o
+CC      src/meta/ea_old.o
+CC      src/meta/emff.o
+CC      src/meta/fsb.o
+CC      src/meta/gca.o
+CC      src/meta/gcsw.o
+CC      src/meta/genh.o
+CC      src/meta/gsp_gsb.o
+CC      src/meta/halpst.o
+CC      src/meta/idsp.o
+CC      src/meta/ish_isd.o
+CC      src/meta/ivb.o
+CC      src/meta/kraw.o
+CC      src/meta/msvp.o
+CC      src/meta/mus_acm.o
+CC      src/meta/musc.o
+CC      src/meta/musx.o
+CC      src/meta/naomi_spsd.o
+CC      src/meta/nds_sad.o
+CC      src/meta/nds_strm.o
+CC      src/meta/ngc_adpdtk.o
+CC      src/meta/ngc_bh2pcm.o
+CC      src/meta/ngc_caf.o
+CC      src/meta/ngc_dsp_std.o
+CC      src/meta/ngc_ffcc_str.o
+CC      src/meta/ngc_iadp.o
+CC      src/meta/ngc_pdt.o
+CC      src/meta/ngc_ssm.o
+CC      src/meta/ngc_tydsp.o
+CC      src/meta/ngc_waa_wac_wad_wam.o
+CC      src/meta/ngc_ymf.o
+CC      src/meta/nwa.o
+CC      src/meta/ogg_vorbis_file.o
+CC      src/meta/pcm.o
+CC      src/meta/pos.o
+CC      src/meta/ps2_ads.o
+CC      src/meta/ps2_ass.o
+CC      src/meta/ps2_aus.o
+CC      src/meta/ps2_bg00.o
+CC      src/meta/ps2_bmdx.o
+CC      src/meta/ps2_ccc.o
+CC      src/meta/ps2_dxh.o
+CC      src/meta/ps2_enth.o
+CC      src/meta/ps2_exst.o
+CC      src/meta/ps2_filp.o
+CC      src/meta/ps2_gbts.o
+CC      src/meta/ps2_hgc1.o
+CC      src/meta/ps2_ikm.o
+CC      src/meta/ps2_ild.o
+CC      src/meta/ps2_int.o
+CC      src/meta/ps2_joe.o
+CC      src/meta/ps2_kces.o
+CC      src/meta/ps2_leg.o
+CC      src/meta/ps2_mib.o
+CC      src/meta/ps2_mic.o
+CC      src/meta/ps2_mihb.o
+CC      src/meta/ps2_npsf.o
+CC      src/meta/ps2_p2bt.o
+CC      src/meta/ps2_pnb.o
+CC      src/meta/ps2_psh.o
+CC      src/meta/ps2_psw.o
+CC      src/meta/ps2_rkv.o
+CC      src/meta/ps2_rnd.o
+CC      src/meta/ps2_rstm.o
+CC      src/meta/ps2_rws.o
+CC      src/meta/ps2_rxw.o
+CC      src/meta/ps2_seg.o
+CC      src/meta/ps2_sfs.o
+CC      src/meta/ps2_sl3.o
+CC      src/meta/ps2_str.o
+CC      src/meta/ps2_svag.o
+CC      src/meta/ps2_tec.o
+CC      src/meta/ps2_vag.o
+CC      src/meta/ps2_vas.o
+CC      src/meta/ps2_vpk.o
+CC      src/meta/ps2_xa2.o
+CC      src/meta/ps2_xa30.o
+CC      src/meta/psx_cdxa.o
+CC      src/meta/psx_fag.o
+CC      src/meta/psx_gms.o
+CC      src/meta/raw.o
+CC      src/meta/riff.o
+CC      src/meta/rs03.o
+CC      src/meta/rsd.o
+CC      src/meta/rsf.o
+CC      src/meta/rwsd.o
+CC      src/meta/rwx.o
+CC      src/meta/sat_dvi.o
+CC      src/meta/sat_sap.o
+CC      src/meta/sdt.o
+CC      src/meta/sfl.o
+CC      src/meta/sli.o
+CC      src/meta/spt_spd.o
+CC      src/meta/ss_stream.o
+CC      src/meta/str_asr.o
+CC      src/meta/str_snds.o
+CC      src/meta/svs.o
+CC      src/meta/thp.o
+CC      src/meta/vgs.o
+CC      src/meta/vs.o
+CC      src/meta/wii_mus.o
+CC      src/meta/wii_smp.o
+CC      src/meta/wii_sng.o
+CC      src/meta/wii_sts.o
+CC      src/meta/ws_aud.o
+CC      src/meta/xbox_ims.o
+CC      src/meta/xbox_stma.o
+CC      src/meta/xbox_wavm.o
+CC      src/meta/xbox_wvs.o
+CC      src/meta/xbox_xmu.o
+CC      src/meta/xbox_xvas.o
+CC      src/meta/xbox_xwav.o
+CC      src/meta/xss.o
+CC      src/meta/xwb.o
+CC      src/meta/ydsp.o
+CC      src/meta/zwdsp.o
+CPP     XBMCVGM.o
+CC      src/vgmstream.o
+CC      src/util.o
+CC      src/streamfile.o
+x86_64-castorbox-linux-gnu-g++ -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -D_LINUX -fPIC -DXBMC -pipe -march=x86-64 -mtune=generic -O3 -mfpmath=sse -m64 -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -g -D_DEBUG -Wall -flto -fuse-linker-plugin -fuse-ld=gold -Wl,--as-needed -flto -fuse-linker-plugin -fuse-ld=gold -Wl,--as-needed -flto -fuse-linker-plugin -fuse-ld=gold -Wl,--as-needed -shared -o /home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/system/players/paplayer/vgmstream-x86_64-linux.so src/coding/acm_decoder.o src/coding/adx_decoder.o src/coding/aica_decoder.o src/coding/eaxa_decoder.o src/coding/g721_decoder.o src/coding/ima_decoder.o src/coding/l5_555_decoder.o src/coding/mpeg_decoder.o src/coding/msadpcm_decoder.o src/coding/nds_procyon_decoder.o src/coding/ngc_afc_decoder.o src/coding/ngc_dsp_decoder.o src/coding/ngc_dtk_decoder.o src/coding/nwa_decoder.o src/coding/ogg_vorbis_decoder.o src/coding/pcm_decoder.o src/coding/psx_decoder.o src/coding/sdx2_decoder.o src/coding/ws_decoder.o src/coding/xa_decoder.o src/layout/aax_layout.o src/layout/aix_layout.o src/layout/ast_blocked.o src/layout/blocked.o src/layout/caf_blocked.o src/layout/de2_blocked.o src/layout/ea_block.o src/layout/emff_blocked.o src/layout/filp_blocked.o src/layout/gsb_blocked.o src/layout/halpst_blocked.o src/layout/ims_block.o src/layout/interleave.o src/layout/interleave_byte.o src/layout/mus_acm_layout.o src/layout/nolayout.o src/layout/str_snds_blocked.o src/layout/thp_blocked.o src/layout/vs_blocked.o src/layout/ws_aud_blocked.o src/layout/wsi_blocked.o src/layout/xa_blocked.o src/layout/xvas_block.o src/meta/aax.o src/meta/acm.o src/meta/adx_header.o src/meta/afc_header.o src/meta/agsc.o src/meta/ahx.o src/meta/aifc.o src/meta/aix.o src/meta/ast.o src/meta/bgw.o src/meta/brstm.o src/meta/capdsp.o src/meta/Cstr.o src/meta/dc_asd.o src/meta/dc_idvi.o src/meta/dc_kcey.o src/meta/dc_str.o src/meta/dc_wav_dcs.o src/meta/de2.o src/meta/ea_header.o src/meta/ea_old.o src/meta/emff.o src/meta/fsb.o src/meta/gca.o src/meta/gcsw.o src/meta/genh.o src/meta/gsp_gsb.o src/meta/halpst.o src/meta/idsp.o src/meta/ish_isd.o src/meta/ivb.o src/meta/kraw.o src/meta/msvp.o src/meta/mus_acm.o src/meta/musc.o src/meta/musx.o src/meta/naomi_spsd.o src/meta/nds_sad.o src/meta/nds_strm.o src/meta/ngc_adpdtk.o src/meta/ngc_bh2pcm.o src/meta/ngc_caf.o src/meta/ngc_dsp_std.o src/meta/ngc_ffcc_str.o src/meta/ngc_iadp.o src/meta/ngc_pdt.o src/meta/ngc_ssm.o src/meta/ngc_tydsp.o src/meta/ngc_waa_wac_wad_wam.o src/meta/ngc_ymf.o src/meta/nwa.o src/meta/ogg_vorbis_file.o src/meta/pcm.o src/meta/pos.o src/meta/ps2_ads.o src/meta/ps2_ass.o src/meta/ps2_aus.o src/meta/ps2_bg00.o src/meta/ps2_bmdx.o src/meta/ps2_ccc.o src/meta/ps2_dxh.o src/meta/ps2_enth.o src/meta/ps2_exst.o src/meta/ps2_filp.o src/meta/ps2_gbts.o src/meta/ps2_hgc1.o src/meta/ps2_ikm.o src/meta/ps2_ild.o src/meta/ps2_int.o src/meta/ps2_joe.o src/meta/ps2_kces.o src/meta/ps2_leg.o src/meta/ps2_mib.o src/meta/ps2_mic.o src/meta/ps2_mihb.o src/meta/ps2_npsf.o src/meta/ps2_p2bt.o src/meta/ps2_pnb.o src/meta/ps2_psh.o src/meta/ps2_psw.o src/meta/ps2_rkv.o src/meta/ps2_rnd.o src/meta/ps2_rstm.o src/meta/ps2_rws.o src/meta/ps2_rxw.o src/meta/ps2_seg.o src/meta/ps2_sfs.o src/meta/ps2_sl3.o src/meta/ps2_str.o src/meta/ps2_svag.o src/meta/ps2_tec.o src/meta/ps2_vag.o src/meta/ps2_vas.o src/meta/ps2_vpk.o src/meta/ps2_xa2.o src/meta/ps2_xa30.o src/meta/psx_cdxa.o src/meta/psx_fag.o src/meta/psx_gms.o src/meta/raw.o src/meta/riff.o src/meta/rs03.o src/meta/rsd.o src/meta/rsf.o src/meta/rwsd.o src/meta/rwx.o src/meta/sat_dvi.o src/meta/sat_sap.o src/meta/sdt.o src/meta/sfl.o src/meta/sli.o src/meta/spt_spd.o src/meta/ss_stream.o src/meta/str_asr.o src/meta/str_snds.o src/meta/svs.o src/meta/thp.o src/meta/vgs.o src/meta/vs.o src/meta/wii_mus.o src/meta/wii_smp.o src/meta/wii_sng.o src/meta/wii_sts.o src/meta/ws_aud.o src/meta/xbox_ims.o src/meta/xbox_stma.o src/meta/xbox_wavm.o src/meta/xbox_wvs.o src/meta/xbox_xmu.o src/meta/xbox_xvas.o src/meta/xbox_xwav.o src/meta/xss.o src/meta/xwb.o src/meta/ydsp.o src/meta/zwdsp.o XBMCVGM.o src/vgmstream.o src/util.o src/streamfile.o      `cat /home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/wrapper.def` /home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/xbmc/cores/DllLoader/exports/wrapper.o
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/vgmstream'
+make -C lib/timidity
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/xbmc/xbmc-extreme/work/main.d/xbmc-extreme/lib/timidity'
+CC      timidity/aq.o
+CC      timidity/buffer_a.o
+CC      timidity/audio_cnv.o
+CC      timidity/common.o
+CC      timidity/controls.o
+CC      timidity/sdl_c.o
+CC      timidity/effect.o
+CC      timidity/filter.o
+CC      timidity/freq.o
+CC      timidity/instrum.o
+CC      timidity/miditrace.o
+CC      timidity/mix.o
+CC      timidity/modmid_a.o
+CC      timidity/mt19937ar.o
+CC      timidity/optcode.o
+CC      timidity/output.o
+CC      timidity/playmidi.o
+CC      timidity/quantity.o
+CC      timidity/readmidi.o

@@ -1,0 +1,34 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/dbus-cxx-0.7.0/dbus-cxx/pointer.h work/main.d/dbus-cxx-0.7.0/dbus-cxx/pointer.h
+--- tmp/dbus-cxx-0.7.0/dbus-cxx/pointer.h	2009-09-28 19:00:12.000000000 -0300
++++ new-dbus-cxx-0.7.0/dbus-cxx/pointer.h	2010-07-27 23:37:04.000000000 -0300
+@@ -23,7 +23,7 @@
+   // Headers for smart pointers
+   #ifdef DBUS_CXX_USE_BOOST_SMART_POINTER
+     #include <boost/shared_ptr.hpp>
+-    //#include <boost/weak_ptr.hpp>
++    #include <boost/weak_ptr.hpp>
+     #define DBusCxxPointer boost::shared_ptr
+     #define DBusCxxWeakPointer boost::weak_ptr
+     #define dbus_cxx_static_pointer_cast  boost::static_pointer_cast
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/dbus-cxx-0.7.0/dbus-cxx/signature.h work/main.d/dbus-cxx-0.7.0/dbus-cxx/signature.h
+--- tmp/dbus-cxx-0.7.0/dbus-cxx/signature.h	2010-03-15 13:16:07.000000000 -0300
++++ new-dbus-cxx-0.7.0/dbus-cxx/signature.h	2010-07-27 23:36:11.000000000 -0300
+@@ -18,6 +18,7 @@
+  ***************************************************************************/
+ #include <ostream>
+ #include <string>
++#include <stdint.h>
+ #include <dbus-cxx/signatureiterator.h>
+ #include <dbus-cxx/path.h>
+ 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/dbus-cxx-0.7.0/dbus-cxx/types.h work/main.d/dbus-cxx-0.7.0/dbus-cxx/types.h
+--- tmp/dbus-cxx-0.7.0/dbus-cxx/types.h	2010-03-15 13:16:34.000000000 -0300
++++ new-dbus-cxx-0.7.0/dbus-cxx/types.h	2010-07-27 23:36:28.000000000 -0300
+@@ -18,6 +18,7 @@
+  ***************************************************************************/
+ #include <typeinfo>
+ #include <string>
++#include <stdint.h>
+ 
+ #include <sigc++/sigc++.h>
+ 

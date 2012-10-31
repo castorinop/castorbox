@@ -1,0 +1,326 @@
+diff -Naur lm_sensors-3.1.1-old/CHANGES lm_sensors-3.1.1-new/CHANGES
+--- lm_sensors-3.1.1-old/CHANGES	2009-09-17 20:21:22.000000000 -0700
++++ lm_sensors-3.1.1-new/CHANGES	2009-09-17 20:23:37.000000000 -0700
+@@ -4,6 +4,7 @@
+ 3.1.1 (2009-06-21)
+   isadump: Use geteuid instead of getuid so that setuid bit works
+   fancontrol: Check that all referenced sysfs files exist
++              Check that all devices match the configuration file
+   isaset: Use geteuid instead of getuid so that setuid bit works
+   libsensors: Don't rely on dirent->dt_type being set
+               New method to free the memory allocated for chip names
+diff -Naur lm_sensors-3.1.1-old/prog/pwm/fancontrol lm_sensors-3.1.1-new/prog/pwm/fancontrol
+--- lm_sensors-3.1.1-old/prog/pwm/fancontrol	2009-09-17 20:21:19.000000000 -0700
++++ lm_sensors-3.1.1-new/prog/pwm/fancontrol	2009-09-17 20:22:52.000000000 -0700
+@@ -3,12 +3,13 @@
+ # Simple script implementing a temperature dependent fan speed control
+ # Supported Linux kernel versions: 2.6.5 and later
+ #
+-# Version 0.68
++# Version 0.70
+ #
+ # Usage: fancontrol [CONFIGFILE]
+ #
+ # Dependencies:
+ #   bash, egrep, sed, cut, sleep, lm_sensors :)
++#   bash, egrep, sed, cut, sleep, readlink, lm_sensors :)
+ #
+ # Please send any questions, comments or success stories to
+ # marius.reiner@hdev.de
+@@ -55,6 +56,8 @@
+ 
+ 	# grep configuration from file
+ 	INTERVAL=`egrep '^INTERVAL=.*$' $1 | sed -e 's/INTERVAL=//g'`
++	DEVPATH=`egrep '^DEVPATH=.*$' $1 | sed -e 's/DEVPATH= *//g'`
++	DEVNAME=`egrep '^DEVNAME=.*$' $1 | sed -e 's/DEVNAME= *//g'`
+ 	FCTEMPS=`egrep '^FCTEMPS=.*$' $1 | sed -e 's/FCTEMPS=//g'`
+ 	MINTEMP=`egrep '^MINTEMP=.*$' $1 | sed -e 's/MINTEMP=//g'`
+ 	MAXTEMP=`egrep '^MAXTEMP=.*$' $1 | sed -e 's/MAXTEMP=//g'`
+@@ -152,6 +155,57 @@
+ 	echo
+ }
+ 
++function DevicePath()
++{
++	if [ -h "$1/device" ]
++	then
++		readlink -f "$1/device" | sed -e 's/^\/sys\///'
++	fi
++}
++
++function DeviceName()
++{
++	if [ -r "$1/name" ]
++	then
++		cat "$1/name" | sed -e 's/[[:space:]=]/_/g'
++	elif [ -r "$1/device/name" ]
++	then
++		cat "$1/device/name" | sed -e 's/[[:space:]=]/_/g'
++	fi
++}
++
++function ValidateDevices()
++{
++	local OLD_DEVPATH="$1" OLD_DEVNAME="$2" outdated=0
++	local entry device name path
++
++	for entry in $OLD_DEVPATH
++	do
++		device=`echo "$entry" | sed -e 's/=[^=]*$//'`
++		path=`echo "$entry" | sed -e 's/^[^=]*=//'`
++
++		if [ "`DevicePath "$device"`" != "$path" ]
++		then
++			echo "Device path of $device has changed"
++			outdated=1
++		fi
++	done
++
++	for entry in $OLD_DEVNAME
++	do
++		device=`echo "$entry" | sed -e 's/=[^=]*$//'`
++		name=`echo "$entry" | sed -e 's/^[^=]*=//'`
++
++		if [ "`DeviceName "$device"`" != "$name" ]
++		then
++			echo "Device name of $device has changed"
++			outdated=1
++		fi
++	done
++
++	return $outdated
++}
++
+ # Check that all referenced sysfs files exist
+ function CheckFiles {
+ 	local outdated=0
+@@ -229,6 +283,17 @@
+ fi
+ cd $DIR
+ 
++# Check for configuration change
++if [ -z "$DEVPATH" -o -z "$DEVNAME" ]
++then
++	echo "Configuration is too old, please run pwmconfig again"
++	exit 1
++fi
++if ! ValidateDevices "$DEVPATH" "$DEVNAME"
++then
++	echo "Configuration appears to be outdated, please run pwmconfig again"
++	exit 1
++fi
+ CheckFiles || exit 1
+ 
+ if [ -f "$PIDFILE" ]
+diff -Naur lm_sensors-3.1.1-old/prog/pwm/fancontrol.8 lm_sensors-3.1.1-new/prog/pwm/fancontrol.8
+--- lm_sensors-3.1.1-old/prog/pwm/fancontrol.8	2009-09-17 20:21:19.000000000 -0700
++++ lm_sensors-3.1.1-new/prog/pwm/fancontrol.8	2009-09-17 20:21:50.000000000 -0700
+@@ -38,13 +38,21 @@
+ This variable defines at which interval in seconds the main loop of
+ \fBfancontrol\fP will be executed
+ .TP
++.B DEVPATH
++Maps hwmon class devices to physical devices. This lets \fBfancontrol\fP
++check that the configuration file is still up-to-date.
++.TP
++.B DEVNAME
++Records hwmon class device names. This lets \fBfancontrol\fP check that
++the configuration file is still up-to-date.
++.TP
+ .B FCTEMPS
+ Maps PWM outputs to temperature sensors so \fBfancontrol\fP knows which
+ temperature sensors should be used for calculation of new values for
+ the corresponding PWM outputs.
+ .TP
+ .B FCFANS
+-FCFANS records the association between a PWM and a fan.
++Records the association between a PWM output and a fan input.
+ Then \fBfancontrol\fP can check the fan speed and restart it if it
+ stops unexpectedly.
+ .TP
+@@ -92,9 +100,11 @@
+ setup I recommend using the \fBpwmconfig\fP script. Small changes can be made by
+ editing the config file directly following the rules above.
+ 
+-Upon starting, fancontrol will make sure that all referenced sysfs files
+-do exist. If not, it will quit immediately, upon the assumption that the
+-configuration file may be out-of-sync with the loaded kernel drivers.
++Upon starting, fancontrol will make sure that all referenced devices
++do exist and match what they were at configuration time, and that all
++referenced sysfs files do exist. If not, it will quit immediately, upon
++the assumption that the configuration file may be out-of-sync with the
++loaded kernel drivers.
+ 
+ .SH THE ALGORITHM
+ 
+diff -Naur lm_sensors-3.1.1-old/prog/pwm/pwmconfig lm_sensors-3.1.1-new/prog/pwm/pwmconfig
+--- lm_sensors-3.1.1-old/prog/pwm/pwmconfig	2009-01-29 00:28:17.000000000 -0800
++++ lm_sensors-3.1.1-new/prog/pwm/pwmconfig	2009-09-17 20:21:50.000000000 -0700
+@@ -540,6 +540,57 @@
+ 	exit 1
+ fi
+ 
++function DevicePath()
++{
++	if [ -h "$1/device" ]
++	then
++		readlink -f "$1/device" | sed -e 's/^\/sys\///'
++	fi
++}
++
++function DeviceName()
++{
++	if [ -r "$1/name" ]
++	then
++		cat "$1/name" | sed -e 's/[[:space:]=]/_/g'
++	elif [ -r "$1/device/name" ]
++	then
++		cat "$1/device/name" | sed -e 's/[[:space:]=]/_/g'
++	fi
++}
++
++function ValidateDevices()
++{
++	local OLD_DEVPATH="$1" OLD_DEVNAME="$2" outdated=0
++	local entry device name path
++
++	for entry in $OLD_DEVPATH
++	do
++		device=`echo "$entry" | sed -e 's/=[^=]*$//'`
++		path=`echo "$entry" | sed -e 's/^[^=]*=//'`
++
++		if [ "`DevicePath "$device"`" != "$path" ]
++		then
++			echo "Device path of $device has changed"
++			outdated=1
++		fi
++	done
++
++	for entry in $OLD_DEVNAME
++	do
++		device=`echo "$entry" | sed -e 's/=[^=]*$//'`
++		name=`echo "$entry" | sed -e 's/^[^=]*=//'`
++
++		if [ "`DeviceName "$device"`" != "$name" ]
++		then
++			echo "Device name of $device has changed"
++			outdated=1
++		fi
++	done
++
++	return $outdated
++}
++
+ function AskPath()
+ {
+ 	echo -n 'What should be the path to your fancontrol config file (/etc/fancontrol)? '
+@@ -567,6 +618,8 @@
+ 
+ function LoadConfig()
+ {
++	local OLD_DEVPATH OLD_DEVNAME
++
+ 	# Nothing to do
+ 	if [ ! -f "$1" ]
+ 	then
+@@ -576,6 +629,8 @@
+ 
+ 	echo "Loading configuration from $1 ..."
+ 	INTERVAL=`egrep '^INTERVAL=.*$' $1 | sed -e 's/INTERVAL= *//g'`
++	OLD_DEVPATH=`egrep '^DEVPATH=.*$' $1 | sed -e 's/DEVPATH= *//g'`
++	OLD_DEVNAME=`egrep '^DEVNAME=.*$' $1 | sed -e 's/DEVNAME= *//g'`
+ 	FCTEMPS=`egrep '^FCTEMPS=.*$' $1 | sed -e 's/FCTEMPS= *//g'`
+ 	FCFANS=`egrep '^FCFANS=.*$' $1 | sed -e 's/FCFANS= *//g'`
+ 	MINTEMP=`egrep '^MINTEMP=.*$' $1 | sed -e 's/MINTEMP= *//g'`
+@@ -586,16 +641,12 @@
+ 	MAXPWM=`egrep '^MAXPWM=.*$' $1 | sed -e 's/MAXPWM= *//g'`
+ 
+ 	# Check for configuration change
+-	local item
+-	for item in $FCFANS
+-	do
+-		if [ ! -f "`echo $item | sed -e 's/=.*$//'`" ]
+-		then
+-			echo "Configuration appears to be outdated, discarded"
+-			ClearConfig
+-			return 0
+-		fi
+-	done
++	if ! ValidateDevices "$OLD_DEVPATH" "$OLD_DEVNAME"
++	then
++		echo "Configuration appears to be outdated, discarded"
++		ClearConfig
++		return 0
++	fi
+ }
+ 
+ LoadConfig $FCCONFIG
+@@ -676,14 +727,68 @@
+ 	echo "OK, using $fanval"
+ }
+ 
++# Remember the path and name of each device with at least one
++# reference (pwm, temp or fan) in the configuration file.
++# This function sets globals DEVPATH and DEVNAME as a side effect.
++function RememberDevices()
++{
++	local used entry device name path tempfandev pwmdev
++	DEVPATH=""
++	DEVNAME=""
++
++	for device in $DEVICES
++	do
++		device=`echo "$device" | sed -e 's/\/.*$//'`
++
++		used=0
++		for entry in $1 $2
++		do
++			pwmdev=`echo "$entry" | sed -e 's/\/.*$//'`
++			tempfandev=`echo "$entry" | sed -e 's/^[^=]*=//' -e 's/\/.*$//'`
++
++			if [ "$device" = "$pwmdev" -o "$device" = "$tempfandev" ]
++			then
++				used=1
++			fi
++		done
++		if [ "$used" -eq 0 ]
++		then
++			continue
++		fi
++
++		# Record the device path and name. This lets the fancontrol
++		# script check that they didn't change. If they did, then the
++		# configuration file can no longer be trusted.
++		path=`DevicePath "$device"`
++		if [ -z "$DEVPATH" ]
++		then
++			DEVPATH="$device=$path"
++		else
++			DEVPATH="$DEVPATH $device=$path"
++		fi
++
++		name=`DeviceName "$device"`
++		if [ -z "$DEVNAME" ]
++		then
++			DEVNAME="$device=$name"
++		else
++			DEVNAME="$DEVNAME $device=$name"
++		fi
++	done
++}
++
+ function SaveConfig()
+ {
++	RememberDevices "$FCTEMPS" "$FCFANS"
++
+ 	echo
+ 	echo "Saving configuration to $FCCONFIG..."
+ 	tmpfile=`mktemp -t pwmcfg.XXXXXXXXXX` || { echo "$0: Cannot create temporary file" >&2; exit 1;  }
+ 	trap " [ -f \"$tmpfile\" ] && /bin/rm -f -- \"$tmpfile\"" 0 1 2 3 13 15
+ 	echo "# Configuration file generated by pwmconfig, changes will be lost" >$tmpfile
+ 	echo -e "INTERVAL=$INTERVAL\nFCTEMPS=$FCTEMPS\nFCFANS=$FCFANS\nMINTEMP=$MINTEMP\nMAXTEMP=$MAXTEMP\nMINSTART=$MINSTART\nMINSTOP=$MINSTOP" >>$tmpfile
++	echo "DEVPATH=$DEVPATH" >>$tmpfile
++	echo "DEVNAME=$DEVNAME" >>$tmpfile
+ 	[ -n "$MINPWM" ] && echo "MINPWM=$MINPWM" >>$tmpfile
+ 	[ -n "$MAXPWM" ] && echo "MAXPWM=$MAXPWM" >>$tmpfile
+ 	mv $tmpfile $FCCONFIG

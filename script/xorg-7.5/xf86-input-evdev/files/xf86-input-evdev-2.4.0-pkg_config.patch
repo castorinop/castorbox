@@ -1,0 +1,15 @@
+diff -Naur xf86-input-evdev-2.4.0-old/configure.ac xf86-input-evdev-2.4.0-new/configure.ac
+--- xf86-input-evdev-2.4.0-old/configure.ac	2010-04-05 17:31:00.000000000 -0700
++++ xf86-input-evdev-2.4.0-new/configure.ac	2010-06-14 17:19:46.000000000 -0700
+@@ -62,9 +62,10 @@
+ # to satisfy silly distcheck requirements.
+ PKG_CHECK_MODULES(XORG, xorg-server xproto $REQUIRED_MODULES)
+ 
++m4_pattern_allow([^PKG_CONFIG_SYSROOT_DIR$])
+ AC_ARG_WITH([sdkdir], [],
+     [sdkdir="$withval"],
+-    [sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`])
++    [sdkdir="$PKG_CONFIG_SYSROOT_DIR$($PKG_CONFIG --variable=sdkdir xorg-server)"])
+ AC_SUBST([sdkdir])
+ 
+ # Checks for libraries.

@@ -1,0 +1,12 @@
+diff -Naur xine-lib-1.1.16.3-old/configure.ac xine-lib-1.1.16.3-new/configure.ac
+--- xine-lib-1.1.16.3-old/configure.ac	2009-04-27 18:47:51.000000000 -0700
++++ xine-lib-1.1.16.3-new/configure.ac	2009-04-27 18:49:09.000000000 -0700
+@@ -1812,7 +1812,7 @@
+ ], bf_lsbf=0, AC_MSG_ERROR([unsupported bitfield ordering]))
+   ],
+   [case "$host" in
+-     *-*-mingw32* | *-*-cygwin*)
++     i?86-* | x86_64-* | *-*-mingw32* | *-*-cygwin*)
+        bf_lsbf=1
+      ;;
+      *)

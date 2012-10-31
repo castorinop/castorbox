@@ -1,0 +1,11 @@
+--- src/Makefile
++++ src/Makefile
+@@ -6,7 +6,7 @@
+ BUILD = 3
+ PLUGIN = libcdriso-${VERSION}.${BUILD}.so
+ CFG = cfgCdrIso
+-CFLAGS = -fPIC -Wall -O2 -fomit-frame-pointer
++CFLAGS = -fPIC -Wall $(OPT_FLAGS) -fomit-frame-pointer -fno-strict-aliasing
+ OBJECTS = cdriso.o
+ CFGOBJS = conf.o interface.o support.o
+ LIBS = -lz -lbz2

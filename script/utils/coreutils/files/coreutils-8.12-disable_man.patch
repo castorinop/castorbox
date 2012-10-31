@@ -1,0 +1,24 @@
+diff -Naur coreutils-8.12-old/Makefile.am coreutils-8.12-new/Makefile.am
+--- coreutils-8.12-old/Makefile.am	2011-04-26 20:42:24.000000000 -0700
++++ coreutils-8.12-new/Makefile.am	2011-04-26 20:43:02.000000000 -0700
+@@ -17,7 +17,7 @@
+ 
+ ALL_RECURSIVE_TARGETS =
+ 
+-SUBDIRS = lib src doc man po tests gnulib-tests
++SUBDIRS = lib src doc po tests gnulib-tests
+ 
+ changelog_etc =				\
+   ChangeLog-2005			\
+diff -Naur coreutils-8.12-old/Makefile.in coreutils-8.12-new/Makefile.in
+--- coreutils-8.12-old/Makefile.in	2011-04-26 20:42:24.000000000 -0700
++++ coreutils-8.12-new/Makefile.in	2011-04-26 20:43:02.000000000 -0700
+@@ -1326,7 +1326,7 @@
+ 
+ # Some tests always need root privileges, others need them only sometimes.
+ ALL_RECURSIVE_TARGETS = install-root check-root distcheck-hook
+-SUBDIRS = lib src doc man po tests gnulib-tests
++SUBDIRS = lib src doc po tests gnulib-tests
+ changelog_etc = \
+   ChangeLog-2005			\
+   ChangeLog-2006			\

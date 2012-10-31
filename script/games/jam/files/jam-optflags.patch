@@ -1,0 +1,11 @@
+--- old/Makefile~	2003-04-23 06:45:50.000000000 +0200
++++ new/Makefile	2003-05-07 22:26:54.000000000 +0200
+@@ -59,7 +59,7 @@ SOURCES = \
+ 	rules.c scan.c search.c timestamp.c variable.c
+ 
+ all: $(EXENAME)
+-	$(EXENAME)
++	$(EXENAME) -a -dx -s CCFLAGS="$(CFLAGS)" -s AR="$(AR) ru"
+ 
+ $(EXENAME):
+ 	$(CC) $(TARGET) $(CFLAGS) $(SOURCES) $(LINKLIBS)

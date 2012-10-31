@@ -1,0 +1,1730 @@
+diff -Naur gnash-0.8.6-old/configure.ac gnash-0.8.6-new/configure.ac
+--- gnash-0.8.6-old/configure.ac	2009-09-13 17:13:12.000000000 -0700
++++ gnash-0.8.6-new/configure.ac	2009-09-15 15:35:08.000000000 -0700
+@@ -1479,6 +1479,7 @@
+ AC_CHECK_HEADERS(signal.h)
+ AC_CHECK_HEADERS(unistd.h)
+ AC_CHECK_HEADERS(sys/time.h)
++AC_CHECK_HEADERS(poll.h epoll.h)
+ dnl libcurl3-dev on Ubuntu has a dependency on lber, and Gnash won't link
+ dnl on most machines without it. While it isn't diretly used by Gnash at all,
+ dnl it's to work around an Ubuntu packaging bug.
+@@ -1496,7 +1497,7 @@
+   AC_CHECK_LIB(Xi, XInput_find_display)
+   AC_CHECK_LIB(X11, XDisableAccessControl)
+ dnl fi
+-AM_CONDITIONAL(HAVE_X11, [test x$x11 = xyes])
++AM_CONDITIONAL(HAVE_X11, [test "x$HAVE_X11" = "xyes"])
+ AC_CHECK_LIB(rt, shm_unlink)
+ AC_CHECK_FUNCS(shm_open shm_unlink)
+ AC_TRY_COMPILE([#include <strings.h>], [
+@@ -1857,12 +1858,19 @@
+ AM_CONDITIONAL([QT_OS9], [test "$platform" = "OS9"])
+ AM_CONDITIONAL([QT_WIN32], [test "$platform" = "Win32"])
+ 
++AC_ARG_ENABLE(glib, AC_HELP_STRING([--enable-glib], [Enable support for GLIB]),
++[case "${enableval}" in
++  yes) glib=yes ;;
++  no)  glib=no ;;
++  *)   AC_MSG_ERROR([bad value ${enableval} for enable-glib option]) ;;
++esac], glib=no)
++
+ dnl Need GLIB for both GTK and GST
+-if test x$build_gtk = xyes -o x${media_handler} = "xgst"; then
++if test x$build_gtk = xyes -o x${Media_handler} = "xgst" -o "x$glib" = "xyes" ; then
+   GNASH_PATH_GLIB
+ fi
+ 
+-AM_CONDITIONAL(HAVE_GLIB, [ test x$has_glib = xyes ])
++AM_CONDITIONAL(HAVE_GLIB, [ test "x$HAVE_GLIB" = "xyes" ])
+ 
+ if test x$build_gtk = xno -a x$npapi = xyes; then
+   AC_MSG_WARN(["Enabled NPAPI plugin, but you aren't building a GTK based GUI!"])
+@@ -2025,7 +2033,7 @@
+   GNASH_PATH_FFMPEG
+   if test x"${media_handler_specified}" = xfalse; then
+      # If the library is not found, or its version is not ok, we'll try gst
+-     if test x"${ac_cv_path_ffmpeg_lib}" = x -o x"${ffmpeg_version_check}" != xok; then
++     if test "x$FFMPEG_LIBS" = "x" -o "x$HAVE_FFMPEG" != "xyes"; then
+        AC_MSG_WARN([No appropriate ffmpeg library found, disabling media handling.])
+        media_handler=none
+      fi
+@@ -2869,9 +2877,9 @@
+   if test x"$media_handler" = x"ffmpeg"; then
+     if test x"$FFMPEG_LIBS" != x; then
+       echo "        MP3 and video support enabled through ffmpeg"
+-      if test x"${ffmpeg_version_check}" != xok; then
+-        echo "        ERROR: You have version ${ffmpeg_version} of ffmpeg installed," >&3
+-        if test x"${have_ffmpeg_swscale}" = "xno"; then
++      if test "x$HAVE_AVCODEC" != "xyes" ; then
++        echo "        ERROR: You have version $FFMPEG_VERSION of ffmpeg installed," >&3
++        if test "x$HAVE_SWCALE" != "xyes"; then
+           echo "               with no swscale enabled." >&3
+         else
+           echo "               with swscale enabled." >&3
+@@ -2879,12 +2887,11 @@
+         echo "               This setup isn't supported!" >&3
+         echo "               Version 51.11.0 or newer is required, enabling swscale if >= 52.0.0." >&3
+       else
+-	if test x"${avformat_h}" = x; then
+-          echo "        ERROR: FFMPEG's libavcodec header is installed but not libavformat." >&3
++	if test "x$HAVE_AVFORMAT" != "xyes" ; then
++          echo "        ERROR: FFMPEG's libavcodec is installed but not libavformat." >&3
+           echo "               You can install FFMPEG from http://ffmpeg.mplayerhq.hu" >&3
+           echo "               or .deb users: apt-get install libavformat-dev" >&3
+           echo "               or YaST users: yast -i libavformat-api (but currently installs into /usr/lib64)" >&3
+-          echo "               or explicitly set the path using --with-ffmpeg-incl=" >&5
+           echo "               or reconfigure with --enable-media=gst" >&3
+ 	else
+           if test x"$FFMPEG_CFLAGS" != x; then
+@@ -3077,21 +3084,13 @@
+ 
+ if test x$build_agg = xyes; then # {
+   echo "        AGG Pixel format is: $pixelformat"
+-    if test x"$AGG_LIBS" != x; then # {
+-      if test x"${agg25}" != xyes; then # {
+-        echo "        ERROR: Your installation of AGG appears to be version 2.4 or older." >&3
+-        echo "               Please upgrade to AGG 2.5 or greater." >&3
+-        echo "               Install it from http://www.antigrain.com" >&3
+-        echo "               or .deb users: apt-get install libagg-dev" >&3
+-        echo "               or .rpm users: yum install agg-devel" >&3
++    if test "x$HAVE_AGG" = "xyes" ; then # {
++      if test "x$AGG_CFLAGS" != "x" ; then # {
++        echo "        AGG flags are: $AGG_CFLAGS"
+       else # }{
+-        if test x"$AGG_CFLAGS" != x; then # {
+-          echo "        AGG flags are: $AGG_CFLAGS"
+-        else # }{
+-          echo "        AGG flags are: default include path"
+-        fi # }
+-        echo "        AGG libs are: $AGG_LIBS"
++        echo "        AGG flags are: default include path"
+       fi # }
++      echo "        AGG libs are: $AGG_LIBS"
+     else # }{
+       echo "        ERROR: No AGG development package installed!" >&3
+       echo "               Install it from http://www.antigrain.com" >&3
+diff -Naur gnash-0.8.6-old/macros/agg.m4 gnash-0.8.6-new/macros/agg.m4
+--- gnash-0.8.6-old/macros/agg.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/agg.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -19,123 +19,9 @@
+ dnl but not in AGG 2.3. As we need AGG 2.4, we use this as 
+ AC_DEFUN([GNASH_PATH_AGG],
+ [
+-  dnl Lool for the header
+-  AC_ARG_WITH(agg_incl, AC_HELP_STRING([--with-agg-incl], [directory where AGG headers are]), with_agg_incl=${withval})
+-  AC_MSG_CHECKING([for AGG headers])
+-  AC_CACHE_VAL(ac_cv_path_agg_incl, [
+-    if test x"${with_agg_incl}" != x ; then
+-      if test -f ${with_agg_incl}/agg_rasterizer_compound_aa.h ; then
+-        agg_include_dir="`(cd ${with_agg_incl}; pwd)`"
+-        ac_cv_path_agg_incl="-I${agg_include_dir}"
+-        agg25=yes
+-      else
+-        AC_MSG_ERROR([${with_agg_incl} directory doesn't contain any headers])
+-        agg25=no
+-      fi
+-    fi
+-  ])
+-
+-  if test x$cross_compiling = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_agg_incl}" = x; then
+-      if $PKG_CONFIG --exists libagg ; then
+-        ac_cv_path_agg_incl="`$PKG_CONFIG --cflags libagg`"
+-        $PKG_CONFIG --atleast-version 2.5.0 libagg && agg25=yes
+- 
+-        dnl I think this setting of agg_include_dir is too error prone!
+-        agg_include_dir="`$PKG_CONFIG --cflags-only-I libagg | cut -d " " -f 1 | sed -e 's/-I//g'`"
+-        if test -f $agg_include_dir/agg_gradient_lut.h ; then
+-          agg25=yes
+-        fi
+-      fi
+-    fi
+-  fi
+-
+-  if test x"${ac_cv_path_agg_incl}" = x; then
+-    for i in $incllist; do
+-      if test -f $i/agg2/agg_gradient_lut.h; then
+-        ac_cv_path_agg_incl="-I$i/agg2"
+-        agg_include_dir=$i/agg2
+-	      agg25=yes
+-        break
+-      fi
+-    done
+-  fi
+-
+-  AC_MSG_RESULT(${ac_cv_path_agg_incl})
+-
+-  if test x"${ac_cv_path_agg_incl}" != x ; then
+-    AGG_CFLAGS="${ac_cv_path_agg_incl}"
+-  fi
++  PKG_CHECK_MODULES(AGG, [libagg >= 2.5.0], [HAVE_AGG=yes], [HAVE_AGG=no])
+ 
+   AC_SUBST(AGG_CFLAGS)
+-
+-
+-  dnl Look for the library
+-  AC_ARG_WITH(agg_lib, AC_HELP_STRING([--with-agg-lib], [directory where AGG libraries are]), with_agg_lib=${withval})
+-  AC_CACHE_VAL(ac_cv_path_agg_lib,[
+-    if test x"${with_agg_lib}" != x ; then
+-      if test -f ${with_agg_lib}/libagg.a -o -f ${with_agg_lib}/libagg.${shlibext}; then
+-      	ac_cv_path_agg_lib="-L`(cd ${with_agg_lib}; pwd)`"
+-      else
+-      	AC_MSG_ERROR([${with_agg_lib} directory doesn't contain AGG libraries.])
+-      fi
+-    fi
+-  ])
+-
+-  pkg=no
+-  if test x$cross_compiling = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_agg_lib}" = x; then
+-      $PKG_CONFIG --exists libagg && ac_cv_path_agg_lib="`$PKG_CONFIG --libs-only-l libagg`"
+-      $PKG_CONFIG --exists libagg && ac_cv_path_agg_lib="${ac_cv_path_agg_lib}`$PKG_CONFIG --libs-only-l libagg`"
+-      $PKG_CONFIG --exists libagg && pkg=yes
+-    fi
+-  fi
+-
+-  AC_LANG_PUSH(C++)
+-  if test x"${ac_cv_path_agg_lib}" = x; then
+-    for i in $libslist; do
+-      if test -f $i/libagg.a -o -f $i/libagg.${shlibext}; then
+-      	if test ! x"$i" = x"/usr/lib" -a ! x"$i" = x"/usr/lib64"; then
+-      	  ac_cv_path_agg_lib="-L$i"
+-      	  break
+-        else
+-      	  ac_cv_path_agg_lib=""
+-      	  break
+-        fi
+-      fi
+-    done
+-  fi
+-  
+-  if test x"${ac_cv_path_agg_lib}" = x; then
+-    AC_CHECK_LIB(agg, agg::gamma_ctrl_impl::calc_points, [ac_cv_path_agg_lib=""])
+-  fi
+-  AC_MSG_CHECKING([for libagg library])
+-  AC_MSG_RESULT(${ac_cv_path_agg_lib})
+-  AC_LANG_POP(C++)
+-
+-  if test x"${ac_cv_path_agg_lib}" != x -a x"$pkg" = x"yes"; then
+-    AGG_LIBS="${ac_cv_path_agg_lib}"
+-  else
+-    if test x"$agg25" = x"yes"; then
+-      AGG_LIBS="${ac_cv_path_agg_lib} -lagg"
+-    else
+-      AGG_LIBS=""
+-    fi     
+-  fi
+-
+-dnl   AC_EGREP_HEADER(render_scanlines_compound_layered, 
+-dnl 	${agg_include_dir}/agg_renderer_scanline.h,
+-dnl 	[ agg_need_compatibility_layer="no" ],
+-dnl 	[ agg_need_compatibility_layer="yes" ] )
+-
+-dnl   AC_SUBST(agg_need_compatibility_layer)
+-
+-dnl   if test x"${agg_need_compatibility_layer}" = xyes; then
+-dnl 	AC_DEFINE(HAVE_AGG_SCANLINES_COMPOUND_LAYERED, [0], [AGG headers include the render_scanlines_compound_layered templated function])
+-dnl   else
+-dnl 	AC_DEFINE(HAVE_AGG_SCANLINES_COMPOUND_LAYERED, [1], [AGG headers include the render_scanlines_compound_layered templated function])
+-dnl   fi
+-
+   AC_SUBST(AGG_LIBS)
+ ])
+ 
+diff -Naur gnash-0.8.6-old/macros/boost.m4 gnash-0.8.6-new/macros/boost.m4
+--- gnash-0.8.6-old/macros/boost.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/boost.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -64,7 +64,7 @@
+     dnl Attempt to find the top level directory, which unfortunately has a
+     dnl version number attached. At least on Debian based systems, this
+     dnl doesn't seem to get a directory that is unversioned.
+-    if test x$cross_compiling = xno; then
++    if test xno = xno; then
+       if test x"$PKG_CONFIG" != x; then
+         AC_MSG_CHECKING([for the Boost Version])
+         $PKG_CONFIG --exists boost && gnash_boost_version="`$PKG_CONFIG --modversion boost | cut -d "." -f 1 | awk '{print $'0'".0"}'`"
+diff -Naur gnash-0.8.6-old/macros/curl.m4 gnash-0.8.6-new/macros/curl.m4
+--- gnash-0.8.6-old/macros/curl.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/curl.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -17,109 +17,11 @@
+ 
+ AC_DEFUN([GNASH_PATH_CURL],
+ [
+-  dnl Look for the header
+-  AC_ARG_WITH(curl_incl, AC_HELP_STRING([--with-curl-incl], [directory where libcurl header is (w/out the curl/ prefix)]), with_curl_incl=${withval})
+-    AC_CACHE_VAL(ac_cv_path_curl_incl,[
+-    if test x"${with_curl_incl}" != x ; then
+-      if test -f ${with_curl_incl}/curl/curl.h ; then
+-	      ac_cv_path_curl_incl="`(cd ${with_curl_incl}; pwd)`"
+-      else
+-	      AC_MSG_ERROR([${with_curl_incl} directory doesn't contain curl/curl.h])
+-      fi
+-    fi
+-  ])
++  PKG_CHECK_MODULES(CURL, [libcurl], [HAVE_CURL=yes], [HAVE_CURL=no])
+ 
+-  curlconfig=""
+-  AC_PATH_PROG(curlconfig, curl-config, ,[${pathlist}])
++  AM_CONDITIONAL(CURL, [test "x$HAVE_CURL" = "xyes"])
+ 
+-  dnl If the path hasn't been specified, go look for it.
+-  if test x"${ac_cv_path_curl_incl}" = x; then
+-    if test x"${curlconfig}" != "x"; then
+-      ac_cv_path_curl_incl="`${curlconfig} --cflags`"
+-    else
+-      for i in $incllist; do
+-        if test -f $i/curl/curl.h; then
+-          ac_cv_path_curl_incl="-I$i"
+-	        break
+-        fi
+-      done
+-    fi
+-
+-    if test x"${ac_cv_path_curl_incl}" = x ; then
+-      AC_CHECK_HEADERS(curl/curl.h)
+-    fi
+-
+-    AC_MSG_CHECKING([for libcurl header])
+-    if test x"${ac_cv_path_curl_incl}" != x ; then
+-      AC_MSG_RESULT(yes)
+-    else
+-      AC_MSG_RESULT(no)
+-    fi
+-  fi
+-
+-
+-  if test x"${ac_cv_path_curl_incl}" != x"/usr/include"; then
+-    ac_cv_path_curl_incl="${ac_cv_path_curl_incl}"
+-  else
+-    ac_cv_path_curl_incl=""
+-  fi
+-
+-  dnl Look for the library
+-  AC_ARG_WITH(curl_lib, AC_HELP_STRING([--with-curl-lib], [directory where curl library is]), with_curl_lib=${withval})
+-    AC_CACHE_VAL(ac_cv_path_curl_lib,[
+-    if test x"${with_curl_lib}" != x ; then # {
+-      if test -f ${with_curl_lib}/libcurl.a -o -f ${with_curl_lib}/libcurl.${shlibext}; then # {
+-        ac_cv_path_curl_lib="-L`(cd ${with_curl_lib}; pwd)`"
+-      else # }{
+-        AC_MSG_ERROR([${with_curl_lib} directory doesn't contain libcurl.])
+-      fi # }
+-    fi # }
+-  ])
+-
+-  dnl If the path hasn't been specified, go look for it.
+-  if test x"${ac_cv_path_curl_lib}" = x; then # {
+-    if test x"${curlconfig}" != "x" -a x"${darwin}" = xno; then # {
+-      dnl curl-config gives us way to many libraries, which create nasty linking
+-      dnl dependancy issue, so we strip them off here. The real dependencies are
+-      dnl are taken care of by other config tests.
+-      ac_cv_path_curl_lib=`${curlconfig} --libs | sed -e 's/lcurl.*/lcurl/' -e 's:-L/usr/lib ::'`
+-    else # }{
+-      AC_MSG_CHECKING([for libcurl library])
+-      for i in $libslist; do # {
+-        if test -f $i/libcurl.a -o -f $i/libcurl.${shlibext}; then # {
+-          if test ! x"$i" = x"/usr/lib" -a ! x"$i" = x"/usr/lib64"; then # {
+-            ac_cv_path_curl_lib="-L$i -lcurl"
+-            AC_MSG_RESULT(${ac_cv_path_curl_lib})
+-            break
+-          else # }{
+-            ac_cv_path_curl_lib="-lcurl"
+-            AC_MSG_RESULT(yes)
+-            break
+-          fi # }
+-        fi # }
+-      done # }
+-      if test x"${ac_cv_path_curl_lib}" = x; then # {
+-        AC_MSG_RESULT(no)
+-      fi # }
+-    fi # }
+-
+-  fi # }
+-
+-  if test x"${ac_cv_path_curl_incl}" != x ; then
+-    CURL_CFLAGS="${ac_cv_path_curl_incl}"
+-  else
+-    CURL_CFLAGS=""
+-  fi
+-
+-  if test x"${ac_cv_path_curl_lib}" != x ; then
+-    CURL_LIBS="${ac_cv_path_curl_lib}"
+-  else
+-    CURL_LIBS=""
+-  fi
+-
+-  AM_CONDITIONAL(CURL, [test -n "$CURL_LIBS"])
+-
+-  if test -n "$CURL_LIBS"; then
++  if test "x$HAVE_CURL" = "xyes"; then
+     AC_DEFINE(USE_CURL, [1], [Define this if you want to enable curl usage])
+   fi
+ 
+diff -Naur gnash-0.8.6-old/macros/dbus.m4 gnash-0.8.6-new/macros/dbus.m4
+--- gnash-0.8.6-old/macros/dbus.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/dbus.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -17,115 +17,7 @@
+ 
+ AC_DEFUN([GNASH_PATH_DBUS],
+ [
+-
+-  dnl Look for the header
+-  AC_ARG_WITH(dbus_incl, AC_HELP_STRING([--with-dbus-incl], [directory where libdbus header is]), with_dbus_incl=${withval})
+-  AC_CACHE_VAL(ac_cv_path_dbus_incl,[
+-    if test x"${with_dbus_incl}" != x ; then
+-      if test -f ${with_dbus_incl}/dbus/dbus.h ; then
+-        ac_cv_path_dbus_incl="-I`(cd ${with_dbus_incl}; pwd)`"
+-      else
+-        AC_MSG_ERROR([${with_dbus_incl} directory doesn't contain dbus/dbus.h])
+-      fi
+-    fi
+-  ])
+-
+-  if test x$cross_compiling = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_dbus_incl}" = x; then
+-      $PKG_CONFIG --exists dbus-1 && ac_cv_path_dbus_incl=`$PKG_CONFIG --cflags dbus-1`
+-    fi
+-  fi
+-
+-  dnl Attempt to find the top level directory, which unfortunately has a
+-  dnl version number attached. At least on Debain based systems, this
+-  dnl doesn't seem to get a directory that is unversioned.
+-
+-  AC_MSG_CHECKING([for the Dbus Version])
+-
+-  if test x$cross_compiling = xno; then
+-    if test x"$PKG_CONFIG" != x; then
+-      $PKG_CONFIG --exists dbus-1 && gnash_dbus_version=`$PKG_CONFIG --modversion dbus-1 | cut -d "." -f 1 | awk '{print $'0'".0"}'`
+-    fi
+-  fi
+-
+-  if test x"${gnash_dbus_version}" = x; then
+-    gnash_dbus_topdir=""
+-    gnash_dbus_version=""
+-    for i in $incllist; do
+-      for j in `ls -dr $i/dbus-[[0-9]].[[0-9]] 2>/dev/null`; do
+-        if test -f $j/dbus.h; then
+-	      gnash_dbus_topdir=`basename $j`
+-	      gnash_dbus_version=`echo ${gnash_dbus_topdir} | sed -e 's:dbus-::' -e 's:.0::'`
+- 	      ac_cv_path_dbus_incl="-I$i/${gnash_dbus_topdir}"
+-	      break
+-	    fi
+-      done
+-	  if test x$gnash_dbus_version != x; then
+-	    break;
+-	  fi
+-    done
+-  fi      
+-
+-  if test x"${gnash_dbus_version}" = x; then
+-    AC_MSG_RESULT(none)
+-  else
+-    AC_MSG_RESULT([${gnash_dbus_version}])
+-  fi
+-  
+-  AC_MSG_CHECKING([for Dbus headers])
+-  AC_MSG_RESULT(${ac_cv_path_dbus_incl}) 
+-
+-  dnl Look for the library
+-  AC_ARG_WITH(dbus_lib, AC_HELP_STRING([--with-dbus-lib], [directory where dbus library is]), with_dbus_lib=${withval})
+-  AC_CACHE_VAL(ac_cv_path_dbus_lib,[
+-    if test x"${with_dbus_lib}" != x ; then
+-      if test -f ${with_dbus_lib}/libdbus-1.a -o -f ${with_dbus_lib}/libdbus-1.${shlibext}; then
+-	      ac_cv_path_dbus_lib="-L`(cd ${with_dbus_lib}; pwd)`"
+-      else
+-	      AC_MSG_ERROR([${with_dbus_lib} directory doesn't contain libdbus.])
+-      fi
+-    fi
+-  ])
+-  
+-  if test x$cross_compiling = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_dbus_lib}" = x; then
+-      $PKG_CONFIG --exists dbus-1 && ac_cv_path_dbus_lib=`$PKG_CONFIG --libs-only-l dbus-1`
+-    fi
+-  fi
+-
+-  if test x"${ac_cv_path_dbus_lib}" = x; then
+-    newlist="/lib /lib64 $libslist"
+-    for i in $newlist; do
+-      if test -f $i/libdbus-${gnash_dbus_version}.a -o -f $i/libdbus-${gnash_dbus_version}.${shlibext}; then
+-        if test x"$i" != x"/lib"; then
+-	        ac_cv_path_dbus_lib="-L$i -ldbus-${gnash_dbus_version}"
+-	        break
+-        else
+-	        ac_cv_path_dbus_lib="-ldbus-${gnash_dbus_version}"
+-	  break
+-	fi
+-      fi
+-    done
+-  fi
+-	
+-  AC_MSG_CHECKING([for Dbus library])
+-  AC_MSG_RESULT(${ac_cv_path_dbus_lib})
+-  
+-  if test x"${ac_cv_path_dbus_lib}" = x; then
+-    AC_CHECK_LIB(dbus-${gnash_dbus_version}, dbus_engine_shape_class_init, [ac_cv_path_dbus_lib="-ldbus-${gnash_dbus_version}"])
+-  fi
+-
+-  if test x"${ac_cv_path_dbus_incl}" != x; then
+-    DBUS_CFLAGS="${ac_cv_path_dbus_incl}"
+-  else
+-    DBUS_CFLAGS=""
+-  fi
+-
+-  if test x"${ac_cv_path_dbus_lib}" != x; then
+-    DBUS_LIBS="${ac_cv_path_dbus_lib}"
+-  else
+-    DBUS_LIBS=""
+-  fi
++  PKG_CHECK_MODULES(DBUS, dbus-1, [HAVE_DBUS=yes], [HAVE_DBUS=no])
+ 
+   AC_SUBST(DBUS_CFLAGS)
+   AC_SUBST(DBUS_LIBS)
+diff -Naur gnash-0.8.6-old/macros/ffmpeg.m4 gnash-0.8.6-new/macros/ffmpeg.m4
+--- gnash-0.8.6-old/macros/ffmpeg.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/ffmpeg.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -17,593 +17,63 @@
+ 
+ AC_DEFUN([GNASH_PATH_FFMPEG],
+ [
++  LIBAVCODEC_IDENT=
++  FFMPEG_CFLAGS=
++  FFMPEG_LIBS=
++
++  PKG_CHECK_MODULES(AVCODEC, [libavcodec >= 51.71.0], [HAVE_AVCODEC=yes], [HAVE_AVCODEC=no])
++ 
++  if test "x$HAVE_AVCODEC" = "xyes" ; then
++    FFMPEG_CFLAGS="$FFMPEG_CFLAGS $AVCODEC_CFLAGS"
++    FFMPEG_LIBS="$FFMPEG_LIBS $AVCODEC_LIBS"
+ 
+-  dnl Backup LIBS and CFLAGS vars, we'll add user-specified dirs there
+-  backupLIBS="$LIBS"
+-  backupCFLAGS="$CFLAGS"
+-  avcodec_h=""
+-  ffmpeg_top_incl=""
++    LIBAVCODEC_IDENT=$($PKG_CONFIG --modversion libavcodec)
+ 
+-  dnl If the user specify an path to include headers from, we assume it's the full
+-  dnl path to the header file, and not the top level path without the 'ffmpeg' node
+-  dnl of the path. This is made more fun my the way ffmpeg changes directory layout
+-  dnl reasonably often.
+-  dnl
+-  dnl ffmpeg_top_level - the top level directory without the ffmpeg specific part.
+-  dnl           ie... /usr/local/include/ffmpeg becomes /usr/local/include, and
+-  dnl           /usr/local/include/ffmpeg/libavcodec becomes /usr/local/include/ffmpeg.
+-  dnl avcode_h - stores the path and file name for avcodec.h, which is used later on
+-  dnl           in this macro to extract the version number of ffmpeg we're using.
+-  AC_ARG_WITH(ffmpeg_incl, AC_HELP_STRING([--with-ffmpeg-incl], [directory where avcodec.h is]), with_ffmpeg_incl=${withval})
+-  AC_CACHE_VAL(ac_cv_path_ffmpeg_incl,[
+-    if test x"${with_ffmpeg_incl}" != x ; then
+-      dnl top level path for include files minus the last directory from the user
+-      dnl specified path.
+-      ffmpeg_top_incl=`dirname ${with_ffmpeg_incl}`
+-      if test -f ${with_ffmpeg_incl}/avcodec.h; then
+-        ac_cv_path_ffmpeg_incl="-I`(cd ${ffmpeg_top_incl}; pwd)`"
+-        avcodec_h=${with_ffmpeg_incl}/avcodec.h
+-      else
+-        AC_MSG_ERROR([${with_ffmpeg_incl} directory does not contain the avcodec.h header])
+-      fi
+-    fi
+-  ])
+-
+-  dnl Try to find avcodec.h ourselves
+-  if test x${ffmpeg_top_incl} = x; then
+-    AC_MSG_CHECKING([location of avcodec.h])
+-    dnl Try PKG_CONFIG if available
+-    if test x"$PKG_CONFIG" != x; then dnl {
+-      if $PKG_CONFIG --exists libavcodec; then dnl {
+-        dnl Some systems return /usr/include/ffmpeg, others /usr/include.
+-        dnl We use #include <ffmpeg/avcodec.h> everywhere so weed out funny
+-        dnl values into the short form.
+-        ffmpeg_pkg=`$PKG_CONFIG --cflags-only-I libavcodec`
+-        ffmpeg_top_incl=`echo ${ffmpeg_pkg} | sed  -e 's:-I::'`
+-        dnl Make sure a header file really exists in the given path.
+-        dnl Ubuntu like the headers here in the top level ffmpeg directory.
+-        for i in "" ffmpeg libavcodec ffmpeg/libavcodec; do
+-          if test -f ${ffmpeg_top_incl}/${i}/avcodec.h; then
+-            ac_cv_path_ffmpeg_incl="-I`(cd ${ffmpeg_top_incl}; pwd)`"
+-            avcodec_h="${ffmpeg_top_incl}/${i}/avcodec.h"
+-            break
+-          fi
+-        done
+-      fi
+-    fi
+-  fi
+-
+-  dnl if pkg-config doesn't have the values we want, or they're plain wrong, look
+-  dnl in several common places ourselves. Note that the variable ffmpeg_top_incl
+-  dnl contains the value of the top level path that has been found.
+-  if test x"${ac_cv_path_ffmpeg_incl}" = x ; then
+-    for ffmpeg_top_incl in $incllist; do
+-      for i in ffmpeg libavcodec ffmpeg/libavcodec; do
+-        if test -f ${ffmpeg_top_incl}/${i}/avcodec.h; then
+-          ac_cv_path_ffmpeg_incl="-I`(cd ${ffmpeg_top_incl}/${i}; pwd)`"
+-          avcodec_h=${ffmpeg_top_incl}/${i}/avcodec.h
+-          break
+-        fi
+-      done
+-      if test x"${ac_cv_path_ffmpeg_incl}" != x ; then
+-	break
+-      fi
+-    done
+-  fi
+-
+-  dnl Because the avcodec.h header file might be found by any one of
+-  dnl the above ways, we set the version macros after all those tests
+-  dnl are done so we only have to do it once.
+-  newer_ffmpeg=`echo ${avcodec_h} | grep -c libavcodec`
+-  if test ${newer_ffmpeg} -eq 0; then
+-    AC_DEFINE(HAVE_FFMPEG_AVCODEC_H, 1, [Define if you have avcodec.h installed.])
+-  else
+     AC_DEFINE(HAVE_LIBAVCODEC_AVCODEC_H, 1, [Define if you have avcodec.h installed.])
+-  fi
+-
+-  if test x"${ac_cv_path_ffmpeg_incl}" = x ; then
+-    AC_MSG_RESULT(none found)
+-  else
+-    AC_MSG_RESULT(${ac_cv_path_ffmpeg_incl})
+-  fi
+-
+-  dnl Find and check libavcodec version number to make sure we have a usable
+-  dnl version and to enable/disable features according to version.
+-  dnl We need LIBAVCODEC VERSION of at least 51.29.0 to get avcodec_decode_audio2
+-  dnl
+-  dnl We try to get the avcodec version as a decimal number
+-  dnl so that we can compare it numerically against what we require.
+-  dnl
+-  dnl This previous version makes ffmpeg fail and then grubs the version string
+-  dnl out of the resulting usage message e.g. "  libavcodec version: 51.40.2"
+-  dnl Early versions of ffmpeg do not output this string at all.
+-  dnl
+-  dnl   AC_PATH_PROG(FFMPEG, ffmpeg, ,[${pathlist}])
+-  dnl   if test "x$FFMPEG" = "x" ; then
+-  dnl     ffmpeg_version=`$FFMPEG uglyhack 2>&1 | grep "libavcodec version" | cut -d ' ' -f 5 | tr -d '.'`
+-  dnl     if test "$ffmpeg_version" -lt 51290; then
+-  dnl       AC_MSG_ERROR([])
+-  dnl     fi
+-  dnl   fi
+-  dnl
+-  dnl These days we check avcodec.h and pick the version out of the constants,
+-  dnl simply throwing away all non-digits.
+-  dnl
+-  dnl In earlier versions we have:
+-  dnl #define FFMPEG_VERSION_INT     0x000409
+-  dnl #define FFMPEG_VERSION         "0.4.9-pre1"
+-  dnl #define LIBAVCODEC_BUILD       4731
+-  dnl #define LIBAVCODEC_VERSION_INT FFMPEG_VERSION_INT
+-  dnl #define LIBAVCODEC_VERSION     FFMPEG_VERSION
+-  dnl
+-  dnl elsewhere, FFMPEG_VERSION may also be the quoted string "CVS"
+-  dnl
+-  dnl This changed from the above to
+-  dnl #define LIBAVCODEC_VERSION_INT ((49<<16)+(0<<8)+0)
+-  dnl #define LIBAVCODEC_VERSION     49.0.0
+-  dnl #define LIBAVCODEC_BUILD       LIBAVCODEC_VERSION_INT
+-  dnl (note, LIBAVCODEC_VERSION also changes from a quoted string to unquoted)
+-  dnl see http://lists.mplayerhq.hu/pipermail/ffmpeg-cvslog/2005-July/000570.html
+-  dnl
+-  dnl
+-  dnl This changed from the above to
+-  dnl #define LIBAVCODEC_VERSION_MAJOR 51
+-  dnl #define LIBAVCODEC_VERSION_MINOR 54
+-  dnl #define LIBAVCODEC_VERSION_MICRO  0
+-  dnl 
+-  dnl #define LIBAVCODEC_VERSION_INT  AV_VERSION_INT(LIBAVCODEC_VERSION_MAJOR, \
+-  dnl                                                LIBAVCODEC_VERSION_MINOR, \
+-  dnl                                                LIBAVCODEC_VERSION_MICRO)
+-  dnl #define LIBAVCODEC_VERSION      AV_VERSION(LIBAVCODEC_VERSION_MAJOR,    \
+-  dnl                                            LIBAVCODEC_VERSION_MINOR,    \
+-  dnl                                            LIBAVCODEC_VERSION_MICRO)
+-  
+-  dnl Those deb-heads at Debian redefine LIBAVCODEC_VERSION in their versions to
+-  dnl (e.g.) 1d.51.38.0 or dnl 0d.51.11.0 - we need to discard the prefixed
+-  dnl rubbish.
+-  dnl
+-  dnl Other values or LIBAVCODEC_VERSION spotted in the wild:
+-  dnl 50.0.0  50.5.0  51.7.0  51.8.0  0d.51.8.0  51.40.4
+-  dnl presumably this will change to 52.0.0 at some point...
+-  dnl
+-  dnl We can ignore the very early versions because 51.10.0 is necessary to decode
+-  dnl Flash video at all. However the current solution will incorrectly succeed
+-  dnl on early debian/ubuntu 1d.* version numbers and incorrectly fail
+-  dnl when 52.0.0 happens.
+-  dnl
+-  dnl The most reliable way is to compile a test program to print the value of
+-  dnl LIBAVCODEC_BUILD, which got up to dnl 4718 at version 0.4.9-pre1,
+-  dnl then changed to (major<<16 + minor<<8 + micro) from then on.
+-  dnl There is code to do this in transcode's configure.in, but when
+-  dnl cross-compiling we cannot run a test program, which suggests that
+-  dnl a modified form of grepping may be better, making sure all old kinds of
+-  dnl version numbering fail gracefully.
+-
+-  dnl Check avcodec version number, if it was found
+-  if test x"${avcodec_h}" != x; then
+-
+-    AC_MSG_CHECKING([ffmpeg version])
+-
+-    ffmpeg_major_version=`$EGREP "define LIBAVCODEC_VERSION_MAJOR " ${avcodec_h} | sed -e "s%[[^0-9]]%%g"`
+-    ffmpeg_minor_version=`$EGREP "define LIBAVCODEC_VERSION_MINOR " ${avcodec_h} | sed -e "s%[[^0-9]]%%g"`
+-    ffmpeg_micro_version=`$EGREP "define LIBAVCODEC_VERSION_MICRO " ${avcodec_h} | sed -e "s%[[^0-9]]%%g"`
+-
+-    if test x"${ffmpeg_major_version}" != x ; then
+-
+-      ffmpeg_version="${ffmpeg_major_version}.${ffmpeg_minor_version}.${ffmpeg_micro_version}"
+ 
+-    else
+-
+-      dnl #define LIBAVCODEC_VERSION_TRIPLET 51,50,1
+-      ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION_TRIPLET " ${avcodec_h} | awk '{print $'3'}' | sed -e "s%,%.%g"`
+-
+-      if test x"${ffmpeg_version}" = x ; then
+-
+-        dnl NOTE: the [0-9]*d. pattern discards deb-heads rubbish prefix
+-        ffmpeg_version=`$EGREP "define LIBAVCODEC_VERSION " ${avcodec_h} | awk '{print $'3'}' | sed -e "s%^[[0-9]]d\.%%"` 
+-
+-        if test x"${ffmpeg_version}" = x ; then
+-          ffmpeg_version=`$EGREP "define LIBAVCODEC_BUILD " ${avcodec_h} | awk '{print $'3'}'`
+-        fi
+-      fi
+-
+-      if test x"${ffmpeg_version}" != x ; then
+-        ffmpeg_major_version=`echo ${ffmpeg_version} | cut -d. -f1`
+-        ffmpeg_minor_version=`echo ${ffmpeg_version} | cut -d. -f2`
+-        ffmpeg_micro_version=`echo ${ffmpeg_version} | cut -d. -f3`
+-      fi
+-
+-    fi
+-
+-    ffmpeg_num_version=`printf %2.2d%2.2d%2.2d $ffmpeg_major_version $ffmpeg_minor_version $ffmpeg_micro_version`
+-
+-    AC_MSG_RESULT($ffmpeg_version ($ffmpeg_num_version))
+-
+-
+-dnl   AC_EGREP_HEADER(avcodec_decode_audio2, ${avcodec_h}, [avfound=yes], [avfound=no])
+-  
+-    if test -z "$ffmpeg_num_version" -o "$ffmpeg_num_version" -lt 511100; then
+-      AC_MSG_WARN([Wrong ffmpeg/libavcodec version! 51.11.0 or greater required, $ffmpeg_version detected.])
+-    else
+-      ffmpeg_version_check=ok
+-    fi
+-
+-    if test ! -z "$ffmpeg_num_version" -a "$ffmpeg_num_version" -gt 512800; then
+-      dnl 51.28.0 or higher required
+-      AC_DEFINE(FFMPEG_AUDIO2, 1, [Define if avcodec_decode_audio2 can be used.])
+-    fi
+-
+-    if test -z "$ffmpeg_num_version" -o "$ffmpeg_num_version" -lt 512700; then
+-      dnl 51.27.0 or higher required
+-      AC_MSG_WARN([This version of ffmpeg/libavcodec ($ffmpeg_version) is not able to play VP6 encoded video: 51.27.0 or higher required!])
+-    else
+-      AC_DEFINE(FFMPEG_VP6, 1, [Define if ffmpeg can play VP6.])
+-    fi
+-
+-    if test -z "$ffmpeg_num_version" -o "$ffmpeg_num_version" -lt 514900; then
+-      dnl 51.49.0 or higher required
+-      AC_MSG_WARN([This version of ffmpeg/libavcodec ($ffmpeg_version) is not able to play VP6A encoded video: 51.49.0 or higher required!])
+-    else
+-      AC_DEFINE(FFMPEG_VP6A, 1, [Define if ffmpeg can play VP6A.])
+-    fi
+-
+-    if test -z "$ffmpeg_num_version" -o "$ffmpeg_num_version" -lt 514600; then
+-      dnl 51.46.0 (r10741) or higher required for CODEC_ID_NELLYMOSER
+-      AC_MSG_WARN([This version of ffmpeg/libavcodec ($ffmpeg_version) is not able to decode NELLYMOSER encoded audio: 51.46.0 (r10741) or higher required!])
+-    else
++    PKG_CHECK_EXISTS([libavcodec >= 51.28.0],
++      [
++        AC_DEFINE(FFMPEG_AUDIO2, 1, [Define if avcodec_decode_audio2 can be used.])
++      ]
++    )
++    PKG_CHECK_EXISTS([libavcodec >= 51.49.0],
++      [
++        AC_DEFINE(FFMPEG_VP6A, 1, [Define if ffmpeg can play VP6A.])
++      ]
++    )
++    PKG_CHECK_EXISTS([libavcodec >= 51.46.0],
++      [
+       AC_DEFINE(FFMPEG_NELLYMOSER, 1, [Define if ffmpeg can decode NELLYMOSER audio.])
+-    fi
++      ]
++    )
+   else
+-    AC_MSG_WARN([Could not check ffmpeg version (dunno where avcodec.h is)])
+-    # ffmpeg_version_check=ok # this is NOT ok, why would it be ?! 
++    AC_MSG_ERROR([Cannot find libavcodec.])
+   fi
+ 
+-  LIBAVCODEC_IDENT=${ffmpeg_version}
+-  FFMPEG_CFLAGS="${ac_cv_path_ffmpeg_incl}"
+-
+-  AC_MSG_CHECKING([for avformat.h])
+-  if test -f "${ffmpeg_top_incl}/avformat.h"; then
+-    AC_DEFINE(HAVE_FFMPEG_AVFORMAT_H, 1, [Define if avformat.h is found])
+-    avformat_h="${ffmpeg_top_incl}/avformat.h"
+-  else
+-    if test -f "${ffmpeg_top_incl}/libavformat/avformat.h"; then
+-      AC_DEFINE(HAVE_LIBAVFORMAT_AVFORMAT_H, 1, [Define if avformat.h is found])
+-      avformat_h="${ffmpeg_top_incl}/libavformat/avformat.h"
+-    else
+-      avformat_h=""
+-    fi
++  PKG_CHECK_MODULES(AVFORMAT, [libavformat >= 52.22.1], [HAVE_AVFORMAT=yes], [HAVE_AVFORMAT=no])
++  if test "x$HAVE_AVFORMAT" = "xyes" ; then
++    AC_DEFINE(HAVE_LIBAVFORMAT_AVFORMAT_H, 1, [Define if avformat.h is found])
++    FFMPEG_CFLAGS="$FFMPEG_CFLAGS $AVFORMAT_CFLAGS"
++    FFMPEG_LIBS="$FFMPEG_LIBS $AVFORMAT_LIBS"
+   fi
+-  AC_MSG_RESULT($avformat_h)
+ 
+-  have_ffmpeg_swscale=no
+-  if test -f "${ffmpeg_top_incl}/ffmpeg/swscale.h"; then
+-    have_ffmpeg_swscale=yes
+-    AC_DEFINE(HAVE_FFMPEG_SWSCALE_H, 1, [Define if swscale.h is found])
+-  fi
+-  if test -f "${ffmpeg_top_incl}/libswscale/swscale.h"; then
+-    have_ffmpeg_swscale=yes
++  PKG_CHECK_MODULES(SWSCALE, [libswscale >= 0.6.1], [HAVE_SWSCALE=yes], [HAVE_SWSCALE=no])
++  if test "x$HAVE_SWSCALE" = "xyes" ; then
+     AC_DEFINE(HAVE_LIBSWSCALE_SWSCALE_H, 1, [Define if swscale.h is found])
+-  fi
+-
+-  if test x"$have_ffmpeg_swscale" = "xno" -a $ffmpeg_num_version -ge 520000; then
+-     AC_MSG_WARN([Cannot find swscale.h, required for ffmpeg versions >= 52.0.0 (detected version: $ffmpeg_version)])
+-     ffmpeg_version_check=
+-  fi
+-
+-  dnl ---------------------------------
+-  dnl
+-  dnl FFMPEG libs checking
+-  dnl
+-  dnl ---------------------------------
+-
+-  top_lib_dir=""
+-
+-  dnl Did they tell us where the libs are ?
+-  AC_ARG_WITH(ffmpeg_lib, AC_HELP_STRING([--with-ffmpeg-lib], [directory where ffmpeg libraries are]), with_ffmpeg_lib=${withval})
+-  AC_CACHE_VAL(ac_cv_path_ffmpeg_lib, [
+-    if test x"${with_ffmpeg_lib}" != x ; then
+-      if test -f ${with_ffmpeg_lib}/libavcodec.a -o -f ${with_ffmpeg_lib}/libavcodec.${shlibext}; then
+-	      ac_cv_path_ffmpeg_lib="-L`(cd ${with_ffmpeg_lib}; pwd)`"
+-          libavcodec="-lavcodec"
+-          LIBS="${ac_cv_path_ffmpeg_lib} $LIBS" dnl <-- What is this needed for ?
+-          top_lib_dir=${with_ffmpeg_lib}
+-      else
+-	      AC_MSG_ERROR([${with_ffmpeg_lib} directory doesn't contain libavcodec libraries.])
+-      fi
+-      if test -f ${with_ffmpeg_lib}/libavformat.a -o -f ${with_ffmpeg_lib}/libavformat.${shlibext}; then
+-	      ac_cv_path_ffmpeg_lib="-L`(cd ${with_ffmpeg_lib}; pwd)`"
+-          libavformat="-lavformat"
+-          top_lib_dir=${with_ffmpeg_lib}
+-      else
+-	      AC_MSG_ERROR([${with_ffmpeg_lib} directory doesn't contain libavformat libraries.])
+-      fi
+-    fi
+-  ])
+-
+-  dnl Look for the AVCODEC library
+-
+-  dnl Try with pkg-config (if not cross-compiling)
+-  if test x"${cross_compiling}" = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${libavcodec}" = x; then
+-      $PKG_CONFIG --exists libavcodec && libavcodec=`$PKG_CONFIG --libs-only-l libavcodec`
+-      dnl
+-      dnl WARNING: we won't be able to set top_lib_dir here, as pkg-config doesn't
+-      dnl          return any -L when not neeed.
+-      dnl          We won't need top_lib_dir either, as the only use for it
+-      dnl          is to look for other required libraries, while pkg-config 
+-      dnl          probably include them all, so not a big deal.
+-      dnl
+-    fi
+-  fi
+-
+-  if test x"${libavcodec}" != x; then
+-    ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libavcodec}"
+-  else
+-    AC_MSG_CHECKING([for libavcodec library])
+-    for i in $libslist; do
+-      if test -f $i/libavcodec.a -o -f $i/libavcodec.${shlibext}; then
+-        if test x${top_lib_dir} = x; then top_lib_dir=$i; fi
+-        AC_MSG_RESULT(${top_lib_dir}/libavcodec)
+-	    if test ! x"$i" = x"/usr/lib" -a ! x"$i" = x"/usr/lib64"; then
+-          libavcodec="-L$i -lavcodec"
+-       	  break
+-        else
+-          libavcodec="-lavcodec"
+-	      break
+-        fi
+-	    ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libavcodec}"
+-      fi
+-    done
+-
+-    if test x"${libavcodec}" = x; then
+-      AC_MSG_RESULT(no)
+-      if test x${cross_compiling} = xno; then
+-        dnl avcodec_decode_audio2 starts 51.29.0
+-        AC_CHECK_LIB(avcodec, ff_eval, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lavcodec"])
+-      fi
+-    fi
+-  fi
+-
+-  if test x$top_lib_dir != x; then
+-    AC_MSG_NOTICE([ffmpeg top lib dir is $top_lib_dir])
+-  fi
+-
+-  dnl Start of all optional library tests {
+-  dnl
+-  dnl TODO: skip these tests if we got ac_cv_path_ffmpeg_lib
+-  dnl       from pkg-config, as it would likely bring all
+-  dnl       required libs in. 
+-  dnl
+-  if test x"${ac_cv_path_ffmpeg_lib}" != x; then
+-
+-    dnl Look for the DTS library, which is required on some systems. {
+-    dnl
+-    dnl TODO: skip this if -ldts is already in due to pkg-config 
+-    dnl
+-    AC_MSG_CHECKING([for libdts library])
+-    if test x"$PKG_CONFIG" != x -a x${cross_compiling} = xno; then
+-      $PKG_CONFIG --exists libdts && libdts=`$PKG_CONFIG --libs-only-l libdts`
+-    else
+-      libdts=""
+-    fi
+-    if test x"${libdts}" = x; then
+-      if test -f ${top_lib_dir}/libdts.a -o -f ${top_lib_dir}/libdts.${shlibext}; then
+-        ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -ldts"
+-        AC_MSG_RESULT(${top_lib_dir}/libdts)
+-      else
+-        AC_MSG_RESULT(no)
+-        if test x${cross_compiling} = xno; then
+-          AC_CHECK_LIB(dts, dts_init, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -ldts"])
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libdts})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libdts}"      
+-    fi
+-    dnl End of DTS library looking }
+-	
+-    dnl Look for the VORBISENC library, which is required on some systems. {
+-    AC_MSG_CHECKING([for libvorbisenc library])
+-    if test x"$PKG_CONFIG" != x -a x${cross_compiling} = xno; then
+-      $PKG_CONFIG --exists vorbisenc && libvorbisenc=`$PKG_CONFIG --libs-only-l vorbisenc`
+-    else
+-      libvorbisenc=""
+-    fi
+-    if test x"${libvorbisenc}" = x; then
+-      if test -f ${top_lib_dir}/libvorbisenc.a -o -f ${top_lib_dir}/libvorbisenc.${shlibext}; then
+-        ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lvorbisenc"
+-        AC_MSG_RESULT(${top_lib_dir}/libvorbisenc)
+-      else
+-        AC_MSG_RESULT(no)
+-        if test x${cross_compiling} = xno; then
+-          AC_CHECK_LIB(vorbisenc, vorbis_encode_init, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lvorbisenc"])
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libvorbisenc})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libvorbisenc}"
+-    fi
+-    dnl End of VORBINSEC library looking }
+-	
+-
+-    dnl Look for the AVFORMAT library {
+-    dnl
+-    dnl TODO: libavformat be mandatory, thus linked in already ?
+-    dnl
+-
+-    AC_MSG_CHECKING([for libavformat library])
+-
+-    dnl Try with pkg-config (if not cross-compiling)
+-    if test x"${cross_compiling}" = xno; then
+-      if test x"$PKG_CONFIG" != x -a x${libavformat} = x; then
+-        $PKG_CONFIG --exists libavformat && libavformat=`$PKG_CONFIG --libs-only-l libavformat`
+-      fi
+-    fi
+-
+-    if test x"${libavformat}" = x; then
+-      if test -f ${top_lib_dir}/libavformat.a -o -f ${top_lib_dir}/libavformat.${shlibext}; then
+-        ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lavformat" 
+-        AC_MSG_RESULT(${top_lib_dir}/libavformat)
+-      else
+-        AC_MSG_RESULT(no)
+-        if test x${cross_compiling} = xno; then
+-          AC_CHECK_LIB(libavformat, av_open_input_file, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lavformat"])
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libavformat})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libavformat}"      
+-    fi
+-
+-    dnl End of AVFORMAT library looking }
+-
+-    dnl Look for the AVUTIL library, which is required on some systems. {
+-    dnl
+-    dnl TODO: skip this if -lavutil is already in due to pkg-config 
+-    dnl
+-    AC_MSG_CHECKING([for libavutil library])
+-    if test x"$PKG_CONFIG" != x -a x${cross_compiling} = xno; then
+-      $PKG_CONFIG --exists libavutil && libavutil=`$PKG_CONFIG --libs-only-l libavutil`
+-    else
+-      libavutil=""
+-    fi
+-    if test x"${libavutil}" = x; then
+-      if test -f ${top_lib_dir}/libavutil.a -o -f ${top_lib_dir}/libavutil.${shlibext}; then
+-        ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lavutil"
+-        AC_MSG_RESULT(${top_lib_dir}/libavutil)
+-      else
+-        AC_MSG_RESULT(no)
+-        if test x${cross_compiling} = xno; then
+-           AC_CHECK_LIB(avutil, av_log, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lavutil"])
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libavutil})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libavutil}"
+-    fi
+-    dnl End of AVUTIL library looking }
+-	
+-    dnl Look for the THEORA library, which is required on some systems. {
+-    dnl
+-    dnl TODO: skip this if -ltheora is already in due to pkg-config 
+-    dnl
+-    AC_MSG_CHECKING([for libtheora library])
+-    if test x"$PKG_CONFIG" != x -a x${cross_compiling} = xno; then
+-      $PKG_CONFIG --exists theora && libtheora=`$PKG_CONFIG --libs-only-l theora`
+-    else
+-      libtheora=""
+-    fi
+-    if test x"${libtheora}" = x; then
+-      if test -f ${top_lib_dir}/libtheora.a -o -f ${top_lib_dir}/libtheora.${shlibext}; then
+-        ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -ltheora"
+-        AC_MSG_RESULT(${top_lib_dir}/libtheora)
+-      else
+-        AC_MSG_RESULT(no)
+-        if test x${cross_compiling} = xno; then
+-          AC_CHECK_LIB(theora, theora_encode_init, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -ltheora"])
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libtheora})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libtheora}"      
+-    fi
+-    dnl End of THEORA library looking }
+-
+-    dnl Look for the GSM library, which is required on some systems. {
+-    AC_MSG_CHECKING([for libgsm library])
+-    if test x"$PKG_CONFIG" != x -a x${cross_compiling} = xno; then
+-      $PKG_CONFIG --exists gsm && libgsm=`$PKG_CONFIG --libs-only-l gsm`
+-    else
+-      libgsm=""
+-    fi
+-
+-    dnl OpenBSD seems to have a problem with libgsm.
+-    if test x$openbsd_os != xopenbsd; then
+-      if test x"${libgsm}" = x; then
+-        if test -f ${top_lib_dir}/libgsm.a -o -f ${top_lib_dir}/libgsm.${shlibext}; then
+-          ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lgsm"
+-          AC_MSG_RESULT(${top_lib_dir}/libgsm)
+-        else
+-          AC_MSG_RESULT(no)
+-          if test x${cross_compiling} = xno; then
+-            AC_CHECK_LIB(gsm, gsm_destroy, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lgsm"])
+-          fi
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libgsm})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libgsm}"      
+-    fi
+-    dnl End of GSM library looking }
+-    
+-    dnl Look for the DC1394 library, which is required on some systems. {
+-    dnl
+-    dnl TODO: skip this if -ldc1394 is already in due to pkg-config 
+-    dnl
+-    AC_MSG_CHECKING([for libdc1394 library])
+-    if test x"$PKG_CONFIG" != x -a x${cross_compiling} = xno; then
+-      $PKG_CONFIG --exists libdc  && libdc=`$PKG_CONFIG --libs-only-l libdc1394`
+-    else
+-      libtdc=""
+-    fi
+-    if test x"${libdc}" = x; then
+-      if test -f ${top_lib_dir}/libdc1394.a -o -f ${top_lib_dir}/libdc1394.${shlibext}; then
+-        ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -ldc1394"
+-        AC_MSG_RESULT(${top_lib_dir}/libdc1394)
+-      else
+-        AC_MSG_RESULT(no)
+-        if test x${cross_compiling} = xno; then
+-          AC_CHECK_LIB(dc1394_control, dc1394_is_camera, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -ldc1394_control"])
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libdc})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libdc}"
+-    fi
+-    dnl End of DC1394 library looking }
+-
+-    dnl Look for the SWSCALE library {
+-    dnl
+-    dnl This is required on some system if ffmpeg is
+-    dnl configured with --enable-gpl --enable-swscale.
+-    AC_MSG_CHECKING([for libswscale library])
+-    if test x"$PKG_CONFIG" != x -a x${cross_compiling} = xno; then
+-      $PKG_CONFIG --exists libswscale  && libsws=`$PKG_CONFIG --libs-only-l libswscale`
+-    else
+-      libsws=""
+-    fi
+-    if test x"${libsws}" = x; then
+-      if test -f ${top_lib_dir}/libswscale.a -o -f ${top_lib_dir}/libswscale.${shlibext}; then
+-        ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lswscale"
+-        AC_MSG_RESULT(yes)
+-      else
+-        AC_MSG_RESULT(no)
+-        if test x${cross_compiling} = xno; then
+-          AC_CHECK_LIB(swscale, sws_scale, [ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} -lswscale"])
+-        fi
+-      fi
+-    else
+-      AC_MSG_RESULT(${libsws})
+-      ac_cv_path_ffmpeg_lib="${ac_cv_path_ffmpeg_lib} ${libsws}"
+-    fi
+-    dnl End of SWSCALE library looking }
+-
+-  fi
+-  dnl End of all optional library tests }
+-
+-  # Set final compilation flags, eliminating the pointless "-I/usr/include"
+-  if test x"${ac_cv_path_ffmpeg_lib}" != x ; then
+-    FFMPEG_LIBS="${ac_cv_path_ffmpeg_lib}"
++    FFMPEG_CFLAGS="$FFMPEG_CFLAGS $SWSCALE_CFLAGS"
++    FFMPEG_LIBS="$FFMPEG_LIBS $SWSCALE_LIBS"
+   else
+-    FFMPEG_LIBS=""
++    PKG_CHECK_EXISTS([libavcodec >= 52.0.0],
++      [
++        AC_MSG_WARN([Cannot find libswscale, required for ffmpeg versions >= 52.0.0 (detected version: $LIBAVCODEC_IDENT)])
++      ]
++    )
+   fi
+-
++ 
+   AC_SUBST(LIBAVCODEC_IDENT)
+   AC_SUBST(FFMPEG_CFLAGS)  
+   AC_SUBST(FFMPEG_LIBS)
+-
+-  LIBS="$backupLIBS"
+-  CFLAGS="$backupCFLAGS"
++ 
+ ])
+ 
+ # Local Variables:
+diff -Naur gnash-0.8.6-old/macros/freetype.m4 gnash-0.8.6-new/macros/freetype.m4
+--- gnash-0.8.6-old/macros/freetype.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/freetype.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -16,116 +16,17 @@
+ 
+ AC_DEFUN([GNASH_PATH_FREETYPE2],
+ [
+-  dnl Look for the header
+-  AC_ARG_WITH(freetype_incl, AC_HELP_STRING([--with-freetype-incl], [directory where libfreetype header is (w/out the freetype/ prefix)]), with_freetype_incl=${withval})
+-    AC_CACHE_VAL(ac_cv_path_freetype_incl,[
+-    if test x"${with_freetype_incl}" != x ; then
+-      if test -f ${with_freetype_incl}/freetype/freetype.h ; then
+-	      ac_cv_path_freetype_incl="-I`(cd ${with_freetype_incl}; pwd)`"
+-      else
+-	      AC_MSG_ERROR([${with_freetype_incl} directory doesn't contain freetype/freetype.h])
+-      fi
+-    fi
+-  ])
+-
+-  if test x$cross_compiling = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_freetype_incl}" = x; then
+-      $PKG_CONFIG --exists freetype2 && ac_cv_path_freetype_incl="`$PKG_CONFIG --cflags freetype2`"
+-    fi
+-  fi
+-
+-  dnl If the path hasn't been specified, go look for it.
+-  if test x"${ac_cv_path_freetype_incl}" = x; then
+-    for i in $incllist; do
+-      if test -f $i/freetype2/freetype/freetype.h; then
+-        ac_cv_path_freetype_incl="-I$i/freetype2"
+-	      break
+-      fi
+-    done
+-
+-    if test x"${ac_cv_path_freetype_incl}" = x ; then
+-      AC_CHECK_HEADERS(freetype2/freetype/freetype.h)
+-    fi
+-
+-    AC_MSG_CHECKING([for libfreetype header])
+-    if test x"${ac_cv_path_freetype_incl}" != x ; then
+-      AC_MSG_RESULT(yes)
+-    else
+-      AC_MSG_RESULT(no)
+-    fi
+-  fi
+-
+-
+-  dnl This check is bogus, ac_cv_path_freetype_incl will have -I too, and possibly multiple things too
+-  dnl so at most we can try to *strip* any -I/usr/include
+-  if test x"${ac_cv_path_freetype_incl}" != x"/usr/include"; then
+-    ac_cv_path_freetype_incl="${ac_cv_path_freetype_incl}"
+-  else
+-    ac_cv_path_freetype_incl=""
+-  fi
+-
+-dnl   if test x"${darwin}" = xyes; then
+-     libname=freetype
+-dnl   else
+-dnl     libname=freetype2
+-dnl   fi
+-  AC_ARG_WITH(freetype_lib, AC_HELP_STRING([--with-freetype-lib], [directory where freetype library is]), with_freetype_lib=${withval})
+-    AC_CACHE_VAL(ac_cv_path_freetype_lib,[
+-    if test x"${with_freetype_lib}" != x ; then
+-      if test -f ${with_freetype_lib}/lib${libname}.a -o -f ${with_freetype_lib}/lib${libname}.${shlibext}; then
+-        ac_cv_path_freetype_lib="-L`(cd ${with_freetype_lib}; pwd)` -l${libname}"
+-      else
+-        AC_MSG_ERROR([${with_freetype_lib} directory doesn't contain libfreetype.])
+-      fi
+-    fi
+-  ])
+-
+-  dnl Look for the library
+-  if test x$cross_compiling = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_freetype_lib}" = x; then
+-      $PKG_CONFIG --exists freetype2 && ac_cv_path_freetype_lib="`$PKG_CONFIG --libs freetype2`"
+-    fi
+-  fi
+-
+-  dnl If the path hasn't been specified, go look for it.
+-  if test x"${ac_cv_path_freetype_lib}" = x; then
+-    dnl freetype-config gives us way too many libraries, which create nasty linking
+-    dnl dependancy issue, so we strip them off here. The real dependencies are
+-    dnl are taken care of by other config tests.
+-    AC_MSG_CHECKING([for ${libname} library])
+-    for i in $libslist; do
+-      if test -f $i/lib${libname}.a -o -f $i/lib${libname}.${shlibext}; then
+-        if test ! x"$i" = x"/usr/lib" -a ! x"$i" = x"/usr/lib64"; then
+-          ac_cv_path_freetype_lib="-L$i -l${libname}"
+-          AC_MSG_RESULT(${ac_cv_path_freetype_lib})
+-          break
+-        else
+-          ac_cv_path_freetype_lib="-l${libname}"
+-          AC_MSG_RESULT(yes)
+-          break
+-        fi
+-      fi
+-    done
+-  fi
++  PKG_CHECK_MODULES(FREETYPE2, freetype2, [HAVE_FREETYPE2=yes], [HAVE_FREETYPE2=no])
+ 
+-  if test x"${ac_cv_path_freetype_incl}" != x ; then
+-    FREETYPE2_CFLAGS="${ac_cv_path_freetype_incl}"
+-  else
+-    FREETYPE2_CFLAGS=""
+-  fi
+-
+-  if test x"${ac_cv_path_freetype_lib}" != x ; then
+-    FREETYPE2_LIBS="${ac_cv_path_freetype_lib}"
+-  else
+-    FREETYPE2_LIBS=""
+-  fi
++  AM_CONDITIONAL(FREETYPE, [test "x$HAVE_FREETYPE2" = "xyes"])
+ 
+-  AM_CONDITIONAL(FREETYPE, [test -n "$FREETYPE_LIBS"])
+-
+-  if test -n "$FREETYPE2_LIBS"; then
++  if test "x$HAVE_FREETYPE2" = "xyes" ; then
+     AC_DEFINE(USE_FREETYPE, [1], [Define this if you want to enable freetype usage])
+   fi
+ 
++  AC_SUBST(FREETYPE2_CFLAGS)
++  AC_SUBST(FREETYPE2_LIBS)
++
+   dnl Look for fontconfig's fc-match to set a hard-coded font path.
+   dnl If fontconfig is available, gnash should always manage to find a
+   dnl suitable system font in run time, so will never need this hard-coded
+@@ -142,9 +43,6 @@
+   fi
+   
+   AC_DEFINE_UNQUOTED(DEFAULT_FONTFILE, ["$DEFAULT_FONT"], [Path to default font])
+-
+-  AC_SUBST(FREETYPE2_CFLAGS)
+-  AC_SUBST(FREETYPE2_LIBS)
+ ])
+ 
+ # Local Variables:
+diff -Naur gnash-0.8.6-old/macros/glib.m4 gnash-0.8.6-new/macros/glib.m4
+--- gnash-0.8.6-old/macros/glib.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/glib.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -17,100 +17,10 @@
+ 
+ AC_DEFUN([GNASH_PATH_GLIB],
+ [
+-    dnl Look for the header
+-  AC_ARG_WITH(glib_incl, AC_HELP_STRING([--with-glib-incl], [directory where libglib header is]), with_glib_incl=${withval})
+-  AC_CACHE_VAL(ac_cv_path_glib_incl,[
+-    if test x"${with_glib_incl}" != x ; then
+-      if test -f ${with_glib_incl}/glib.h ; then
+-      	ac_cv_path_glib_incl="-I`(cd ${with_glib_incl}; pwd)`"
+-      else
+-    	  AC_MSG_ERROR([${with_glib_incl} directory doesn't contain glib.h])
+-      fi
+-    fi
+-  ])
++  PKG_CHECK_MODULES(GLIB, [glib-2.0], [HAVE_GLIB=yes], [HAVE_GLIB=no])
+ 
+-  dnl Try with pkg-config
+-  if test x${cross_compiling} = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_glib_incl}" = x; then
+-	    $PKG_CONFIG --exists glib-2.0 && gnash_glib_version=`$PKG_CONFIG --modversion glib-2.0`
+-	    $PKG_CONFIG --exists glib-2.0 && ac_cv_path_glib_incl=`$PKG_CONFIG --cflags glib-2.0`
+-    fi
+-  fi
+-
+-  dnl Attempt to find the top level directory, which unfortunately has a
+-  dnl version number attached. At least on Debain based systems, this
+-  dnl doesn't seem to get a directory that is unversioned.
+-  AC_MSG_CHECKING([for Glib header])  
+-  if test x"${gnash_glib_version}" = x; then
+-    gnash_glib_topdir=""
+-    gnash_glib_version=""
+-    for i in $incllist; do
+-      for j in `ls -dr $i/glib-[[0-9]].[[0-9]] $i/glib/glib-[[0-9]].[[0-9]] 2>/dev/null`; do
+-        if test -f $j/glib.h; then
+-          gnash_glib_topdir=`basename $j`
+-          gnash_glib_version=`echo ${gnash_glib_topdir} | sed -e 's:glib-::'`
+-          ac_cv_path_glib_incl="-I$j"
+-          gnash_glib_config=`echo $j | sed -e 's:include:lib:' -e 's:lib/glib/:lib/:'`
+-          if test -f ${gnash_glib_config}/include/glibconfig.h; then
+-            ac_cv_path_glib_incl="${ac_cv_path_glib_incl} -I${gnash_glib_config}/include"
+-          fi
+-          break
+-        fi
+-      done
+-    done
+-  fi
+-      if test x"${ac_cv_path_glib_incl}" = x; then
+-        AC_MSG_RESULT(no)
+-	else
+-        AC_MSG_RESULT(${ac_cv_path_glib_incl})	
+-      fi
+- 
+-
+-  dnl Look for the library
+-  AC_ARG_WITH(glib_lib, AC_HELP_STRING([--with-glib-lib], [directory where glib library is]), with_glib_lib=${withval})
+-  AC_CACHE_VAL(ac_cv_path_glib_lib,[
+-    if test x"${with_glib_lib}" != x ; then
+-      if test -f ${with_glib_lib}/libglib-${gnash_glib_version}.a -o -f ${with_glib_lib}/libglib-${gnash_glib_version}.${shlibext}; then
+-        ac_cv_path_glib_lib="-L`(cd ${with_glib_lib}; pwd)` -lglib-${gnash_glib_version}"
+-      else
+-        AC_MSG_ERROR([${with_glib_lib} directory doesn't contain libglib.])
+-      fi
+-    fi
+-  ])
+-
+-  if test x${cross_compiling} = xno; then
+-    if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_glib_lib}" = x; then
+-      $PKG_CONFIG --exists glib-2.0 && ac_cv_path_glib_lib=`$PKG_CONFIG --libs glib-2.0`
+-    fi
+-  fi
+-
+-  AC_MSG_CHECKING([for glib library])
+-  if test x"${ac_cv_path_glib_lib}" = x; then
+-    for i in $libslist; do
+-      if test -f $i/libglib-${gnash_glib_version}.a -o -f $i/libglib-${gnash_glib_version}.${shlibext}; then
+-        if test ! x"$i" = x"/usr/lib" -a ! x"$i" = x"/usr/lib64" -a ! x"$i" = x"/usr"; then
+-          ac_cv_path_glib_lib="-L$i -lglib-${gnash_glib_version}"
+-          break
+-        else
+-          ac_cv_path_glib_lib="-lglib-${gnash_glib_version}"
+-          break
+-        fi
+-      fi
+-    done
+-  fi
+-  AC_MSG_RESULT(${ac_cv_path_glib_lib})
+- 
+-  if test x"${ac_cv_path_glib_incl}" != x; then
+-	  GLIB_CFLAGS="${ac_cv_path_glib_incl} $GLIB_CFLAGS"
+-	  AC_DEFINE([HAVE_GLIB], [1], [Has GLIB library installed])
+-  else
+-	  GLIB_CFLAGS=""
+-  fi
+-
+-  if test x"${ac_cv_path_glib_lib}" != x ; then
+-	  GLIB_LIBS="${ac_cv_path_glib_lib}"
+-  else
+-  	GLIB_LIBS=""
++  if test "x$HAVE_GLIB" = "xyes"; then
++    AC_DEFINE([HAVE_GLIB], [1], [Has GLIB library installed])
+   fi
+ 
+   AC_SUBST(GLIB_CFLAGS)
+diff -Naur gnash-0.8.6-old/macros/gnashpkgtool.m4 gnash-0.8.6-new/macros/gnashpkgtool.m4
+--- gnash-0.8.6-old/macros/gnashpkgtool.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/gnashpkgtool.m4	2009-09-15 15:36:15.000000000 -0700
+@@ -55,7 +55,7 @@
+       fi
+     ])
+ 
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_$1_incl}" = x; then
+       AC_MSG_CHECKING([for $2 header using pkg-config])
+       $PKG_CONFIG --exists DASHDOWN[] && ac_cv_path_$1_incl="`$PKG_CONFIG --cflags DASHDOWN[]`"
+diff -Naur gnash-0.8.6-old/macros/gtk2.m4 gnash-0.8.6-new/macros/gtk2.m4
+--- gnash-0.8.6-old/macros/gtk2.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/gtk2.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -31,7 +31,7 @@
+   ])
+ 
+ 
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_gtk2_incl}" = x; then
+       $PKG_CONFIG --exists gtk+-2.0 && ac_cv_path_gtk2_incl="`$PKG_CONFIG --cflags gtk+-2.0`"
+       $PKG_CONFIG --exists gtk+-2.0 && gnash_gtk2_version="`$PKG_CONFIG --modversion gtk+-2.0`"
+@@ -86,7 +86,7 @@
+     fi
+   ])
+ 
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_gtk2_lib}" = x; then
+       $PKG_CONFIG --exists gtk+-2.0 && ac_cv_path_gtk2_lib="`$PKG_CONFIG --libs-only-l gtk+-2.0`"
+     fi
+diff -Naur gnash-0.8.6-old/macros/hildon.m4 gnash-0.8.6-new/macros/hildon.m4
+--- gnash-0.8.6-old/macros/hildon.m4	2009-09-13 16:22:17.000000000 -0700
++++ gnash-0.8.6-new/macros/hildon.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -30,7 +30,7 @@
+     fi
+   ])
+ 
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_hildon_incl}" = x; then
+       $PKG_CONFIG --exists hildon-1 && ac_cv_path_hildon_incl="`$PKG_CONFIG --cflags-only-I hildon-1 | cut -d ' ' -f 1`"
+     fi
+@@ -42,7 +42,7 @@
+ 
+   AC_MSG_CHECKING([for the Hildon Version])
+ 
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x; then
+       $PKG_CONFIG --exists hildon-1 && gnash_hildon_version="`$PKG_CONFIG --modversion hildon-1 | cut -d '.' -f 1`"
+     fi
+@@ -87,7 +87,7 @@
+     fi
+   ])
+   
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_hildon_lib}" = x; then
+       $PKG_CONFIG --exists hildon-1 && ac_cv_path_hildon_lib="`$PKG_CONFIG --libs-only-l hildon-1 | cut -d ' ' -f 1`"
+     fi
+diff -Naur gnash-0.8.6-old/macros/nspr.m4 gnash-0.8.6-new/macros/nspr.m4
+--- gnash-0.8.6-old/macros/nspr.m4	2009-09-13 16:22:18.000000000 -0700
++++ gnash-0.8.6-new/macros/nspr.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -49,7 +49,7 @@
+ 
+   #always check to see if we have it; we only use the results if XPCOM is set.
+   #if test x$nspr4 = xyes; then
+-    if test x$cross_compiling = xno; then
++    if test xno = xno; then
+       if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_nspr_incl}" = x; then
+         $PKG_CONFIG --exists nspr && ac_cv_path_nspr_incl="`$PKG_CONFIG --cflags-only-I nspr`"
+         $PKG_CONFIG --exists nspr && ac_cv_path_nspr_lib="`$PKG_CONFIG --libs nspr`"
+diff -Naur gnash-0.8.6-old/macros/pango.m4 gnash-0.8.6-new/macros/pango.m4
+--- gnash-0.8.6-old/macros/pango.m4	2009-09-13 16:22:18.000000000 -0700
++++ gnash-0.8.6-new/macros/pango.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -36,7 +36,7 @@
+     pango_pkg=pangox
+   fi
+ 
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_pango_incl}" = x; then
+       $PKG_CONFIG --exists $pango_pkg && ac_cv_path_pango_incl="`$PKG_CONFIG --cflags $pango_pkg`"
+     fi
+@@ -48,7 +48,7 @@
+ 
+   AC_MSG_CHECKING([for the Pango Version])
+ 
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x; then
+       $PKG_CONFIG --exists $pango_pkg && gnash_pango_version=`$PKG_CONFIG --modversion $pango_pkg | cut -d "." -f 1 | awk '{print $'0'".0"}'`
+     fi
+@@ -93,7 +93,7 @@
+     fi
+   ])
+   
+-  if test x$cross_compiling = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_pango_lib}" = x; then
+       $PKG_CONFIG --exists $pango_pkg && ac_cv_path_pango_lib=`$PKG_CONFIG --libs-only-l $pango_pkg`
+     fi
+diff -Naur gnash-0.8.6-old/macros/pkg.m4 gnash-0.8.6-new/macros/pkg.m4
+--- gnash-0.8.6-old/macros/pkg.m4	2009-09-13 16:22:18.000000000 -0700
++++ gnash-0.8.6-new/macros/pkg.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -28,7 +28,7 @@
+ [m4_pattern_forbid([^_?PKG_[A-Z_]+$])
+ m4_pattern_allow([^PKG_CONFIG(_PATH)?$])
+ AC_ARG_VAR([PKG_CONFIG], [path to pkg-config utility])dnl
+-if test x$cross_compiling = xno; then
++if test xno = xno; then
+   if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
+     AC_PATH_TOOL([PKG_CONFIG], [pkg-config], ,[${pathlist}])
+   fi
+diff -Naur gnash-0.8.6-old/macros/sdl.m4 gnash-0.8.6-new/macros/sdl.m4
+--- gnash-0.8.6-old/macros/sdl.m4	2009-09-13 16:22:18.000000000 -0700
++++ gnash-0.8.6-new/macros/sdl.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -28,7 +28,7 @@
+       fi
+     fi
+   ])
+-  if test x${cross_compiling} = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_sdl_incl}" = x; then
+ 	    $PKG_CONFIG --exists sdl && ac_cv_path_sdl_incl=`$PKG_CONFIG --cflags sdl` 
+     fi
+@@ -38,7 +38,7 @@
+   dnl version number attached. At least on Debain based systems, this
+   dnl doesn't seem to get a directory that is unversioned.
+ 
+-  if test x${cross_compiling} = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x; then
+       dnl What's the point of checking for SDL version here if we wipe out that info below ?? .. dropping the check
+       dnl AC_MSG_CHECKING([for the SDL Version])  
+@@ -52,13 +52,13 @@
+   if test "x$SDL_CONFIG" != "x" ; then
+     if test "x$SDL_CFLAGS" = "x" ; then
+       SDL_CFLAGS=`$SDL_CONFIG --cflags`
+-	if test x${cross_compiling} = xno; then
++	if test xno = xno; then
+       		ac_cv_path_sdl_incl=$SDL_CFLAGS
+ 	fi
+     fi
+     if test "x$SDL_LIBS" = "x" ; then
+       SDL_LIBS=`$SDL_CONFIG --libs | sed -e 's:-L/usr/lib\>::'`
+-	if test x${cross_compiling} = xno; then
++	if test xno = xno; then
+ 		ac_cv_path_sdl_lib=$SDL_LIBS
+ 	fi
+     fi
+@@ -118,7 +118,7 @@
+   ])
+ 
+   SDL_LIBS=""
+-  if test x${cross_compiling} = xno; then
++  if test xno = xno; then
+     if test x"$PKG_CONFIG" != x -a x"${ac_cv_path_sdl_lib}" = x; then
+       $PKG_CONFIG --exists sdl && ac_cv_path_sdl_lib=`$PKG_CONFIG --libs sdl`
+       if test x"$ac_cv_path_sdl_lib" != x; then
+diff -Naur gnash-0.8.6-old/macros/x11.m4 gnash-0.8.6-new/macros/x11.m4
+--- gnash-0.8.6-old/macros/x11.m4	2009-09-13 16:22:18.000000000 -0700
++++ gnash-0.8.6-new/macros/x11.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -18,131 +18,69 @@
+ 
+ AC_DEFUN([GNASH_PATH_X11],
+ [
+-  dnl Look for the header
+-  AC_ARG_WITH(x11_incl, AC_HELP_STRING([--with-x11-incl], [Directory where x11 header is]), with_x11_incl=${withval})
+-  AC_CACHE_VAL(ac_cv_path_x11_incl, [
+-    if test x"${with_x11_incl}" != x ; then
+-      if test -f ${with_x11_incl}/X11/X.h ; then
+-       ac_cv_path_x11_incl="-I`(cd ${with_x11_incl}; pwd)`"
+-      else
+-       AC_MSG_ERROR([${with_x11_incl} directory doesn't contain X.h])
+-      fi
+-    fi
+-  ])
++  X11_CFLAGS=
++  X11_LIBS=
+ 
+-  dnl If the path hasn't been specified, go look for it.
+-  if test x"${ac_cv_path_x11_incl}" = x ; then
+-    newlist="/Developer/SDKs/MacOSX10.4*.sdk/usr/include ${incllist}"
+-    for i in $newlist; do
+-    	if test -f $i/X11/X.h; then
+-  	    ac_cv_path_x11_incl="-I$i"
+-    	fi
+-    done
+-  fi
++  PKG_CHECK_MODULES(X11, x11, [HAVE_X11=yes], [HAVE_X11=no])
+ 
+-  if test x"${ac_cv_path_x11_incl}" = x ; then
+-    AC_CHECK_HEADERS(X11/X.h, [ac_cv_path_x11_incl=""])
+-  fi
+-  
+-  dnl We want to know whether the headers for XShm exist.
+-  if test x"${ac_cv_path_x11_incl}" != x ; then
+-    includedirfound=`echo "${ac_cv_path_x11_incl}" | cut -b 3-`
+-    if test -f "$includedirfound/X11/extensions/Xv.h"; then
+-      xv_incl=yes
++  if test "x$HAVE_X11" = "xyes" ; then
++    AC_CHECK_LIB(X11, x11_mem_init,
++      [
++        HAVE_X11=no
++        X11_CFLAGS=
++        X11_LIBS=
++      ]
++    )
++  fi
++
++  if test "x$HAVE_X11" = "xyes" ; then
++    PKG_CHECK_MODULES(XEXT, xext, [HAVE_XEXT=yes], [HAVE_XEXT=no])
++    if test "x$HAVE_XEXT" = "xyes" ; then
++      X11_CFLAG="$X11_CFLAGS $XEXT_CFLAGS"
++      X11_LIBS="$X11_LIBS $XEXT_LIBS"
+     fi
+-  fi
+ 
+-  AC_MSG_CHECKING([for X11 headers])
+-  if test x"${ac_cv_path_x11_incl}" != x ; then
+-    dnl Don't pass -I/usr/include
+-    if test x"${ac_cv_path_x11_incl}" != "x-I/usr/include"; then
+-      X11_CFLAGS="${ac_cv_path_x11_incl}"
++    PKG_CHECK_MODULES(XINERAMA, xinerama, [HAVE_XINERAMA=yes], [HAVE_XINERAMA=no])
++    if test "x$HAVE_XINERAMA" = "xyes" ; then
++      X11_CFLAG="$X11_CFLAGS $XINERAMA_CFLAGS"
++      X11_LIBS="$X11_LIBS $XINERAMA_LIBS"
+     fi
+-    AC_MSG_RESULT(${ac_cv_path_x11_incl})
+-  else
+-    X11_CFLAGS=""
+-    AC_MSG_RESULT(none)
+-  fi
+ 
+-  dnl Look for the library
+-  AC_ARG_WITH(x11_lib, AC_HELP_STRING([--with-x11-lib], [directory where x11 library is]), with_x11_lib=${withval})
+-  AC_CACHE_VAL(ac_cv_path_x11_lib,[
+-    if test x"${with_x11_lib}" != x ; then
+-      if test -f ${with_x11_lib}/libX11.a -o -f ${with_x11_lib}/libX11.${shlibext}; then
+-       ac_cv_path_x11_lib=`(cd ${with_x11_lib}; pwd)`
+-      else
+-       AC_MSG_ERROR([${with_x11_lib} directory doesn't contain libx11.])
+-      fi
++    PKG_CHECK_MODULES(SM, sm, [HAVE_SM=yes], [HAVE_SM=no])
++    if test "x$HAVE_SM" = "xyes" ; then
++      X11_CFLAG="$X11_CFLAGS $SM_CFLAGS"
++      X11_LIBS="$X11_LIBS $SM_LIBS"
+     fi
+-  ])
+ 
+-  dnl If the header doesn't exist, there is no point looking for the library.
+-  if test x"${ac_cv_path_x11_incl}" != x ; then
+-    newlist="/Developer/SDKs/MacOSX10.5*.sdk/usr/lib /Developer/SDKs/MacOSX10.5*.sdk/usr/X11R6/lib /Developer/SDKs/MacOSX10.4*.sdk/usr/lib /Developer/SDKs/MacOSX10.4*.sdk/usr/X11R6/lib ${libslist}"
+-    for i in $newlist; do
+-      if test -f $i/libX11.a -o -f $i/libX11.${shlibext}; then
+-        if test ! x"${i}" = x"/usr/lib" -a ! x"$i" = x"/usr/lib64"; then
+-          ac_cv_path_x11_lib="-L$i -lX11"
+-        else
+-          ac_cv_path_x11_lib="-lX11"
+-        fi
+-        if test -f $i/libXinerama.a -o -f $i/libXinerama.${shlibext}; then
+-          ac_cv_path_x11_lib="${ac_cv_path_x11_lib} -lXinerama"
+-        fi
+-        if test -f $i/libXext.a -o -f $i/libXext.${shlibext}; then
+-          ac_cv_path_x11_lib="${ac_cv_path_x11_lib} -lXext"
+-        fi
+-        if test -f $i/libSM.a -o -f $i/libSM.${shlibext}; then
+-          ac_cv_path_x11_lib="${ac_cv_path_x11_lib} -lSM"
+-        fi
+-        if test -f $i/libICE.a -o -f $i/libICE.${shlibext}; then
+-          ac_cv_path_x11_lib="${ac_cv_path_x11_lib} -lICE"
+-        fi
+-        if test -f $i/libXv.a -o -f $i/libXv.${shlibext}; then
+-          ac_cv_path_x11_lib="${ac_cv_path_x11_lib} -lXv"
+-          xv_lib=yes
+-        fi
+-        break
+-      fi
+-    done
+-  fi
+-
+-  for i in $newlist; do
+-    if test -f $i/libXplugin.a -o -f $i/libXplugin.${shlibext}; then
+-      if test ! x"${i}" = x"/usr/lib" -o x"$i" = x"/usr/lib64"; then
+-        ac_cv_path_x11_lib="${ac_cv_path_x11_lib} -L$i -lXplugin"
+-      else
+-        ac_cv_path_x11_lib="${ac_cv_path_x11_lib} -lXplugin"
+-      fi
+-      break
++    PKG_CHECK_MODULES(ICE, ice, [HAVE_ICE=yes], [HAVE_ICE=no])
++    if test "x$HAVE_ICE" = "xyes" ; then
++      X11_CFLAG="$X11_CFLAGS $ICE_CFLAGS"
++      X11_LIBS="$X11_LIBS $ICE_LIBS"
+     fi
+-  done
+-
+-  if test x"${ac_cv_path_x11_lib}" = x ; then
+-    AC_CHECK_LIB(X11, x11_mem_init, [ac_cv_path_x11_lib=""])
+-  fi
+ 
+-  AC_MSG_CHECKING([for X11 library])
+-  if test x"${ac_cv_path_x11_lib}" != x ; then
+-    X11_LIBS="${ac_cv_path_x11_lib}"
+-    AC_MSG_RESULT(${ac_cv_path_x11_lib})
+-  else
+-    X11_LIBS=""
+-    AC_MSG_RESULT(none)
++    PKG_CHECK_MODULES(XV, xv, [HAVE_XV=yes], [HAVE_XV=no])
++    if test "x$HAVE_XV" = "xyes" ; then
++      X11_CFLAG="$X11_CFLAGS $XV_CFLAGS"
++      X11_LIBS="$X11_LIBS $XV_LIBS"
++    fi
+   fi
+ 
+-  if test -n "$X11_LIBS" -a -n "$X11_CFLAGS"; then
+-    x11=yes
++  PKG_CHECK_MODULES(XPLUGIN, xplugin, [HAVE_XPLUGIN=yes], [HAVE_XPLUGIN=no])
++  if test "x$HAVE_XPLUGIN" = "xyes" ; then
++    HAVE_X11=yes
++    X11_CFLAG="$X11_CFLAGS $XPLUGIN_CFLAGS"
++    X11_LIBS="$X11_LIBS $XPLUGIN_LIBS"
+   fi
+ 
+-  if test "x$x11" = xyes; then
++  if test "x$HAVE_X11" = xyes; then
+     AC_DEFINE(HAVE_X11, [1], [X11 headers and libraries])
+   fi
+   
+-  if test x"$xv_incl" != x -a x"$xv_lib" != x; then
++
++  if test "x$HAVE_XV" = xyes; then
+     AC_DEFINE(HAVE_XV, [1], [X Video extension header and library])
+   fi
+-  AM_CONDITIONAL(HAVE_XV, [ test x"$xv_incl" != x -a x"$xv_lib" != x ])
++  AM_CONDITIONAL(HAVE_XV, [ test x"$HAVE_XV" = xyes ])
+ 
+   AC_SUBST(X11_CFLAGS)
+   AC_SUBST(X11_LIBS)
+diff -Naur gnash-0.8.6-old/macros/xpcom.m4 gnash-0.8.6-new/macros/xpcom.m4
+--- gnash-0.8.6-old/macros/xpcom.m4	2009-09-13 16:22:18.000000000 -0700
++++ gnash-0.8.6-new/macros/xpcom.m4	2009-09-15 15:32:10.000000000 -0700
+@@ -57,7 +57,7 @@
+     ])
+ 
+   if test x$xpcom = xyes; then
+-    if test x$cross_compiling = xno; then
++    if test xno = xno; then
+ 
+       # Look for libxpcomglue_s.a (version 1.8 !!) if not explicitly given
+       if test x$ac_cv_path_xpcom_sdk_dir = x; then
+diff -Naur gnash-0.8.6-old/plugin/plugin.h gnash-0.8.6-new/plugin/plugin.h
+--- gnash-0.8.6-old/plugin/plugin.h	2009-09-13 16:22:18.000000000 -0700
++++ gnash-0.8.6-new/plugin/plugin.h	2009-09-15 15:32:10.000000000 -0700
+@@ -41,6 +41,9 @@
+ #include <X11/Xlib.h>
+ //#include <X11/Intrinsic.h>
+ #include <X11/cursorfont.h>
++#ifdef HAVE_GLIB
++#include <glib.h>
++#endif
+ #ifdef HAVE_GTK2
+ #include <gtk/gtk.h>
+ #endif

@@ -1,0 +1,119 @@
+--- old/checksums	2010-10-01 17:16:08.268450941 -0300
++++ new/checksums	2010-12-26 00:56:27.058257425 -0300
+@@ -1,7 +1,7 @@
+-0e46a5010a10f3f50d51cae8fbefe642  download/xine-ui-librt.patch
+-ad3e1305e411926d0145d40af170a29f  download/xine-ui-fork_wait.patch
+-fde77025b484ba8b64f3ca27b70ed440  download/xine-ui-lirc.patch
+-3a2ba70649956f73a086a1fabbdf04e4  download/xine-ui.patch.gar
+-32d7f535cd88a385c7abe8d7a141222b  download/xine-ui-xscreensaver.patch
+-6877c7f66b88011cba0ed0496550aa1f  download/xine-ui-xtest_disable.patch
+-2cf345ba15e47a733dc78d6a8355e12e  download/xine-ui-desktop_disable.patch
++f9aa20f5bf99eee2256977e73dd3c787  download/xine-ui-librt.patch
++52fa58b91c1b744af7a1f1f0b151484a  download/xine-ui-fork_wait.patch
++ed23a8da003c0e2bea52d7413d0b6673  download/xine-ui-lirc.patch
++87c35efedbfcbbd9e8d3e496c35c9d7b  download/xine-ui.patch.gar
++7d73b2dfa6071c10ec50c8a6bc0d4db5  download/xine-ui-xscreensaver.patch
++cb872e135776c91c12357393232a5034  download/xine-ui-xtest_disable.patch
++6f8d2c49c2a8a28f0e5f9369047ea94d  download/xine-ui-desktop_disable.patch
+diff -ruP -x '.*' -x '*~' ./files/xine-ui-desktop_disable.patch new/files/xine-ui-desktop_disable.patch
+--- old/files/xine-ui-desktop_disable.patch	2010-10-01 17:16:08.269173676 -0300
++++ new/files/xine-ui-desktop_disable.patch	2010-12-26 00:56:27.019874389 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-ui-3056-old/misc/Makefile.am xine-ui-3056-new/misc/Makefile.am
+---- xine-ui-3056-old/misc/Makefile.am	2010-08-20 12:51:30.000000000 -0700
+-+++ xine-ui-3056-new/misc/Makefile.am	2010-08-20 12:51:31.000000000 -0700
++diff -Naur xine-ui-3073-old/misc/Makefile.am xine-ui-3073-new/misc/Makefile.am
++--- xine-ui-3073-old/misc/Makefile.am	2010-12-17 07:49:48.000000000 -0800
+++++ xine-ui-3073-new/misc/Makefile.am	2010-12-17 07:49:48.000000000 -0800
+ @@ -1,4 +1,4 @@
+ -SUBDIRS = desktops visuals
+ +SUBDIRS = visuals
+diff -ruP -x '.*' -x '*~' ./files/xine-ui-fork_wait.patch new/files/xine-ui-fork_wait.patch
+--- old/files/xine-ui-fork_wait.patch	2010-10-01 17:16:08.270170474 -0300
++++ new/files/xine-ui-fork_wait.patch	2010-12-26 00:56:27.014496430 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-ui-3056-old/src/xitk/videowin.c xine-ui-3056-new/src/xitk/videowin.c
+---- xine-ui-3056-old/src/xitk/videowin.c	2010-08-20 12:51:30.000000000 -0700
+-+++ xine-ui-3056-new/src/xitk/videowin.c	2010-08-20 12:51:30.000000000 -0700
++diff -Naur xine-ui-3073-old/src/xitk/videowin.c xine-ui-3073-new/src/xitk/videowin.c
++--- xine-ui-3073-old/src/xitk/videowin.c	2010-12-17 07:49:48.000000000 -0800
+++++ xine-ui-3073-new/src/xitk/videowin.c	2010-12-17 07:49:48.000000000 -0800
+ @@ -27,6 +27,7 @@
+  #include <stdio.h>
+  #include <unistd.h>
+diff -ruP -x '.*' -x '*~' ./files/xine-ui-librt.patch new/files/xine-ui-librt.patch
+--- old/files/xine-ui-librt.patch	2010-10-01 17:16:08.271208620 -0300
++++ new/files/xine-ui-librt.patch	2010-12-26 00:56:27.019167505 -0300
+@@ -1,7 +1,7 @@
+-diff -Naur xine-ui-3056-old/src/xitk/Makefile.am xine-ui-3056-new/src/xitk/Makefile.am
+---- xine-ui-3056-old/src/xitk/Makefile.am	2010-08-20 12:51:27.000000000 -0700
+-+++ xine-ui-3056-new/src/xitk/Makefile.am	2010-08-20 12:51:30.000000000 -0700
+-@@ -71,7 +71,7 @@
++diff -Naur xine-ui-3073-old/src/xitk/Makefile.am xine-ui-3073-new/src/xitk/Makefile.am
++--- xine-ui-3073-old/src/xitk/Makefile.am	2010-12-17 07:49:44.000000000 -0800
+++++ xine-ui-3073-new/src/xitk/Makefile.am	2010-12-17 07:49:48.000000000 -0800
++@@ -70,7 +70,7 @@
+  	     $(top_builddir)/src/xitk/oxine/liboxine.a \
+  	     $(X_PRE_LIBS) $(LIRC_LIBS) $(XFT_LIBS) \
+  	     $(X_LIBS) $(XTEST_LIBS) $(XSSAVER_LIBS) $(CURL_LIBS) $(NVTVSIMPLE_LIBS) \
+diff -ruP -x '.*' -x '*~' ./files/xine-ui-lirc.patch new/files/xine-ui-lirc.patch
+--- old/files/xine-ui-lirc.patch	2010-10-01 17:16:08.272323593 -0300
++++ new/files/xine-ui-lirc.patch	2010-12-26 00:56:27.016699409 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-ui-3056-old/m4/_xine.m4 xine-ui-3056-new/m4/_xine.m4
+---- xine-ui-3056-old/m4/_xine.m4	2010-08-20 12:51:30.000000000 -0700
+-+++ xine-ui-3056-new/m4/_xine.m4	2010-08-20 12:51:30.000000000 -0700
++diff -Naur xine-ui-3073-old/m4/_xine.m4 xine-ui-3073-new/m4/_xine.m4
++--- xine-ui-3073-old/m4/_xine.m4	2010-12-17 07:49:48.000000000 -0800
+++++ xine-ui-3073-new/m4/_xine.m4	2010-12-17 07:49:48.000000000 -0800
+ @@ -31,47 +31,17 @@
+    found_lirc=no
+    if test x"$enable_lirc" = xyes; then
+diff -ruP -x '.*' -x '*~' ./files/xine-ui.patch.gar new/files/xine-ui.patch.gar
+--- old/files/xine-ui.patch.gar	2010-10-01 17:16:08.273184337 -0300
++++ new/files/xine-ui.patch.gar	2010-12-26 00:56:27.016699409 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-ui-3056-old/configure.ac xine-ui-3056-new/configure.ac
+---- xine-ui-3056-old/configure.ac	2010-08-20 12:51:30.000000000 -0700
+-+++ xine-ui-3056-new/configure.ac	2010-08-20 12:51:30.000000000 -0700
++diff -Naur xine-ui-3073-old/configure.ac xine-ui-3073-new/configure.ac
++--- xine-ui-3073-old/configure.ac	2010-12-17 07:49:48.000000000 -0800
+++++ xine-ui-3073-new/configure.ac	2010-12-17 07:49:48.000000000 -0800
+ @@ -694,7 +694,7 @@
+  dnl
+  dnl Some include paths ( !!! DO NOT REMOVE !!! )
+diff -ruP -x '.*' -x '*~' ./files/xine-ui-xscreensaver.patch new/files/xine-ui-xscreensaver.patch
+--- old/files/xine-ui-xscreensaver.patch	2010-10-01 17:16:08.275435234 -0300
++++ new/files/xine-ui-xscreensaver.patch	2010-12-26 00:56:27.014496430 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-ui-3056-old/src/xitk/videowin.c xine-ui-3056-new/src/xitk/videowin.c
+---- xine-ui-3056-old/src/xitk/videowin.c	2010-08-20 12:51:30.000000000 -0700
+-+++ xine-ui-3056-new/src/xitk/videowin.c	2010-08-20 12:51:30.000000000 -0700
++diff -Naur xine-ui-3073-old/src/xitk/videowin.c xine-ui-3073-new/src/xitk/videowin.c
++--- xine-ui-3073-old/src/xitk/videowin.c	2010-12-17 07:49:48.000000000 -0800
+++++ xine-ui-3073-new/src/xitk/videowin.c	2010-12-17 07:49:48.000000000 -0800
+ @@ -2310,6 +2310,51 @@
+      else 
+  #endif
+diff -ruP -x '.*' -x '*~' ./files/xine-ui-xtest_disable.patch new/files/xine-ui-xtest_disable.patch
+--- old/files/xine-ui-xtest_disable.patch	2010-10-01 17:16:08.276199036 -0300
++++ new/files/xine-ui-xtest_disable.patch	2010-12-26 00:56:27.017703504 -0300
+@@ -1,6 +1,6 @@
+-diff -Naur xine-ui-3056-old/configure.ac xine-ui-3056-new/configure.ac
+---- xine-ui-3056-old/configure.ac	2010-08-20 12:51:30.000000000 -0700
+-+++ xine-ui-3056-new/configure.ac	2010-08-20 12:51:31.000000000 -0700
++diff -Naur xine-ui-3073-old/configure.ac xine-ui-3073-new/configure.ac
++--- xine-ui-3073-old/configure.ac	2010-12-17 07:49:48.000000000 -0800
+++++ xine-ui-3073-new/configure.ac	2010-12-17 07:49:48.000000000 -0800
+ @@ -270,11 +270,8 @@
+  dnl
+  dnl XTest Extension
+--- old/Makefile	2010-10-01 17:16:08.278194310 -0300
++++ new/Makefile	2010-12-26 00:56:27.058257425 -0300
+@@ -1,5 +1,5 @@
+ GARNAME = xine-ui
+-GARVERSION = 3056
++GARVERSION = 3073
+ CATEGORIES = mediaplayers
+ MASTER_SITES = hg://hg.debian.org/hg/xine-lib/$(GARNAME)/
+ DISTFILES = $(DISTNAME).tar.bz2

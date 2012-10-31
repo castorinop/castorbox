@@ -1,0 +1,11 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/splashutils-1.5.4.2/src/daemon.c work/main.d/splashutils-1.5.4.2/src/daemon.c
+--- tmp/splashutils-1.5.4.2/src/daemon.c	2008-07-21 19:30:12.000000000 -0300
++++ splashutils-1.5.4.2/src/daemon.c	2008-10-08 19:51:06.000000000 -0300
+@@ -682,6 +682,7 @@
+ 	{ "help",	no_argument, NULL, 'h'},
+ 	{ "verbose", no_argument, NULL, 'v'},
+ 	{ "quiet",  no_argument, NULL, 'q'},
++	{0, 0, 0, 0}
+ };
+ 
+ static void usage()

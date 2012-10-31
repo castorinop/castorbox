@@ -1,0 +1,83 @@
+=== modified file 'plugins/feature/audio/audio.cpp'
+--- plugins/feature/audio/audio.cpp	2008-10-25 08:44:05 +0000
++++ new/plugins/feature/audio/audio.cpp	2008-10-26 18:52:50 +0000
+@@ -1816,17 +1816,29 @@
+   }
+ }
+ 
++void Audio::set_buffering_timeout()
++{
++  buffering_time_end = time(0);
++
++  Simplefile s = audio_state->p->p_cur_nr();
++
++  if (s.path.find("http://") != -1 || s.path.find("rtp://") != -1)
++    buffering_time_end += 15; // secs
++  else
++    buffering_time_end += 2; // secs
++}
++
+ void Audio::next_track()
+ {
+   audio_state->p->next();
+-
++  set_buffering_timeout();
+   update_playlist_view();
+ }
+ 
+ void Audio::prev_track()
+ {
+   audio_state->p->prev();
+-
++  set_buffering_timeout();
+   update_playlist_view();
+ }
+ 
+
+=== modified file 'plugins/feature/audio/audio.hpp'
+--- plugins/feature/audio/audio.hpp	2008-10-18 01:57:53 +0000
++++ new/plugins/feature/audio/audio.hpp	2008-10-26 18:57:47 +0000
+@@ -106,14 +106,15 @@
+     Option *reload_p, *dir_order_p, *repeat_p, *shuffle_p, *shutdown_p, *lyrics_p, *time_mode_p, *extract_meta_p, *bitrate_p;
+   };
+ 
+-  long buffering_time_end;
+-
+   // list of folders from config, the names are normalized to have / at the end
+   std::list<std::string> audio_folders;
+   void set_folders();
+ 
+   bool exit_fall_through;
+ 
++  long buffering_time_end;
++  void set_buffering_timeout();
++
+   // commands
+   void exit();
+   void exit_playlist();
+@@ -1147,6 +1148,8 @@
+ 
+     if (opts.shuffle() == dgettext("mms-audio", "real random"))
+       audio_state->direction = Audio_s::ADDED;
++
++    set_buffering_timeout();
+   }
+ 
+   void prev()
+@@ -2135,14 +2138,7 @@
+ 	   !audio_state->p->is_playing() && audio_state->p_playing() &&
+ 	   !audio_state->p_pause() && !is_buffering)) {
+ 
+-	buffering_time_end = time(0);
+-
+-	Simplefile s = audio_state->p->p_cur_nr();
+-
+-	if (s.path.find("http://") != -1 || s.path.find("rtp://") != -1)
+-	  buffering_time_end += 15; // secs
+-	else
+-	  buffering_time_end += 2; // secs
++	set_buffering_timeout();
+ 
+ 	if (audio_state->suspended_playback())
+ 	  audio_state->restore_playback();
+

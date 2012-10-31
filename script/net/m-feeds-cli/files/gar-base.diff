@@ -1,0 +1,118 @@
+--- tmp/m-feeds-cli-buggy/celerity/celerity/http.py	2012-08-09 19:01:17.000000000 -0300
++++ new-m-feeds-cli-buggy/celerity/celerity/http.py	2012-09-22 11:35:34.286529999 -0300
+@@ -69,7 +69,7 @@
+         connection.request('HEAD', loc)
+         response = connection.getresponse()
+         data = {}
+-        data['size'] = int(response.getheader('content-length'))
++        data['size'] = int(response.getheader('Content-Length'))
+         data['name'] = parsed[2].split('/')[-1]
+         connection.close()
+         #print data
+@@ -131,11 +131,11 @@
+             #print "cheching..."
+             size = os.path.getsize(self.file.path)
+             date =  os.path.getmtime(self.file.path)
+-            #print "path?" + self.file.path
+-            #print "%s size? %i == %s" %  ( self.file.path, size, self.content_length)
++            print "path?" + self.file.path
++            print "%s size? %i == %s" %  ( self.file.path, size, self.content_length)
+             #Sun, 17 Apr 2011 03:49:41 -0300
+             self.file.mtime = time.mktime(parsedate(self.last_modified))
+-            #print "%s day? %i == %s" %  ( self.file.path, date, self.file.mtime)
++            print "%s day? %i == %s" %  ( self.file.path, date, self.file.mtime)
+             import datetime as dt
+             ##print dt.datetime.fromtimestamp(self.file.mtime)
+             
+@@ -144,9 +144,13 @@
+             if size == int(self.content_length) and date == self.file.mtime:
+                 self.file.retrieved = int(self.content_length)
+                 connection.close()
+-                print "%s already download" %  (self.file.path)
++                print "downloaded %s" %  (self.file.path)
+                 return
+-        
++            else: 
++            	print "retry %s" %  self.file.path
++            	#os.remove(self.file.path)
++        	#return
++
+         
+         connection = HTTPConnection(urlparse(self.loc)[1])
+         
+@@ -154,7 +158,7 @@
+             self.begin, self.size = self.file.get_piece(self)
+             self.place = self.begin
+             self.end = self.begin + self.size
+-            #print 'fetching %s bytes starting at %s and ending at %s' % (self.size, self.begin, self.end)
++            print 'fetching %s bytes starting at %s and ending at %s' % (self.size, self.begin, self.end)
+             if self.size <= 0:
+                 break
+             else:
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/m-feeds-cli-buggy/src/m-feeds-cli.py work/main.d/m-feeds-cli-buggy/src/m-feeds-cli.py
+--- tmp/m-feeds-cli-buggy/src/m-feeds-cli.py	2012-08-13 09:39:52.000000000 -0300
++++ new-m-feeds-cli-buggy/src/m-feeds-cli.py	2012-09-22 11:35:17.336529999 -0300
+@@ -42,11 +42,18 @@
+     tmp = []
+     for i in self.files:
+       tmp.append( { 'added': i['added'], 'title': i['title'], 'link': i['link'], 'dest': i['dest'], 'down': None , 'stat': i['stat']} )
+-     
+-    fp  = open(self.filename, 'w')
++    
++    fbkp = "%s.bkp" % self.filename 
++    ftmp = "%s.tmp" % self.filename 
++    fp  = open(ftmp, 'w')
+     fp.write(str(tmp))
+     fp.close()
+-
++    
++    if os.path.isfile(fbkp):
++    	os.remove(fbkp)
++    if os.path.isfile(self.filename):
++    	os.rename(self.filename, fbkp)
++    os.rename(ftmp, self.filename)
+ 
+   def loadFile(self):
+     if not os.path.isfile(self.filename):
+@@ -89,8 +96,8 @@
+         for item in items:
+                 title = item.find('title').text
+                 link = item.find('link').text
+-                print title
+-                print link
++                print title.encode('utf-8')
++                print link.encode('utf-8')
+             
+                 if re.search('(?P<season>\d){2}x(\d){2}', title, re.I):
+                     match = re.match('(?P<title>.*) - (?P<season>\d){2}x(\d){2}', title, re.I)
+@@ -100,7 +107,7 @@
+                 else:
+                     path = os.path.join('Movies', title)
+                 
+-                path = os.path.join(dest, path)
++                path = os.path.join(dest, path).encode('utf-8')
+                 print path
+             
+                 if not os.path.isdir(path):
+@@ -115,9 +122,9 @@
+                     
+                     
+   def download_list(self):
+-            #print "download list"
+-            #for i in self.files:
+-            #    print i['title']
++            print "download list"
++            for i in self.files:
++                print i['title']
+                 
+             while 1:
+                 for k, i in enumerate(self.files):
+@@ -128,7 +135,7 @@
+                         i['down'] = self.startDownload(i)
+                         self.files[k]['down'] = i['down']
+                     progress = i['down'].get_progress()
+-                    print "%.2f\t%s" % (progress, i['title']) 
++                    print "%.2f\t%s" % (progress, i['title'].encode('utf-8')) 
+                     if (progress >= 1 and re.search('metalink', i['link'])):
+                         file = os.path.join(i['dest'], os.path.basename(i['link']))
+                         self.files[k]['stat'] = 'done'

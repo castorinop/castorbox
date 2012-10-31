@@ -1,0 +1,124 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/configure.in new-NetworkManager-0.7.1/configure.in
+--- tmp/NetworkManager-0.7.1/configure.in	2009-04-12 19:32:52.000000000 -0300
++++ new-NetworkManager-0.7.1/configure.in	2009-05-13 14:38:16.000000000 -0300
+@@ -78,7 +78,7 @@
+ dnl
+ AC_C_BIGENDIAN
+ 
+-AC_ARG_WITH(distro, AS_HELP_STRING([--with-distro=DISTRO], [Specify the Linux distribution to target: One of redhat, suse, gentoo, debian, arch, slackware, paldo or mandriva]))
++AC_ARG_WITH(distro, AS_HELP_STRING([--with-distro=DISTRO], [Specify the Linux distribution to target: One of redhat, suse, gentoo, debian, arch, slackware, paldo, mandriva or busybox]))
+ if test "z$with_distro" = "z"; then
+ 	AC_CHECK_FILE(/etc/redhat-release,with_distro="redhat")
+ 	AC_CHECK_FILE(/etc/SuSE-release,with_distro="suse")
+@@ -100,7 +100,7 @@
+ 	exit 1
+ else
+ 	case $with_distro in
+-		redhat|suse|gentoo|debian|slackware|arch|paldo|frugalware|mandriva) ;;
++		redhat|suse|gentoo|debian|slackware|arch|paldo|frugalware|mandriva|busybox) ;;
+ 		*)
+ 			echo "Your distribution (${with_distro}) is not yet supported!  (patches welcome)"
+ 			exit 1
+@@ -153,6 +153,11 @@
+   AC_DEFINE(TARGET_MANDRIVA, 1, [Define if you have Mandriva])
+ fi
+ 
++AM_CONDITIONAL(TARGET_BUSYBOX, test x"$with_distro" = xbusybox)
++if test x"$with_distro" = xbusybox; then
++  AC_DEFINE(TARGET_BUSYBOX, 1, [Define if you have busybox])
++fi
++
+ AC_MSG_CHECKING([Linux Wireless Extensions >= 18])
+ AC_TRY_COMPILE([#ifndef __user
+                 #define __user
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/src/backends/Makefile.am new-NetworkManager-0.7.1/src/backends/Makefile.am
+--- tmp/NetworkManager-0.7.1/src/backends/Makefile.am	2009-03-03 13:55:47.000000000 -0300
++++ new-NetworkManager-0.7.1/src/backends/Makefile.am	2009-05-13 14:41:20.000000000 -0300
+@@ -49,6 +49,10 @@
+ libnmbackend_la_SOURCES += NetworkManagerMandriva.c
+ endif
+ 
++if TARGET_BUSYBOX
++libnmbackend_la_SOURCES += NetworkManagerBusybox.c
++endif
++
+ libnmbackend_la_LIBADD += $(DBUS_LIBS) $(GLIB_LIBS)
+ libnmbackend_la_CPPFLAGS =	$(DBUS_CFLAGS)				\
+ 					$(GLIB_CFLAGS)				\
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/system-settings/plugins/Makefile.am new-NetworkManager-0.7.1/system-settings/plugins/Makefile.am
+--- tmp/NetworkManager-0.7.1/system-settings/plugins/Makefile.am	2009-03-03 13:55:48.000000000 -0300
++++ new-NetworkManager-0.7.1/system-settings/plugins/Makefile.am	2009-05-13 14:39:31.000000000 -0300
+@@ -15,3 +15,7 @@
+ if TARGET_DEBIAN
+ SUBDIRS+=ifupdown
+ endif
++
++if TARGET_BUSYBOX
++SUBDIRS+=ifupdown
++endif
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/NetworkManager-0.7.1/src/backends/NetworkManagerBusybox.c new-NetworkManager-0.7.1/src/backends/NetworkManagerBusybox.c
+--- tmp/NetworkManager-0.7.1/src/backends/NetworkManagerBusybox.c	1969-12-31 21:00:00.000000000 -0300
++++ new-NetworkManager-0.7.1/src/backends/NetworkManagerBusybox.c	2009-05-13 15:02:05.000000000 -0300
+@@ -0,0 +1,62 @@
++/* NetworkManager -- Network link manager
++ *
++ * Pablo Castorino <pablo@castorinop.com.ar>
++ *
++ * Heavily based on NetworkManagerRedhat.c by Dan Williams <dcbw@redhat.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * (C) Copyright 2009 Pablo Castorino
++ */
++
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
++
++#include "NetworkManagerGeneric.h"
++#include "NetworkManagerSystem.h"
++#include "NetworkManagerUtils.h"
++#include "nm-utils.h"
++
++/*
++ * nm_system_enable_loopback
++ *
++ * Bring up the loopback interface
++ *
++ */
++void nm_system_enable_loopback (void)
++{
++	nm_generic_enable_loopback();
++}
++
++/*
++ * nm_system_update_dns
++ *
++ * Invalidate the nscd host cache, if it exists, since
++ * we changed resolv.conf.
++ *
++ */
++void nm_system_update_dns (void)
++{
++	if (g_file_test ("/usr/sbin/nscd", G_FILE_TEST_IS_EXECUTABLE)) {
++		nm_info ("Clearing nscd hosts cache.");
++		nm_spawn_process ("/usr/sbin/nscd -i hosts");
++	}
++}
++

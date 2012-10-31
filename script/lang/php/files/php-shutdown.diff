@@ -1,0 +1,40 @@
+diff -Naur php-5.2.3/ext/snmp/php_snmp.h php-5.2.3.oden/ext/snmp/php_snmp.h
+--- php-5.2.3/ext/snmp/php_snmp.h	2007-01-01 10:36:06.000000000 +0100
++++ php-5.2.3.oden/ext/snmp/php_snmp.h	2007-06-20 13:04:28.000000000 +0200
+@@ -39,7 +39,6 @@
+ #endif
+ 
+ PHP_MINIT_FUNCTION(snmp);
+-PHP_MSHUTDOWN_FUNCTION(snmp);
+ PHP_MINFO_FUNCTION(snmp);
+ 
+ PHP_FUNCTION(snmpget);
+diff -Naur php-5.2.3/ext/snmp/snmp.c php-5.2.3.oden/ext/snmp/snmp.c
+--- php-5.2.3/ext/snmp/snmp.c	2007-01-01 10:36:06.000000000 +0100
++++ php-5.2.3.oden/ext/snmp/snmp.c	2007-06-20 13:04:28.000000000 +0200
+@@ -161,7 +161,7 @@
+ 	"snmp",
+ 	snmp_functions,
+ 	PHP_MINIT(snmp),
+-	PHP_MSHUTDOWN(snmp),
++	NULL,
+ 	NULL,
+ 	NULL,
+ 	PHP_MINFO(snmp),
+@@ -225,16 +225,6 @@
+ }
+ /* }}} */
+ 
+-/* {{{ PHP_MSHUTDOWN_FUNCTION
+- */
+-PHP_MSHUTDOWN_FUNCTION(snmp)
+-{
+-	snmp_shutdown("snmpapp");
+-
+-	return SUCCESS;
+-}
+-/* }}} */
+-
+ /* {{{ PHP_MINFO_FUNCTION
+  */
+ PHP_MINFO_FUNCTION(snmp)

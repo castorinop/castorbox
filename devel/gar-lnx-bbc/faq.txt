@@ -1,0 +1,287 @@
+Frequently Asked Questions
+
+= LNX-BBC =
+
+== What is an LNX-BBC? ==
+
+The LNX-BBC is a miniature Linux-based GNU distribution, small
+enough to fit on a CD-ROM that has been cut, pressed, or molded
+to the size and shape of a business card.
+
+It provides a portable rescue system or temporary workstation OS for
+any system with a CD-ROM drive.
+
+== So it's just a small installer? ==
+
+Not at all!  The LNX-BBC runs as a "live filesystem" CD.  Nothing is
+installed, and the system returns to its previous OS once you pop the
+LNX-BBC out.
+
+== What happens to my hard drives? ==
+
+Only what you explicitly do to them!  The LNX-BBC philosophy is "leave
+no trace".  The LNX-BBC does not even mount your hard drives
+read-write.  
+
+To be a useful rescue system, it provides you with the tools to modify
+your hard drives.  You must explicitly re-mount them read-write to
+take advantage of this.
+
+== What distribution do you use? ==
+
+We develop our own distribution specifically to fit in the space
+constraints of the tiny CD-ROMs.  We compile everything from source
+code with -Os, and use an elaborate system of compression and
+pivot_rooting to make a 50MB CD-ROM hold all of the programs we
+include.
+
+== Does it work with Red Hat? ==
+
+The LNX-BBC is its own operating system.  It works independently of
+what operating system is installed on the computer's hard drives.  You
+could have OS/2 installed on your system and the LNX-BBC would still
+function in your machine.
+
+== So how do I get one? ==
+
+Your options:
+
+	* <download.html Download an image>, and then <printing.html
+		burn it> to a CD-R.
+	* Meet one of us at any of the trade shows we attend.
+	* Join the FSF and get their <http://member.fsf.org/ membership card>.
+	* Request one on the <http://zork.net/mailman/listinfo/lnx-bbc 
+		lnx-bbc mailing list>
+
+== So this is that Linuxcare thing, right? ==
+
+Not anymore!
+
+In 1999 Duncan MacKinnon, Tom Crimi, and Seth David Schoen started
+work on the project at Linuxcare. Linuxcare printed 10,000 copies of
+the "Linuxcare Bootable Business Card" to be distributed at the
+then-upcoming LinuxWorld Conference and Expo.  The give-away mini
+CD-ROMs were a huge success and have generated steady praise and
+thanks for their rescue capabilities, attracting many other developers
+to the project.
+
+The BBC went through seven versions, five of which were pressed into
+business-card sized CD-ROMs and handed out at trade shows or
+distributed by mail to Linux User Groups around the world.
+
+Eventually, the original developers left Linuxcare, and Seth decided
+to officially <http://zork.net/pipermail/lnx-bbc/2001-May/000003.html
+announce a project fork> in May 2001. 
+
+== But Linuxcare still has a GNU/Linux business card CD.  Is this the same project? ==
+
+The LNX-BBC has no affiliation with Linuxcare, although Linuxcare have
+continued maintaining <http://lbt.linuxcare.com/index.epl their own
+similar project>.  Both are descended from the original project, but
+all of the original developers are currently working on the LNX-BBC.
+
+== So what version should I get? ==
+
+As of this writing (September 2002) the latest release version is
+<download.html 1.618>.  The 2.0 version will be built
+entirely from source code using GAR.  When you build from source, you
+currently get a timestamped pre-release edition of the LNX-BBC.
+
+== Are there any images for larger CDs?  (8cm, full CD-ROM etc)? ==
+
+Not yet, but with GAR, we hope to be able to build using
+<http://bugs.lnx-bbc.org/bugs/db/11/111.html package profiles>, so
+there may eventually be ISOs that are larger than the business card
+format.
+
+= GAR =
+
+== What is GAR? ==
+
+The machine {gar.lnx-bbc.org} was our old development box and build
+system.  
+
+GAR is also the name of our software <http://cvs.lnx-bbc.org/cvs/gar/
+build toolset>.  Common backronyms we've seen include "GAR Are
+Recursive" and "Gmake Autobuild Runtime".  It is a system similar in
+function (and nearly identical in purpose) to the BSD
+<http://www.freebsd.org/ports/ ports system>.  It is a set of
+Makefiles that we use to compile all of the software in the BBC and
+turn them into an ISO9660 CD-ROM image file.
+
+The term "GAR" <http://everything2.com/index.pl?node=gar has many
+definitions>, but it is most commonly used by us as an expression of
+frustration or in the context of <http://cvs.lnx-bbc.org/cvs/gar/ the
+GAR system>.
+
+== Why was GAR written? ==
+
+The BBC is required by the GPL to provide a written offer for the
+source code to many of the applications on the CD.  Unfortunately, the
+original BBCs were slapped together rather haphazardly, and many
+applications were taken from existing Linux distros in binary form!
+The tarball of source code that was distributed from the old Web site
+was not enough for users to build their own BBC, and this disappointed
+many prospective developers.
+
+In addition to this, the disk space required to store all of our
+development versions of the BBC was quickly growing as a result
+of the "big fat tree of binaries" method of development.  There
+was no revision control, and no logging of changes.  Typically
+everything would be a scramble to get a gold image out the door
+before a trade show or other release deadline.
+
+The process of taking a tree of files and directories and making a
+compressed loopback bootable iso from it was pretty well automated,
+but there was no good way of getting the tree into the proper state.
+GAR downloads, checksums, patches, configures, builds, and installs
+packages using only a tree of makefiles and patches.  This allows it
+to be <http://cvs.lnx-bbc.org/cvs/gar/ stored in CVS>, and the size of
+the <http://cvs.lnx-bbc.org/cvs/gar/gar.tar.gz?tarball=1 checked-out
+copy> is only a few megabytes overall.
+
+== So why GAR?  Why not <name-of-favorite-build-system>? ==
+
+The goals of GAR are best suited to the compilation of /third-party/
+software.  We theoretically could set up everything in a big autoconf
+tree, or scheme- or Java-based build system, but that would require a
+/lot/ of hacking.  GAR is designed to support a heterogeneous set of
+autoconfiguration and build tools, and to make the best of what a
+software package already has.
+
+It is important to remember that GAR itself doesn't replace autoconf
+or imake.  Each third-party package will use an autoconfiguration tool
+of its own, and GAR simply provides hooks into the efficient automated
+use of these tools.
+
+== So why GAR?  Why not <name-of-favorite-binary-package-format>? ==
+
+Again, GAR is designed to automate the compilation of third-party
+source code packages.  It is true that some binary package systems do
+help somewhat, but none of them so far provide the ability to simply
+type "make install" and compile an entire GNU distribution from source
+(and with your own set of compiler flags and installation frobs).  In
+many ways, GAR can be thought of as a kit for building your own OS.  
+
+It is important to remember that GAR itself doesn't replace rpm or
+dpkg.  In fact, the process of building and installing packages could
+be just as easily done by pointing GAR at a spec or debian/rules file,
+building a binary package, and then doing the package installation as
+the install step.
+
+= Building from Source Code =
+
+== How do I get GAR? ==
+
+Issue the following commands.
+
+----8<----
+cvs -z3 -d:pserver:anonymous@cvs.lnx-bbc.org:/var/cvs login
+cvs -z3 -d:pserver:anonymous@cvs.lnx-bbc.org:/var/cvs co gar
+----8<----
+
+Just hit return when it asks you for a password.
+
+Alternately, you can download
+<http://cvs.lnx-bbc.org/cvs/gar/gar.tar.gz?tarball=1 the latest CVS
+snapshot>, updated immediately from the latest CVS checkin. 
+
+== When I try to get GAR, it hangs on wireless-tools! How do I fix
+this? ==
+
+This is because you have a broken version of CVS, such as the one
+shipped with Red Hat.  Try issuing the above commands without the -z3
+flag.
+
+== When I try to build GAR, it fails on one package.  How do I fix it?  ==
+
+Sadly, the nature of compilation is that it will behave differently on
+different machines.  The build system we use is a lightly-loaded
+Debian GNU/Linux installation.  Your distribution will have slightly
+different headers and directory layouts, which can confuse certain
+portions of the build (glibc is especially finnicky).
+
+Your best bet is to file a bug against the package that failed.
+
+== How do I file a bug against a GAR package? ==
+
+Simply send an e-mail to submit@bugs.lnx-bbc.org with a line that
+looks like this at the top:
+
+----8<----
+Package: gar
+----8<----
+
+Please describe the nature of your problem, and include the output of
+"uname -a" and the name and version of the distribution you're
+building on.  Include at least a screenful of output, not just the
+Make error lines!
+
+== My build failed, and it is very frustrating.  How do I get the
+tree that built the last actual release of LNX-BBC? ==
+
+All of the 1.x versions of the BBC and LNX-BBC were built by taking
+binaries from a variety of sources (hand-compiled, out of Debian
+packages, etc) and just throwing them together.  As of September 2002,
+there has not yet been a release of the LNX-BBC that uses the GAR
+tree.  
+
+However, our build system attempts to build two ISO files per day, and
+puts them up at <http://www.lnx-bbc.org/builds/>.  If you're just
+looking to boot our development pre-release and look around, that's
+the way to go (though it most likely won't fit on a business card CD
+yet).
+
+== I don't always have access to the Internet, but want to be able to
+build with a pre-downloaded set of tarballs.  How do I get GAR to do
+this? ==
+
+The LNX-BBC build process takes a few hundred megabytes of compressed
+source code.  If you don't plan on having a constant network
+connection during the build process, you can pre-fetch source code in
+a couple of ways:
+
+First, you can run "make checksum" in the top-level gar/ dir.  This
+may, however, download a number of tarballs for packages that are not
+needed by the BBC but are in the GAR tree nonetheless.  The solution
+to this is to cd into gar/meta/lnx-bbc and run "make deep-checksum",
+and this will download and verify only those files needed by the BBC
+itself.
+
+The use of the checksum rule is not without its flaws, however.  If
+you want these files to survive a "make clean" in any given package,
+then you should use "make garchive" in the top-level dir or "make
+deep-garchive" in gar/meta/lnx-bbc.  
+
+== But I get a bunch of permission denied errors when I do a "make
+garchive"!  I've never even heard of /var/www!  What is this? ==
+
+Debian solves the problem of "where do system HTML documents go?" in
+the FHS by putting them in /var/www.  It's a controversy no matter
+where they go, but it's typically different on each system.  The main
+GAR developers tend to use Debian a lot, so that's why it is the
+default.
+
+If you don't want your garchive to live in /var/www/garchive, then
+you'll want to change GARCHIVEROOT to the directory where you want to
+keep your tarballs.  If you have a Web server, you can point it at
+that dir and share your garchive as a local cache to machines on your
+network!
+
+== My system has way too many problems during build.  Is there some
+sort of pre-packaged build setup I can use? ==
+
+Sneakums has been kind enough to provide us with a <chroot.html a
+fairly straightforward to use chroot build environment>.  You may wish
+to give that a try.
+
+== How do I package up a piece of software for GAR? ==
+
+Your questions are most likely answered in the <garchitecture.html GAR
+Architecture Doc>, which contains a package author's guide.
+
+== When I build a BBC, I'm finding that everything, including the
+chroot uses 5.3 GiB of disk space.  Is this typical? ==
+     
+Yes.
+

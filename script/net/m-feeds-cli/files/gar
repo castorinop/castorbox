@@ -1,0 +1,326 @@
+Only in work/main.d/m-feeds-cli-buggy/: 96064bb0-d0a6-11df-9b60-00110930e59f.xml
+Only in work/main.d/m-feeds-cli-buggy/: bin
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/amuleEC.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/amuleEC.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/asyncproc.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/asyncproc.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/block.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/block.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/common.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/common.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/download.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/download.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/external_ed2k.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/external_ed2k.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/ftp.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/ftp.pyc differ
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -ru tmp/m-feeds-cli-buggy//celerity/celerity/http.py work/main.d/m-feeds-cli-buggy//celerity/celerity/http.py
+--- tmp/m-feeds-cli-buggy//celerity/celerity/http.py	2012-08-09 19:01:17.000000000 -0300
++++ work/main.d/m-feeds-cli-buggy//celerity/celerity/http.py	2012-09-22 12:01:11.466530000 -0300
+@@ -69,7 +69,7 @@
+         connection.request('HEAD', loc)
+         response = connection.getresponse()
+         data = {}
+-        data['size'] = int(response.getheader('content-length'))
++        data['size'] = int(response.getheader('Content-Length'))
+         data['name'] = parsed[2].split('/')[-1]
+         connection.close()
+         #print data
+@@ -131,11 +131,11 @@
+             #print "cheching..."
+             size = os.path.getsize(self.file.path)
+             date =  os.path.getmtime(self.file.path)
+-            #print "path?" + self.file.path
+-            #print "%s size? %i == %s" %  ( self.file.path, size, self.content_length)
++            print "path?" + self.file.path
++            print "%s size? %i == %s" %  ( self.file.path, size, self.content_length)
+             #Sun, 17 Apr 2011 03:49:41 -0300
+             self.file.mtime = time.mktime(parsedate(self.last_modified))
+-            #print "%s day? %i == %s" %  ( self.file.path, date, self.file.mtime)
++            print "%s day? %i == %s" %  ( self.file.path, date, self.file.mtime)
+             import datetime as dt
+             ##print dt.datetime.fromtimestamp(self.file.mtime)
+             
+@@ -144,9 +144,13 @@
+             if size == int(self.content_length) and date == self.file.mtime:
+                 self.file.retrieved = int(self.content_length)
+                 connection.close()
+-                print "%s already download" %  (self.file.path)
++                print "downloaded %s" %  (self.file.path)
+                 return
+-        
++            else: 
++            	print "retry %s" %  self.file.path
++            	#os.remove(self.file.path)
++        	#return
++
+         
+         connection = HTTPConnection(urlparse(self.loc)[1])
+         
+@@ -154,7 +158,7 @@
+             self.begin, self.size = self.file.get_piece(self)
+             self.place = self.begin
+             self.end = self.begin + self.size
+-            #print 'fetching %s bytes starting at %s and ending at %s' % (self.size, self.begin, self.end)
++            print 'fetching %s bytes starting at %s and ending at %s' % (self.size, self.begin, self.end)
+             if self.size <= 0:
+                 break
+             else:
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/http.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/http.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/__init__.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/__init__.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/metalink.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/metalink.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/methods.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/methods.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/codes.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/codes.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/conn.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/conn.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/__init__.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/__init__.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/packet.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/packet.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/tag.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/tag.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/tagtypes.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/ec/tagtypes.pyc differ
+Binary files tmp/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/__init__.pyc and work/main.d/m-feeds-cli-buggy//celerity/celerity/pyamulecmd/__init__.pyc differ
+Only in work/main.d/m-feeds-cli-buggy/: cron
+Only in work/main.d/m-feeds-cli-buggy/: helper
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -ru tmp/m-feeds-cli-buggy//m-feeds-cli.py work/main.d/m-feeds-cli-buggy//m-feeds-cli.py
+--- tmp/m-feeds-cli-buggy//m-feeds-cli.py	2012-08-09 19:01:17.000000000 -0300
++++ work/main.d/m-feeds-cli-buggy//m-feeds-cli.py	2012-09-22 12:01:13.256529997 -0300
+@@ -42,11 +42,18 @@
+     tmp = []
+     for i in self.files:
+       tmp.append( { 'added': i['added'], 'title': i['title'], 'link': i['link'], 'dest': i['dest'], 'down': None , 'stat': i['stat']} )
+-     
+-    fp  = open(self.filename, 'w')
++    
++    fbkp = "%s.bkp" % self.filename 
++    ftmp = "%s.tmp" % self.filename 
++    fp  = open(ftmp, 'w')
+     fp.write(str(tmp))
+     fp.close()
+-
++    
++    if os.path.isfile(fbkp):
++    	os.remove(fbkp)
++    if os.path.isfile(self.filename):
++    	os.rename(self.filename, fbkp)
++    os.rename(ftmp, self.filename)
+ 
+   def loadFile(self):
+     if not os.path.isfile(self.filename):
+@@ -89,8 +96,8 @@
+         for item in items:
+                 title = item.find('title').text
+                 link = item.find('link').text
+-                print title
+-                print link
++                print title.encode('utf-8')
++                print link.encode('utf-8')
+             
+                 if re.search('(?P<season>\d){2}x(\d){2}', title, re.I):
+                     match = re.match('(?P<title>.*) - (?P<season>\d){2}x(\d){2}', title, re.I)
+@@ -100,18 +107,15 @@
+                 else:
+                     path = os.path.join('Movies', title)
+                 
+-                path = os.path.join(dest, path)
++                path = os.path.join(dest, path).encode('utf-8')
+                 print path
+             
+                 if not os.path.isdir(path):
+                     os.makedirs(path,0755)
+             
+                 if not self.checkLink(link, self.files):
+-                    DOWNLOAD = celerity.get_from_loc(link)
+-                    DOWNLOAD.metalink.update_from_loc(link)
+-                    DOWNLOAD.change_save_location(path)
+-                    DOWNLOAD.run()
+-                    self.files.append( { 'added': time.time(), 'title': title, 'link': link, 'dest': path, 'down': DOWNLOAD, 'stat': 'downloading' } )
++                    down = self.startDownload(link, path)
++                    self.files.append( { 'added': time.time(), 'title': title, 'link': link, 'dest': path, 'down': down, 'stat': 'downloading' } )
+                     
+                     
+   def download_list(self):
+@@ -125,10 +129,10 @@
+                         continue
+                     
+                     if i['down'] is None:
+-                        i['down'] = self.startDownload(i)
++                        i['down'] = self.startDownload(i['link'],i['dest'])
+                         self.files[k]['down'] = i['down']
+                     progress = i['down'].get_progress()
+-                    print "%.2f\t%s" % (progress, i['title']) 
++                    print "%.2f\t%s" % (progress, i['title'].encode('utf-8')) 
+                     if (progress >= 1 and re.search('metalink', i['link'])):
+                         file = os.path.join(i['dest'], os.path.basename(i['link']))
+                         self.files[k]['stat'] = 'done'
+@@ -136,11 +140,9 @@
+                      
+                         if not self.checkLink(file, self.files):
+                             print "following %s" % file
+-                            DOWNLOAD = celerity.get_from_loc(file)
+-                            DOWNLOAD.metalink.update_from_loc(file)
+-                            DOWNLOAD.change_save_location(i['dest'])
+-                            DOWNLOAD.run()
+-                            self.files.append( { 'added': time.time(), 'title': i['title'], 'link': file, 'dest': i['dest'], 'down': DOWNLOAD , 'stat': 'downloading'} )
++                            
++                            down = self.startDownload(file, i['dest'])
++                            self.files.append( { 'added': time.time(), 'title': i['title'], 'link': file, 'dest': i['dest'], 'down': down , 'stat': 'downloading'} )
+                             #i['down'] = DOWNLOAD
+                         
+                         self.done.append(i)
+@@ -155,20 +157,24 @@
+                   self.times = 0
+      
+      
+-  def startDownload(self, i):
++  def startDownload(self, link, dest):
+       
+-#        if self.checkLink(i['link'], self.files):
+-#            return None
+-        
+-        if self.checkLink(i['link'], self.done):
++        if self.checkLink(link, self.files):
+             return None
+         
+-        DOWNLOAD = celerity.get_from_loc(i['link'])
+-        DOWNLOAD.metalink.update_from_loc(i['link'])
+-        DOWNLOAD.change_save_location(i['dest'])
+-        DOWNLOAD.run()
++        if self.checkLink(link, self.done):
++            return None
+         
+-        return DOWNLOAD
++        try:
++          DOWNLOAD = celerity.get_from_loc(link)
++          DOWNLOAD.metalink.update_from_loc(link)
++          DOWNLOAD.change_save_location(dest)
++          DOWNLOAD.run()
++          
++          return DOWNLOAD
++        except:
++          print "failed %s" % link;
++          return None;
+     
+   def checkLink(self, link, list):
+     for i in list:
+Only in work/main.d/m-feeds-cli-buggy/: rss-parser.php
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -ru tmp/m-feeds-cli-buggy//src/m-feeds-cli.py work/main.d/m-feeds-cli-buggy//src/m-feeds-cli.py
+--- tmp/m-feeds-cli-buggy//src/m-feeds-cli.py	2012-08-13 09:39:52.000000000 -0300
++++ work/main.d/m-feeds-cli-buggy//src/m-feeds-cli.py	2012-09-22 12:01:00.096529999 -0300
+@@ -42,11 +42,18 @@
+     tmp = []
+     for i in self.files:
+       tmp.append( { 'added': i['added'], 'title': i['title'], 'link': i['link'], 'dest': i['dest'], 'down': None , 'stat': i['stat']} )
+-     
+-    fp  = open(self.filename, 'w')
++    
++    fbkp = "%s.bkp" % self.filename 
++    ftmp = "%s.tmp" % self.filename 
++    fp  = open(ftmp, 'w')
+     fp.write(str(tmp))
+     fp.close()
+-
++    
++    if os.path.isfile(fbkp):
++    	os.remove(fbkp)
++    if os.path.isfile(self.filename):
++    	os.rename(self.filename, fbkp)
++    os.rename(ftmp, self.filename)
+ 
+   def loadFile(self):
+     if not os.path.isfile(self.filename):
+@@ -89,8 +96,8 @@
+         for item in items:
+                 title = item.find('title').text
+                 link = item.find('link').text
+-                print title
+-                print link
++                print title.encode('utf-8')
++                print link.encode('utf-8')
+             
+                 if re.search('(?P<season>\d){2}x(\d){2}', title, re.I):
+                     match = re.match('(?P<title>.*) - (?P<season>\d){2}x(\d){2}', title, re.I)
+@@ -100,24 +107,21 @@
+                 else:
+                     path = os.path.join('Movies', title)
+                 
+-                path = os.path.join(dest, path)
++                path = os.path.join(dest, path).encode('utf-8')
+                 print path
+             
+                 if not os.path.isdir(path):
+                     os.makedirs(path,0755)
+             
+                 if not self.checkLink(link, self.files):
+-                    DOWNLOAD = celerity.get_from_loc(link)
+-                    DOWNLOAD.metalink.update_from_loc(link)
+-                    DOWNLOAD.change_save_location(path)
+-                    DOWNLOAD.run()
+-                    self.files.append( { 'added': time.time(), 'title': title, 'link': link, 'dest': path, 'down': DOWNLOAD, 'stat': 'downloading' } )
++                    down = self.startDownload(link, path)
++                    self.files.append( { 'added': time.time(), 'title': title, 'link': link, 'dest': path, 'down': down, 'stat': 'downloading' } )
+                     
+                     
+   def download_list(self):
+-            #print "download list"
+-            #for i in self.files:
+-            #    print i['title']
++            print "download list"
++            for i in self.files:
++                print i['title']
+                 
+             while 1:
+                 for k, i in enumerate(self.files):
+@@ -125,10 +129,10 @@
+                         continue
+                     
+                     if i['down'] is None:
+-                        i['down'] = self.startDownload(i)
++                        i['down'] = self.startDownload(i['link'],i['dest'])
+                         self.files[k]['down'] = i['down']
+                     progress = i['down'].get_progress()
+-                    print "%.2f\t%s" % (progress, i['title']) 
++                    print "%.2f\t%s" % (progress, i['title'].encode('utf-8')) 
+                     if (progress >= 1 and re.search('metalink', i['link'])):
+                         file = os.path.join(i['dest'], os.path.basename(i['link']))
+                         self.files[k]['stat'] = 'done'
+@@ -136,11 +140,9 @@
+                      
+                         if not self.checkLink(file, self.files):
+                             print "following %s" % file
+-                            DOWNLOAD = celerity.get_from_loc(file)
+-                            DOWNLOAD.metalink.update_from_loc(file)
+-                            DOWNLOAD.change_save_location(i['dest'])
+-                            DOWNLOAD.run()
+-                            self.files.append( { 'added': time.time(), 'title': i['title'], 'link': file, 'dest': i['dest'], 'down': DOWNLOAD , 'stat': 'downloading'} )
++                            
++                            down = self.startDownload(file, i['dest'])
++                            self.files.append( { 'added': time.time(), 'title': i['title'], 'link': file, 'dest': i['dest'], 'down': down , 'stat': 'downloading'} )
+                             #i['down'] = DOWNLOAD
+                         
+                         self.done.append(i)
+@@ -155,20 +157,24 @@
+                   self.times = 0
+      
+      
+-  def startDownload(self, i):
++  def startDownload(self, link, dest):
+       
+-#        if self.checkLink(i['link'], self.files):
+-#            return None
+-        
+-        if self.checkLink(i['link'], self.done):
++        if self.checkLink(link, self.files):
+             return None
+         
+-        DOWNLOAD = celerity.get_from_loc(i['link'])
+-        DOWNLOAD.metalink.update_from_loc(i['link'])
+-        DOWNLOAD.change_save_location(i['dest'])
+-        DOWNLOAD.run()
++        if self.checkLink(link, self.done):
++            return None
+         
+-        return DOWNLOAD
++        try:
++          DOWNLOAD = celerity.get_from_loc(link)
++          DOWNLOAD.metalink.update_from_loc(link)
++          DOWNLOAD.change_save_location(dest)
++          DOWNLOAD.run()
++          
++          return DOWNLOAD
++        except:
++          print "failed %s" % link;
++          return None;
+     
+   def checkLink(self, link, list):
+     for i in list:

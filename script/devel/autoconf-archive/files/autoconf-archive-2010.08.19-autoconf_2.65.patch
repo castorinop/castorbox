@@ -1,0 +1,47 @@
+diff -Naur autoconf-archive-2010.08.19-old/m4/ax_cflags_gcc_option.m4 autoconf-archive-2010.08.19-new/m4/ax_cflags_gcc_option.m4
+--- autoconf-archive-2010.08.19-old/m4/ax_cflags_gcc_option.m4	2010-08-18 15:00:00.000000000 -0700
++++ autoconf-archive-2010.08.19-new/m4/ax_cflags_gcc_option.m4	2010-08-19 09:17:01.000000000 -0700
+@@ -75,8 +75,9 @@
+ #serial 8
+ 
+ AC_DEFUN([AX_CFLAGS_GCC_OPTION_OLD], [dnl
++AS_REQUIRE([_AS_TR_SH_PREPARE])dnl
+ AS_VAR_PUSHDEF([FLAGS],[CFLAGS])dnl
+-AS_VAR_PUSHDEF([VAR],[ax_cv_cflags_gcc_option_$2])dnl
++AS_VAR_PUSHDEF([VAR],[_AS_TR_SH_LITERAL([ax_cv_cflags_gcc_option_$2])])dnl
+ AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for gcc m4_ifval($2,$2,-option)],
+ VAR,[VAR="no, unknown"
+  AC_LANG_SAVE
+@@ -111,8 +112,9 @@
+ dnl the only difference - the LANG selection... and the default FLAGS
+ 
+ AC_DEFUN([AX_CXXFLAGS_GCC_OPTION_OLD], [dnl
++AS_REQUIRE([_AS_TR_SH_PREPARE])dnl
+ AS_VAR_PUSHDEF([FLAGS],[CXXFLAGS])dnl
+-AS_VAR_PUSHDEF([VAR],[ax_cv_cxxflags_gcc_option_$2])dnl
++AS_VAR_PUSHDEF([VAR],[_AS_TR_SH_LITERAL([ax_cv_cxxflags_gcc_option_$2])])dnl
+ AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for gcc m4_ifval($2,$2,-option)],
+ VAR,[VAR="no, unknown"
+  AC_LANG_SAVE
+@@ -146,8 +148,9 @@
+ dnl -------------------------------------------------------------------------
+ 
+ AC_DEFUN([AX_CFLAGS_GCC_OPTION_NEW], [dnl
++AS_REQUIRE([_AS_TR_SH_PREPARE])dnl
+ AS_VAR_PUSHDEF([FLAGS],[CFLAGS])dnl
+-AS_VAR_PUSHDEF([VAR],[ax_cv_cflags_gcc_option_$1])dnl
++AS_VAR_PUSHDEF([VAR],[_AS_TR_SH_LITERAL([ax_cv_cflags_gcc_option_$1])])dnl
+ AC_CACHE_CHECK([m4_ifval($2,$2,FLAGS) for gcc m4_ifval($1,$1,-option)],
+ VAR,[VAR="no, unknown"
+  AC_LANG_SAVE
+@@ -182,8 +185,9 @@
+ dnl the only difference - the LANG selection... and the default FLAGS
+ 
+ AC_DEFUN([AX_CXXFLAGS_GCC_OPTION_NEW], [dnl
++AS_REQUIRE([_AS_TR_SH_PREPARE])dnl
+ AS_VAR_PUSHDEF([FLAGS],[CXXFLAGS])dnl
+-AS_VAR_PUSHDEF([VAR],[ax_cv_cxxflags_gcc_option_$1])dnl
++AS_VAR_PUSHDEF([VAR],[_AS_TR_SH_LITERAL([ax_cv_cxxflags_gcc_option_$1])])dnl
+ AC_CACHE_CHECK([m4_ifval($2,$2,FLAGS) for gcc m4_ifval($1,$1,-option)],
+ VAR,[VAR="no, unknown"
+  AC_LANG_SAVE

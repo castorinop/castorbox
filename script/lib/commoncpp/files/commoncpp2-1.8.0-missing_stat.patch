@@ -1,0 +1,11 @@
+--- old-commoncpp2-1.8.0/src/applog.cpp~	2010-02-24 08:08:17.000000000 -0300
++++ new-commoncpp2-1.8.0/src/applog.cpp	2010-08-16 14:43:34.550730812 -0300
+@@ -44,6 +44,8 @@
+ #include <cstdio>
+ #include <stdarg.h>
+ #include <errno.h>
++#include <sys/types.h> 
++#include <sys/stat.h> 
+ 
+ // TODO sc: test if has to move up now that it is into commoncpp
+ // NOTE: the order of inclusion is important do not move following include line

@@ -1,0 +1,11 @@
+diff -Naur cdparanoia-III-alpha9.8-old/Makefile.in cdparanoia-III-alpha9.8-new/Makefile.in
+--- cdparanoia-III-alpha9.8-old/Makefile.in	2001-03-27 14:46:58.000000000 -0800
++++ cdparanoia-III-alpha9.8-new/Makefile.in	2005-12-28 15:16:59.000000000 -0800
+@@ -44,7 +44,6 @@
+ 	cd interface && $(MAKE) all
+ 	cd paranoia && $(MAKE) all
+ 	$(MAKE) cdparanoia CFLAGS="$(OPT)" 
+-	strip cdparanoia
+ 
+ debug:  
+ 	cd interface && $(MAKE) debug

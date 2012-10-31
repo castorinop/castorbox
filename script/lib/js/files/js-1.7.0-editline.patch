@@ -1,0 +1,13 @@
+--- old/src/Makefile.ref	2007-08-28 19:07:38.000000000 +0200
++++ new/src/Makefile.ref.oden	2007-08-28 19:08:18.000000000 +0200
+@@ -131,9 +131,8 @@
+ else
+ ifdef JS_EDITLINE
+ # Use the editline library, built locally.
+-PREDIRS += editline
+ DEFINES += -DEDITLINE
+-PROG_LIBS += editline/$(OBJDIR)/libedit.a
++PROG_LIBS += -ledit
+ endif
+ endif
+ 

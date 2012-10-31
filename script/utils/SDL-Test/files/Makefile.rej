@@ -1,0 +1,17 @@
+***************
+*** 2,8 ****
+  prefix  ?= /usr
+  bindir  ?= $(prefix)/bin
+  
+- SDL_CONFIG ?= $(DESTDIR)$(bindir)/sdl-config
+  
+  SDL_CFLAGS ?= $(shell $(SDL_CONFIG) --cflags)
+  SDL_LIBS   ?= $(shell $(SDL_CONFIG) --libs)
+--- 2,8 ----
+  prefix  ?= /usr
+  bindir  ?= $(prefix)/bin
+  
++ SDL_CONFIG ?= sdl-config
+  
+  SDL_CFLAGS ?= $(shell $(SDL_CONFIG) --cflags)
+  SDL_LIBS   ?= $(shell $(SDL_CONFIG) --libs)

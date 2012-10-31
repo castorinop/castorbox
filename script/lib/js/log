@@ -1,0 +1,2196 @@
+make -C work/main.d/js/src -f Makefile.ref \
+	CPU_ARCH="pentium-mmx" \
+	JS_THREADSAFE="1" \
+	XCFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32 -g" \
+	CFLAGS="-pipe -march=pentium-mmx -mtune=generic -Os -m32 -g" \
+	BUILD_OPT="1" \
+	JS_EITLINE="1" \
+	LD=i586-castorbox-linux-gnu-ld \
+	CC=i586-castorbox-linux-gnu-gcc \
+	LDFLAGS="-Wl,--as-needed"
+cat: ../../dist/Linux_All_OPT.OBJ/nspr/Version: No such file or directory
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/testing/libjs/work/main.d/js/src'
+make -f Makefile.ref  Linux_All_OPT.OBJ/libjs.a Linux_All_OPT.OBJ/libjs.so Linux_All_OPT.OBJ/js  Linux_All_OPT.OBJ/jsautocfg.h Linux_All_OPT.OBJ/jscpucfg Linux_All_OPT.OBJ/jscpucfg.o
+cat: ../../dist/Linux_All_OPT.OBJ/nspr/Version: No such file or directory
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/testing/libjs/work/main.d/js/src'
+make[2]: Circular jscpucfg.h <- Linux_All_OPT.OBJ/jsautocfg.h dependency dropped.
+make[2]: Circular Linux_All_OPT.OBJ/jsautocfg.h <- Linux_All_OPT.OBJ/jsautocfg.h dependency dropped.
+i586-castorbox-linux-gnu-gcc -o Linux_All_OPT.OBJ/jsapi.o -c -pipe -march=pentium-mmx -mtune=generic -Os -m32 -g jsapi.c
+In file included from jsapi.c:49:
+jstypes.h:248:6: error: #error "Must define one of XP_BEOS, XP_OS2, XP_WIN or XP_UNIX"
+jstypes.h:264:2: error: #error No suitable type for JSInt8/JSUint8
+jstypes.h:277:2: error: #error No suitable type for JSInt16/JSUint16
+jstypes.h:297:2: error: #error No suitable type for JSInt32/JSUint32
+In file included from jsapi.c:49:
+jstypes.h:329: error: expected specifier-qualifier-list before ‘JSUint32’
+jstypes.h:348:2: error: #error 'sizeof(int)' not sufficient for platform use
+jstypes.h:393: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JSBool’
+jstypes.h:403: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JSPackedBool’
+In file included from jstypes.h:416,
+                 from jsapi.c:49:
+jsotypes.h:73: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint’
+jsotypes.h:76: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uintn’
+jsotypes.h:79: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint32’
+jsotypes.h:83: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint16’
+jsotypes.h:84: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint8’
+jsotypes.h:87: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘intn’
+jsotypes.h:106: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int32’
+jsotypes.h:110: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int16’
+jsotypes.h:111: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int8’
+In file included from jsarena.h:51,
+                 from jsapi.c:50:
+jscompat.h:51: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘intN’
+jscompat.h:52: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uintN’
+In file included from jsapi.c:53:
+jsdhash.h:79: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JSDHashNumber’
+jsdhash.h:114: error: expected specifier-qualifier-list before ‘JSDHashNumber’
+jsdhash.h:196: error: expected specifier-qualifier-list before ‘int16’
+jsdhash.h:240: error: expected declaration specifiers or ‘...’ before ‘uint32’
+jsdhash.h:260: error: expected declaration specifiers or ‘...’ before ‘*’ token
+jsdhash.h:260: error: ‘JSDHashNumber’ declared as function returning a function
+jsdhash.h:267: error: expected declaration specifiers or ‘...’ before ‘*’ token
+jsdhash.h:269: error: ‘JSBool’ declared as function returning a function
+jsdhash.h:309: error: ‘JSDHashInitEntry’ declared as function returning a function
+jsdhash.h:343: error: expected specifier-qualifier-list before ‘JSDHashHashKey’
+jsdhash.h:357: error: expected declaration specifiers or ‘...’ before ‘uint32’
+jsdhash.h:363: error: ‘JS_DHashStringKey’ declared as function returning a function
+jsdhash.h:375: error: ‘JS_DHashVoidPtrKeyStub’ declared as function returning a function
+jsdhash.h:380: error: ‘JS_DHashMatchEntryStub’ declared as function returning a function
+jsdhash.h:385: error: ‘JS_DHashMatchStringKey’ declared as function returning a function
+jsdhash.h:416: error: expected declaration specifiers or ‘...’ before ‘uint32’
+jsdhash.h:417: error: expected declaration specifiers or ‘...’ before ‘uint32’
+jsdhash.h:434: error: expected declaration specifiers or ‘...’ before ‘uint32’
+jsdhash.h:434: error: expected declaration specifiers or ‘...’ before ‘uint32’
+jsdhash.h:434: error: ‘JS_DHashTableInit’ declared as function returning a function
+jsdhash.h:567: error: expected declaration specifiers or ‘...’ before ‘uint32’
+jsdhash.h:570: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_DHashTableEnumerate’
+In file included from jsapi.c:54:
+jsprf.h:71: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_snprintf’
+jsprf.h:101: error: expected declaration specifiers or ‘...’ before ‘*’ token
+jsprf.h:101: error: expected declaration specifiers or ‘...’ before ‘JSUint32’
+jsprf.h:101: error: ‘JSIntn’ declared as function returning a function
+jsprf.h:103: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_sxprintf’
+jsprf.h:108: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_vsnprintf’
+jsprf.h:111: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_vsxprintf’
+jsprf.h:146: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_sscanf’
+In file included from jsapi.h:47,
+                 from jsapi.c:55:
+jspubtd.h:51: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jschar’
+jspubtd.h:52: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jsint’
+jspubtd.h:53: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jsuint’
+jspubtd.h:57: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jsrefcount’
+In file included from jsapi.h:47,
+                 from jsapi.c:55:
+jspubtd.h:160: error: ‘JSPropertyOp’ declared as function returning a function
+jspubtd.h:192: error: ‘JSNewEnumerateOp’ declared as function returning a function
+jspubtd.h:199: error: ‘JSEnumerateOp’ declared as function returning a function
+jspubtd.h:214: error: ‘JSResolveOp’ declared as function returning a function
+jspubtd.h:247: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jspubtd.h:247: error: ‘JSNewResolveOp’ declared as function returning a function
+jspubtd.h:255: error: ‘JSConvertOp’ declared as function returning a function
+jspubtd.h:313: error: ‘JSCheckAccessOp’ declared as function returning a function
+jspubtd.h:320: error: ‘JSXDRObjectOp’ declared as function returning a function
+jspubtd.h:329: error: ‘JSHasInstanceOp’ declared as function returning a function
+jspubtd.h:350: error: expected declaration specifiers or ‘...’ before ‘*’ token
+jspubtd.h:350: error: ‘uint32’ declared as function returning a function
+jspubtd.h:365: error: ‘JSReserveSlotsOp’ declared as function returning a function
+jspubtd.h:383: error: expected declaration specifiers or ‘...’ before ‘jsrefcount’
+jspubtd.h:413: error: ‘JSLookupPropOp’ declared as function returning a function
+jspubtd.h:431: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jspubtd.h:431: error: ‘JSDefinePropOp’ declared as function returning a function
+jspubtd.h:443: error: ‘JSPropertyIdOp’ declared as function returning a function
+jspubtd.h:453: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jspubtd.h:453: error: ‘JSAttributesOp’ declared as function returning a function
+jspubtd.h:463: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jspubtd.h:463: error: ‘JSCheckAccessIdOp’ declared as function returning a function
+jspubtd.h:490: error: ‘JSSetObjectSlotOp’ declared as function returning a function
+jspubtd.h:511: error: ‘JSSetRequiredSlotOp’ declared as function returning a function
+jspubtd.h:519: error: ‘JSSetMethodOp’ declared as function returning a function
+jspubtd.h:524: error: ‘JSEnumerateValuesOp’ declared as function returning a function
+jspubtd.h:528: error: ‘JSEqualityOp’ declared as function returning a function
+jspubtd.h:532: error: ‘JSConcatenateOp’ declared as function returning a function
+jspubtd.h:537: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jspubtd.h:538: error: ‘JSNative’ declared as function returning a function
+jspubtd.h:561: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jspubtd.h:561: error: ‘JSContextCallback’ declared as function returning a function
+jspubtd.h:571: error: ‘JSGCCallback’ declared as function returning a function
+jspubtd.h:574: error: ‘JSBranchCallback’ declared as function returning a function
+jspubtd.h:603: error: expected specifier-qualifier-list before ‘uint16’
+jspubtd.h:611: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jspubtd.h:619: error: ‘JSArgumentFormatter’ declared as function returning a function
+jspubtd.h:624: error: ‘JSLocaleToUpperCase’ declared as function returning a function
+jspubtd.h:628: error: ‘JSLocaleToLowerCase’ declared as function returning a function
+jspubtd.h:633: error: ‘JSLocaleCompare’ declared as function returning a function
+jspubtd.h:636: error: ‘JSLocaleToUnicode’ declared as function returning a function
+jspubtd.h:652: error: ‘JSPrincipalsTranscoder’ declared as function returning a function
+In file included from jsapi.c:55:
+jsapi.h:266: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:267: error: ‘JS_ConvertArguments’ declared as function returning a function
+jsapi.h:271: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:272: error: ‘JS_ConvertArgumentsVA’ declared as function returning a function
+jsapi.h:339: error: ‘JS_AddArgumentFormatter’ declared as function returning a function
+jsapi.h:347: error: ‘JS_ConvertValue’ declared as function returning a function
+jsapi.h:350: error: ‘JS_ValueToObject’ declared as function returning a function
+jsapi.h:362: error: ‘JS_ValueToNumber’ declared as function returning a function
+jsapi.h:369: error: expected declaration specifiers or ‘...’ before ‘int32’
+jsapi.h:369: error: ‘JS_ValueToECMAInt32’ declared as function returning a function
+jsapi.h:376: error: ‘JS_ValueToECMAUint32’ declared as function returning a function
+jsapi.h:384: error: expected declaration specifiers or ‘...’ before ‘int32’
+jsapi.h:384: error: ‘JS_ValueToInt32’ declared as function returning a function
+jsapi.h:390: error: expected declaration specifiers or ‘...’ before ‘uint16’
+jsapi.h:390: error: ‘JS_ValueToUint16’ declared as function returning a function
+jsapi.h:393: error: ‘JS_ValueToBoolean’ declared as function returning a function
+jsapi.h:568: error: ‘JS_GetOptions’ declared as function returning a function
+jsapi.h:571: error: ‘JS_SetOptions’ declared as function returning a function
+jsapi.h:574: error: ‘JS_ToggleOptions’ declared as function returning a function
+jsapi.h:593: error: ‘JS_InitStandardClasses’ declared as function returning a function
+jsapi.h:610: error: ‘JS_ResolveStandardClass’ declared as function returning a function
+jsapi.h:613: error: ‘JS_EnumerateStandardClasses’ declared as function returning a function
+jsapi.h:626: error: ‘JS_GetClassObject’ declared as function returning a function
+jsapi.h:647: error: ‘JS_NewDoubleValue’ declared as function returning a function
+jsapi.h:650: error: ‘JS_NewNumberValue’ declared as function returning a function
+jsapi.h:669: error: ‘JS_AddRoot’ declared as function returning a function
+jsapi.h:678: error: ‘JS_AddNamedRoot’ declared as function returning a function
+jsapi.h:681: error: ‘JS_AddNamedRootRT’ declared as function returning a function
+jsapi.h:684: error: ‘JS_RemoveRoot’ declared as function returning a function
+jsapi.h:687: error: ‘JS_RemoveRootRT’ declared as function returning a function
+jsapi.h:757: error: ‘JS_EnterLocalRootScope’ declared as function returning a function
+jsapi.h:827: error: expected declaration specifiers or ‘...’ before ‘*’ token
+jsapi.h:827: error: ‘intN’ declared as function returning a function
+jsapi.h:830: error: expected declaration specifiers or ‘...’ before ‘JSGCRootMapFun’
+jsapi.h:830: error: ‘JS_MapGCRoots’ declared as function returning a function
+jsapi.h:833: error: ‘JS_LockGCThing’ declared as function returning a function
+jsapi.h:836: error: ‘JS_LockGCThingRT’ declared as function returning a function
+jsapi.h:839: error: ‘JS_UnlockGCThing’ declared as function returning a function
+jsapi.h:842: error: ‘JS_UnlockGCThingRT’ declared as function returning a function
+jsapi.h:873: error: ‘JS_IsAboutToBeFinalized’ declared as function returning a function
+jsapi.h:896: error: ‘JS_AddExternalStringFinalizer’ declared as function returning a function
+jsapi.h:912: error: ‘JS_RemoveExternalStringFinalizer’ declared as function returning a function
+jsapi.h:920: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.h:927: error: ‘JS_GetExternalStringGCType’ declared as function returning a function
+jsapi.h:946: error: field ‘flags’ declared as a function
+jsapi.h:965: error: expected specifier-qualifier-list before ‘JSMarkOp’
+jsapi.h:1070: error: expected specifier-qualifier-list before ‘JSMarkOp’
+jsapi.h:1100: error: expected specifier-qualifier-list before ‘jsint’
+jsapi.h:1108: error: ‘JS_ValueToId’ declared as function returning a function
+jsapi.h:1111: error: ‘JS_IdToValue’ declared as function returning a function
+jsapi.h:1130: error: ‘JS_PropertyStub’ declared as function returning a function
+jsapi.h:1133: error: ‘JS_EnumerateStub’ declared as function returning a function
+jsapi.h:1136: error: ‘JS_ResolveStub’ declared as function returning a function
+jsapi.h:1139: error: ‘JS_ConvertStub’ declared as function returning a function
+jsapi.h:1147: error: expected specifier-qualifier-list before ‘uint8’
+jsapi.h:1158: error: expected specifier-qualifier-list before ‘int8’
+jsapi.h:1172: error: expected specifier-qualifier-list before ‘uint16’
+jsapi.h:1183: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1200: error: ‘JS_InstanceOf’ declared as function returning a function
+jsapi.h:1203: error: ‘JS_HasInstance’ declared as function returning a function
+jsapi.h:1209: error: ‘JS_SetPrivate’ declared as function returning a function
+jsapi.h:1219: error: ‘JS_SetPrototype’ declared as function returning a function
+jsapi.h:1225: error: ‘JS_SetParent’ declared as function returning a function
+jsapi.h:1236: error: ‘JS_GetObjectId’ declared as function returning a function
+jsapi.h:1242: error: ‘JS_SealObject’ declared as function returning a function
+jsapi.h:1250: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1254: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1257: error: ‘JS_DefineConstDoubles’ declared as function returning a function
+jsapi.h:1260: error: ‘JS_DefineProperties’ declared as function returning a function
+jsapi.h:1264: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1264: error: ‘JS_DefineProperty’ declared as function returning a function
+jsapi.h:1274: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1274: error: ‘JS_GetPropertyAttributes’ declared as function returning a function
+jsapi.h:1284: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1286: error: ‘JS_GetPropertyAttrsGetterAndSetter’ declared as function returning a function
+jsapi.h:1296: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1296: error: ‘JS_SetPropertyAttributes’ declared as function returning a function
+jsapi.h:1300: error: expected declaration specifiers or ‘...’ before ‘int8’
+jsapi.h:1302: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1302: error: ‘JS_DefinePropertyWithTinyId’ declared as function returning a function
+jsapi.h:1306: error: ‘JS_AliasProperty’ declared as function returning a function
+jsapi.h:1309: error: ‘JS_HasProperty’ declared as function returning a function
+jsapi.h:1312: error: ‘JS_LookupProperty’ declared as function returning a function
+jsapi.h:1316: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1316: error: ‘JS_LookupPropertyWithFlags’ declared as function returning a function
+jsapi.h:1319: error: ‘JS_GetProperty’ declared as function returning a function
+jsapi.h:1323: error: ‘JS_GetMethodById’ declared as function returning a function
+jsapi.h:1327: error: ‘JS_GetMethod’ declared as function returning a function
+jsapi.h:1330: error: ‘JS_SetProperty’ declared as function returning a function
+jsapi.h:1333: error: ‘JS_DeleteProperty’ declared as function returning a function
+jsapi.h:1337: error: ‘JS_DeleteProperty2’ declared as function returning a function
+jsapi.h:1341: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1353: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1363: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1376: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1382: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1389: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1394: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1399: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1404: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1409: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1413: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1416: error: ‘JS_IsArrayObject’ declared as function returning a function
+jsapi.h:1419: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsapi.h:1419: error: ‘JS_GetArrayLength’ declared as function returning a function
+jsapi.h:1422: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsapi.h:1422: error: ‘JS_SetArrayLength’ declared as function returning a function
+jsapi.h:1425: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsapi.h:1425: error: ‘JS_HasArrayLength’ declared as function returning a function
+jsapi.h:1428: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1429: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1429: error: ‘JS_DefineElement’ declared as function returning a function
+jsapi.h:1432: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1432: error: ‘JS_AliasElement’ declared as function returning a function
+jsapi.h:1435: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1435: error: ‘JS_HasElement’ declared as function returning a function
+jsapi.h:1438: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1438: error: ‘JS_LookupElement’ declared as function returning a function
+jsapi.h:1441: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1441: error: ‘JS_GetElement’ declared as function returning a function
+jsapi.h:1444: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1444: error: ‘JS_SetElement’ declared as function returning a function
+jsapi.h:1447: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1447: error: ‘JS_DeleteElement’ declared as function returning a function
+jsapi.h:1450: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.h:1450: error: ‘JS_DeleteElement2’ declared as function returning a function
+jsapi.h:1472: error: ‘JS_NextProperty’ declared as function returning a function
+jsapi.h:1476: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1476: error: ‘JS_CheckAccess’ declared as function returning a function
+jsapi.h:1482: error: ‘JS_GetReservedSlot’ declared as function returning a function
+jsapi.h:1485: error: ‘JS_SetReservedSlot’ declared as function returning a function
+jsapi.h:1497: error: ‘globalPrivilegesEnabled’ declared as function returning a function
+jsapi.h:1500: error: expected specifier-qualifier-list before ‘jsrefcount’
+jsapi.h:1536: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1536: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1566: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_GetFunctionFlags’
+jsapi.h:1572: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_GetFunctionArity’
+jsapi.h:1581: error: ‘JS_ObjectIsFunction’ declared as function returning a function
+jsapi.h:1584: error: ‘JS_DefineFunctions’ declared as function returning a function
+jsapi.h:1588: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1588: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1592: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1607: error: ‘JS_BufferIsCompilableUnit’ declared as function returning a function
+jsapi.h:1619: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1625: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1629: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1635: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1681: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1683: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1688: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1690: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1694: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1695: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1701: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1702: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1707: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1716: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1719: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1757: error: ‘JS_ExecuteScript’ declared as function returning a function
+jsapi.h:1767: error: ‘JS_ExecuteScriptPart’ declared as function returning a function
+jsapi.h:1771: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1772: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1773: error: ‘JS_EvaluateScript’ declared as function returning a function
+jsapi.h:1778: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1779: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1780: error: ‘JS_EvaluateScriptForPrincipals’ declared as function returning a function
+jsapi.h:1784: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1791: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1796: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1797: error: ‘JS_CallFunction’ declared as function returning a function
+jsapi.h:1800: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1801: error: ‘JS_CallFunctionName’ declared as function returning a function
+jsapi.h:1804: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:1805: error: ‘JS_CallFunctionValue’ declared as function returning a function
+jsapi.h:1811: error: ‘JS_IsRunning’ declared as function returning a function
+jsapi.h:1814: error: ‘JS_IsConstructing’ declared as function returning a function
+jsapi.h:1822: error: ‘JS_IsAssigning’ declared as function returning a function
+jsapi.h:1878: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.h:1881: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1884: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1887: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1890: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1895: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsapi.h:1902: error: ‘JS_CompareStrings’ declared as function returning a function
+jsapi.h:1924: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.h:1949: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsapi.h:1957: error: ‘JS_MakeStringImmutable’ declared as function returning a function
+jsapi.h:1965: error: ‘JS_CStringsAreUTF8’ declared as function returning a function
+jsapi.h:1990: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.h:1994: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.h:1995: error: ‘JS_DecodeBytes’ declared as function returning a function
+jsapi.h:2007: error: expected specifier-qualifier-list before ‘JSErrorCallback’
+jsapi.h:2043: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.h:2044: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.h:2050: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.h:2051: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.h:2060: error: ‘JS_ReportWarning’ declared as function returning a function
+jsapi.h:2063: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:2064: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.h:2065: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.h:2068: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:2069: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.h:2070: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.h:2080: error: expected specifier-qualifier-list before ‘uintN’
+jsapi.h:2123: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:2126: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.h:2126: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.h:2142: error: ‘JS_IsExceptionPending’ declared as function returning a function
+jsapi.h:2145: error: ‘JS_GetPendingException’ declared as function returning a function
+jsapi.h:2154: error: ‘JS_ReportPendingException’ declared as function returning a function
+jsapi.h:2192: error: ‘JS_ThrowReportedError’ declared as function returning a function
+In file included from jsarray.h:45,
+                 from jsapi.c:56:
+jsprvtd.h:86: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jsbytecode’
+jsprvtd.h:87: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jssrcnote’
+jsprvtd.h:139: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsprvtd.h:143: error: ‘JSWatchPointHandler’ declared as function returning a function
+jsprvtd.h:149: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsprvtd.h:161: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsprvtd.h:162: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsprvtd.h:200: error: ‘JSDebugErrorHook’ declared as function returning a function
+In file included from jsapi.c:56:
+jsarray.h:54: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsarray.h:54: error: ‘js_IdIsIndex’ declared as function returning a function
+jsarray.h:62: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsarray.h:65: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsarray.h:65: error: ‘js_GetLengthProperty’ declared as function returning a function
+jsarray.h:68: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsarray.h:68: error: ‘js_SetLengthProperty’ declared as function returning a function
+jsarray.h:71: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsarray.h:71: error: ‘js_HasLengthProperty’ declared as function returning a function
+jsarray.h:81: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsarray.h:81: error: ‘js_IsArrayLike’ declared as function returning a function
+jsarray.h:87: error: ‘JSComparator’ declared as function returning a function
+jsarray.h:91: error: ‘js_HeapSort’ declared as function returning a function
+In file included from jsatom.h:47,
+                 from jsapi.c:57:
+jshash.h:59: error: ‘JSHashFunction’ declared as function returning a function
+jshash.h:60: error: ‘JSHashComparator’ declared as function returning a function
+jshash.h:61: error: ‘JSHashEnumerator’ declared as function returning a function
+jshash.h:72: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jshash.h:80: error: field ‘keyHash’ declared as a function
+jshash.h:87: error: field ‘nentries’ declared as a function
+jshash.h:88: error: field ‘shift’ declared as a function
+jshash.h:130: error: ‘JS_HashTableRemove’ declared as function returning a function
+jshash.h:133: error: ‘JS_HashTableEnumerateEntries’ declared as function returning a function
+jshash.h:139: error: ‘JS_HashTableDump’ declared as function returning a function
+jshash.h:143: error: ‘JS_HashString’ declared as function returning a function
+jshash.h:147: error: ‘JS_CompareValues’ declared as function returning a function
+In file included from jsapi.c:57:
+jsatom.h:68: error: field ‘flags’ declared as a function
+jsatom.h:69: error: field ‘number’ declared as a function
+jsatom.h:111: error: expected specifier-qualifier-list before ‘jsuint’
+jsatom.h:146: error: field ‘length’ declared as a function
+jsatom.h:152: error: field ‘number’ declared as a function
+jsatom.h:153: error: field ‘liveAtoms’ declared as a function
+In file included from jsapi.c:57:
+jsatom.h:323: error: ‘js_InitAtomState’ declared as function returning a function
+jsatom.h:361: error: ‘js_InitPinnedAtoms’ declared as function returning a function
+jsatom.h:371: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsatom.h:378: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsatom.h:385: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsatom.h:385: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsatom.h:392: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsatom.h:399: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsatom.h:402: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsatom.h:405: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsatom.h:412: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsatom.h:418: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsatom.h:446: error: ‘js_InitAtomMap’ declared as function returning a function
+In file included from jsapi.c:58:
+jsbool.h:72: error: ‘js_ValueToBoolean’ declared as function returning a function
+In file included from jscntxt.h:52,
+                 from jsapi.c:59:
+jsgc.h:82: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsgc.h:105: error: ‘js_ChangeExternalStringFinalizer’ declared as function returning a function
+jsgc.h:108: error: ‘js_InitGC’ declared as function returning a function
+jsgc.h:114: error: ‘js_AddRoot’ declared as function returning a function
+jsgc.h:117: error: ‘js_AddRootRT’ declared as function returning a function
+jsgc.h:120: error: ‘js_RemoveRoot’ declared as function returning a function
+jsgc.h:130: error: expected declaration specifiers or ‘...’ before ‘JSGCRootMapFun’
+jsgc.h:130: error: ‘js_MapGCRoots’ declared as function returning a function
+jsgc.h:139: error: ‘js_RegisterCloseableIterator’ declared as function returning a function
+jsgc.h:164: error: field ‘runningCloseHook’ declared as a function
+jsgc.h:172: error: ‘js_RunCloseHooks’ declared as function returning a function
+jsgc.h:181: error: expected specifier-qualifier-list before ‘uint8’
+jsgc.h:190: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsgc.h:193: error: ‘js_LockGCThing’ declared as function returning a function
+jsgc.h:196: error: ‘js_LockGCThingRT’ declared as function returning a function
+jsgc.h:199: error: ‘js_UnlockGCThingRT’ declared as function returning a function
+jsgc.h:202: error: ‘js_IsAboutToBeFinalized’ declared as function returning a function
+jsgc.h:335: error: expected specifier-qualifier-list before ‘uint16’
+jsgc.h:346: error: ‘JSUint32’ undeclared here (not in a function)
+jsgc.h:346: error: expected ‘)’ before numeric constant
+In file included from jscntxt.h:53,
+                 from jsapi.c:59:
+jsinterp.h:67: error: expected specifier-qualifier-list before ‘uintN’
+jsinterp.h:182: error: expected ‘)’ before numeric constant
+jsinterp.h:183: error: field ‘empty’ declared as a function
+jsinterp.h:184: error: field ‘disabled’ declared as a function
+jsinterp.h:247: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:253: error: ‘js_GetArgument’ declared as function returning a function
+jsinterp.h:256: error: ‘js_SetArgument’ declared as function returning a function
+jsinterp.h:259: error: ‘js_GetLocalVariable’ declared as function returning a function
+jsinterp.h:262: error: ‘js_SetLocalVariable’ declared as function returning a function
+jsinterp.h:299: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:299: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:299: error: ‘js_Invoke’ declared as function returning a function
+jsinterp.h:335: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:336: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:336: error: ‘js_InternalInvoke’ declared as function returning a function
+jsinterp.h:340: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:340: error: ‘js_InternalGetOrSet’ declared as function returning a function
+jsinterp.h:344: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:344: error: ‘js_Execute’ declared as function returning a function
+jsinterp.h:347: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:348: error: ‘js_CheckRedeclaration’ declared as function returning a function
+jsinterp.h:351: error: ‘js_StrictlyEqual’ declared as function returning a function
+jsinterp.h:354: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsinterp.h:354: error: ‘js_InvokeConstructor’ declared as function returning a function
+jsinterp.h:357: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsinterp.h:357: error: ‘js_Interpret’ declared as function returning a function
+In file included from jscntxt.h:54,
+                 from jsapi.c:59:
+jsobj.h:58: error: expected specifier-qualifier-list before ‘jsrefcount’
+jsobj.h:275: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsobj.h:291: error: ‘js_PutBlockObject’ declared as function returning a function
+jsobj.h:294: error: expected specifier-qualifier-list before ‘jsrefcount’
+jsobj.h:310: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsobj.h:323: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:324: error: ‘js_obj_toSource’ declared as function returning a function
+jsobj.h:327: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:328: error: ‘js_obj_toString’ declared as function returning a function
+jsobj.h:332: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:332: error: ‘js_HasOwnPropertyHelper’ declared as function returning a function
+jsobj.h:352: error: expected declaration specifiers or ‘...’ before ‘jsrefcount’
+jsobj.h:356: error: expected declaration specifiers or ‘...’ before ‘jsrefcount’
+jsobj.h:369: error: ‘js_GetClassId’ declared as function returning a function
+jsobj.h:379: error: ‘js_GetClassObject’ declared as function returning a function
+jsobj.h:382: error: ‘js_SetClassObject’ declared as function returning a function
+jsobj.h:385: error: ‘js_FindClassObject’ declared as function returning a function
+jsobj.h:389: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:395: error: ‘js_AllocSlot’ declared as function returning a function
+jsobj.h:409: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:409: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:413: error: ‘js_LookupHiddenProperty’ declared as function returning a function
+jsobj.h:422: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:422: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:431: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:431: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:443: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:444: error: ‘js_DefineProperty’ declared as function returning a function
+jsobj.h:448: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:449: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:449: error: ‘js_DefineNativeProperty’ declared as function returning a function
+jsobj.h:460: error: ‘js_LookupProperty’ declared as function returning a function
+jsobj.h:468: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:469: error: ‘js_LookupPropertyWithFlags’ declared as function returning a function
+jsobj.h:475: error: ‘js_FindProperty’ declared as function returning a function
+jsobj.h:491: error: ‘js_NativeGet’ declared as function returning a function
+jsobj.h:494: error: ‘js_NativeSet’ declared as function returning a function
+jsobj.h:497: error: ‘js_GetProperty’ declared as function returning a function
+jsobj.h:500: error: ‘js_SetProperty’ declared as function returning a function
+jsobj.h:504: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:504: error: ‘js_GetAttributes’ declared as function returning a function
+jsobj.h:508: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:508: error: ‘js_SetAttributes’ declared as function returning a function
+jsobj.h:511: error: ‘js_DeleteProperty’ declared as function returning a function
+jsobj.h:514: error: ‘js_DefaultValue’ declared as function returning a function
+jsobj.h:517: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsobj.h:523: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsobj.h:527: error: ‘js_Enumerate’ declared as function returning a function
+jsobj.h:534: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:534: error: ‘js_CheckAccess’ declared as function returning a function
+jsobj.h:537: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:537: error: ‘js_Call’ declared as function returning a function
+jsobj.h:540: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:541: error: ‘js_Construct’ declared as function returning a function
+jsobj.h:544: error: ‘js_HasInstance’ declared as function returning a function
+jsobj.h:547: error: ‘js_SetProtoOrParent’ declared as function returning a function
+jsobj.h:550: error: ‘js_IsDelegate’ declared as function returning a function
+jsobj.h:554: error: ‘js_GetClassPrototype’ declared as function returning a function
+jsobj.h:558: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:558: error: ‘js_SetClassPrototype’ declared as function returning a function
+jsobj.h:561: error: ‘js_ValueToObject’ declared as function returning a function
+jsobj.h:567: error: ‘js_TryValueOf’ declared as function returning a function
+jsobj.h:571: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsobj.h:571: error: ‘js_TryMethod’ declared as function returning a function
+jsobj.h:574: error: ‘js_XDRObject’ declared as function returning a function
+jsobj.h:577: error: ‘js_Mark’ declared as function returning a function
+jsobj.h:586: error: ‘js_SetRequiredSlot’ declared as function returning a function
+jsobj.h:593: error: ‘js_CheckPrincipalsAccess’ declared as function returning a function
+In file included from jsregexp.h:47,
+                 from jscntxt.h:57,
+                 from jsapi.c:59:
+jsstr.h:74: error: expected specifier-qualifier-list before ‘jschar’
+jsstr.h:151: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:154: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:160: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:165: error: expected ‘:’, ‘,’, ‘;’, ‘}’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:168: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_empty_ucstr’
+jsstr.h:172: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_X’
+jsstr.h:173: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_Y’
+jsstr.h:174: error: declaration of ‘js_A’ as array of functions
+jsstr.h:302: error: ‘js_InitRuntimeStringState’ declared as function returning a function
+jsstr.h:326: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsstr.h:326: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsstr.h:330: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsstr.h:334: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsstr.h:338: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsstr.h:384: error: ‘js_HashString’ declared as function returning a function
+jsstr.h:392: error: ‘js_CompareStrings’ declared as function returning a function
+jsstr.h:398: error: ‘js_EqualStrings’ declared as function returning a function
+jsstr.h:413: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_BoyerMooreHorspool’
+jsstr.h:418: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsstr.h:420: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:423: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:431: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:439: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsstr.h:443: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsstr.h:455: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsstr.h:455: error: ‘js_InflateStringToBuffer’ declared as function returning a function
+jsstr.h:466: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsstr.h:474: error: ‘js_SetStringBytes’ declared as function returning a function
+jsstr.h:488: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsstr.h:489: error: ‘js_str_escape’ declared as function returning a function
+jsstr.h:496: error: expected ‘)’ before ‘*’ token
+In file included from jscntxt.h:57,
+                 from jsapi.c:59:
+jsregexp.h:55: error: field ‘multiline’ declared as a function
+jsregexp.h:56: error: expected specifier-qualifier-list before ‘uint16’
+jsregexp.h:75: error: expected specifier-qualifier-list before ‘JSPackedBool’
+jsregexp.h:101: error: expected specifier-qualifier-list before ‘jsrefcount’
+jsregexp.h:114: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsregexp.h:133: error: ‘js_ExecuteRegExp’ declared as function returning a function
+jsregexp.h:140: error: ‘js_InitRegExpStatics’ declared as function returning a function
+jsregexp.h:158: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsregexp.h:159: error: ‘js_regexp_toString’ declared as function returning a function
+jsregexp.h:166: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsregexp.h:166: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsregexp.h:169: error: ‘js_XDRRegExp’ declared as function returning a function
+jsregexp.h:178: error: ‘js_GetLastIndex’ declared as function returning a function
+jsregexp.h:181: error: ‘js_SetLastIndex’ declared as function returning a function
+In file included from jsapi.c:59:
+jscntxt.h:182: error: expected specifier-qualifier-list before ‘jsrefcount’
+jscntxt.h:476: error: expected specifier-qualifier-list before ‘uintN’
+jscntxt.h:496: error: field ‘flags’ declared as a function
+jscntxt.h:509: error: expected ‘)’ before numeric constant
+jscntxt.h:514: error: field ‘scopeMark’ declared as a function
+jscntxt.h:515: error: field ‘rootCount’ declared as a function
+jscntxt.h:669: error: expected specifier-qualifier-list before ‘uintN’
+jscntxt.h:906: error: ‘js_ValidContextPointer’ declared as function returning a function
+jscntxt.h:920: error: ‘js_StartResolving’ declared as function returning a function
+jscntxt.h:935: error: ‘js_EnterLocalRootScope’ declared as function returning a function
+In file included from jsapi.c:59:
+jscntxt.h:965: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jscntxt.h:969: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jscntxt.h:969: error: ‘js_ReportErrorVA’ declared as function returning a function
+jscntxt.h:972: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jscntxt.h:972: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jscntxt.h:973: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jscntxt.h:977: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jscntxt.h:978: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+In file included from jsapi.c:61:
+jsdate.h:77: error: ‘js_DateIsValid’ declared as function returning a function
+In file included from jsemit.h:50,
+                 from jsapi.c:63:
+jsopcode.h:200: error: ‘JS_BITS_PER_BYTE’ undeclared here (not in a function)
+jsopcode.h:230: error: expected specifier-qualifier-list before ‘int8’
+jsopcode.h:238: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_NumCodeSpecs’
+jsopcode.h:239: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_EscapeMap’
+jsopcode.h:247: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsopcode.h:255: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsopcode.h:267: error: ‘js_puts’ declared as function returning a function
+jsopcode.h:287: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsopcode.h:287: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsopcode.h:288: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsopcode.h:288: error: ‘js_DecompileCode’ declared as function returning a function
+jsopcode.h:291: error: ‘js_DecompileScript’ declared as function returning a function
+jsopcode.h:294: error: ‘js_DecompileFunctionBody’ declared as function returning a function
+jsopcode.h:297: error: ‘js_DecompileFunction’ declared as function returning a function
+In file included from jsapi.c:63:
+jsemit.h:125: error: expected specifier-qualifier-list before ‘uint16’
+jsemit.h:157: error: expected specifier-qualifier-list before ‘uint16’
+jsemit.h:269: error: expected specifier-qualifier-list before ‘jsbytecode’
+jsemit.h:280: error: expected specifier-qualifier-list before ‘uintN’
+jsemit.h:337: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsemit.h:338: error: ‘js_InitCodeGenerator’ declared as function returning a function
+jsemit.h:360: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsemit.h:366: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsemit.h:367: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsemit.h:388: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsemit.h:389: error: ‘js_SetJumpOffset’ declared as function returning a function
+jsemit.h:393: error: ‘js_InStatement’ declared as function returning a function
+jsemit.h:404: error: ‘js_IsGlobalReference’ declared as function returning a function
+jsemit.h:435: error: ‘js_PopStatementCG’ declared as function returning a function
+jsemit.h:451: error: ‘js_DefineCompileTimeConstant’ declared as function returning a function
+jsemit.h:455: error: ‘js_LookupCompileTimeConstant’ declared as function returning a function
+jsemit.h:472: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsemit.h:479: error: ‘js_EmitTree’ declared as function returning a function
+jsemit.h:485: error: ‘js_EmitFunctionBytecode’ declared as function returning a function
+jsemit.h:493: error: ‘js_EmitFunctionBody’ declared as function returning a function
+jsemit.h:625: error: expected specifier-qualifier-list before ‘uint8’
+jsemit.h:632: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_SrcNoteLength’
+jsemit.h:649: error: ‘js_NewSrcNote’ declared as function returning a function
+jsemit.h:653: error: ‘js_NewSrcNote2’ declared as function returning a function
+jsemit.h:657: error: ‘js_NewSrcNote3’ declared as function returning a function
+jsemit.h:662: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsemit.h:670: error: expected ‘)’ before ‘*’ token
+jsemit.h:673: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsemit.h:674: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsemit.h:674: error: ‘js_SetSrcNoteOffset’ declared as function returning a function
+jsemit.h:708: error: expected declaration specifiers or ‘...’ before ‘jssrcnote’
+jsemit.h:708: error: ‘js_FinishTakingSrcNotes’ declared as function returning a function
+jsemit.h:716: error: ‘js_AllocTryNotes’ declared as function returning a function
+In file included from jsapi.c:64:
+jsexn.h:66: error: ‘js_ErrorToException’ declared as function returning a function
+jsexn.h:85: error: ‘js_ReportUncaughtException’ declared as function returning a function
+jsexn.h:92: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+In file included from jsapi.c:65:
+jsfun.h:52: error: expected specifier-qualifier-list before ‘uint16’
+jsfun.h:91: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:91: error: ‘js_fun_toString’ declared as function returning a function
+jsfun.h:94: error: ‘js_IsIdentifier’ declared as function returning a function
+jsfun.h:106: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:107: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:113: error: ‘js_LinkFunctionObject’ declared as function returning a function
+jsfun.h:117: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:117: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:129: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:132: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:135: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:138: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsfun.h:144: error: ‘js_PutCallObject’ declared as function returning a function
+jsfun.h:147: error: ‘js_GetCallVariable’ declared as function returning a function
+jsfun.h:150: error: ‘js_SetCallVariable’ declared as function returning a function
+jsfun.h:153: error: ‘js_GetArgsValue’ declared as function returning a function
+jsfun.h:157: error: ‘js_GetArgsProperty’ declared as function returning a function
+jsfun.h:163: error: ‘js_PutArgsObject’ declared as function returning a function
+jsfun.h:166: error: ‘js_XDRFunction’ declared as function returning a function
+In file included from jsapi.c:70:
+jsnum.h:72: error: field ‘hi’ declared as a function
+jsnum.h:72: error: field ‘lo’ declared as a function
+jsnum.h:150: error: ‘js_InitRuntimeNumberState’ declared as function returning a function
+jsnum.h:173: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsnum.h:179: error: ‘js_NewDoubleValue’ declared as function returning a function
+jsnum.h:182: error: ‘js_NewNumberValue’ declared as function returning a function
+jsnum.h:197: error: ‘js_ValueToNumber’ declared as function returning a function
+jsnum.h:204: error: expected declaration specifiers or ‘...’ before ‘int32’
+jsnum.h:204: error: ‘js_ValueToECMAInt32’ declared as function returning a function
+jsnum.h:207: error: expected declaration specifiers or ‘...’ before ‘int32’
+jsnum.h:207: error: ‘js_DoubleToECMAInt32’ declared as function returning a function
+jsnum.h:214: error: ‘js_ValueToECMAUint32’ declared as function returning a function
+jsnum.h:217: error: ‘js_DoubleToECMAUint32’ declared as function returning a function
+jsnum.h:225: error: expected declaration specifiers or ‘...’ before ‘int32’
+jsnum.h:225: error: ‘js_ValueToInt32’ declared as function returning a function
+jsnum.h:232: error: expected declaration specifiers or ‘...’ before ‘uint16’
+jsnum.h:232: error: ‘js_ValueToUint16’ declared as function returning a function
+jsnum.h:252: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsnum.h:264: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+In file included from jsparse.h:49,
+                 from jsapi.c:73:
+jsscan.h:158: error: expected specifier-qualifier-list before ‘jschar’
+jsscan.h:177: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsscan.h:180: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsscan.h:180: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscan.h:189: error: expected specifier-qualifier-list before ‘uint16’
+jsscan.h:201: error: expected specifier-qualifier-list before ‘jschar’
+jsscan.h:221: error: expected specifier-qualifier-list before ‘jschar’
+jsscan.h:233: error: expected specifier-qualifier-list before ‘uintN’
+jsscan.h:310: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsscan.h:314: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsscan.h:320: error: ‘js_CloseTokenStream’ declared as function returning a function
+jsscan.h:330: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsscan.h:347: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscan.h:348: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscan.h:348: error: ‘js_ReportCompileErrorNumber’ declared as function returning a function
+jsscan.h:351: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscan.h:352: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscan.h:352: error: ‘js_ReportCompileErrorNumberUC’ declared as function returning a function
+jsscan.h:385: error: ‘js_MatchToken’ declared as function returning a function
+In file included from jsapi.c:73:
+jsparse.h:273: error: expected specifier-qualifier-list before ‘uint16’
+jsparse.h:422: error: ‘js_CompileTokenStream’ declared as function returning a function
+jsparse.h:425: error: ‘js_CompileFunctionBody’ declared as function returning a function
+jsparse.h:428: error: ‘js_FoldConstants’ declared as function returning a function
+In file included from jsapi.c:76:
+jsscope.h:205: error: expected specifier-qualifier-list before ‘uint8’
+jsscope.h:261: error: field ‘slot’ declared as a function
+jsscope.h:262: error: expected specifier-qualifier-list before ‘uint8’
+jsscope.h:346: error: expected declaration specifiers or ‘...’ before ‘jsrefcount’
+jsscope.h:371: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscope.h:371: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscope.h:375: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscope.h:375: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsscope.h:379: error: ‘js_RemoveScopeProperty’ declared as function returning a function
+jsscope.h:402: error: ‘js_InitPropertyTree’ declared as function returning a function
+In file included from jsapi.c:77:
+jsscript.h:68: error: expected specifier-qualifier-list before ‘jsbytecode’
+jsscript.h:106: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsscript.h:119: error: ‘js_InitRuntimeScriptState’ declared as function returning a function
+jsscript.h:145: error: ‘js_GetScriptFilenameFlags’ declared as function returning a function
+jsscript.h:198: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsscript.h:203: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_PCToLineNumber’
+jsscript.h:205: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsscript.h:209: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘js_GetScriptLineExtent’
+jsscript.h:221: error: ‘js_XDRScript’ declared as function returning a function
+In file included from jsapi.c:79:
+prmjtime.h:60: error: expected specifier-qualifier-list before ‘JSInt32’
+prmjtime.h:82: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘PRMJ_LocalGMTDifference’
+In file included from jsapi.c:86:
+jsxml.h:59: error: field ‘declared’ declared as a function
+jsxml.h:110: error: ‘JSIdentityOp’ declared as function returning a function
+jsxml.h:113: error: field ‘length’ declared as a function
+jsxml.h:114: error: field ‘capacity’ declared as a function
+jsxml.h:125: error: field ‘index’ declared as a function
+jsxml.h:164: error: expected specifier-qualifier-list before ‘uint16’
+jsxml.h:254: error: ‘js_GetFunctionNamespace’ declared as function returning a function
+jsxml.h:257: error: ‘js_GetDefaultXMLNamespace’ declared as function returning a function
+jsxml.h:260: error: ‘js_SetDefaultXMLNamespace’ declared as function returning a function
+jsxml.h:268: error: ‘js_IsXMLName’ declared as function returning a function
+jsxml.h:271: error: ‘js_ToAttributeName’ declared as function returning a function
+jsxml.h:287: error: ‘js_GetAnyName’ declared as function returning a function
+jsxml.h:290: error: ‘js_FindXMLProperty’ declared as function returning a function
+jsxml.h:293: error: ‘js_GetXMLProperty’ declared as function returning a function
+jsxml.h:296: error: ‘js_GetXMLFunction’ declared as function returning a function
+jsxml.h:299: error: ‘js_SetXMLProperty’ declared as function returning a function
+jsxml.h:302: error: ‘js_GetXMLDescendants’ declared as function returning a function
+jsxml.h:305: error: ‘js_DeleteXMLListElements’ declared as function returning a function
+jsxml.h:308: error: expected declaration specifiers or ‘...’ before ‘jsbytecode’
+jsxml.h:308: error: ‘js_FilterXMLList’ declared as function returning a function
+In file included from jsapi.c:90:
+jsiter.h:65: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsiter.h:65: error: ‘js_ValueToIterator’ declared as function returning a function
+jsiter.h:72: error: ‘js_CallIteratorNext’ declared as function returning a function
+jsiter.h:103: error: ‘js_CloseGeneratorObject’ declared as function returning a function
+jsapi.c: In function ‘JS_GetNaNValue’:
+jsapi.c:114: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: In function ‘JS_GetNegativeInfinityValue’:
+jsapi.c:120: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: In function ‘JS_GetPositiveInfinityValue’:
+jsapi.c:126: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: In function ‘JS_GetEmptyStringValue’:
+jsapi.c:132: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: At top level:
+jsapi.c:138: error: ‘TryArgumentFormatter’ declared as function returning a function
+jsapi.c: In function ‘TryArgumentFormatter’:
+jsapi.c:143: error: ‘JSContext’ has no member named ‘argumentFormatMap’
+jsapi.c:149: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:149: error: (Each undeclared identifier is reported only once
+jsapi.c:149: error: for each function it appears in.)
+jsapi.c:150: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:154: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:156: error: ‘JS_ConvertArguments’ declared as function returning a function
+jsapi.c: In function ‘JS_ConvertArguments’:
+jsapi.c:161: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:161: warning: passing argument 3 of ‘JS_ConvertArgumentsVA’ from incompatible pointer type
+jsapi.h:271: note: expected ‘const char *’ but argument is of type ‘jsval *’
+jsapi.c:161: warning: passing argument 4 of ‘JS_ConvertArgumentsVA’ discards qualifiers from pointer target type
+jsapi.h:271: note: expected ‘va_list’ but argument is of type ‘const char *’
+jsapi.c:161: error: too many arguments to function ‘JS_ConvertArgumentsVA’
+jsapi.c:161: error: lvalue required as left operand of assignment
+jsapi.c:163: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:167: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:169: error: ‘JS_ConvertArgumentsVA’ declared as function returning a function
+jsapi.c: In function ‘JS_ConvertArgumentsVA’:
+jsapi.c:180: error: cast specifies function type
+jsapi.c:185: error: cast specifies function type
+jsapi.c:188: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:190: error: too many arguments to function ‘js_ValueToFunction’
+jsapi.c:194: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:199: error: cast specifies function type
+jsapi.c:206: error: cast specifies function type
+jsapi.c:209: error: expected specifier-qualifier-list before ‘uint16’
+jsapi.c:209: error: too many arguments to function ‘js_ValueToUint16’
+jsapi.c:210: error: cast specifies function type
+jsapi.c:213: error: expected specifier-qualifier-list before ‘int32’
+jsapi.c:213: error: too many arguments to function ‘js_ValueToECMAInt32’
+jsapi.c:214: error: cast specifies function type
+jsapi.c:218: error: cast specifies function type
+jsapi.c:221: error: expected specifier-qualifier-list before ‘int32’
+jsapi.c:221: error: too many arguments to function ‘js_ValueToInt32’
+jsapi.c:222: error: cast specifies function type
+jsapi.c:226: error: cast specifies function type
+jsapi.c:230: error: cast specifies function type
+jsapi.c:238: error: cast specifies function type
+jsapi.c:243: error: expected specifier-qualifier-list before ‘jschar’
+jsapi.c:249: error: cast specifies function type
+jsapi.c:254: error: too many arguments to function ‘js_ValueToFunctionObject’
+jsapi.c:256: error: cast specifies function type
+jsapi.c:266: error: cast specifies function type
+jsapi.c:268: error: cast specifies function type
+jsapi.c:275: error: cast specifies function type
+jsapi.c: In function ‘JS_PushArgumentsVA’:
+jsapi.c:293: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:293: error: expected ‘;’ before ‘argc’
+jsapi.c:303: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:313: error: too many arguments to function ‘js_AllocStack’
+jsapi.c:322: error: cast specifies function type
+jsapi.c:325: error: ‘uint16’ undeclared (first use in this function)
+jsapi.c:325: error: expected ‘)’ before ‘__builtin_va_arg’
+jsapi.c:329: error: expected specifier-qualifier-list before ‘int32’
+jsapi.c:333: error: pointer value used where a floating point value was expected
+jsapi.c:348: error: expected specifier-qualifier-list before ‘jschar’
+jsapi.c:348: warning: assignment makes pointer from integer without a cast
+jsapi.c:369: error: cast specifies function type
+jsapi.c:386: error: ‘JSContext’ has no member named ‘stackPool’
+jsapi.c:389: error: ‘JSContext’ has no member named ‘stackHeaders’
+jsapi.c:391: error: ‘JSStackHeader’ has no member named ‘nslots’
+jsapi.c: At top level:
+jsapi.c:410: error: ‘JS_AddArgumentFormatter’ declared as function returning a function
+jsapi.c: In function ‘JS_AddArgumentFormatter’:
+jsapi.c:415: error: ‘JSContext’ has no member named ‘argumentFormatMap’
+jsapi.c:426: error: cast specifies function type
+jsapi.c:433: error: cast specifies function type
+jsapi.c: In function ‘JS_RemoveArgumentFormatter’:
+jsapi.c:443: error: ‘JSContext’ has no member named ‘argumentFormatMap’
+jsapi.c: At top level:
+jsapi.c:456: error: ‘JS_ConvertValue’ declared as function returning a function
+jsapi.c: In function ‘JS_ConvertValue’:
+jsapi.c:466: error: cast specifies function type
+jsapi.c:469: error: lvalue required as left operand of assignment
+jsapi.c:475: error: too many arguments to function ‘js_ValueToFunctionObject’
+jsapi.c:476: error: lvalue required as left operand of assignment
+jsapi.c:480: error: lvalue required as left operand of assignment
+jsapi.c:485: error: lvalue required as left operand of assignment
+jsapi.c:487: error: too many arguments to function ‘js_NewDouble’
+jsapi.c:488: error: lvalue required as left operand of assignment
+jsapi.c:494: error: lvalue required as left operand of assignment
+jsapi.c:501: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:503: error: cast specifies function type
+jsapi.c:507: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:512: error: ‘JS_ValueToObject’ declared as function returning a function
+jsapi.c: In function ‘JS_ValueToFunction’:
+jsapi.c:521: error: too many arguments to function ‘js_ValueToFunction’
+jsapi.c: In function ‘JS_ValueToConstructor’:
+jsapi.c:528: error: too many arguments to function ‘js_ValueToFunction’
+jsapi.c: At top level:
+jsapi.c:540: error: ‘JS_ValueToNumber’ declared as function returning a function
+jsapi.c:546: error: expected declaration specifiers or ‘...’ before ‘int32’
+jsapi.c:547: error: ‘JS_ValueToECMAInt32’ declared as function returning a function
+jsapi.c: In function ‘JS_ValueToECMAInt32’:
+jsapi.c:549: error: ‘ip’ undeclared (first use in this function)
+jsapi.c:549: error: too many arguments to function ‘js_ValueToECMAInt32’
+jsapi.c: At top level:
+jsapi.c:554: error: ‘JS_ValueToECMAUint32’ declared as function returning a function
+jsapi.c:560: error: expected declaration specifiers or ‘...’ before ‘int32’
+jsapi.c:561: error: ‘JS_ValueToInt32’ declared as function returning a function
+jsapi.c: In function ‘JS_ValueToInt32’:
+jsapi.c:563: error: ‘ip’ undeclared (first use in this function)
+jsapi.c:563: error: too many arguments to function ‘js_ValueToInt32’
+jsapi.c: At top level:
+jsapi.c:567: error: expected declaration specifiers or ‘...’ before ‘uint16’
+jsapi.c:568: error: ‘JS_ValueToUint16’ declared as function returning a function
+jsapi.c: In function ‘JS_ValueToUint16’:
+jsapi.c:570: error: ‘ip’ undeclared (first use in this function)
+jsapi.c:570: error: too many arguments to function ‘js_ValueToUint16’
+jsapi.c: At top level:
+jsapi.c:575: error: ‘JS_ValueToBoolean’ declared as function returning a function
+jsapi.c: In function ‘JS_TypeOfValue’:
+jsapi.c:589: error: expected ‘)’ before numeric constant
+jsapi.c:591: error: expected ‘)’ before numeric constant
+jsapi.c:593: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:627: error: expected ‘)’ before numeric constant
+jsapi.c:629: error: expected ‘)’ before numeric constant
+jsapi.c:631: error: expected ‘)’ before numeric constant
+jsapi.c: In function ‘JS_GetTypeName’:
+jsapi.c:642: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:642: error: expected ‘)’ before ‘type’
+jsapi.c: In function ‘JS_Init’:
+jsapi.c:693: error: ‘JSRuntime’ has no member named ‘contextList’
+jsapi.c:693: error: ‘JSRuntime’ has no member named ‘contextList’
+jsapi.c:693: error: ‘JSRuntime’ has no member named ‘contextList’
+jsapi.c:693: error: ‘JSRuntime’ has no member named ‘contextList’
+jsapi.c:694: error: ‘JSRuntime’ has no member named ‘trapList’
+jsapi.c:694: error: ‘JSRuntime’ has no member named ‘trapList’
+jsapi.c:694: error: ‘JSRuntime’ has no member named ‘trapList’
+jsapi.c:694: error: ‘JSRuntime’ has no member named ‘trapList’
+jsapi.c:695: error: ‘JSRuntime’ has no member named ‘watchPointList’
+jsapi.c:695: error: ‘JSRuntime’ has no member named ‘watchPointList’
+jsapi.c:695: error: ‘JSRuntime’ has no member named ‘watchPointList’
+jsapi.c:695: error: ‘JSRuntime’ has no member named ‘watchPointList’
+jsapi.c:733: error: ‘JSRuntime’ has no member named ‘propertyCache’
+jsapi.c:733: error: cast specifies function type
+jsapi.c: In function ‘JS_Finish’:
+jsapi.c:760: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:780: error: ‘JSRuntime’ has no member named ‘gsnCache’
+jsapi.c:780: error: ‘JSRuntime’ has no member named ‘gsnCache’
+jsapi.c:780: error: ‘JSRuntime’ has no member named ‘gsnCache’
+jsapi.c:780: error: ‘JSRuntime’ has no member named ‘gsnCache’
+jsapi.c: In function ‘JS_GetRuntimePrivate’:
+jsapi.c:798: error: ‘JSRuntime’ has no member named ‘data’
+jsapi.c: In function ‘JS_SetRuntimePrivate’:
+jsapi.c:804: error: ‘JSRuntime’ has no member named ‘data’
+jsapi.c: In function ‘JS_GetContextPrivate’:
+jsapi.c:987: error: ‘JSContext’ has no member named ‘data’
+jsapi.c: In function ‘JS_SetContextPrivate’:
+jsapi.c:993: error: ‘JSContext’ has no member named ‘data’
+jsapi.c: In function ‘JS_GetRuntime’:
+jsapi.c:999: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: In function ‘JS_ContextIterator’:
+jsapi.c:1005: error: cast specifies function type
+jsapi.c: In function ‘JS_GetVersion’:
+jsapi.c:1011: error: ‘JSContext’ has no member named ‘version’
+jsapi.c: In function ‘JS_SetVersion’:
+jsapi.c:1022: error: ‘JSContext’ has no member named ‘version’
+jsapi.c:1030: error: ‘JSContext’ has no member named ‘version’
+jsapi.c:1030: error: ‘JSContext’ has no member named ‘version’
+jsapi.c: At top level:
+jsapi.c:1076: error: ‘JS_GetOptions’ declared as function returning a function
+jsapi.c: In function ‘JS_GetOptions’:
+jsapi.c:1077: error: ‘JSContext’ has no member named ‘options’
+jsapi.c: At top level:
+jsapi.c:1090: error: ‘JS_SetOptions’ declared as function returning a function
+jsapi.c: In function ‘JS_SetOptions’:
+jsapi.c:1091: error: function ‘oldopts’ is initialized like a variable
+jsapi.c:1091: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:1092: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:1093: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:1093: error: expected ‘)’ before numeric constant
+jsapi.c:1093: error: ‘JSContext’ has no member named ‘version’
+jsapi.c:1093: error: ‘JSContext’ has no member named ‘version’
+jsapi.c:1094: warning: return makes integer from pointer without a cast
+jsapi.c:1094: warning: function returns address of local variable
+jsapi.c:1091: error: nested function ‘oldopts’ declared but never defined
+jsapi.c: At top level:
+jsapi.c:1099: error: ‘JS_ToggleOptions’ declared as function returning a function
+jsapi.c: In function ‘JS_ToggleOptions’:
+jsapi.c:1100: error: function ‘oldopts’ is initialized like a variable
+jsapi.c:1100: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:1101: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:1102: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:1102: error: expected ‘)’ before numeric constant
+jsapi.c:1102: error: ‘JSContext’ has no member named ‘version’
+jsapi.c:1102: error: ‘JSContext’ has no member named ‘version’
+jsapi.c:1103: warning: return makes integer from pointer without a cast
+jsapi.c:1103: warning: function returns address of local variable
+jsapi.c:1100: error: nested function ‘oldopts’ declared but never defined
+jsapi.c: In function ‘JS_GetGlobalObject’:
+jsapi.c:1116: error: ‘JSContext’ has no member named ‘globalObject’
+jsapi.c: In function ‘JS_SetGlobalObject’:
+jsapi.c:1122: error: ‘JSContext’ has no member named ‘globalObject’
+jsapi.c:1125: error: ‘JSContext’ has no member named ‘xmlSettingFlags’
+jsapi.c: In function ‘js_InitFunctionAndObjectClasses’:
+jsapi.c:1140: error: ‘JSContext’ has no member named ‘globalObject’
+jsapi.c:1144: error: ‘JSContext’ has no member named ‘resolvingTable’
+jsapi.c:1145: error: ‘JSDHashTable’ has no member named ‘entryCount’
+jsapi.c:1146: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1149: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1152: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:1155: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1165: warning: assignment makes pointer from integer without a cast
+jsapi.c:1167: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1168: warning: passing argument 3 of ‘js_StartResolving’ makes pointer from integer without a cast
+jscntxt.h:919: note: expected ‘int (*)()’ but argument is of type ‘int’
+jsapi.c:1171: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1172: warning: passing argument 3 of ‘js_StartResolving’ makes pointer from integer without a cast
+jscntxt.h:919: note: expected ‘int (*)()’ but argument is of type ‘int’
+jsapi.c:1173: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1178: error: ‘JSContext’ has no member named ‘resolvingTable’
+jsapi.c:1195: error: expected ‘)’ before numeric constant
+jsapi.c:1205: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c: At top level:
+jsapi.c:1213: error: ‘JS_InitStandardClasses’ declared as function returning a function
+jsapi.c: In function ‘JS_InitStandardClasses’:
+jsapi.c:1219: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1220: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:1222: error: cast specifies function type
+jsapi.c:1227: error: cast specifies function type
+jsapi.c: In function ‘StdNameToAtom’:
+jsapi.c:1279: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1283: error: too many arguments to function ‘js_Atomize’
+jsapi.c:1284: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: At top level:
+jsapi.c:1408: error: ‘JS_ResolveStandardClass’ declared as function returning a function
+jsapi.c: In function ‘JS_ResolveStandardClass’:
+jsapi.c:1413: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:1413: error: expected ‘;’ before ‘i’
+jsapi.c:1416: error: cast specifies function type
+jsapi.c:1418: error: expected ‘)’ before numeric constant
+jsapi.c:1419: error: cast specifies function type
+jsapi.c:1420: error: expected ‘)’ before numeric constant
+jsapi.c:1421: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1424: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1425: error: expected ‘)’ before numeric constant
+jsapi.c:1426: error: cast specifies function type
+jsapi.c:1427: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:1433: error: ‘i’ undeclared (first use in this function)
+jsapi.c:1434: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1435: error: expected ‘)’ before numeric constant
+jsapi.c:1446: error: cast specifies function type
+jsapi.c:1447: error: expected ‘)’ before numeric constant
+jsapi.c:1453: error: expected ‘)’ before numeric constant
+jsapi.c:1462: error: cast specifies function type
+jsapi.c:1463: error: expected ‘)’ before numeric constant
+jsapi.c:1482: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:1483: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:1484: error: cast specifies function type
+jsapi.c:1488: error: cast specifies function type
+jsapi.c:1489: error: cast specifies function type
+jsapi.c:1491: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:1496: error: ‘AlreadyHasOwnProperty’ declared as function returning a function
+jsapi.c: In function ‘AlreadyHasOwnProperty’:
+jsapi.c:1503: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:1510: error: ‘JS_EnumerateStandardClasses’ declared as function returning a function
+jsapi.c: In function ‘JS_EnumerateStandardClasses’:
+jsapi.c:1513: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:1513: error: expected ‘;’ before ‘i’
+jsapi.c:1516: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1519: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1521: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:1523: error: cast specifies function type
+jsapi.c:1527: error: ‘i’ undeclared (first use in this function)
+jsapi.c:1528: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1531: error: cast specifies function type
+jsapi.c:1535: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:1539: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c: In function ‘AddAtomToArray’:
+jsapi.c:1541: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:1541: error: expected ‘;’ before ‘i’
+jsapi.c:1543: error: ‘i’ undeclared (first use in this function)
+jsapi.c:1543: error: ‘ip’ undeclared (first use in this function)
+jsapi.c:1544: error: ‘length’ undeclared (first use in this function)
+jsapi.c:1544: error: ‘JSIdArray’ has no member named ‘length’
+jsapi.c:1546: error: too many arguments to function ‘js_SetIdArrayLength’
+jsapi.c:1551: error: ‘JSIdArray’ has no member named ‘vector’
+jsapi.c: At top level:
+jsapi.c:1558: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c: In function ‘EnumerateIfResolved’:
+jsapi.c:1560: error: lvalue required as left operand of assignment
+jsapi.c:1562: error: ‘ip’ undeclared (first use in this function)
+jsapi.c:1562: error: too many arguments to function ‘AddAtomToArray’
+jsapi.c: In function ‘JS_EnumerateResolvedStandardClasses’:
+jsapi.c:1571: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:1571: error: expected ‘;’ before ‘i’
+jsapi.c:1577: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1579: error: ‘i’ undeclared (first use in this function)
+jsapi.c:1579: error: ‘JSIdArray’ has no member named ‘length’
+jsapi.c:1581: error: too many arguments to function ‘js_NewIdArray’
+jsapi.c:1588: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1589: error: too many arguments to function ‘EnumerateIfResolved’
+jsapi.c:1594: error: ‘j’ undeclared (first use in this function)
+jsapi.c:1595: error: ‘JSRuntime’ has no member named ‘atomState’
+jsapi.c:1596: error: too many arguments to function ‘EnumerateIfResolved’
+jsapi.c:1603: error: ‘k’ undeclared (first use in this function)
+jsapi.c:1606: error: too many arguments to function ‘AddAtomToArray’
+jsapi.c:1615: error: too many arguments to function ‘AddAtomToArray’
+jsapi.c:1624: error: too many arguments to function ‘js_SetIdArrayLength’
+jsapi.c: At top level:
+jsapi.c:1640: error: ‘JS_GetClassObject’ declared as function returning a function
+jsapi.c: In function ‘JS_GetScopeChain’:
+jsapi.c:1650: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:1652: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c: In function ‘JS_NewDouble’:
+jsapi.c:1710: error: too many arguments to function ‘js_NewDouble’
+jsapi.c: At top level:
+jsapi.c:1715: error: ‘JS_NewDoubleValue’ declared as function returning a function
+jsapi.c:1722: error: ‘JS_NewNumberValue’ declared as function returning a function
+jsapi.c:1730: error: ‘JS_AddRoot’ declared as function returning a function
+jsapi.c:1737: error: ‘JS_AddNamedRootRT’ declared as function returning a function
+jsapi.c:1743: error: ‘JS_RemoveRoot’ declared as function returning a function
+jsapi.c: In function ‘JS_RemoveRoot’:
+jsapi.c:1745: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: At top level:
+jsapi.c:1750: error: ‘JS_RemoveRootRT’ declared as function returning a function
+jsapi.c:1756: error: ‘JS_AddNamedRoot’ declared as function returning a function
+jsapi.c: In function ‘JS_ClearNewbornRoots’:
+jsapi.c:1764: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c: At top level:
+jsapi.c:1769: error: ‘JS_EnterLocalRootScope’ declared as function returning a function
+jsapi.c:1808: error: expected declaration specifiers or ‘...’ before ‘JSGCRootMapFun’
+jsapi.c:1809: error: ‘JS_MapGCRoots’ declared as function returning a function
+jsapi.c: In function ‘JS_MapGCRoots’:
+jsapi.c:1810: error: ‘map’ undeclared (first use in this function)
+jsapi.c:1810: error: too many arguments to function ‘js_MapGCRoots’
+jsapi.c: At top level:
+jsapi.c:1815: error: ‘JS_LockGCThing’ declared as function returning a function
+jsapi.c: In function ‘JS_LockGCThing’:
+jsapi.c:1819: error: lvalue required as left operand of assignment
+jsapi.c:1821: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:1822: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:1827: error: ‘JS_LockGCThingRT’ declared as function returning a function
+jsapi.c:1833: error: ‘JS_UnlockGCThing’ declared as function returning a function
+jsapi.c: In function ‘JS_UnlockGCThing’:
+jsapi.c:1837: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1837: error: lvalue required as left operand of assignment
+jsapi.c:1839: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:1840: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:1845: error: ‘JS_UnlockGCThingRT’ declared as function returning a function
+jsapi.c: In function ‘JS_GC’:
+jsapi.c:1869: error: ‘JSContext’ has no member named ‘stackPool’
+jsapi.c:1869: error: ‘JSContext’ has no member named ‘stackPool’
+jsapi.c:1870: error: ‘JSContext’ has no member named ‘stackPool’
+jsapi.c:1871: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:1871: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:1872: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c: In function ‘JS_MaybeGC’:
+jsapi.c:1892: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:1893: error: ‘JSRuntime’ has no member named ‘gcBytes’
+jsapi.c:1894: error: ‘JSRuntime’ has no member named ‘gcLastBytes’
+jsapi.c:1943: warning: comparison between pointer and integer
+jsapi.c:1943: error: invalid operands to binary / (have ‘int (*)()’ and ‘int’)
+jsapi.c:1944: error: ‘JSRuntime’ has no member named ‘gcMallocBytes’
+jsapi.c:1944: error: ‘JSRuntime’ has no member named ‘gcMaxMallocBytes’
+jsapi.c: In function ‘JS_SetGCCallback’:
+jsapi.c:1959: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: In function ‘JS_SetGCCallbackRT’:
+jsapi.c:1967: error: ‘JSRuntime’ has no member named ‘gcCallback’
+jsapi.c:1968: error: ‘JSRuntime’ has no member named ‘gcCallback’
+jsapi.c: At top level:
+jsapi.c:1974: error: ‘JS_IsAboutToBeFinalized’ declared as function returning a function
+jsapi.c: In function ‘JS_SetGCParameter’:
+jsapi.c:1984: error: ‘JSRuntime’ has no member named ‘gcMaxBytes’
+jsapi.c:1987: error: ‘JSRuntime’ has no member named ‘gcMaxMallocBytes’
+jsapi.c: At top level:
+jsapi.c:1994: error: ‘JS_AddExternalStringFinalizer’ declared as function returning a function
+jsapi.c:2000: error: ‘JS_RemoveExternalStringFinalizer’ declared as function returning a function
+jsapi.c:2005: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.c: In function ‘JS_NewExternalString’:
+jsapi.c:2012: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:2012: error: expected ‘)’ before ‘type’
+jsapi.c:2016: error: ‘JSString’ has no member named ‘chars’
+jsapi.c:2016: error: ‘chars’ undeclared (first use in this function)
+jsapi.c: At top level:
+jsapi.c:2022: error: ‘JS_GetExternalStringGCType’ declared as function returning a function
+jsapi.c: In function ‘JS_GetExternalStringGCType’:
+jsapi.c:2023: error: ‘uint8’ undeclared (first use in this function)
+jsapi.c:2023: error: expected ‘;’ before ‘type’
+jsapi.c:2025: error: ‘type’ undeclared (first use in this function)
+jsapi.c: In function ‘JS_SetThreadStackLimit’:
+jsapi.c:2038: error: ‘JSContext’ has no member named ‘stackLimit’
+jsapi.c: At top level:
+jsapi.c:2051: error: ‘JS_ValueToId’ declared as function returning a function
+jsapi.c: In function ‘JS_ValueToId’:
+jsapi.c:2059: error: expected ‘)’ before numeric constant
+jsapi.c:2060: error: expected ‘)’ before numeric constant
+jsapi.c:2061: error: cast specifies function type
+jsapi.c:2066: error: cast specifies function type
+jsapi.c:2069: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2074: error: ‘JS_IdToValue’ declared as function returning a function
+jsapi.c: In function ‘JS_IdToValue’:
+jsapi.c:2077: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2082: error: ‘JS_PropertyStub’ declared as function returning a function
+jsapi.c: In function ‘JS_PropertyStub’:
+jsapi.c:2083: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2088: error: ‘JS_EnumerateStub’ declared as function returning a function
+jsapi.c: In function ‘JS_EnumerateStub’:
+jsapi.c:2089: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2094: error: ‘JS_ResolveStub’ declared as function returning a function
+jsapi.c: In function ‘JS_ResolveStub’:
+jsapi.c:2095: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2100: error: ‘JS_ConvertStub’ declared as function returning a function
+jsapi.c:2111: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_InitClass’:
+jsapi.c:2124: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2142: error: invalid operands to binary >> (have ‘int (*)()’ and ‘int’)
+jsapi.c:2142: error: expected ‘)’ before numeric constant
+jsapi.c:2145: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:2156: error: ‘JSContext’ has no member named ‘tempValueRooters’
+jsapi.c:2156: error: ‘JSContext’ has no member named ‘tempValueRooters’
+jsapi.c:2165: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:2166: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:2168: error: cast specifies function type
+jsapi.c:2170: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2170: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:2184: error: ‘nargs’ undeclared (first use in this function)
+jsapi.c:2184: error: too many arguments to function ‘js_DefineFunction’
+jsapi.c:2185: error: lvalue required as left operand of assignment
+jsapi.c:2194: error: ‘JSFunction’ has no member named ‘clasp’
+jsapi.c:2203: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:2205: warning: passing argument 4 of ‘js_InternalInvoke’ makes pointer from integer without a cast
+jsinterp.h:335: note: expected ‘jsval *’ but argument is of type ‘int’
+jsapi.c:2205: error: too many arguments to function ‘js_InternalInvoke’
+jsapi.c:2207: error: expected ‘)’ before numeric constant
+jsapi.c:2207: error: expected ‘)’ before numeric constant
+jsapi.c:2208: error: expected ‘)’ before numeric constant
+jsapi.c:2213: error: too many arguments to function ‘js_SetClassPrototype’
+jsapi.c:2237: error: ‘JSContext’ has no member named ‘tempValueRooters’
+jsapi.c:2242: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: At top level:
+jsapi.c:2264: error: ‘JS_InstanceOf’ declared as function returning a function
+jsapi.c: In function ‘JS_InstanceOf’:
+jsapi.c:2269: error: cast specifies function type
+jsapi.c:2271: error: too many arguments to function ‘js_ValueToFunction’
+jsapi.c:2273: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:2279: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2284: error: ‘JS_HasInstance’ declared as function returning a function
+jsapi.c:2302: error: ‘JS_SetPrivate’ declared as function returning a function
+jsapi.c: In function ‘JS_SetPrivate’:
+jsapi.c:2305: error: cast specifies function type
+jsapi.c: In function ‘JS_GetPrototype’:
+jsapi.c:2323: error: expected ‘)’ before numeric constant
+jsapi.c: At top level:
+jsapi.c:2331: error: ‘JS_SetPrototype’ declared as function returning a function
+jsapi.c: In function ‘JS_SetPrototype’:
+jsapi.c:2333: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2334: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2336: error: cast specifies function type
+jsapi.c: In function ‘JS_GetParent’:
+jsapi.c:2344: error: expected ‘)’ before numeric constant
+jsapi.c: At top level:
+jsapi.c:2352: error: ‘JS_SetParent’ declared as function returning a function
+jsapi.c: In function ‘JS_SetParent’:
+jsapi.c:2354: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2355: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2357: error: cast specifies function type
+jsapi.c: In function ‘JS_GetConstructor’:
+jsapi.c:2366: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2366: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:2371: error: expected ‘)’ before numeric constant
+jsapi.c:2371: error: expected ‘)’ before numeric constant
+jsapi.c:2372: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:2376: error: expected ‘)’ before numeric constant
+jsapi.c: At top level:
+jsapi.c:2381: error: ‘JS_GetObjectId’ declared as function returning a function
+jsapi.c: In function ‘JS_GetObjectId’:
+jsapi.c:2384: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2398: error: ‘JS_SealObject’ declared as function returning a function
+jsapi.c: In function ‘JS_SealObject’:
+jsapi.c:2404: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2404: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2404: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2405: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:2408: error: cast specifies function type
+jsapi.c:2424: error: ‘JSScope’ has no member named ‘flags’
+jsapi.c:2425: error: cast specifies function type
+jsapi.c:2430: error: cast specifies function type
+jsapi.c:2437: error: ‘JSScope’ has no member named ‘flags’
+jsapi.c:2440: error: cast specifies function type
+jsapi.c:2444: error: cast specifies function type
+jsapi.c:2447: error: ‘JSObjectMap’ has no member named ‘freeslot’
+jsapi.c:2447: error: ‘JSObjectMap’ has no member named ‘nslots’
+jsapi.c:2447: error: ‘JSObjectMap’ has no member named ‘freeslot’
+jsapi.c:2447: error: ‘JSObjectMap’ has no member named ‘nslots’
+jsapi.c:2448: error: invalid operands to binary + (have ‘jsval *’ and ‘int (*)()’)
+jsapi.c:2450: error: expected ‘)’ before numeric constant
+jsapi.c:2452: error: expected ‘)’ before numeric constant
+jsapi.c:2453: error: cast specifies function type
+jsapi.c:2455: error: cast specifies function type
+jsapi.c: In function ‘JS_ConstructObject’:
+jsapi.c:2465: error: too many arguments to function ‘js_ConstructObject’
+jsapi.c: At top level:
+jsapi.c:2470: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_ConstructObjectWithArguments’:
+jsapi.c:2475: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:2475: error: too many arguments to function ‘js_ConstructObject’
+jsapi.c: At top level:
+jsapi.c:2480: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2481: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2482: error: ‘DefineProperty’ declared as function returning a function
+jsapi.c: In function ‘DefineProperty’:
+jsapi.c:2486: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c:2487: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:2491: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2493: error: cast specifies function type
+jsapi.c:2496: error: ‘flags’ undeclared (first use in this function)
+jsapi.c:2496: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2496: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2496: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2498: error: too many arguments to function ‘js_DefineNativeProperty’
+jsapi.c:2500: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: At top level:
+jsapi.c:2508: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:2528: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_DefineObject’:
+jsapi.c:2538: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c:2539: error: too many arguments to function ‘DefineProperty’
+jsapi.c:2540: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c: At top level:
+jsapi.c:2548: error: ‘JS_DefineConstDoubles’ declared as function returning a function
+jsapi.c: In function ‘JS_DefineConstDoubles’:
+jsapi.c:2551: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:2551: error: expected ‘;’ before ‘flags’
+jsapi.c:2554: error: cast specifies function type
+jsapi.c:2555: error: lvalue required as left operand of assignment
+jsapi.c:2558: error: ‘flags’ undeclared (first use in this function)
+jsapi.c:2558: error: ‘JSConstDoubleSpec’ has no member named ‘flags’
+jsapi.c:2561: error: too many arguments to function ‘DefineProperty’
+jsapi.c:2561: error: lvalue required as left operand of assignment
+jsapi.c:2565: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:2570: error: ‘JS_DefineProperties’ declared as function returning a function
+jsapi.c: In function ‘JS_DefineProperties’:
+jsapi.c:2574: error: cast specifies function type
+jsapi.c:2576: error: ‘JSPropertySpec’ has no member named ‘getter’
+jsapi.c:2576: error: ‘JSPropertySpec’ has no member named ‘setter’
+jsapi.c:2576: error: ‘JSPropertySpec’ has no member named ‘flags’
+jsapi.c:2577: error: ‘JSPropertySpec’ has no member named ‘tinyid’
+jsapi.c:2577: error: too many arguments to function ‘DefineProperty’
+jsapi.c:2577: error: lvalue required as left operand of assignment
+jsapi.c:2581: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:2586: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2587: error: ‘JS_DefineProperty’ declared as function returning a function
+jsapi.c: In function ‘JS_DefineProperty’:
+jsapi.c:2589: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c:2589: error: too many arguments to function ‘DefineProperty’
+jsapi.c: At top level:
+jsapi.c:2594: error: expected declaration specifiers or ‘...’ before ‘int8’
+jsapi.c:2596: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2597: error: ‘JS_DefinePropertyWithTinyId’ declared as function returning a function
+jsapi.c: In function ‘JS_DefinePropertyWithTinyId’:
+jsapi.c:2599: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c:2600: error: ‘tinyid’ undeclared (first use in this function)
+jsapi.c:2600: error: too many arguments to function ‘DefineProperty’
+jsapi.c: At top level:
+jsapi.c:2606: error: ‘LookupProperty’ declared as function returning a function
+jsapi.c: In function ‘LookupProperty’:
+jsapi.c:2609: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2611: error: cast specifies function type
+jsapi.c:2612: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: At top level:
+jsapi.c:2617: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:2631: error: ‘JS_AliasProperty’ declared as function returning a function
+jsapi.c: In function ‘JS_AliasProperty’:
+jsapi.c:2640: error: cast specifies function type
+jsapi.c:2643: error: cast specifies function type
+jsapi.c:2645: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2645: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2645: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2646: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2646: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2647: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:2649: error: cast specifies function type
+jsapi.c:2651: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2653: error: cast specifies function type
+jsapi.c:2658: error: ‘JSScopeProperty’ has no member named ‘attrs’
+jsapi.c:2658: error: ‘JSScopeProperty’ has no member named ‘flags’
+jsapi.c:2659: error: ‘JSScopeProperty’ has no member named ‘shortid’
+jsapi.c:2659: error: too many arguments to function ‘js_AddNativeProperty’
+jsapi.c:2660: error: lvalue required as left operand of assignment
+jsapi.c:2662: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2662: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2663: warning: return makes integer from pointer without a cast
+jsapi.c: In function ‘LookupResult’:
+jsapi.c:2676: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2676: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2676: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2679: error: ‘JSObjectMap’ has no member named ‘freeslot’
+jsapi.c:2680: error: array subscript is not an integer
+jsapi.c:2681: error: cast specifies function type
+jsapi.c:2684: error: cast specifies function type
+jsapi.c:2686: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2686: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: At top level:
+jsapi.c:2692: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2694: error: ‘GetPropertyAttributes’ declared as function returning a function
+jsapi.c: In function ‘GetPropertyAttributes’:
+jsapi.c:2700: error: cast specifies function type
+jsapi.c:2701: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2702: error: cast specifies function type
+jsapi.c:2705: error: ‘attrsp’ undeclared (first use in this function)
+jsapi.c:2706: error: cast specifies function type
+jsapi.c:2712: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2712: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2713: error: cast specifies function type
+jsapi.c:2716: error: cast specifies function type
+jsapi.c:2717: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2718: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2718: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2718: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2726: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2726: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2727: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:2732: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2733: error: ‘SetPropertyAttributes’ declared as function returning a function
+jsapi.c: In function ‘SetPropertyAttributes’:
+jsapi.c:2739: error: cast specifies function type
+jsapi.c:2740: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2741: error: cast specifies function type
+jsapi.c:2743: error: cast specifies function type
+jsapi.c:2745: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2745: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2746: error: cast specifies function type
+jsapi.c:2749: error: cast specifies function type
+jsapi.c:2750: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2750: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c:2751: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2751: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2752: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:2757: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2758: error: ‘JS_GetPropertyAttributes’ declared as function returning a function
+jsapi.c: In function ‘JS_GetPropertyAttributes’:
+jsapi.c:2761: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2762: error: ‘attrsp’ undeclared (first use in this function)
+jsapi.c:2762: warning: passing argument 5 of ‘GetPropertyAttributes’ from incompatible pointer type
+jsapi.c:2691: note: expected ‘int (**)(struct JSContext *, struct JSObject *, jsval,  jsval *)’ but argument is of type ‘int (*)()’
+jsapi.c:2762: error: too many arguments to function ‘GetPropertyAttributes’
+jsapi.c: At top level:
+jsapi.c:2768: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2771: error: ‘JS_GetPropertyAttrsGetterAndSetter’ declared as function returning a function
+jsapi.c: In function ‘JS_GetPropertyAttrsGetterAndSetter’:
+jsapi.c:2774: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2775: error: ‘attrsp’ undeclared (first use in this function)
+jsapi.c:2775: warning: passing argument 5 of ‘GetPropertyAttributes’ from incompatible pointer type
+jsapi.c:2691: note: expected ‘int (**)(struct JSContext *, struct JSObject *, jsval,  jsval *)’ but argument is of type ‘int (*)()’
+jsapi.c:2775: error: too many arguments to function ‘GetPropertyAttributes’
+jsapi.c: At top level:
+jsapi.c:2780: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2781: error: ‘JS_SetPropertyAttributes’ declared as function returning a function
+jsapi.c: In function ‘JS_SetPropertyAttributes’:
+jsapi.c:2784: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2785: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c:2785: error: too many arguments to function ‘SetPropertyAttributes’
+jsapi.c: At top level:
+jsapi.c:2790: error: ‘JS_HasProperty’ declared as function returning a function
+jsapi.c: In function ‘JS_HasProperty’:
+jsapi.c:2796: error: lvalue required as left operand of assignment
+jsapi.c:2798: error: lvalue required as left operand of assignment
+jsapi.c:2800: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2800: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2802: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:2807: error: ‘JS_LookupProperty’ declared as function returning a function
+jsapi.c: In function ‘JS_LookupProperty’:
+jsapi.c:2813: error: lvalue required as left operand of assignment
+jsapi.c:2816: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:2821: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:2822: error: ‘JS_LookupPropertyWithFlags’ declared as function returning a function
+jsapi.c: In function ‘JS_LookupPropertyWithFlags’:
+jsapi.c:2829: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2831: error: cast specifies function type
+jsapi.c:2832: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2832: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2832: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2833: error: ‘flags’ undeclared (first use in this function)
+jsapi.c:2834: warning: passing argument 5 of ‘js_LookupPropertyWithFlags’ from incompatible pointer type
+jsobj.h:468: note: expected ‘struct JSProperty **’ but argument is of type ‘struct JSObject **’
+jsapi.c:2834: error: too many arguments to function ‘js_LookupPropertyWithFlags’
+jsapi.c:2835: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2838: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:2843: error: ‘JS_GetProperty’ declared as function returning a function
+jsapi.c: In function ‘JS_GetProperty’:
+jsapi.c:2847: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2849: error: cast specifies function type
+jsapi.c:2850: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: At top level:
+jsapi.c:2856: error: ‘JS_GetMethodById’ declared as function returning a function
+jsapi.c: In function ‘JS_GetMethodById’:
+jsapi.c:2860: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2863: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2866: error: cast specifies function type
+jsapi.c:2870: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:2871: error: cast specifies function type
+jsapi.c:2875: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2881: error: ‘JS_GetMethod’ declared as function returning a function
+jsapi.c: In function ‘JS_GetMethod’:
+jsapi.c:2884: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2886: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:2892: error: ‘JS_SetProperty’ declared as function returning a function
+jsapi.c: In function ‘JS_SetProperty’:
+jsapi.c:2896: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2898: error: cast specifies function type
+jsapi.c:2899: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: At top level:
+jsapi.c:2904: error: ‘JS_DeleteProperty’ declared as function returning a function
+jsapi.c:2914: error: ‘JS_DeleteProperty2’ declared as function returning a function
+jsapi.c: In function ‘JS_DeleteProperty2’:
+jsapi.c:2918: error: too many arguments to function ‘js_Atomize’
+jsapi.c:2920: error: cast specifies function type
+jsapi.c:2921: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: At top level:
+jsapi.c:2926: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:2937: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:2948: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:2961: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:2972: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:2984: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:3003: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:3019: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:3033: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:3047: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:3060: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c: In function ‘JS_NewArrayObject’:
+jsapi.c:3064: error: ‘jsuint’ undeclared (first use in this function)
+jsapi.c:3064: error: expected ‘)’ before ‘length’
+jsapi.c: At top level:
+jsapi.c:3069: error: ‘JS_IsArrayObject’ declared as function returning a function
+jsapi.c:3074: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsapi.c:3075: error: ‘JS_GetArrayLength’ declared as function returning a function
+jsapi.c: In function ‘JS_GetArrayLength’:
+jsapi.c:3077: error: ‘lengthp’ undeclared (first use in this function)
+jsapi.c:3077: error: too many arguments to function ‘js_GetLengthProperty’
+jsapi.c: At top level:
+jsapi.c:3081: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsapi.c:3082: error: ‘JS_SetArrayLength’ declared as function returning a function
+jsapi.c: In function ‘JS_SetArrayLength’:
+jsapi.c:3084: error: ‘length’ undeclared (first use in this function)
+jsapi.c:3084: error: too many arguments to function ‘js_SetLengthProperty’
+jsapi.c: At top level:
+jsapi.c:3088: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+jsapi.c:3089: error: ‘JS_HasArrayLength’ declared as function returning a function
+jsapi.c: In function ‘JS_HasArrayLength’:
+jsapi.c:3091: error: ‘lengthp’ undeclared (first use in this function)
+jsapi.c:3091: error: too many arguments to function ‘js_HasLengthProperty’
+jsapi.c: At top level:
+jsapi.c:3095: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3096: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:3097: error: ‘JS_DefineElement’ declared as function returning a function
+jsapi.c: In function ‘JS_DefineElement’:
+jsapi.c:3099: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3099: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3099: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c: At top level:
+jsapi.c:3104: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3105: error: ‘JS_AliasElement’ declared as function returning a function
+jsapi.c: In function ‘JS_AliasElement’:
+jsapi.c:3113: error: cast specifies function type
+jsapi.c:3116: error: cast specifies function type
+jsapi.c:3118: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3118: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3118: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3120: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3120: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3121: error: ‘alias’ undeclared (first use in this function)
+jsapi.c:3122: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:3124: error: cast specifies function type
+jsapi.c:3127: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3129: error: ‘JSScopeProperty’ has no member named ‘attrs’
+jsapi.c:3129: error: ‘JSScopeProperty’ has no member named ‘flags’
+jsapi.c:3130: error: ‘JSScopeProperty’ has no member named ‘shortid’
+jsapi.c:3130: error: too many arguments to function ‘js_AddNativeProperty’
+jsapi.c:3131: error: lvalue required as left operand of assignment
+jsapi.c:3132: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3132: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3133: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:3137: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3138: error: ‘JS_HasElement’ declared as function returning a function
+jsapi.c: In function ‘JS_HasElement’:
+jsapi.c:3144: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3144: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3146: error: lvalue required as left operand of assignment
+jsapi.c:3148: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3148: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3150: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:3154: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3155: error: ‘JS_LookupElement’ declared as function returning a function
+jsapi.c: In function ‘JS_LookupElement’:
+jsapi.c:3161: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3161: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3164: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:3168: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3169: error: ‘JS_GetElement’ declared as function returning a function
+jsapi.c: In function ‘JS_GetElement’:
+jsapi.c:3171: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3171: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c: At top level:
+jsapi.c:3175: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3176: error: ‘JS_SetElement’ declared as function returning a function
+jsapi.c: In function ‘JS_SetElement’:
+jsapi.c:3178: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3178: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c: At top level:
+jsapi.c:3182: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3183: error: ‘JS_DeleteElement’ declared as function returning a function
+jsapi.c: In function ‘JS_DeleteElement’:
+jsapi.c:3187: warning: passing argument 3 of ‘JS_DeleteElement2’ from incompatible pointer type
+jsapi.h:1450: note: expected ‘jsval *’ but argument is of type ‘char * (*)(const char *, int)’
+jsapi.c:3187: error: too many arguments to function ‘JS_DeleteElement2’
+jsapi.c: At top level:
+jsapi.c:3191: error: expected declaration specifiers or ‘...’ before ‘jsint’
+jsapi.c:3192: error: ‘JS_DeleteElement2’ declared as function returning a function
+jsapi.c: In function ‘JS_DeleteElement2’:
+jsapi.c:3194: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3194: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c: In function ‘JS_ClearScope’:
+jsapi.c:3202: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3203: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3206: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:3210: error: incompatible type for argument 3 of ‘JS_SetReservedSlot’
+jsapi.h:1485: note: expected ‘int (*)()’ but argument is of type ‘JSProtoKey’
+jsapi.c: In function ‘JS_Enumerate’:
+jsapi.c:3217: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3217: error: expected ‘;’ before ‘i’
+jsapi.c:3229: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3237: error: ‘n’ undeclared (first use in this function)
+jsapi.c:3242: error: too many arguments to function ‘js_NewIdArray’
+jsapi.c:3246: error: ‘i’ undeclared (first use in this function)
+jsapi.c:3247: error: ‘JSIdArray’ has no member named ‘vector’
+jsapi.c:3249: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3256: error: ‘JSIdArray’ has no member named ‘length’
+jsapi.c:3257: error: ‘JSIdArray’ has no member named ‘length’
+jsapi.c:3257: error: too many arguments to function ‘js_SetIdArrayLength’
+jsapi.c:3260: error: ‘JSIdArray’ has no member named ‘vector’
+jsapi.c:3264: error: too many arguments to function ‘js_SetIdArrayLength’
+jsapi.c:3268: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c: In function ‘prop_iter_finalize’:
+jsapi.c:3291: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3291: error: expected ‘;’ before ‘i’
+jsapi.c:3298: error: ‘i’ undeclared (first use in this function)
+jsapi.c: At top level:
+jsapi.c:3309: error: ‘prop_iter_mark’ declared as function returning a function
+jsapi.c: In function ‘prop_iter_mark’:
+jsapi.c:3311: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3311: error: expected ‘;’ before ‘i’
+jsapi.c:3319: error: ‘i’ undeclared (first use in this function)
+jsapi.c:3328: error: ‘n’ undeclared (first use in this function)
+jsapi.c:3328: error: ‘JSIdArray’ has no member named ‘length’
+jsapi.c:3329: error: ‘JSIdArray’ has no member named ‘vector’
+jsapi.c: At top level:
+jsapi.c:3338: error: expected ‘)’ before numeric constant
+jsapi.c:3342: warning: excess elements in struct initializer
+jsapi.c:3342: warning: (near initialization for ‘prop_iter_class’)
+jsapi.c:3343: warning: excess elements in struct initializer
+jsapi.c:3343: warning: (near initialization for ‘prop_iter_class’)
+jsapi.c: In function ‘JS_NewPropertyIterator’:
+jsapi.c:3351: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3351: error: expected ‘;’ before ‘index’
+jsapi.c:3359: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3359: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3359: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3362: error: ‘JSScope’ has no member named ‘lastProp’
+jsapi.c:3363: error: lvalue required as left operand of assignment
+jsapi.c:3373: error: ‘JSContext’ has no member named ‘tempValueRooters’
+jsapi.c:3373: error: ‘JSContext’ has no member named ‘tempValueRooters’
+jsapi.c:3375: error: ‘JSContext’ has no member named ‘tempValueRooters’
+jsapi.c:3379: error: ‘JSIdArray’ has no member named ‘length’
+jsapi.c:3388: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c: At top level:
+jsapi.c:3394: error: ‘JS_NextProperty’ declared as function returning a function
+jsapi.c: In function ‘JS_NextProperty’:
+jsapi.c:3395: error: ‘jsint’ undeclared (first use in this function)
+jsapi.c:3395: error: expected ‘;’ before ‘i’
+jsapi.c:3402: error: ‘i’ undeclared (first use in this function)
+jsapi.c:3405: error: expected ‘)’ before numeric constant
+jsapi.c:3419: error: ‘JSScopeProperty’ has no member named ‘attrs’
+jsapi.c:3420: error: ‘JSScopeProperty’ has no member named ‘flags’
+jsapi.c:3421: error: ‘JSScope’ has no member named ‘flags’
+jsapi.c:3422: error: cast specifies function type
+jsapi.c:3423: error: ‘JSScopeProperty’ has no member named ‘parent’
+jsapi.c:3429: error: ‘JSScopeProperty’ has no member named ‘parent’
+jsapi.c:3430: error: cast specifies function type
+jsapi.c:3440: error: ‘JSIdArray’ has no member named ‘vector’
+jsapi.c:3444: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:3449: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:3450: error: ‘JS_CheckAccess’ declared as function returning a function
+jsapi.c: In function ‘JS_CheckAccess’:
+jsapi.c:3452: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3452: error: ‘attrsp’ undeclared (first use in this function)
+jsapi.c: In function ‘JS_SetCheckObjectAccessCallback’:
+jsapi.c:3460: error: ‘JSRuntime’ has no member named ‘checkObjectAccess’
+jsapi.c:3461: error: ‘JSRuntime’ has no member named ‘checkObjectAccess’
+jsapi.c: At top level:
+jsapi.c:3468: error: ‘ReservedSlotIndexOK’ declared as function returning a function
+jsapi.c: In function ‘ReservedSlotIndexOK’:
+jsapi.c:3470: error: ‘JSClass’ has no member named ‘reserveSlots’
+jsapi.c:3471: error: ‘JSClass’ has no member named ‘reserveSlots’
+jsapi.c:3473: error: ‘js_GetErrorMessage’ undeclared (first use in this function)
+jsapi.c:3475: error: cast specifies function type
+jsapi.c:3477: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:3482: error: ‘JS_GetReservedSlot’ declared as function returning a function
+jsapi.c: In function ‘JS_GetReservedSlot’:
+jsapi.c:3488: error: invalid operands to binary >> (have ‘int (*)()’ and ‘int’)
+jsapi.c:3488: error: expected ‘)’ before numeric constant
+jsapi.c:3490: error: cast specifies function type
+jsapi.c:3491: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:3492: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3492: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3493: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:3498: error: ‘JS_SetReservedSlot’ declared as function returning a function
+jsapi.c: In function ‘JS_SetReservedSlot’:
+jsapi.c:3504: error: invalid operands to binary >> (have ‘int (*)()’ and ‘int’)
+jsapi.c:3504: error: expected ‘)’ before numeric constant
+jsapi.c:3506: error: cast specifies function type
+jsapi.c:3507: error: invalid operands to binary & (have ‘int (*)()’ and ‘int’)
+jsapi.c:3508: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3508: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:3508: error: cast specifies function type
+jsapi.c: In function ‘JS_SetPrincipalsTranscoder’:
+jsapi.c:3533: error: ‘JSRuntime’ has no member named ‘principalsTranscoder’
+jsapi.c:3534: error: ‘JSRuntime’ has no member named ‘principalsTranscoder’
+jsapi.c: In function ‘JS_SetObjectPrincipalsFinder’:
+jsapi.c:3543: error: ‘JSRuntime’ has no member named ‘findObjectPrincipals’
+jsapi.c:3544: error: ‘JSRuntime’ has no member named ‘findObjectPrincipals’
+jsapi.c: At top level:
+jsapi.c:3549: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:3549: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_NewFunction’:
+jsapi.c:3559: error: too many arguments to function ‘js_Atomize’
+jsapi.c:3563: error: ‘nargs’ undeclared (first use in this function)
+jsapi.c:3563: error: ‘flags’ undeclared (first use in this function)
+jsapi.c:3563: error: too many arguments to function ‘js_NewFunction’
+jsapi.c: In function ‘JS_GetFunctionName’:
+jsapi.c:3586: error: ‘JSFunction’ has no member named ‘atom’
+jsapi.c:3587: error: ‘JSFunction’ has no member named ‘atom’
+jsapi.c:3587: error: expected ‘)’ before numeric constant
+jsapi.c: In function ‘JS_GetFunctionId’:
+jsapi.c:3594: error: ‘JSFunction’ has no member named ‘atom’
+jsapi.c:3594: error: ‘JSFunction’ has no member named ‘atom’
+jsapi.c:3594: error: expected ‘)’ before numeric constant
+jsapi.c: At top level:
+jsapi.c:3598: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_GetFunctionFlags’
+jsapi.c:3614: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_GetFunctionArity’
+jsapi.c:3621: error: ‘JS_ObjectIsFunction’ declared as function returning a function
+jsapi.c:3627: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:3628: error: ‘js_generic_native_method_dispatcher’ declared as function returning a function
+jsapi.c: In function ‘js_generic_native_method_dispatcher’:
+jsapi.c:3633: error: expected ‘)’ before numeric constant
+jsapi.c:3634: error: cast specifies function type
+jsapi.c:3643: error: expected ‘)’ before numeric constant
+jsapi.c:3649: error: cast specifies function type
+jsapi.c:3659: error: ‘JSFunctionSpec’ has no member named ‘nargs’
+jsapi.c:3659: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:3659: error: ‘JSFunctionSpec’ has no member named ‘nargs’
+jsapi.c:3666: error: expected ‘)’ before numeric constant
+jsapi.c:3668: error: cast specifies function type
+jsapi.c:3669: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:3678: error: expected ‘)’ before numeric constant
+jsapi.c:3678: error: too many arguments to function ‘fs->call’
+jsapi.c: At top level:
+jsapi.c:3683: error: ‘JS_DefineFunctions’ declared as function returning a function
+jsapi.c: In function ‘JS_DefineFunctions’:
+jsapi.c:3684: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:3684: error: expected ‘;’ before ‘flags’
+jsapi.c:3694: error: ‘flags’ undeclared (first use in this function)
+jsapi.c:3694: error: ‘JSFunctionSpec’ has no member named ‘flags’
+jsapi.c:3704: error: cast specifies function type
+jsapi.c:3710: error: ‘JSFunctionSpec’ has no member named ‘nargs’
+jsapi.c:3710: error: too many arguments to function ‘JS_DefineFunction’
+jsapi.c:3712: error: cast specifies function type
+jsapi.c:3713: error: ‘JSFunction’ has no member named ‘u’
+jsapi.c:3713: error: ‘uint16’ undeclared (first use in this function)
+jsapi.c:3713: error: expected ‘;’ before ‘fs’
+jsapi.c:3720: error: cast specifies function type
+jsapi.c:3723: error: ‘JSFunctionSpec’ has no member named ‘nargs’
+jsapi.c:3723: error: too many arguments to function ‘JS_DefineFunction’
+jsapi.c:3725: error: cast specifies function type
+jsapi.c:3726: error: ‘JSFunction’ has no member named ‘u’
+jsapi.c:3726: error: expected ‘;’ before ‘fs’
+jsapi.c:3728: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:3733: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:3733: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_DefineFunction’:
+jsapi.c:3738: error: too many arguments to function ‘js_Atomize’
+jsapi.c:3741: error: ‘nargs’ undeclared (first use in this function)
+jsapi.c:3741: error: ‘attrs’ undeclared (first use in this function)
+jsapi.c:3741: error: too many arguments to function ‘js_DefineFunction’
+jsapi.c: At top level:
+jsapi.c:3746: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c: In function ‘CompileTokenStream’:
+jsapi.c:3767: error: cast specifies function type
+jsapi.c:3768: error: ‘jsbytecode’ undeclared (first use in this function)
+jsapi.c:3769: error: ‘jssrcnote’ undeclared (first use in this function)
+jsapi.c:3771: error: ‘JSTokenStream’ has no member named ‘filename’
+jsapi.c:3771: error: ‘JSTokenStream’ has no member named ‘lineno’
+jsapi.c:3772: error: ‘JSTokenStream’ has no member named ‘principals’
+jsapi.c:3772: error: too many arguments to function ‘js_InitCodeGenerator’
+jsapi.c:3776: error: ‘JSTokenStream’ has no member named ‘flags’
+jsapi.c:3781: error: lvalue required as left operand of assignment
+jsapi.c: At top level:
+jsapi.c:3797: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_CompileScript’:
+jsapi.c:3799: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:3799: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:3806: error: ‘lineno’ undeclared (first use in this function)
+jsapi.c:3806: warning: assignment makes pointer from integer without a cast
+jsapi.c: At top level:
+jsapi.c:3815: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_CompileScriptForPrincipals’:
+jsapi.c:3817: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:3817: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:3825: error: ‘lineno’ undeclared (first use in this function)
+jsapi.c:3825: warning: assignment makes pointer from integer without a cast
+jsapi.c: At top level:
+jsapi.c:3832: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:3857: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:3877: error: ‘JS_BufferIsCompilableUnit’ declared as function returning a function
+jsapi.c: In function ‘JS_BufferIsCompilableUnit’:
+jsapi.c:3878: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:3878: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:3888: error: cast specifies function type
+jsapi.c:3894: error: cast specifies function type
+jsapi.c:3896: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3897: warning: assignment makes pointer from integer without a cast
+jsapi.c:3901: error: ‘JSTokenStream’ has no member named ‘flags’
+jsapi.c:3907: error: cast specifies function type
+jsapi.c:3912: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3912: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3912: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3912: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3912: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3917: warning: return makes integer from pointer without a cast
+jsapi.c: In function ‘JS_CompileFile’:
+jsapi.c:3928: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3933: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:3933: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c:3933: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:3933: error: expected ‘)’ before numeric constant
+jsapi.c: In function ‘JS_CompileFileHandleForPrincipals’:
+jsapi.c:3954: error: ‘JSContext’ has no member named ‘tempPool’
+jsapi.c:3958: error: ‘JSTokenStream’ has no member named ‘filename’
+jsapi.c:3961: error: ‘JSTokenStream’ has no member named ‘principals’
+jsapi.c:3962: error: ‘JSTokenStream’ has no member named ‘principals’
+jsapi.c:3965: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:3965: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c:3965: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:3965: error: expected ‘)’ before numeric constant
+jsapi.c: In function ‘JS_NewScriptObject’:
+jsapi.c:3981: error: ‘JSScript’ has no member named ‘object’
+jsapi.c: In function ‘JS_GetScriptObject’:
+jsapi.c:3989: error: ‘JSScript’ has no member named ‘object’
+jsapi.c: At top level:
+jsapi.c:4001: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4003: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_CompileFunction’:
+jsapi.c:4005: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4005: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4012: error: ‘nargs’ undeclared (first use in this function)
+jsapi.c:4013: error: ‘lineno’ undeclared (first use in this function)
+jsapi.c:4013: warning: assignment makes pointer from integer without a cast
+jsapi.c: At top level:
+jsapi.c:4021: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4023: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_CompileFunctionForPrincipals’:
+jsapi.c:4025: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4025: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4033: error: ‘nargs’ undeclared (first use in this function)
+jsapi.c:4034: error: ‘lineno’ undeclared (first use in this function)
+jsapi.c:4034: warning: assignment makes pointer from integer without a cast
+jsapi.c: At top level:
+jsapi.c:4041: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4042: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4055: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4056: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4123: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_DecompileScript’:
+jsapi.c:4130: error: ‘indent’ undeclared (first use in this function)
+jsapi.c:4130: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:4130: error: expected ‘)’ before numeric constant
+jsapi.c:4131: error: expected ‘)’ before numeric constant
+jsapi.c:4131: error: too many arguments to function ‘js_NewPrinter’
+jsapi.c: At top level:
+jsapi.c:4143: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_DecompileFunction’:
+jsapi.c:4150: error: ‘indent’ undeclared (first use in this function)
+jsapi.c:4150: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:4150: error: expected ‘)’ before numeric constant
+jsapi.c:4151: error: expected ‘)’ before numeric constant
+jsapi.c:4151: error: too many arguments to function ‘js_NewPrinter’
+jsapi.c: At top level:
+jsapi.c:4163: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_DecompileFunctionBody’:
+jsapi.c:4170: error: ‘indent’ undeclared (first use in this function)
+jsapi.c:4170: error: ‘uintN’ undeclared (first use in this function)
+jsapi.c:4170: error: expected ‘)’ before numeric constant
+jsapi.c:4171: error: expected ‘)’ before numeric constant
+jsapi.c:4171: error: too many arguments to function ‘js_NewPrinter’
+jsapi.c: At top level:
+jsapi.c:4184: error: ‘JS_ExecuteScript’ declared as function returning a function
+jsapi.c: In function ‘JS_ExecuteScript’:
+jsapi.c:4188: error: too many arguments to function ‘js_Execute’
+jsapi.c:4188: error: lvalue required as left operand of assignment
+jsapi.c:4189: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4189: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c:4189: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:4189: error: expected ‘)’ before numeric constant
+jsapi.c:4190: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4196: error: ‘JS_ExecuteScriptPart’ declared as function returning a function
+jsapi.c: In function ‘JS_ExecuteScriptPart’:
+jsapi.c:4204: error: ‘JSScript’ has no member named ‘length’
+jsapi.c:4204: error: ‘JSScript’ has no member named ‘main’
+jsapi.c:4204: error: ‘JSScript’ has no member named ‘code’
+jsapi.c:4206: error: ‘JSScript’ has no member named ‘length’
+jsapi.c:4206: error: ‘JSScript’ has no member named ‘main’
+jsapi.c:4206: error: ‘JSScript’ has no member named ‘code’
+jsapi.c:4207: error: ‘JSScript’ has no member named ‘code’
+jsapi.c:4207: error: ‘JSScript’ has no member named ‘main’
+jsapi.c:4211: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:4212: error: ‘JSRuntime’ has no member named ‘newScriptHook’
+jsapi.c:4213: error: ‘JSRuntime’ has no member named ‘newScriptHook’
+jsapi.c:4213: error: ‘JSScript’ has no member named ‘filename’
+jsapi.c:4213: error: ‘JSScript’ has no member named ‘lineno’
+jsapi.c:4214: error: ‘JSRuntime’ has no member named ‘newScriptHookData’
+jsapi.c:4218: error: lvalue required as left operand of assignment
+jsapi.c:4219: error: ‘JSRuntime’ has no member named ‘destroyScriptHook’
+jsapi.c:4220: error: ‘JSRuntime’ has no member named ‘destroyScriptHook’
+jsapi.c:4220: error: ‘JSRuntime’ has no member named ‘destroyScriptHookData’
+jsapi.c:4221: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4227: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4228: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4230: error: ‘JS_EvaluateScript’ declared as function returning a function
+jsapi.c: In function ‘JS_EvaluateScript’:
+jsapi.c:4231: error: ‘nbytes’ undeclared (first use in this function)
+jsapi.c:4232: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4232: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4238: error: cast specifies function type
+jsapi.c:4239: error: ‘lineno’ undeclared (first use in this function)
+jsapi.c:4239: error: lvalue required as left operand of assignment
+jsapi.c:4241: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4248: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4249: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4251: error: ‘JS_EvaluateScriptForPrincipals’ declared as function returning a function
+jsapi.c: In function ‘JS_EvaluateScriptForPrincipals’:
+jsapi.c:4252: error: ‘nbytes’ undeclared (first use in this function)
+jsapi.c:4253: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4253: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4259: error: cast specifies function type
+jsapi.c:4261: error: ‘lineno’ undeclared (first use in this function)
+jsapi.c:4261: error: lvalue required as left operand of assignment
+jsapi.c:4263: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4268: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4280: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4303: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4305: error: ‘JS_CallFunction’ declared as function returning a function
+jsapi.c: In function ‘JS_CallFunction’:
+jsapi.c:4309: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:4309: error: too many arguments to function ‘js_InternalInvoke’
+jsapi.c:4309: error: lvalue required as left operand of assignment
+jsapi.c:4311: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4311: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c:4311: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:4311: error: expected ‘)’ before numeric constant
+jsapi.c:4312: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4316: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4318: error: ‘JS_CallFunctionName’ declared as function returning a function
+jsapi.c: In function ‘JS_CallFunctionName’:
+jsapi.c:4324: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:4328: error: ‘JSObjectMap’ has no member named ‘ops’
+jsapi.c:4329: error: too many arguments to function ‘js_Atomize’
+jsapi.c:4331: error: cast specifies function type
+jsapi.c:4334: error: cast specifies function type
+jsapi.c:4338: error: cast specifies function type
+jsapi.c:4339: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:4339: error: too many arguments to function ‘js_InternalInvoke’
+jsapi.c:4339: error: lvalue required as left operand of assignment
+jsapi.c:4340: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4340: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c:4340: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:4340: error: expected ‘)’ before numeric constant
+jsapi.c:4341: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4345: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4347: error: ‘JS_CallFunctionValue’ declared as function returning a function
+jsapi.c: In function ‘JS_CallFunctionValue’:
+jsapi.c:4351: error: ‘argc’ undeclared (first use in this function)
+jsapi.c:4351: error: too many arguments to function ‘js_InternalInvoke’
+jsapi.c:4351: error: lvalue required as left operand of assignment
+jsapi.c:4352: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4352: error: ‘JSContext’ has no member named ‘weakRoots’
+jsapi.c:4352: error: ‘JSContext’ has no member named ‘options’
+jsapi.c:4352: error: expected ‘)’ before numeric constant
+jsapi.c:4353: warning: return makes integer from pointer without a cast
+jsapi.c: In function ‘JS_SetBranchCallback’:
+jsapi.c:4361: error: ‘JSContext’ has no member named ‘branchCallback’
+jsapi.c:4362: error: ‘JSContext’ has no member named ‘branchCallback’
+jsapi.c: At top level:
+jsapi.c:4368: error: ‘JS_IsRunning’ declared as function returning a function
+jsapi.c: In function ‘JS_IsRunning’:
+jsapi.c:4369: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c: At top level:
+jsapi.c:4374: error: ‘JS_IsConstructing’ declared as function returning a function
+jsapi.c: In function ‘JS_IsConstructing’:
+jsapi.c:4375: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4375: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c: At top level:
+jsapi.c:4380: error: ‘JS_IsAssigning’ declared as function returning a function
+jsapi.c: In function ‘JS_IsAssigning’:
+jsapi.c:4382: error: ‘jsbytecode’ undeclared (first use in this function)
+jsapi.c:4382: error: ‘pc’ undeclared (first use in this function)
+jsapi.c:4384: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4384: error: ‘JSStackFrame’ has no member named ‘down’
+jsapi.c:4386: error: ‘JSStackFrame’ has no member named ‘pc’
+jsapi.c:4387: error: cast specifies function type
+jsapi.c: In function ‘JS_SetCallReturnValue2’:
+jsapi.c:4395: error: ‘JSContext’ has no member named ‘rval2’
+jsapi.c:4396: error: ‘JSContext’ has no member named ‘rval2set’
+jsapi.c:4396: error: cast specifies function type
+jsapi.c: In function ‘JS_SaveFrameChain’:
+jsapi.c:4405: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4410: error: ‘JSStackFrame’ has no member named ‘dormantNext’
+jsapi.c:4410: error: ‘JSContext’ has no member named ‘dormantFrameChain’
+jsapi.c:4411: error: ‘JSContext’ has no member named ‘dormantFrameChain’
+jsapi.c:4412: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c: In function ‘JS_RestoreFrameChain’:
+jsapi.c:4424: error: ‘JSContext’ has no member named ‘fp’
+jsapi.c:4425: error: ‘JSContext’ has no member named ‘dormantFrameChain’
+jsapi.c:4425: error: ‘JSStackFrame’ has no member named ‘dormantNext’
+jsapi.c:4426: error: ‘JSStackFrame’ has no member named ‘dormantNext’
+jsapi.c: In function ‘JS_NewString’:
+jsapi.c:4435: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4435: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4446: error: too many arguments to function ‘js_NewString’
+jsapi.c:4453: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c: In function ‘JS_NewStringCopyN’:
+jsapi.c:4461: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4461: error: ‘js’ undeclared (first use in this function)
+jsapi.c:4468: error: too many arguments to function ‘js_NewString’
+jsapi.c: In function ‘JS_NewStringCopyZ’:
+jsapi.c:4478: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4478: error: ‘js’ undeclared (first use in this function)
+jsapi.c:4483: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:4488: error: too many arguments to function ‘js_NewString’
+jsapi.c: In function ‘JS_InternString’:
+jsapi.c:4500: error: too many arguments to function ‘js_Atomize’
+jsapi.c:4503: error: expected ‘)’ before numeric constant
+jsapi.c: At top level:
+jsapi.c:4507: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.c: In function ‘JS_NewUCString’:
+jsapi.c:4510: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4510: error: too many arguments to function ‘js_NewString’
+jsapi.c: At top level:
+jsapi.c:4514: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4521: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4530: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4542: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4558: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsapi.c:4587: error: ‘JS_CompareStrings’ declared as function returning a function
+jsapi.c:4592: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.c: In function ‘JS_NewGrowableString’:
+jsapi.c:4595: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4595: error: too many arguments to function ‘js_NewString’
+jsapi.c: In function ‘JS_NewDependentString’:
+jsapi.c:4603: error: too many arguments to function ‘js_NewDependentString’
+jsapi.c: At top level:
+jsapi.c:4613: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+jsapi.c:4622: error: ‘JS_MakeStringImmutable’ declared as function returning a function
+jsapi.c: In function ‘JS_MakeStringImmutable’:
+jsapi.c:4625: error: cast specifies function type
+jsapi.c:4627: error: invalid type argument of ‘unary *’ (have ‘int’)
+jsapi.c:4628: error: cast specifies function type
+jsapi.c: At top level:
+jsapi.c:4632: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+jsapi.c:4639: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.c:4641: error: ‘JS_DecodeBytes’ declared as function returning a function
+jsapi.c: In function ‘JS_DecodeBytes’:
+jsapi.c:4642: error: ‘dst’ undeclared (first use in this function)
+jsapi.c:4642: error: too many arguments to function ‘js_InflateStringToBuffer’
+jsapi.c: At top level:
+jsapi.c:4647: error: ‘JS_CStringsAreUTF8’ declared as function returning a function
+jsapi.c: In function ‘JS_CStringsAreUTF8’:
+jsapi.c:4651: error: cast specifies function type
+jsapi.c: In function ‘JS_ReportError’:
+jsapi.c:4663: warning: passing argument 3 of ‘js_ReportErrorVA’ discards qualifiers from pointer target type
+jscntxt.h:969: note: expected ‘va_list’ but argument is of type ‘const char *’
+jsapi.c:4663: error: too many arguments to function ‘js_ReportErrorVA’
+jsapi.c: At top level:
+jsapi.c:4668: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.c:4669: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.c:4680: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.c:4681: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.c:4693: error: ‘JS_ReportWarning’ declared as function returning a function
+jsapi.c: In function ‘JS_ReportWarning’:
+jsapi.c:4698: warning: passing argument 2 of ‘js_ReportErrorVA’ makes pointer from integer without a cast
+jscntxt.h:969: note: expected ‘const char *’ but argument is of type ‘int’
+jsapi.c:4698: warning: passing argument 3 of ‘js_ReportErrorVA’ discards qualifiers from pointer target type
+jscntxt.h:969: note: expected ‘va_list’ but argument is of type ‘const char *’
+jsapi.c:4698: error: too many arguments to function ‘js_ReportErrorVA’
+jsapi.c:4698: error: lvalue required as left operand of assignment
+jsapi.c:4700: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4704: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4705: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.c:4706: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.c:4719: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c:4720: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+jsapi.c:4721: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+jsapi.c: In function ‘JS_SetErrorReporter’:
+jsapi.c:4744: error: ‘JSContext’ has no member named ‘errorReporter’
+jsapi.c:4745: error: ‘JSContext’ has no member named ‘errorReporter’
+jsapi.c: At top level:
+jsapi.c:4755: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_NewRegExpObject’:
+jsapi.c:4757: error: ‘jschar’ undeclared (first use in this function)
+jsapi.c:4757: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4764: error: ‘flags’ undeclared (first use in this function)
+jsapi.c:4764: error: too many arguments to function ‘js_NewRegExpObject’
+jsapi.c: At top level:
+jsapi.c:4770: error: expected declaration specifiers or ‘...’ before ‘jschar’
+jsapi.c:4770: error: expected declaration specifiers or ‘...’ before ‘uintN’
+jsapi.c: In function ‘JS_NewUCRegExpObject’:
+jsapi.c:4773: error: ‘chars’ undeclared (first use in this function)
+jsapi.c:4773: error: ‘flags’ undeclared (first use in this function)
+jsapi.c:4773: error: too many arguments to function ‘js_NewRegExpObject’
+jsapi.c: In function ‘JS_SetRegExpInput’:
+jsapi.c:4783: error: ‘JSContext’ has no member named ‘regExpStatics’
+jsapi.c:4786: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:4786: error: cast specifies function type
+jsapi.c: In function ‘JS_ClearRegExpStatics’:
+jsapi.c:4795: error: ‘JSContext’ has no member named ‘regExpStatics’
+jsapi.c:4797: error: cast specifies function type
+jsapi.c:4798: error: ‘JSRegExpStatics’ has no member named ‘parenCount’
+jsapi.c:4799: error: ‘JSRegExpStatics’ has no member named ‘lastMatch’
+jsapi.c:4799: error: ‘JSRegExpStatics’ has no member named ‘lastParen’
+jsapi.c:4800: error: ‘JSRegExpStatics’ has no member named ‘leftContext’
+jsapi.c:4800: error: ‘JSRegExpStatics’ has no member named ‘rightContext’
+jsapi.c:4801: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:4801: error: cast specifies function type
+jsapi.c: In function ‘JS_ClearRegExpRoots’:
+jsapi.c:4810: error: ‘JSContext’ has no member named ‘regExpStatics’
+jsapi.c:4812: error: ‘JSContext’ has no member named ‘runtime’
+jsapi.c:4812: error: cast specifies function type
+jsapi.c: In function ‘JS_SetLocaleCallbacks’:
+jsapi.c:4822: error: ‘JSContext’ has no member named ‘localeCallbacks’
+jsapi.c: In function ‘JS_GetLocaleCallbacks’:
+jsapi.c:4828: error: ‘JSContext’ has no member named ‘localeCallbacks’
+jsapi.c: At top level:
+jsapi.c:4835: error: ‘JS_IsExceptionPending’ declared as function returning a function
+jsapi.c: In function ‘JS_IsExceptionPending’:
+jsapi.c:4836: error: ‘JSContext’ has no member named ‘throwing’
+jsapi.c: At top level:
+jsapi.c:4841: error: ‘JS_GetPendingException’ declared as function returning a function
+jsapi.c: In function ‘JS_GetPendingException’:
+jsapi.c:4843: error: ‘JSContext’ has no member named ‘throwing’
+jsapi.c:4844: error: cast specifies function type
+jsapi.c:4845: error: ‘JSContext’ has no member named ‘exception’
+jsapi.c:4846: error: cast specifies function type
+jsapi.c: In function ‘JS_SetPendingException’:
+jsapi.c:4853: error: ‘JSContext’ has no member named ‘throwing’
+jsapi.c:4853: error: cast specifies function type
+jsapi.c:4854: error: ‘JSContext’ has no member named ‘exception’
+jsapi.c: In function ‘JS_ClearPendingException’:
+jsapi.c:4860: error: ‘JSContext’ has no member named ‘throwing’
+jsapi.c:4860: error: cast specifies function type
+jsapi.c:4861: error: ‘JSContext’ has no member named ‘exception’
+jsapi.c: At top level:
+jsapi.c:4866: error: ‘JS_ReportPendingException’ declared as function returning a function
+jsapi.c: In function ‘JS_ReportPendingException’:
+jsapi.c:4877: error: ‘JSContext’ has no member named ‘creatingException’
+jsapi.c:4878: error: ‘JSContext’ has no member named ‘creatingException’
+jsapi.c:4878: error: cast specifies function type
+jsapi.c:4879: error: lvalue required as left operand of assignment
+jsapi.c:4880: error: ‘JSContext’ has no member named ‘creatingException’
+jsapi.c:4881: warning: return makes integer from pointer without a cast
+jsapi.c: At top level:
+jsapi.c:4885: error: field ‘throwing’ declared as a function
+jsapi.c: In function ‘JS_SaveExceptionState’:
+jsapi.c:4897: warning: assignment makes pointer from integer without a cast
+jsapi.c:4898: error: expected ‘)’ before numeric constant
+jsapi.c: In function ‘JS_DropExceptionState’:
+jsapi.c:4922: error: expected ‘)’ before numeric constant
+jsapi.c: At top level:
+jsapi.c:4938: error: ‘JS_ThrowReportedError’ declared as function returning a function
+make[2]: *** [Linux_All_OPT.OBJ/jsapi.o] Error 1
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/testing/libjs/work/main.d/js/src'
+make[1]: *** [all] Error 2
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/testing/libjs/work/main.d/js/src'
+make: *** [build-custom] Error 2

@@ -1,0 +1,109 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/alsaplayer-0.99.80/alsaplayer.spec work/main.d/alsaplayer-0.99.80/alsaplayer.spec
+--- tmp/alsaplayer-0.99.80/alsaplayer.spec	2007-11-03 17:29:15.000000000 -0300
++++ work/main.d/alsaplayer-0.99.80/alsaplayer.spec	1969-12-31 21:00:00.000000000 -0300
+@@ -1,73 +0,0 @@
+-Summary: A advanced, graphical PCM audio player
+-Name: alsaplayer
+-Version: 0.99.80
+-Release: 1
+-URL: http://www.alsaplayer.org/
+-Source0: http://www.alsaplayer.org/%{name}-%{version}.tar.bz2
+-License: GPL
+-Group: Applications/Multimedia
+-BuildRoot: %{_tmppath}/%{name}-root
+-# FIXME: check out what packages are available in different
+-# distributions.
+-
+-# These are correct for both redhat and mandrake
+-BuildRequires: gtk+-devel, libvorbis-devel, mikmod
+-
+-# These are redhat only
+-#BuildRequires: libmad, esound-devel, audiofile-devel
+-
+-%description
+-AlsaPlayer is a new PCM player developed on the Linux Operating
+-System. AlsaPlayer was written in the first place to excercise the new
+-ALSA (Advanced Linux Sound Architecture) driver and library system.
+-
+-It has now developed into a versitile audio player with rich plugin system.
+-The  Input Plugins plugins include: OGG, MPEG, MAD, CDDA, MikMod, FLAC and
+-Audiofile. The Output Plugins include: ALSA, OSS and OSS/Lite, Esound,
+-Sparc (tested on UltraSparc), SGI, and JACK. There are also a few scope
+-plugins included.
+-
+-%package devel
+-Group: Development/Libraries
+-Requires: %{name} = %{version}-%{release}
+-Summary: Files needed for building applications with libalsaplayer
+-
+-%description devel
+-The functionality of the alsaplayer is also exposed via a c programming
+-library. This package is neede to compile programs that uses the library.
+-
+-%prep
+-%setup -q
+-
+-%build
+-automake
+-./configure --prefix=%{_prefix} --mandir=%{_datadir}/man --enable-audiofile
+-make
+-
+-%install
+-rm -rf $RPM_BUILD_ROOT
+-make DESTDIR=%{buildroot} install
+-
+-%clean
+-rm -rf $RPM_BUILD_ROOT
+-
+-%files
+-%defattr(-,root,root)
+-%doc README INSTALL AUTHORS COPYING TODO docs/wishlist.txt
+-%{_libdir}/pkgconfig/*
+-%{_libdir}/*.so.*
+-%{_libdir}/alsaplayer/*
+-%{_bindir}/*
+-%{_datadir}/man/man*/*
+-
+-%files devel
+-%{_includedir}/alsaplayer/*
+-%doc docs/reference/html
+-%{_libdir}/*.so
+-%{_libdir}/*.la
+-
+-%changelog
+-* Mon Jul 29 2002 Daniel Resare <noa@resare.com>
+-- Initial build.
+-* Sun Jul 06 2007 Dominique Michel <dominique@tuxfamily.rog>
+-- Added FLAC input plugin in description.
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/alsaplayer-0.99.80/app/ControlSocket.cpp work/main.d/alsaplayer-0.99.80/app/ControlSocket.cpp
+--- tmp/alsaplayer-0.99.80/app/ControlSocket.cpp	2007-07-08 11:27:31.000000000 -0300
++++ work/main.d/alsaplayer-0.99.80/app/ControlSocket.cpp	2009-08-05 21:11:12.000000000 -0300
+@@ -20,6 +20,7 @@
+ #include "AlsaPlayer.h"
+ #include <cstdio>
+ #include <cstdlib>
++#include <climits>
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/alsaplayer-0.99.80/input/flac/FlacPlugin.cpp work/main.d/alsaplayer-0.99.80/input/flac/FlacPlugin.cpp
+--- tmp/alsaplayer-0.99.80/input/flac/FlacPlugin.cpp	2007-10-29 18:00:16.000000000 -0300
++++ work/main.d/alsaplayer-0.99.80/input/flac/FlacPlugin.cpp	2009-08-05 21:26:49.000000000 -0300
+@@ -239,7 +239,7 @@
+     else
+     {
+ 	// use stream name
+-	char * fname = strrchr (f->name ().c_str (), '/');
++	char * fname = (char *)strrchr (f->name ().c_str (), '/');
+ 	if (fname)
+ 	{
+ 	    fname++;
+@@ -270,7 +270,7 @@
+ 	if (strncmp(name, "http://", 7) == 0) {
+ 		return 0.0;
+ 	}
+-	char *ext = strrchr(name, '.');
++	char *ext = (char *)strrchr(name, '.');
+ 	if (!ext)
+ 		return 0.0;
+ 	ext++;

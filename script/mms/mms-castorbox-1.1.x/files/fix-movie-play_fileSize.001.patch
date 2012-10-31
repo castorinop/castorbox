@@ -1,0 +1,11 @@
+--- old-mms-castorbox-1.1.x-1792/plugins/feature/movie/movie.cpp~	2010-12-17 22:17:29.672955189 -0300
++++ new-mms-castorbox-1.1.x-1792/plugins/feature/movie/movie.cpp	2010-12-17 22:37:18.508004877 -0300
+@@ -534,7 +534,7 @@
+       cur_files += " -playlist ";
+ 
+     foreach (const string& filename, file.filenames)
+-      if (filesystem::getFileSize(filename) > 0) 
++      if (filesystem::getFileSize(filename) != 0) 
+         cur_files += " " + string_format::escape_string(filename);
+  
+     if (cur_files.size() > 0)

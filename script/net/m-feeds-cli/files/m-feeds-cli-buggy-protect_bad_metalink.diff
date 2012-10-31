@@ -1,0 +1,40 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/m-feeds-cli-buggy/src/m-feeds-cli.py work/main.d/m-feeds-cli-buggy/src/m-feeds-cli.py
+--- tmp/m-feeds-cli-buggy/src/m-feeds-cli.py	2012-08-13 09:39:52.000000000 -0300
++++ new-m-feeds-cli-buggy/src/m-feeds-cli.py	2012-09-17 13:04:44.921307280 -0300
+@@ -107,12 +107,15 @@
+                     os.makedirs(path,0755)
+             
+                 if not self.checkLink(link, self.files):
++		  try:
+                     DOWNLOAD = celerity.get_from_loc(link)
+                     DOWNLOAD.metalink.update_from_loc(link)
+                     DOWNLOAD.change_save_location(path)
+                     DOWNLOAD.run()
+                     self.files.append( { 'added': time.time(), 'title': title, 'link': link, 'dest': path, 'down': DOWNLOAD, 'stat': 'downloading' } )
+-                    
++                 except:
++	            print "cant download %s" % link
++		   
+                     
+   def download_list(self):
+             #print "download list"
+@@ -136,11 +139,14 @@
+                      
+                         if not self.checkLink(file, self.files):
+                             print "following %s" % file
+-                            DOWNLOAD = celerity.get_from_loc(file)
+-                            DOWNLOAD.metalink.update_from_loc(file)
+-                            DOWNLOAD.change_save_location(i['dest'])
+-                            DOWNLOAD.run()
+-                            self.files.append( { 'added': time.time(), 'title': i['title'], 'link': file, 'dest': i['dest'], 'down': DOWNLOAD , 'stat': 'downloading'} )
++			    try:
++                              DOWNLOAD = celerity.get_from_loc(file)
++                              DOWNLOAD.metalink.update_from_loc(file)
++                              DOWNLOAD.change_save_location(i['dest'])
++                              DOWNLOAD.run()
++                              self.files.append( { 'added': time.time(), 'title': i['title'], 'link': file, 'dest': i['dest'], 'down': DOWNLOAD , 'stat': 'downloading'} )
++			    except:
++			      print "cant follow %s" % file
+                             #i['down'] = DOWNLOAD
+                         
+                         self.done.append(i)

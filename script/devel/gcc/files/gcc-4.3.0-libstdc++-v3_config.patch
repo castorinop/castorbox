@@ -1,0 +1,124 @@
+diff -Naur gcc-4.3.0-old/libstdc++-v3/config.h.in gcc-4.3.0-new/libstdc++-v3/config.h.in
+--- gcc-4.3.0-old/libstdc++-v3/config.h.in	2008-03-05 23:40:34.000000000 -0800
++++ gcc-4.3.0-new/libstdc++-v3/config.h.in	2008-03-05 23:43:03.000000000 -0800
+@@ -76,7 +76,7 @@
+ #undef HAVE_FABSL
+ 
+ /* Define to 1 if you have the <fenv.h> header file. */
+-#undef HAVE_FENV_H
++#define HAVE_FENV_H 1
+ 
+ /* Define to 1 if you have the `finite' function. */
+ #undef HAVE_FINITE
+@@ -118,13 +118,13 @@
+ #undef HAVE_GCONF_H
+ 
+ /* Define to 1 if you have the <gconv.h> header file. */
+-#undef HAVE_GCONV_H
++#define HAVE_GCONV_H 1
+ 
+ /* Define if _Unwind_GetIPInfo is available. */
+ #undef HAVE_GETIPINFO
+ 
+ /* Define to 1 if you have the `getpagesize' function. */
+-#undef HAVE_GETPAGESIZE
++#define HAVE_GETPAGESIZE 1
+ 
+ /* Define if gthr-default.h exists (meaning that threading support is
+    enabled). */
+@@ -140,7 +140,7 @@
+ #undef HAVE_HYPOTL
+ 
+ /* Define if you have the iconv() function. */
+-#undef HAVE_ICONV
++#define HAVE_ICONV 1
+ 
+ /* Define to 1 if you have the <ieeefp.h> header file. */
+ #undef HAVE_IEEEFP_H
+@@ -173,7 +173,7 @@
+ #undef HAVE_ISWBLANK
+ 
+ /* Define if LC_MESSAGES is available in <locale.h>. */
+-#undef HAVE_LC_MESSAGES
++#define HAVE_LC_MESSAGES 1
+ 
+ /* Define to 1 if you have the `ldexpf' function. */
+ #undef HAVE_LDEXPF
+@@ -233,7 +233,7 @@
+ #undef HAVE_MEMORY_H
+ 
+ /* Define to 1 if you have a working `mmap' system call. */
+-#undef HAVE_MMAP
++#define HAVE_MMAP 1
+ 
+ /* Define to 1 if you have the `modf' function. */
+ #undef HAVE_MODF
+@@ -260,10 +260,10 @@
+ #undef HAVE_QFPCLASS
+ 
+ /* Define to 1 if you have the `setenv' function. */
+-#undef HAVE_SETENV
++#define HAVE_SETENV 1
+ 
+ /* Define if sigsetjmp is available. */
+-#undef HAVE_SIGSETJMP
++#define HAVE_SIGSETJMP 1
+ 
+ /* Define to 1 if you have the `sincos' function. */
+ #undef HAVE_SINCOS
+@@ -302,7 +302,7 @@
+ #undef HAVE_STDLIB_H
+ 
+ /* Define if strerror_l is available in <string.h>. */
+-#undef HAVE_STRERROR_L
++#define HAVE_STRERROR_L 1
+ 
+ /* Define if strerror_r is available in <string.h>. */
+ #undef HAVE_STRERROR_R
+@@ -329,7 +329,7 @@
+ #undef HAVE_SYS_IOCTL_H
+ 
+ /* Define to 1 if you have the <sys/ipc.h> header file. */
+-#undef HAVE_SYS_IPC_H
++#define HAVE_SYS_IPC_H 1
+ 
+ /* Define to 1 if you have the <sys/isa_defs.h> header file. */
+ #undef HAVE_SYS_ISA_DEFS_H
+@@ -341,16 +341,16 @@
+ #undef HAVE_SYS_PARAM_H
+ 
+ /* Define to 1 if you have the <sys/resource.h> header file. */
+-#undef HAVE_SYS_RESOURCE_H
++#define HAVE_SYS_RESOURCE_H 1
+ 
+ /* Define to 1 if you have the <sys/sem.h> header file. */
+-#undef HAVE_SYS_SEM_H
++#define HAVE_SYS_SEM_H 1
+ 
+ /* Define to 1 if you have the <sys/stat.h> header file. */
+ #undef HAVE_SYS_STAT_H
+ 
+ /* Define to 1 if you have the <sys/time.h> header file. */
+-#undef HAVE_SYS_TIME_H
++#define HAVE_SYS_TIME_H 1
+ 
+ /* Define to 1 if you have the <sys/types.h> header file. */
+ #undef HAVE_SYS_TYPES_H
+@@ -380,7 +380,7 @@
+ #undef HAVE_TGMATH_H
+ 
+ /* Define to 1 if the target supports thread-local storage. */
+-#undef HAVE_TLS
++#define HAVE_TLS 1
+ 
+ /* Define to 1 if you have the <unistd.h> header file. */
+ #undef HAVE_UNISTD_H
+@@ -650,7 +650,7 @@
+ #undef HAVE___SIGNBITL
+ 
+ /* Define as const if the declaration of iconv() needs const. */
+-#undef ICONV_CONST
++#define ICONV_CONST 1
+ 
+ /* Define to the sub-directory in which libtool stores uninstalled libraries.
+    */

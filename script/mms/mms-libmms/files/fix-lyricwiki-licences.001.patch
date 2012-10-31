@@ -1,0 +1,64 @@
+=== modified file 'common.cpp'
+--- old/common.cpp	2009-05-10 12:29:22 +0000
++++ new/common.cpp	2009-08-30 18:37:47 +0000
+@@ -785,6 +791,18 @@
+  return convert_locale(str, fromlocale, "UTF-8");
+ }
+ 
++std::string string_format::StripHTML(std::string strHTML)
++{
++  // convert newline
++  strHTML = regex_tools::regex_replace(strHTML, "\n", "(<br />)", true, true);
++  // remove tags
++  strHTML = regex_tools::regex_replace(strHTML, "", "(<[a-zA-Z/][^>]*>)", true, true);
++  // remove comments
++  strHTML = regex_tools::regex_replace(strHTML, "", "(<!(?:--(?:[^-]*|-[^-]+)*--*)>)", true, true);
++
++  return strHTML;
++}
++
+ std::string string_format::ValidateU8(const std::string& str){
+ 
+   string str2, str3;
+
+=== modified file 'common.hpp'
+--- old/common.hpp	2009-05-10 12:29:22 +0000
++++ new/common.hpp	2009-08-30 18:35:54 +0000
+@@ -108,6 +108,9 @@
+   // convert an HTML string to UTF-8
+   std::string ConvertHTMLToAnsi(const std::string& strHTML, const std::string& fromlocale = "UTF-8");
+ 
++  // strip tags of a string 
++  std::string StripHTML(const std::string strHTML);
++
+   // parses an UTF-8 string and replaces invalid characters with '?'
+   std::string ValidateU8(const std::string& str);
+ 
+=== modified file 'plugins/feature/audio/lyrics_helper_lyricwiki.cpp'
+--- old/plugins/feature/audio/lyrics_helper_lyricwiki.cpp	2008-10-19 11:17:15 +0000
++++ new/plugins/feature/audio/lyrics_helper_lyricwiki.cpp	2009-08-30 18:36:53 +0000
+@@ -12,11 +12,20 @@
+     "&song=" +
+     string_format::sanitizeurl(title);
+ 
+-  std::string str_contents;
++  std::string str_contents, str_get;
+ 
+-  if (!WgetWrapper::download(url, str_contents))
++  if (!WgetWrapper::download(url, str_get))
+     return false;
+-  str_contents = string_format::ConvertHTMLToAnsi(regex_tools::extract_substr(str_contents, "<lyrics>(.+?)</lyrics>", true));
++  str_contents = string_format::ConvertHTMLToAnsi(regex_tools::extract_substr(str_get, "<lyrics>(.+?)</lyrics>", true));
++  if (str_contents.size() > 0 || regex_tools::regex_str_match(str_contents, "Unfortunately, due to licensing restrictions", true))
++  { 
++	//FUCKING LICENSES getting trought HTML 
++        url = string_format::ConvertHTMLToAnsi(regex_tools::extract_substr(str_get, "<url>(.+?)</url>", true));
++        if (url.size() == 0 || !WgetWrapper::download(url, str_get))
++	  return false;
++	str_contents = string_format::StripHTML(regex_tools::extract_substr(str_get, "<div class='lyricbox' >(.+?)</div>", true)); 	  
++  }
++
+   if (str_contents.size() == 0 || str_contents == "Not found")
+     return false;
+   str_lyric = string_format::trim(string_format::ValidateU8(str_contents));
+

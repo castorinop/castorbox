@@ -1,0 +1,95 @@
+diff -Naur fontconfig-2.7.3-old/doc/Makefile.am fontconfig-2.7.3-new/doc/Makefile.am
+--- fontconfig-2.7.3-old/doc/Makefile.am	2009-03-18 14:02:20.000000000 -0700
++++ fontconfig-2.7.3-new/doc/Makefile.am	2009-09-08 17:35:07.000000000 -0700
+@@ -21,7 +21,15 @@
+ # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ # PERFORMANCE OF THIS SOFTWARE.
+ 
++CPP = $(CPP_FOR_BUILD)
+ CC = @CC_FOR_BUILD@
++CXX = $(CXX_FOR_BUILD)
++AR = $(AR_FOR_BUILD)
++AS = $(AS_FOR_BUILD)
++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
++CFLAGS = $(CFLAGS_FOR_BUILD)
++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
++LDFLAGS = $(LDFLAGS_FOR_BUILD)
+ EXEEXT = @EXEEXT_FOR_BUILD@
+ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+ 
+diff -Naur fontconfig-2.7.3-old/fc-arch/Makefile.am fontconfig-2.7.3-new/fc-arch/Makefile.am
+--- fontconfig-2.7.3-old/fc-arch/Makefile.am	2009-03-18 14:02:20.000000000 -0700
++++ fontconfig-2.7.3-new/fc-arch/Makefile.am	2009-09-08 17:35:07.000000000 -0700
+@@ -22,7 +22,15 @@
+ # PERFORMANCE OF THIS SOFTWARE.
+ #
+ 
++CPP = $(CPP_FOR_BUILD)
+ CC = @CC_FOR_BUILD@
++CXX = $(CXX_FOR_BUILD)
++AR = $(AR_FOR_BUILD)
++AS = $(AS_FOR_BUILD)
++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
++CFLAGS = $(CFLAGS_FOR_BUILD)
++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
++LDFLAGS = $(LDFLAGS_FOR_BUILD)
+ EXEEXT = @EXEEXT_FOR_BUILD@
+ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+ 
+diff -Naur fontconfig-2.7.3-old/fc-case/Makefile.am fontconfig-2.7.3-new/fc-case/Makefile.am
+--- fontconfig-2.7.3-old/fc-case/Makefile.am	2009-03-18 14:02:20.000000000 -0700
++++ fontconfig-2.7.3-new/fc-case/Makefile.am	2009-09-08 17:35:07.000000000 -0700
+@@ -22,7 +22,15 @@
+ # PERFORMANCE OF THIS SOFTWARE.
+ #
+ 
++CPP = $(CPP_FOR_BUILD)
+ CC = @CC_FOR_BUILD@
++CXX = $(CXX_FOR_BUILD)
++AR = $(AR_FOR_BUILD)
++AS = $(AS_FOR_BUILD)
++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
++CFLAGS = $(CFLAGS_FOR_BUILD)
++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
++LDFLAGS = $(LDFLAGS_FOR_BUILD)
+ EXEEXT = @EXEEXT_FOR_BUILD@
+ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+ 
+diff -Naur fontconfig-2.7.3-old/fc-glyphname/Makefile.am fontconfig-2.7.3-new/fc-glyphname/Makefile.am
+--- fontconfig-2.7.3-old/fc-glyphname/Makefile.am	2009-03-18 14:02:20.000000000 -0700
++++ fontconfig-2.7.3-new/fc-glyphname/Makefile.am	2009-09-08 17:35:07.000000000 -0700
+@@ -22,7 +22,15 @@
+ # PERFORMANCE OF THIS SOFTWARE.
+ #
+ 
++CPP = $(CPP_FOR_BUILD)
+ CC = @CC_FOR_BUILD@
++CXX = $(CXX_FOR_BUILD)
++AR = $(AR_FOR_BUILD)
++AS = $(AS_FOR_BUILD)
++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
++CFLAGS = $(CFLAGS_FOR_BUILD)
++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
++LDFLAGS = $(LDFLAGS_FOR_BUILD)
+ EXEEXT = @EXEEXT_FOR_BUILD@
+ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+ 
+diff -Naur fontconfig-2.7.3-old/fc-lang/Makefile.am fontconfig-2.7.3-new/fc-lang/Makefile.am
+--- fontconfig-2.7.3-old/fc-lang/Makefile.am	2009-06-24 10:52:10.000000000 -0700
++++ fontconfig-2.7.3-new/fc-lang/Makefile.am	2009-09-08 17:35:07.000000000 -0700
+@@ -22,7 +22,15 @@
+ # PERFORMANCE OF THIS SOFTWARE.
+ #
+ 
++CPP = $(CPP_FOR_BUILD)
+ CC = @CC_FOR_BUILD@
++CXX = $(CXX_FOR_BUILD)
++AR = $(AR_FOR_BUILD)
++AS = $(AS_FOR_BUILD)
++CPPFLAGS = $(CXXFLAGS_FOR_BUILD)
++CFLAGS = $(CFLAGS_FOR_BUILD)
++CXXFLAGS = $(CXXFLAGS_FOR_BUILD)
++LDFLAGS = $(LDFLAGS_FOR_BUILD)
+ EXEEXT = @EXEEXT_FOR_BUILD@
+ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+ 

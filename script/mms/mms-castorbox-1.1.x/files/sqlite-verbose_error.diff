@@ -1,0 +1,13 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1782/cpp_sqlitepp.cpp work/main.d/mms-1.1.0-1782/cpp_sqlitepp.cpp
+--- tmp/mms-1.1.0-1782/cpp_sqlitepp.cpp	2009-11-18 23:27:14.000000000 -0300
++++ new-mms-1.1.0-1782/cpp_sqlitepp.cpp	2009-11-21 08:03:58.000000000 -0300
+@@ -315,7 +315,7 @@
+ 	int ris = sqlite3_exec(db_, cmd.c_str(), Callback, this, &sqlerr);
+ 
+ 	if( ris != SQLITE_OK ) {
+-	        std::cerr << "SQLITE ERROR: " << ris << " - " << sqlerr << std::endl;
++	        std::cerr << "SQLITE ERROR: " << ris << " - " << sqlerr << " on: " << cmd << std::endl;
+                 sqlite3_free(sqlerr);
+ 		delete query_ris_;
+ 		query_ris_ = NULL;
+

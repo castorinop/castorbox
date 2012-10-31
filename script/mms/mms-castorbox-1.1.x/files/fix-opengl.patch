@@ -1,0 +1,22 @@
+=== modified file 'plugins/output/opengl/SDL_GLout.cpp'
+--- old/plugins/output/opengl/SDL_GLout.cpp	2008-02-06 19:23:08 +0000
++++ new/plugins/output/opengl/SDL_GLout.cpp	2008-06-06 16:32:35 +0000
+@@ -279,6 +279,7 @@
+ 	    OBJOUTPUT("SDL_GLout::Falling back to standard/compatibility mode\n"));
+   }
+ 
++#ifndef FORCE_GL
+  	//we check if this card supports GL_ARB_texture_rectangle
+ 	//if not we exit
+  if (!CheckGLExt("GL_ARB_texture_rectangle")){
+@@ -296,6 +297,9 @@
+        }
+  else
+    glrecmode = GL_TEXTURE_RECTANGLE_ARB;
++#else
++  glrecmode = GL_TEXTURE_2D;
++#endif
+ 
+ 	//we dyamically link some OpenGL extension APIs
+   _glGenBuffersARB = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(SDL_GL_GetProcAddress("glGenBuffersARB"));
+

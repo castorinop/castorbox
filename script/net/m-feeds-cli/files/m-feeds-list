@@ -1,0 +1,3 @@
+#!/bin/sh
+mkdir -p /config/m-feeds
+HOME=/config/m-feeds python /usr/share/m-feeds-cli/src/m-feeds-list.py

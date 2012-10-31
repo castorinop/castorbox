@@ -1,0 +1,205 @@
+body {
+    background-color: #000000;
+    color: #cccccc;
+    font-family: Times New;
+    font-size: small;
+}
+
+h1,h2,h3,h4,h5 {
+    font-family: Helvetica;
+    background-color: #536287;
+    color: white;
+    padding-left:3pt;
+    margin-top:2pt;
+    margin-bottom:8pt;
+}
+
+h1 {
+    font-size: xx-large;
+    border-style:double;
+    border-width:medium;
+    border-color:black;
+}
+
+h2 {
+    font-size: x-large;
+    padding-left:6pt;
+    border-style:double;
+    border-width:medium;
+    border-color:black;
+}
+
+h3 {
+    font-size: large;
+    padding-left:9pt;
+}
+
+h4 {
+    font-size: medium;
+    padding-left:12pt;
+}
+
+h5 {
+    font-size: small;
+    padding-left:15pt;
+}
+
+li.invisible {
+    list-style-type: none;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 12pt;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+li.navbar,h4.navbar {
+    padding-left: 6pt;
+    margin-top:8pt;
+    margin-bottom:2pt;
+    border-style:none;
+}
+
+.chapter {
+    padding-left: 0pt;
+    list-style-type: decimal;
+    list-style-position: inside;
+    margin-bottom:2pt;
+}
+
+li.chapter {
+    font-size: small;
+    padding-left: 3pt;
+    background-color: #333333;
+}
+
+li.activechapter, li.chapter:hover {
+    list-style-type: decimal;
+    list-style-position: inside;
+    margin-bottom:2pt;
+    font-size: small;
+    padding-left: 6pt;
+    background-color: #001133;
+}
+
+
+li.navbar {
+    padding-left: 3pt;
+    list-style-type: none;
+    background-color: #333333;
+    margin-bottom:2pt;
+    margin-top: 2pt;
+    color: #cccccc;
+}
+
+
+li.activenavbar, li.navbar:hover {
+    padding-left: 6pt;
+    list-style-type: none;
+    margin-bottom:2pt;
+    margin-top: 2pt;
+    background-color: #001133;
+}
+
+a:link {
+    color: #0099cc;
+}
+
+a.navbar:link, a.navbar:visited {
+    color: #cccccc;
+}
+
+a.next:link, a.next:visited {
+    background-color: #003366;
+    color:white;
+    border-style:double;
+    border-width:medium;
+    border-color:black;
+}
+
+a:visited {
+    color: #aaaaaa;
+}
+
+dl,ul,ol {
+    margin-top: 1pt;
+}
+
+tt,pre {
+    font-family: Lucida Console,Courier New,Courier,monotype;
+    font-size: x-small;
+}
+
+pre.code {
+    margin-top: 8pt;
+    margin-bottom: 8pt;
+    background-color: #001133;
+    white-space:pre;
+    border-style:solid;
+    border-width:thin;
+    border-color:#0099cc;
+    color:#0099cc;
+    padding:5px;
+    font-size: x-small;
+}
+
+p.sidebar {
+    float: right;
+    width: 15em;
+}
+
+/* Style info for the diffs in the package list */
+TABLE.d2h-table {
+ border-collapse: collapse;
+ border-style: solid;
+ border-width: 1px;
+ border-color: white;
+ margin: 5px 15px;
+ color: #cccccc;
+ }
+
+TABLE.d2h-table TR {
+ font-family: sans-serif;
+}
+
+TABLE.d2h-table TR.blk-hdr {
+ font-size: 11pt;
+ font-weight: bold;
+ border-style: solid;
+ border-width: 1px 0px 0px 0px;
+ border-color: white;
+ background-color: #333333;
+}
+
+TABLE.d2h-table TR.blk-hdr TH {
+ border-style: dashed;
+ border-width: 0px 0px 0px 1px;
+ border-color: white;
+ padding: 0px 2px;
+}
+
+TABLE.d2h-table TR.blk-text {
+ font-size: 11pt;
+}
+
+TABLE.d2h-table TR.blk-text TD {
+ border-style: dashed;
+ border-width: 0px 0px 0px 1px;
+ border-color: white;
+ padding: 0px 5px;
+}
+
+TABLE.d2h-table TR.blk-text TD.right-changed, TABLE.d2h-table TR.blk-text TD.left-changed {
+ background-color: #536287;
+}
+
+TABLE.d2h-table TR.blk-text TD.right-added, TABLE.d2h-table TR.ver-hdr TH.newver {
+ background-color: #336633;
+}
+
+TABLE.d2h-table TR.blk-text TD.left-removed, TABLE.d2h-table TR.ver-hdr TH.oldver {
+ background-color: #663333;
+}

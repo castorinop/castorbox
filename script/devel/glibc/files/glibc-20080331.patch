@@ -1,0 +1,24 @@
+diff -Naur glibc-20080331-old/configure glibc-20080331-new/configure
+--- glibc-20080331-old/configure	2008-03-31 19:42:43.000000000 -0700
++++ glibc-20080331-new/configure	2008-03-31 19:43:40.000000000 -0700
+@@ -4326,15 +4326,15 @@
+     path_binutils=`(cd $path_binutils; pwd) | sed 's%/*$%/%'`
+     CC="$CC -B$path_binutils"
+ fi
+-AS=`$CC -print-prog-name=as`
+-LD=`$CC -print-prog-name=ld`
+-AR=`$CC -print-prog-name=ar`
++AS=${AS}
++LD=${LD}
++AR=${AR}
+ 
+-OBJDUMP=`$CC -print-prog-name=objdump`
++OBJDUMP=${OBJDUMP}
+ 
+ 
+ # ranlib has to be treated a bit differently since it might not exist at all.
+-ac_ranlib=`$CC -print-prog-name=ranlib`
++ac_ranlib=${RANLIB}
+ if test "x$ac_ranlib" = xranlib; then
+ # This extra check has to happen since gcc simply echos the parameter in
+ # case it cannot find the value in its own directories.

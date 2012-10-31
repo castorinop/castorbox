@@ -1,0 +1,121 @@
+diff -Naur xvidcore-old/build/generic/Makefile xvidcore-new/build/generic/Makefile
+--- xvidcore-old/build/generic/Makefile	2008-11-25 18:17:50.000000000 -0800
++++ xvidcore-new/build/generic/Makefile	2009-05-30 21:16:31.000000000 -0700
+@@ -45,6 +45,8 @@
+ 
+ RM = rm -rf
+ 
++AR ?= ar
++
+ ##############################################################################
+ #
+ # Build rules
+@@ -83,7 +85,7 @@
+ 
+ $(BUILD_DIR):
+ 	@echo "  D: $(BUILD_DIR)"
+-	@$(INSTALL) -d $(BUILD_DIR)
++	$(INSTALL) -d $(BUILD_DIR)
+ 
+ #-----------------------------------------------------------------------------
+ # Generic assembly rule
+@@ -91,8 +93,8 @@
+ 
+ .$(ASSEMBLY_EXTENSION).$(OBJECT_EXTENSION):
+ 	@echo "  A: $(@D)/$(<F)"
+-	@$(INSTALL) -d $(BUILD_DIR)/$(@D)
+-	@$(AS) $(AFLAGS) $< -o $(BUILD_DIR)/$@
++	$(INSTALL) -d $(BUILD_DIR)/$(@D)
++	$(AS) $(AFLAGS) $< -o $(BUILD_DIR)/$@
+ 
+ #-----------------------------------------------------------------------------
+ # Generic C rule
+@@ -100,8 +102,8 @@
+ 
+ .c.$(OBJECT_EXTENSION):
+ 	@echo "  C: $(@D)/$(<F)"
+-	@$(INSTALL) -d $(BUILD_DIR)/$(@D)
+-	@$(CC) -c $(ARCHITECTURE) $(BUS) $(ENDIANNESS) $(FEATURES) $(SPECIFIC_CFLAGS) $(CFLAGS) $< -o $(BUILD_DIR)/$@
++	$(INSTALL) -d $(BUILD_DIR)/$(@D)
++	$(CC) -c $(ARCHITECTURE) $(BUS) $(ENDIANNESS) $(FEATURES) $(SPECIFIC_CFLAGS) $(CFLAGS) $< -o $(BUILD_DIR)/$@
+ 
+ #-----------------------------------------------------------------------------
+ # Static Library
+@@ -109,7 +111,7 @@
+ 
+ $(STATIC_LIB): $(BUILD_DIR) $(OBJECTS)
+ 	@echo "  L: $(@F)"
+-	@cd $(BUILD_DIR) && ar rc $(@F) $(OBJECTS) && $(RANLIB) $(@F)
++	cd $(BUILD_DIR) && $(AR) rc $(@F) $(OBJECTS) && $(RANLIB) $(@F)
+ 
+ #-----------------------------------------------------------------------------
+ # Shared Library
+@@ -128,9 +130,9 @@
+ 
+ $(SHARED_LIB): $(BUILD_DIR) $(OBJECTS)
+ 	@echo "  L: $(@F)"
+-	@$(INSTALL) -m 644 libxvidcore.def $(BUILD_DIR)/libxvidcore.def
+-	@$(INSTALL) -m 644 libxvidcore.ld $(BUILD_DIR)/libxvidcore.ld
+-	@cd $(BUILD_DIR) && $(CC) $(LDFLAGS) $(OBJECTS) -o $(PRE_SHARED_LIB) $(SPECIFIC_LDFLAGS)
++	$(INSTALL) -m 644 libxvidcore.def $(BUILD_DIR)/libxvidcore.def
++	$(INSTALL) -m 644 libxvidcore.ld $(BUILD_DIR)/libxvidcore.ld
++	cd $(BUILD_DIR) && $(CC) $(LDFLAGS) $(OBJECTS) -o $(PRE_SHARED_LIB) $(SPECIFIC_LDFLAGS)
+ 
+ #-----------------------------------------------------------------------------
+ # Installation
+@@ -138,15 +140,15 @@
+ 
+ install: $(BUILD_DIR)/$(STATIC_LIB) $(BUILD_DIR)/$(SHARED_LIB)
+ 	@echo "  D: $(libdir)"
+-	@$(INSTALL) -d $(DESTDIR)$(libdir)
++	$(INSTALL) -d $(DESTDIR)$(libdir)
+ 	@echo "  I: $(libdir)/$(SHARED_LIB)"
+-	@$(INSTALL) -m 644 $(BUILD_DIR)/$(SHARED_LIB) $(DESTDIR)$(libdir)/$(SHARED_LIB)
++	$(INSTALL) -m 644 $(BUILD_DIR)/$(SHARED_LIB) $(DESTDIR)$(libdir)/$(SHARED_LIB)
+ 	@echo "  I: $(libdir)/$(STATIC_LIB)"
+-	@$(INSTALL) -m 644 $(BUILD_DIR)/$(STATIC_LIB) $(DESTDIR)$(libdir)/$(STATIC_LIB)
++	$(INSTALL) -m 644 $(BUILD_DIR)/$(STATIC_LIB) $(DESTDIR)$(libdir)/$(STATIC_LIB)
+ 	@echo "  D: $(includedir)"
+-	@$(INSTALL) -d $(DESTDIR)$(includedir)
++	$(INSTALL) -d $(DESTDIR)$(includedir)
+ 	@echo "  I: $(includedir)/xvid.h"
+-	@$(INSTALL) -m 644 $(SRC_DIR)/xvid.h $(DESTDIR)$(includedir)/xvid.h
++	$(INSTALL) -m 644 $(SRC_DIR)/xvid.h $(DESTDIR)$(includedir)/xvid.h
+ 
+ #-----------------------------------------------------------------------------
+ # Platorm specific file -- dumb rules for people executing make before
+@@ -168,23 +170,23 @@
+ 
+ clean:
+ 	@echo "  Cl: Build directory"
+-	@$(RM) $(BUILD_DIR)
++	$(RM) $(BUILD_DIR)
+ 
+ distclean: clean
+ 	@echo "  Cl: Generated build files"
+-	@$(RM) platform.inc
+-	@$(RM) config.log
+-	@$(RM) config.status
+-	@$(RM) autom4te.cache
++	$(RM) platform.inc
++	$(RM) config.log
++	$(RM) config.status
++	$(RM) autom4te.cache
+ 
+ mrproper: distclean
+ 	@echo "  Cl: Bootstrapped build files"
+-	@$(RM) configure
+-	@$(RM) install-sh
+-	@$(RM) missing
+-	@$(RM) config.guess
+-	@$(RM) mkinstalldirs
+-	@$(RM) config.sub
++	$(RM) configure
++	$(RM) install-sh
++	$(RM) missing
++	$(RM) config.guess
++	$(RM) mkinstalldirs
++	$(RM) config.sub
+ 
+ list-objects:
+ 	@echo

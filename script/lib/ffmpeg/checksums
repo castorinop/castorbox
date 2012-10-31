@@ -1,0 +1,3 @@
+48af79cb31a0ccbabc971f4507b0c64b  download/ffmpeg-pkg_config.patch
+352ac88144e0215bcf2706d88860c1b5  download/ffmpeg-uint64_c.patch
+d71724db73c13f80020cf29bfbb3acde  download/ffmpeg-libswscale_symbol_export.patch

@@ -1,0 +1,8 @@
+354853e0b2da90c527e35aabb8d6f1e6  download/make-3.81.tar.bz2
+3f1ce13687b5c5262c9f6da0304af8fe  download/make-3.81-savannah_bug_18124.patch
+f0621e0fc6d2c4480899a84df528c7bd  download/make-3.81-library_search.patch
+af6de2afe8491c1f49fd72761a26218c  download/make-3.81-perl.patch.gar
+
+1a11100f3c63fcf5753818e59d63088f  download/make-3.82.tar.bz2
+09d7c80331e350398e19c3fc96efa1ce  download/make-3.82-library_search.patch
+8d149f284d0cbb3d99784390b4c6c591  download/make-3.82-perl.patch.gar

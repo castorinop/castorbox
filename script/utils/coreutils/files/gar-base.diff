@@ -1,0 +1,18 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/coreutils-7.4/configure work/main.d/coreutils-7.4/configure
+--- tmp/coreutils-7.4/configure	2009-05-07 10:37:36.000000000 -0300
++++ work/main.d/coreutils-7.4/configure	2009-06-01 15:11:39.000000000 -0300
+@@ -28698,12 +28698,12 @@
+ 
+ $as_echo "#define rename rpl_rename" >>confdefs.h
+ 
+-    if test $gl_cv_func_rename_trailing_slash_bug; then
++    if test $gl_cv_func_rename_trailing_slash_bug = "yes"; then
+ 
+ $as_echo "#define RENAME_TRAILING_SLASH_BUG 1" >>confdefs.h
+ 
+     fi
+-    if test $gl_cv_func_rename_dest_exists_bug; then
++    if test $gl_cv_func_rename_dest_exists_bug = "yes"; then
+ 
+ $as_echo "#define RENAME_DEST_EXISTS_BUG 1" >>confdefs.h
+ 

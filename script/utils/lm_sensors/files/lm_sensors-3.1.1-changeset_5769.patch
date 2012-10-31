@@ -1,0 +1,39 @@
+diff -Naur lm_sensors-3.1.1-old/CHANGES lm_sensors-3.1.1-new/CHANGES
+--- lm_sensors-3.1.1-old/CHANGES	2009-09-14 08:43:53.000000000 -0700
++++ lm_sensors-3.1.1-new/CHANGES	2009-09-14 08:46:07.000000000 -0700
+@@ -13,6 +13,8 @@
+   fancontrol: Add support for absolute path to hwmon devices
+   sensord: Remove the hidden commandline interface
+            Introduce struct sensord_arguments
++                  Drop AMD K10 detection (unreliable sensors)
++                  Add detection for AMD Family 11h thermal sensors
+            Using sigaction for signal handlers
+            Convert to linux coding style
+            Cleanup and refactoring of the source code
+diff -Naur lm_sensors-3.1.1-old/prog/detect/sensors-detect lm_sensors-3.1.1-new/prog/detect/sensors-detect
+--- lm_sensors-3.1.1-old/prog/detect/sensors-detect	2009-09-14 08:42:41.000000000 -0700
++++ lm_sensors-3.1.1-new/prog/detect/sensors-detect	2009-09-14 08:46:07.000000000 -0700
+@@ -1828,9 +1828,9 @@
+ 		driver => "k8temp",
+ 		detect => \&k8temp_pci_detect,
+ 	}, {
+-		name => "AMD K10 thermal sensors",
++		name => "AMD Family 11h thermal sensors",
+ 		driver => "to-be-written",
+-		detect => \&k10temp_pci_detect,
++		detect => \&fam11h_pci_detect,
+ 	}, {
+ 		name => "Intel Core family thermal sensor",
+ 		driver => "coretemp",
+@@ -5201,9 +5201,9 @@
+ 	return 9;
+ }
+ 
+-sub k10temp_pci_detect
++sub fam11h_pci_detect
+ {
+-	return unless exists $pci_list{'1022:1203'};
++	return unless exists $pci_list{'1022:1303'};
+ 	return 9;
+ }
+ 

@@ -1,0 +1,21 @@
+NFILES=17
+
+[ -n "$1" ] && NFILES="$1"
+
+UNK=$(grep -v DONE bbc-files | wc -l)
+DONE=$(grep '	DONE' bbc-files | wc -l)
+PACKAGES=$(./each show | wc -l)
+NOTDONE=$(grep '	NOTDONE' bbc-files | wc -l)
+NOTDONEPACKAGES=$(grep '	NOTDONE' bbc-files | cut -f1 | uniq | wc -l)
+
+echo $DONE files done, in $PACKAGES packages.
+echo $NOTDONE files remain, in $NOTDONEPACKAGES packages.
+echo $UNK files are unknown.
+
+echo
+
+echo Top $NFILES unbuilt/unfinished packages:
+
+echo
+
+grep NOTDONE bbc-files | cut -f1 | uniq -c | sort -rn | head -$NFILES

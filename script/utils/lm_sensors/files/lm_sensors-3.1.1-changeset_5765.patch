@@ -1,0 +1,102 @@
+diff -Naur lm_sensors-3.1.1-old/CHANGES lm_sensors-3.1.1-new/CHANGES
+--- lm_sensors-3.1.1-old/CHANGES	2009-09-14 08:42:35.000000000 -0700
++++ lm_sensors-3.1.1-new/CHANGES	2009-09-14 08:43:53.000000000 -0700
+@@ -3,6 +3,7 @@
+ 
+ 3.1.1 (2009-06-21)
+   isadump: Use geteuid instead of getuid so that setuid bit works
++  fancontrol: Check that all referenced sysfs files exist
+   isaset: Use geteuid instead of getuid so that setuid bit works
+   libsensors: Don't rely on dirent->dt_type being set
+               New method to free the memory allocated for chip names
+diff -Naur lm_sensors-3.1.1-old/prog/pwm/fancontrol lm_sensors-3.1.1-new/prog/pwm/fancontrol
+--- lm_sensors-3.1.1-old/prog/pwm/fancontrol	2009-05-09 04:43:06.000000000 -0700
++++ lm_sensors-3.1.1-new/prog/pwm/fancontrol	2009-09-14 08:43:53.000000000 -0700
+@@ -152,6 +152,58 @@
+ 	echo
+ }
+ 
++# Check that all referenced sysfs files exist
++function CheckFiles {
++	local outdated=0
++
++	let fcvcount=0
++	while (( $fcvcount < ${#AFCPWM[@]} )) # go through all pwm outputs
++	do
++		pwmo=${AFCPWM[$fcvcount]}
++		if [ ! -w $pwmo ]
++		then
++			echo "Error: file $pwmo doesn't exist"
++			outdated=1
++		fi
++		let fcvcount=$fcvcount+1
++	done
++
++	let fcvcount=0
++	while (( $fcvcount < ${#AFCTEMP[@]} )) # go through all temp inputs
++	do
++		tsen=${AFCTEMP[$fcvcount]}
++		if [ ! -r $tsen ]
++		then
++			echo "Error: file $tsen doesn't exist"
++			outdated=1
++		fi
++		let fcvcount=$fcvcount+1
++	done
++
++	let fcvcount=0
++	while (( $fcvcount < ${#AFCFAN[@]} )) # go through all fan inputs
++	do
++		fan=${AFCFAN[$fcvcount]}
++		if [ ! -r $fan ]
++		then
++			echo "Error: file $fan doesn't exist"
++			outdated=1
++		fi
++		let fcvcount=$fcvcount+1
++	done
++
++	if [ $outdated -eq 1 ]
++	then
++		echo
++		echo "At least one referenced file is missing. Either some"
++		echo "required kernel modules haven't been loaded, or your"
++		echo "configuration file is outdated. In the latter case,"
++		echo "you should run pwmconfig again."
++	fi
++
++	return $outdated
++}
++
+ if [ -f "$1" ]
+ then
+ 	LoadConfig $1
+@@ -177,6 +229,8 @@
+ fi
+ cd $DIR
+ 
++CheckFiles || exit 1
++
+ if [ -f "$PIDFILE" ]
+ then
+ 	echo "File $PIDFILE exists, is fancontrol already running?"
+diff -Naur lm_sensors-3.1.1-old/prog/pwm/fancontrol.8 lm_sensors-3.1.1-new/prog/pwm/fancontrol.8
+--- lm_sensors-3.1.1-old/prog/pwm/fancontrol.8	2009-05-09 04:43:06.000000000 -0700
++++ lm_sensors-3.1.1-new/prog/pwm/fancontrol.8	2009-09-14 08:43:53.000000000 -0700
+@@ -1,4 +1,4 @@
+-.TH FANCONTROL 8 "January 2009" "lm-sensors 3"
++.TH FANCONTROL 8 "September 2009" "lm-sensors 3"
+ .SH NAME
+ fancontrol \- automated software based fan speed regulation
+ 
+@@ -92,6 +92,10 @@
+ setup I recommend using the \fBpwmconfig\fP script. Small changes can be made by
+ editing the config file directly following the rules above.
+ 
++Upon starting, fancontrol will make sure that all referenced sysfs files
++do exist. If not, it will quit immediately, upon the assumption that the
++configuration file may be out-of-sync with the loaded kernel drivers.
++
+ .SH THE ALGORITHM
+ 
+ \fBfancontrol\fP first reads its configuration, writes it to arrays and loops its

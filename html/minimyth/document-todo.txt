@@ -1,0 +1,17 @@
+Packages we will not update:
+    db/mysql              - 5.0.x    - causes some problems with MythTV 0.18.1.
+    devel/automake        - 1.10     - causes build problems with alsa-lib.
+    devel/binutils        - 2.17     - strip incompatible with binary NVIDIA libraries.
+    devel/gcc             - 4.0.3    - causes MiniMyth to consume much more CPU.
+    devel/gcc             - 4.1.1    - may cause MiniMyth to consume more CPU.
+    kernel/linux          > 2.6.17.x - not compatible with any released unionfs.
+                                     - not compatible with nvidia 1.0-8178.
+    kernel/nvidia         > 1.0-8178 - causes stuttering during HDTV playback.
+    lib/faad2             - 2.5      - new license has an advertising clause.
+    lib/fftw              - 3.x.x    - MythMusic and MythStream requires 2.x.x.
+    mediaplayers/xine-lib - 1.1.2    - has DVD audio sync issues.
+    qt/qt                 - 4.x.x    - not compatible with MythTV.
+    X11/nvidia            > 1.0-8178 - causes stuttering during HDTV playback.
+    xorg-new              - X11R7.1  - not compatible with nvidia 1.0-8178.
+
+Packages we may update:

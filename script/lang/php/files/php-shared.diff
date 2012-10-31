@@ -1,0 +1,76 @@
+diff -Naur php5.3-200808241230/Makefile.global php5.3-200808241230.oden/Makefile.global
+--- php5.3-200808241230/Makefile.global	2008-08-12 22:35:00.000000000 -0400
++++ php5.3-200808241230.oden/Makefile.global	2008-08-25 15:17:46.000000000 -0400
+@@ -13,10 +13,14 @@
+ 	
+ build-modules: $(PHP_MODULES) $(PHP_ZEND_EX)
+ 
+-libphp$(PHP_MAJOR_VERSION).la: $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS)
+-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(EXTRA_CFLAGS) -rpath $(phptempdir) $(EXTRA_LDFLAGS) $(LDFLAGS) $(PHP_RPATHS) $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS) $(EXTRA_LIBS) $(ZEND_EXTRA_LIBS) -o $@
++libphp$(PHP_MAJOR_VERSION)_common.la: $(PHP_GLOBAL_OBJS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(EXTRA_CFLAGS) -version-info 8:0:3 -rpath $(phptempdir) $(LDFLAGS) $(PHP_RPATHS) $(PHP_GLOBAL_OBJS) $(EXTRA_LIBS) $(ZEND_EXTRA_LIBS) -o $@
+ 	-@$(LIBTOOL) --silent --mode=install cp $@ $(phptempdir)/$@ >/dev/null 2>&1
+ 
++libphp$(PHP_MAJOR_VERSION).la: libphp$(PHP_MAJOR_VERSION)_common.la $(PHP_SAPI_OBJS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(EXTRA_CFLAGS) -rpath $(phptempdir) $(EXTRA_LDFLAGS) $(LDFLAGS) $(PHP_RPATHS) libphp$(PHP_MAJOR_VERSION)_common.la $(PHP_SAPI_OBJS) $(EXTRA_LIBS) $(ZEND_EXTRA_LIBS) -o $@
++ 	-@$(LIBTOOL) --silent --mode=install cp libphp5.la $(phptempdir)/libphp5.la >/dev/null 2>&1
++
+ libs/libphp$(PHP_MAJOR_VERSION).bundle: $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS)
+ 	$(CC) $(MH_BUNDLE_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(PHP_GLOBAL_OBJS:.lo=.o) $(PHP_SAPI_OBJS:.lo=.o) $(PHP_FRAMEWORKS) $(EXTRA_LIBS) $(ZEND_EXTRA_LIBS) -o $@ && cp $@ libs/libphp$(PHP_MAJOR_VERSION).so
+ 
+@@ -25,10 +29,10 @@
+ install-sapi: $(OVERALL_TARGET)
+ 	@echo "Installing PHP SAPI module:       $(PHP_SAPI)"
+ 	-@$(mkinstalldirs) $(INSTALL_ROOT)$(bindir)
+-	-@if test ! -r $(phptempdir)/libphp$(PHP_MAJOR_VERSION).$(SHLIB_DL_SUFFIX_NAME); then \
++	-@if test ! -r $(phptempdir)/libphp$(PHP_MAJOR_VERSION)_common.$(SHLIB_DL_SUFFIX_NAME); then \
+ 		for i in 0.0.0 0.0 0; do \
+-			if test -r $(phptempdir)/libphp$(PHP_MAJOR_VERSION).$(SHLIB_DL_SUFFIX_NAME).$$i; then \
+-				$(LN_S) $(phptempdir)/libphp$(PHP_MAJOR_VERSION).$(SHLIB_DL_SUFFIX_NAME).$$i $(phptempdir)/libphp$(PHP_MAJOR_VERSION).$(SHLIB_DL_SUFFIX_NAME); \
++			if test -r $(phptempdir)/libphp$(PHP_MAJOR_VERSION)_common.$(SHLIB_DL_SUFFIX_NAME).$$i; then \
++				$(LN_S) $(phptempdir)/libphp$(PHP_MAJOR_VERSION)_common.$(SHLIB_DL_SUFFIX_NAME).$$i $(phptempdir)/libphp$(PHP_MAJOR_VERSION)_common.$(SHLIB_DL_SUFFIX_NAME); \
+ 				break; \
+ 			fi; \
+ 		done; \
+diff -Naur php5.3-200808241230/sapi/cgi/config9.m4 php5.3-200808241230.oden/sapi/cgi/config9.m4
+--- php5.3-200808241230/sapi/cgi/config9.m4	2007-10-01 08:40:54.000000000 -0400
++++ php5.3-200808241230.oden/sapi/cgi/config9.m4	2008-08-25 15:17:46.000000000 -0400
+@@ -64,7 +64,7 @@
+         BUILD_CGI="\$(CC) \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) \$(NATIVE_RPATHS) \$(PHP_GLOBAL_OBJS:.lo=.o) \$(PHP_SAPI_OBJS:.lo=.o) \$(PHP_FRAMEWORKS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CGI_PATH)"
+       ;;
+       *)
+-        BUILD_CGI="\$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_SAPI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CGI_PATH)"
++        BUILD_CGI="\$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) \$(PHP_RPATHS) libphp\$(PHP_MAJOR_VERSION)_common.la \$(PHP_SAPI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CGI_PATH)"
+       ;;
+     esac
+ 
+diff -Naur php5.3-200808241230/sapi/cgi/Makefile.frag php5.3-200808241230.oden/sapi/cgi/Makefile.frag
+--- php5.3-200808241230/sapi/cgi/Makefile.frag	2003-07-01 21:08:26.000000000 -0400
++++ php5.3-200808241230.oden/sapi/cgi/Makefile.frag	2008-08-25 15:17:46.000000000 -0400
+@@ -1,2 +1,2 @@
+-$(SAPI_CGI_PATH): $(PHP_GLOBAL_OBJS) $(PHP_SAPI_OBJS)
++$(SAPI_CGI_PATH): libphp$(PHP_MAJOR_VERSION)_common.la $(PHP_SAPI_OBJS)
+ 	$(BUILD_CGI)
+diff -Naur php5.3-200808241230/sapi/cli/config.m4 php5.3-200808241230.oden/sapi/cli/config.m4
+--- php5.3-200808241230/sapi/cli/config.m4	2007-07-11 19:20:36.000000000 -0400
++++ php5.3-200808241230.oden/sapi/cli/config.m4	2008-08-25 15:17:46.000000000 -0400
+@@ -23,7 +23,7 @@
+     BUILD_CLI="\$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) \$(PHP_RPATHS) \$(PHP_CLI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -Lnetware -lphp5lib -o \$(SAPI_CLI_PATH)"
+     ;;
+   *)
+-    BUILD_CLI="\$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) \$(PHP_RPATHS) \$(PHP_GLOBAL_OBJS) \$(PHP_CLI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CLI_PATH)"
++    BUILD_CLI="\$(LIBTOOL) --mode=link \$(CC) -export-dynamic \$(CFLAGS_CLEAN) \$(EXTRA_CFLAGS) \$(EXTRA_LDFLAGS_PROGRAM) \$(LDFLAGS) \$(PHP_RPATHS) libphp\$(PHP_MAJOR_VERSION)_common.la \$(PHP_CLI_OBJS) \$(EXTRA_LIBS) \$(ZEND_EXTRA_LIBS) -o \$(SAPI_CLI_PATH)"
+     ;;
+   esac
+   INSTALL_CLI="\$(mkinstalldirs) \$(INSTALL_ROOT)\$(bindir); \$(INSTALL) -m 0755 \$(SAPI_CLI_PATH) \$(INSTALL_ROOT)\$(bindir)/\$(program_prefix)php\$(program_suffix)\$(EXEEXT)"
+diff -Naur php5.3-200808241230/sapi/cli/Makefile.frag php5.3-200808241230.oden/sapi/cli/Makefile.frag
+--- php5.3-200808241230/sapi/cli/Makefile.frag	2005-10-13 06:02:59.000000000 -0400
++++ php5.3-200808241230.oden/sapi/cli/Makefile.frag	2008-08-25 15:17:46.000000000 -0400
+@@ -1,6 +1,6 @@
+ cli: $(SAPI_CLI_PATH)
+ 
+-$(SAPI_CLI_PATH): $(PHP_GLOBAL_OBJS) $(PHP_CLI_OBJS)
++$(SAPI_CLI_PATH): libphp$(PHP_MAJOR_VERSION)_common.la $(PHP_CLI_OBJS)
+ 	$(BUILD_CLI)
+ 
+ install-cli: $(SAPI_CLI_PATH)

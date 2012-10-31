@@ -1,0 +1,35 @@
+diff -Naur cdparanoia-III-alpha9.8-old/interface/utils.h cdparanoia-III-alpha9.8-new/interface/utils.h
+--- cdparanoia-III-alpha9.8-old/interface/utils.h	2000-04-19 15:41:04.000000000 -0700
++++ cdparanoia-III-alpha9.8-new/interface/utils.h	2004-12-15 17:05:05.706091922 -0800
+@@ -112,6 +112,7 @@
+       break;
+     case CDDA_MESSAGE_FORGETIT:
+     default:
++      ;
+     }
+   }
+ }
+@@ -127,6 +128,7 @@
+       break;
+     case CDDA_MESSAGE_FORGETIT:
+     default:
++      ;
+     }
+   }
+ }
+@@ -169,6 +171,7 @@
+       break;
+     case CDDA_MESSAGE_FORGETIT:
+     default:
++      ;
+     }
+   }
+   if(malloced)free(buffer);
+@@ -205,6 +208,7 @@
+       break;
+     case CDDA_MESSAGE_FORGETIT:
+     default:
++      ;
+     }
+   }
+   if(malloced)free(buffer);

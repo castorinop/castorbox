@@ -1,0 +1,31 @@
+Source: acpi-support
+Section: admin
+Priority: optional
+Maintainer: Ubuntu Core developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Bart Samwel <bart@samwel.tk>
+Uploaders: Loic Minier <lool@dooz.org>, Raphael Hertzog <hertzog@debian.org>
+DM-Upload-Allowed: yes
+Build-Depends: debhelper (>= 4.1.16)
+Vcs-Bzr: https://code.launchpad.net/~ubuntu-core-dev/acpi-support/trunk/
+XS-Orig-Vcs-Svn: svn://svn.debian.org/collab-maint/deb-maint/acpi-support/trunk
+XS-Orig-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/acpi-support/trunk/
+Standards-Version: 3.7.3
+
+Package: acpi-support
+Architecture: i386 amd64 ia64 lpia
+Depends: x11-xserver-utils, acpid (>= 1.0.4-1ubuntu4), hdparm, lsb-base (>= 1.3-9ubuntu3), finger, powermgmt-base, laptop-detect, dmidecode (>= 2.7-1), ${shlibs:Depends}, pm-utils
+Recommends: toshset [i386 amd64], radeontool, xinput, wireless-tools
+Conflicts: uswsusp (<= 0.2)
+Description: scripts for handling many ACPI events
+ This package contains scripts to react to various ACPI events. It only
+ includes scripts for events that can be supported with some level of
+ safety cross platform.
+ .
+ It is able to:
+  * Detect loss and gain of AC power, lid closure, and the press of a
+    number of specific buttons (on Asus, IBM, Lenovo, Panasonic, Sony
+    and Toshiba laptops).
+  * Suspend, hibernate and resume the computer, with workarounds for 
+    hardware that needs it.
+  * On some laptops, set screen brightness.
+

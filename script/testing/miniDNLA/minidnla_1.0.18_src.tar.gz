@@ -1,0 +1,798 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Consume Server: sfs-consume-1 -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    
+    <meta name="description" content="Get MiniDLNA at SourceForge.net. Fast, secure and free downloads from the largest Open Source applications and software directory" />
+    
+    
+    <meta name="keywords" content="Multimedia,  Open Source, Open Source Software, Development, Community, Source Code, Secure,  Downloads, Free Software" />
+    
+    
+    <title>Browse MiniDLNA Files on SourceForge.net</title>
+    <link rel="shortcut icon" href="http://a.fsdn.com/con/img/favicon.ico" />
+    
+    
+    <link rel="stylesheet" href="http://a.fsdn.com/con/css/sf.min.css?1289506495" type="text/css" />
+    
+    
+
+    
+
+    
+    
+
+    <script type="text/javascript">
+    /*jslint onevar: false, nomen: false, evil: true, css: true, plusplus: false, white: false, forin: true */
+    /*global unescape, window, jQuery, $, net, COMSCORE */
+    </script>
+
+    
+    <script src="http://a.fsdn.com/con/js/sf.min.js?1289506495" type="text/javascript"></script>
+    
+    <script src="http://a.fsdn.com/con/js/project.js?1289506495" type="text/javascript"></script>
+    
+    
+    
+    
+    
+        
+<!-- DoubleClick Random Number -->
+<script type="text/javascript">
+    var dfp_ord = Math.random() * 10000000000000000;
+    var dfp_tile = 1;
+    var ad_prefix = '';
+    var adspot = '';
+    var ad_wrapper = '';
+    var wrappercode = '';
+
+    
+    var ad_page = '/project/showfiles.php';
+    
+
+    var adid = '';
+    var sponsored = '';
+    var ad_topics = '';
+    var dfp_dcopt = 'dcopt=ist;';
+
+    
+    var page_id = '';
+    
+
+    
+    var ad_zone = net.sf.ab_test || 'multimedia';
+    if (page_id) {
+        ad_prefix = 'cons_' + page_id + '_' + ad_zone + '_';
+    } else {
+        ad_prefix = 'cons_' + ad_zone + '_';
+    }
+    
+
+    var ad_logged_in = 0;
+    var ad_search = 0;
+    var immersion_adcode = "";
+    var dfp_u = '';
+
+    var google_page_url = 'http://sourceforge.net/projects/minidlna';
+    var sourceforge_project_name = 'MiniDLNA';
+    var sourceforge_project_description = 'MiniDLNA aka ReadyDLNA is server software with the aim of being fully compliant with DLNA UPnP AV clients It is developed by a NETGEAR employee for the ReadyNAS product line So if you are looking for a NAS please consider ReadyNAS first ';
+    ad_topics = 'tpc=minidlna;';
+    
+    var google_hints = 'c,multimedia';
+    dfp_u = '20081022_minidlna_Multimedia';
+    ad_topics += 'tpc=c;tpc=multimedia;aud=enduser_advanced;';
+    
+
+</script>
+    
+    
+        
+            
+<script type="text/javascript">
+    adspot = ad_prefix + 'p97_wrapper';
+
+    
+    if ($.cookie('ad_wrapper')) {
+        ad_wrapper = $.cookie('ad_wrapper');
+        
+        wrappercode = ";wrapper=" + ad_wrapper;
+    }
+    
+    
+    document.write(unescape('%3Cscript src="http://ad.doubleclick.net/adj/ostg.sourceforge/' + adspot + ';pg=' + ad_page + ';psrch=' + ad_search + wrappercode + ';logged_in=0;' + ad_topics + '' + 'tile=' + dfp_tile + ';sz=1400x600;ord=' + dfp_ord + '?" type="text/javascript"%3E%3C/script%3E'));
+    
+    dfp_tile = dfp_tile + 1;
+
+    
+    jQuery(function ($) {
+        if (ad_wrapper !== "") {
+            // an easy way to zero out a date's timestamp (i.e., midnight)
+            Date.prototype.zeroTimestamp = function () {
+                this.setHours(0);
+                this.setMinutes(0);
+                this.setSeconds(0);
+                this.setMilliseconds(0);
+                return this;
+            };
+
+            var d = new Date();
+
+            // get the current date in EST
+            var localTime = d.getTime();
+            var localOffset = d.getTimezoneOffset() * 60000;
+            var utc = localTime + localOffset;
+            var est = utc - (3600000 * 5);
+            var nd = new Date(est);
+
+            // setup the cookie to expire tomorrow at midnight
+            nd.zeroTimestamp();
+            nd = new Date(nd.getTime() + 86400000);
+
+            $.cookie('ad_wrapper', ad_wrapper, { path: '/', expires: nd });
+        }
+    });
+</script>
+        
+    
+    
+    
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-32013-6'], ['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script');
+        ga.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        ga.setAttribute('async', 'true');
+        document.documentElement.firstChild.appendChild(ga);
+    }());
+    </script>
+  </head>
+
+  <body id="files"  class="short-head" >
+    <!--[if IE 7]><div id="ie7only"><![endif]-->
+    <!--[if IE 6]><div id="ie6only"><![endif]-->
+    <!--[if IE]><div id="ieonly"><![endif]-->
+
+    <div id="messages">
+        
+        
+        <div class="message error">
+            <a class="closer icon-sm close" title="Clear this message" href="#close">[X]</a>
+            The &#34;/minidnla/1.0.18/minidnla_1.0.18_src.tar.gz&#34; file could not be found or is not available.  Please select another file.
+        </div>
+        
+        
+    </div>
+
+    <div id="doc3">
+      <div id="hd">
+    <div class="yui-b">
+          
+          
+<p id="metaNav">
+    
+    <strong>Welcome, Guest!</strong>
+    <a href="https://sourceforge.net/account/login.php">Log In</a> | <a href="/account/registration/">Create Account</a>
+    
+</p>
+      <a href="/" class="logo">Find and develop open source software</a>
+      <div class="yui-gc">
+            <div class="yui-u first">
+              <ul id="nav">
+        <li class="first"><a href="/directory/" title="Find free open source software">Find Software</a></li>
+        <li><a href="/develop/" title="Learn more about the actively developed projects on SourceForge">Develop</a></li>
+        <li><a href="/register/" title="Start your very own project!">Create Project</a></li>
+                <li><a href="/blog/">Blog</a></li>
+                <li><a href="http://p.sf.net/sourceforge/getsupport">Site Support</a></li>
+                
+                <li class="last"><a href="/about">About</a></li>
+              </ul>
+            </div>
+            <div class="yui-u">
+          <div class="search">
+        <form action="/search/" method="get" name="searchform" id="searchform">
+          <input type="hidden" name="type_of_search" value="soft" />
+          <input type="text" class="text clear hint" name="words" id="words" value="enter keyword" />
+          <span class="yui-button yui-push-button default">
+            <span class="first-child">
+              <button type="submit" value="Search">Search</button>
+            </span>
+          </span>
+        </form>
+          </div>
+        </div>
+      </div>
+          
+    </div>
+      </div>
+
+
+    <div id="bd" class="inner-bd">
+        <div id="doc4" class="yui-t6">
+            <div id="breadcrumbs">
+        <a href="/">SourceForge.net</a>
+        &gt; <a href="/directory/">Find Software</a>
+        &gt; <a href="/projects/minidlna/">MiniDLNA</a>
+        &gt; <strong>Browse Files</strong>
+    </div>
+    <div id="project_nav_container">
+    
+<div id="project-header">
+    <div id="project-actions">
+        
+        <!-- AddThis Button BEGIN -->
+        
+        
+        
+        <div id="addthis">
+            <div class="addthis_toolbox addthis_default_style">
+                <h4>Share</h4>
+                <a class="addthis_button_facebook"></a>
+                <a class="addthis_button_twitter"></a>
+                <a class="addthis_button_google"></a>
+                <a class="addthis_button_expanded">More</a>
+            </div>
+            <script type="text/javascript">var addthis_config = {"data_track_clickback": true}; </script>
+            <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=sfnet"></script>
+        </div>
+        <!-- AddThis Button END -->
+
+        
+        
+    </div><!-- #project-actions -->
+
+    
+    <div id="pd-icon" class="editable">
+        <img alt="MiniDLNA Icon" src="http://a.fsdn.com/con/img/project_default.png" height="48" width="48"/>
+    </div>
+
+    
+    <div id="project-header-inner" class="editable">
+        <h2 class="ph-title">MiniDLNA</h2>
+
+        
+        
+        
+        
+        
+        
+        
+
+        
+        
+        <p id="maintainers" class="ph-developer">
+        by
+        
+        <a href="/users/jmaggard">jmaggard</a>
+        
+        </p>
+        
+    </div><!-- #project-header-inner -->
+</div><!-- #project-header -->
+
+
+
+
+
+
+<div id="nav-project">
+    <ul class="b-hornav">
+        
+        <li >
+            <a href="/projects/minidlna/">
+                Summary
+            </a>
+        </li>
+        
+        <li class=" selected">
+            <a href="/projects/minidlna/files/">
+                <span><span>Files</span></span>
+            </a>
+        </li>
+        
+        <li >
+            <a href="/projects/minidlna/support">
+                Support
+            </a>
+        </li>
+        
+        <li class="last ">
+            <a href="/projects/minidlna/develop">
+                Develop
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+    </div>
+    <hr class="clear"/>
+    <div id="yui-main">
+        <div class="yui-b">
+            <div class="sfBox b-proj clearfix b-hot">
+                
+
+
+<div id="project-description">
+    
+    <p id="pd-txt" class="editable">
+        MiniDLNA (aka ReadyDLNA) is server software with the aim of being fully compliant with DLNA/UPnP-AV clients. It is developed by a NETGEAR employee for the ReadyNAS product line. So if you are looking for a NAS, please consider ReadyNAS first!
+    </p>
+    <div class="pd-dload editable">
+        
+            <a class="button button-dload dload { url: &#39;http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fminidlna%2Ffiles%2F&amp;ts=1289753245&#39; }" href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz/download" title="/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz:  released on 2010-07-22 1:10:46 UTC">
+    <span><strong>Download Now!</strong> minidlna_1.0.18_static.ta... (1.2 MB)</span>
+</a>
+            <small>OR</small>
+        
+        <a href="/projects/minidlna/files/" class="button"><span>View all files</span></a>
+    </div><!--pd-dload-->
+
+    
+</div><!--b-proj__descr-->
+
+
+            </div>
+
+            <div class="sfBox rBox">
+                <div class="header">
+                    <h2>Browse Files for MiniDLNA</h2>
+                </div>
+                    <table class="filesTable treeTable" summary="Files that MiniDLNA has released">
+                    <thead>
+                        <tr>
+                            <th><a href="?sort=filename&amp;sortdir=asc">File/Folder Name&nbsp;</a></th>
+                            <th>Platform</th>
+                            <th>Size</th>
+                            <th><a href="?sort=date&amp;sortdir=asc">Date&nbsp;&darr;</a></th>
+                            <th>Downloads</th>
+                            <th>Notes/Subscribe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+
+                        
+                        <tr class="header">
+                            <td colspan="6">Newest Files</td>
+                        </tr>
+                        
+                        <tr class="latest">
+                            <td class="tree">
+                              <a class="
+
+
+    
+    
+        ext_gz
+    
+ dload filename { url: 'http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz?r=&amp;ts=1289753245' }"
+                                href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz/download"
+                                title="/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz:  released on 2010-07-22"
+                                >minidlna_1.0.18_static.tar.gz</a>
+                              
+                            </td>
+                            <td class="platform">
+                                    
+                                        
+                                                <img src="http://a.fsdn.com/con/img/icons/linux.png" alt="linux" title="linux" height="15" width="15" vspace=0 />
+                                        
+                                    
+                                
+                            </td>
+                            <td>1.2 MB</td>
+                            <td>2010-07-22</td>
+                            <td>13,480</td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                        
+                        <tr class="latest">
+                            <td class="tree">
+                              <a class="
+
+
+    
+    
+        ext_gz
+    
+ dload filename { url: 'http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.18/minidlna_1.0.18_src.tar.gz?r=&amp;ts=1289753245' }"
+                                href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.18/minidlna_1.0.18_src.tar.gz/download"
+                                title="/minidlna/1.0.18/minidlna_1.0.18_src.tar.gz:  released on 2010-07-22"
+                                >minidlna_1.0.18_src.tar.gz</a>
+                              
+                            </td>
+                            <td class="platform">
+                                    
+                                
+                            </td>
+                            <td>190.9 KB</td>
+                            <td>2010-07-22</td>
+                            <td>3,627</td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                        
+                        
+
+                        <tr class="header">
+                            <td colspan="5">
+                                
+                                    All Files
+                                
+                            </td>
+                            <td>
+                                
+                                <a href="/api/file/index/project-id/243163/mtime/desc/rss" class="icon-sm rss" title="Subscribe to all file releases">Subscribe</a>
+                                
+                            </td>
+                        </tr>
+                        <tr id="node-0-0" class="">
+                                    
+                                        <td>
+                                            <a class="folder dynamic" href="/projects/minidlna/files/minidlna/">minidlna</a>
+                                            
+                                        </td>
+                                        <td></td>
+                                        <td>4.7 MB</td>
+                                        <td>2010-07-22</td>
+                                        <td>47,923</td>
+                                        <td>
+                                            <a href="/api/file/index/project-id/243163/mtime/desc/rss?path=%2Fminidlna" class="icon-sm rss" title="Subscribe to file releases within this folder">Subscribe</a>
+                                            <a href="/projects/minidlna/files/minidlna/" class="icon-sm folder-link" title="View only this folder">Folder view</a>
+                                            
+                                        </td>
+                                    
+                                </tr><tr id="node-0-1" class="child-of-node-0-0">
+                                    
+                                        <td>
+                                            <a class="folder dynamic" href="/projects/minidlna/files/minidlna/1.0.18/">1.0.18</a>
+                                            
+                                        </td>
+                                        <td></td>
+                                        <td>1.3 MB</td>
+                                        <td>2010-07-22</td>
+                                        <td>17,107</td>
+                                        <td>
+                                            <a href="/api/file/index/project-id/243163/mtime/desc/rss?path=%2Fminidlna%2F1.0.18" class="icon-sm rss" title="Subscribe to file releases within this folder">Subscribe</a>
+                                            <a href="/projects/minidlna/files/minidlna/1.0.18/" class="icon-sm folder-link" title="View only this folder">Folder view</a>
+                                            
+                                        </td>
+                                    
+                                </tr><tr id="node-0-2" class="child-of-node-0-1">
+                                    
+                                        <td class="tree">
+                              <a class="
+
+
+    
+    
+        ext_gz
+    
+ dload filename { url: 'http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz?r=&amp;ts=1289753245' }"
+                                href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz/download"
+                                title="/minidlna/1.0.18/minidlna_1.0.18_static.tar.gz:  released on 2010-07-22"
+                                >minidlna_1.0.18_static.tar.gz</a>
+                              
+                            </td>
+                            <td class="platform">
+                                    
+                                        
+                                                <img src="http://a.fsdn.com/con/img/icons/linux.png" alt="linux" title="linux" height="15" width="15" vspace=0 />
+                                        
+                                    
+                                
+                            </td>
+                            <td>1.2 MB</td>
+                            <td>2010-07-22</td>
+                            <td>13,480</td>
+                            <td>
+                                
+                            </td>
+                                    
+                                </tr><tr id="node-1-2" class="child-of-node-0-1">
+                                    
+                                        <td class="tree">
+                              <a class="
+
+
+    
+    
+        ext_gz
+    
+ dload filename { url: 'http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.18/minidlna_1.0.18_src.tar.gz?r=&amp;ts=1289753245' }"
+                                href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.18/minidlna_1.0.18_src.tar.gz/download"
+                                title="/minidlna/1.0.18/minidlna_1.0.18_src.tar.gz:  released on 2010-07-22"
+                                >minidlna_1.0.18_src.tar.gz</a>
+                              
+                            </td>
+                            <td class="platform">
+                                    
+                                
+                            </td>
+                            <td>190.9 KB</td>
+                            <td>2010-07-22</td>
+                            <td>3,627</td>
+                            <td>
+                                
+                            </td>
+                                    
+                                </tr><tr id="node-2-1" class="child-of-node-0-0">
+                                    
+                                        <td>
+                                            <a class="folder dynamic" href="/projects/minidlna/files/minidlna/1.0.16/">1.0.16</a>
+                                            
+                                        </td>
+                                        <td></td>
+                                        <td>2.3 MB</td>
+                                        <td>2009-11-24</td>
+                                        <td>25,511</td>
+                                        <td>
+                                            <a href="/api/file/index/project-id/243163/mtime/desc/rss?path=%2Fminidlna%2F1.0.16" class="icon-sm rss" title="Subscribe to file releases within this folder">Subscribe</a>
+                                            <a href="/projects/minidlna/files/minidlna/1.0.16/" class="icon-sm folder-link" title="View only this folder">Folder view</a>
+                                            
+                                        </td>
+                                    
+                                </tr><tr id="node-2-2" class="child-of-node-2-1">
+                                    
+                                        <td class="tree">
+                              <a class="
+
+
+    
+    
+        ext_gz
+    
+ dload filename { url: 'http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.16/minidlna_1.0.16.3_static.tar.gz?r=&amp;ts=1289753245' }"
+                                href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.16/minidlna_1.0.16.3_static.tar.gz/download"
+                                title="/minidlna/1.0.16/minidlna_1.0.16.3_static.tar.gz:  released on 2009-11-24"
+                                >minidlna_1.0.16.3_static.tar.gz</a>
+                              
+                            </td>
+                            <td class="platform">
+                                    
+                                
+                            </td>
+                            <td>1.1 MB</td>
+                            <td>2009-11-24</td>
+                            <td>21,670</td>
+                            <td>
+                                
+                            </td>
+                                    
+                                </tr><tr id="node-3-2" class="child-of-node-2-1">
+                                    
+                                        <td class="tree">
+                              <a class="
+
+
+    
+    
+        ext_gz
+    
+ dload filename { url: 'http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.16/minidlna_1.0.16-pre7_static.tar.gz?r=&amp;ts=1289753245' }"
+                                href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.16/minidlna_1.0.16-pre7_static.tar.gz/download"
+                                title="/minidlna/1.0.16/minidlna_1.0.16-pre7_static.tar.gz:  released on 2009-10-23"
+                                >minidlna_1.0.16-pre7_static.tar.gz</a>
+                              
+                            </td>
+                            <td class="platform">
+                                    
+                                
+                            </td>
+                            <td>1.1 MB</td>
+                            <td>2009-10-23</td>
+                            <td>3,841</td>
+                            <td>
+                                
+                            </td>
+                                    
+                                </tr><tr id="node-4-1" class="child-of-node-0-0">
+                                    
+                                        <td>
+                                            <a class="folder dynamic" href="/projects/minidlna/files/minidlna/1.0.15/">1.0.15</a>
+                                            
+                                        </td>
+                                        <td></td>
+                                        <td>1.1 MB</td>
+                                        <td>2009-07-09</td>
+                                        <td>5,305</td>
+                                        <td>
+                                            <a href="/api/file/index/project-id/243163/mtime/desc/rss?path=%2Fminidlna%2F1.0.15" class="icon-sm rss" title="Subscribe to file releases within this folder">Subscribe</a>
+                                            <a href="/projects/minidlna/files/minidlna/1.0.15/" class="icon-sm folder-link" title="View only this folder">Folder view</a>
+                                            
+                                        </td>
+                                    
+                                </tr><tr id="node-4-2" class="child-of-node-4-1">
+                                    
+                                        <td class="tree">
+                              <a class="
+
+
+    
+    
+        ext_gz
+    
+ dload filename { url: 'http://downloads.sourceforge.net/project/minidlna/minidlna/1.0.15/minidlna_1.0.15_static.tar.gz?r=&amp;ts=1289753245' }"
+                                href="http://sourceforge.net/projects/minidlna/files/minidlna/1.0.15/minidlna_1.0.15_static.tar.gz/download"
+                                title="/minidlna/1.0.15/minidlna_1.0.15_static.tar.gz:  released on 2009-07-09"
+                                >minidlna_1.0.15_static.tar.gz</a>
+                              
+                            </td>
+                            <td class="platform">
+                                    
+                                
+                            </td>
+                            <td>1.1 MB</td>
+                            <td>2009-07-09</td>
+                            <td>5,305</td>
+                            <td>
+                                
+                            </td>
+                                    
+                                </tr></tbody>
+                    </table>
+            </div>
+        </div><!-- .yui-b -->
+    </div><!-- .yui-main -->
+    <div class="yui-b">
+         <div class="ads">
+             <div id="fad84" class="ad">
+                 
+<script type="text/javascript">
+    adspot = ad_prefix + 'p84_medrec';
+    if (adid !== "") {
+        adspot += ";comp=" + adid;
+    }
+
+    if (immersion_adcode === "") {
+        
+        
+        document.write(unescape('%3Cscript src="http://ad.doubleclick.net/adj/ostg.sourceforge/' + adspot + ';pg=' + ad_page + ';psrch=' + ad_search + wrappercode + ';logged_in=0;' + ad_topics + dfp_dcopt + 'u=' + dfp_u + ';tile=' + dfp_tile + ';sz=' + '300x250' + ';ord=' + dfp_ord + '?" type="text/javascript"%3E%3C/script%3E'));
+        
+        dfp_tile = dfp_tile + 1;
+        dfp_dcopt = ''; 
+    }
+</script>
+             </div>
+             <div id="fad85" class="ad">
+                 
+<script type="text/javascript">
+    adspot = ad_prefix + 'p85_medrec';
+    if (adid !== "") {
+        adspot += ";comp=" + adid;
+    }
+
+    if (immersion_adcode === "") {
+        
+        
+        document.write(unescape('%3Cscript src="http://ad.doubleclick.net/adj/ostg.sourceforge/' + adspot + ';pg=' + ad_page + ';psrch=' + ad_search + wrappercode + ';logged_in=0;' + ad_topics + dfp_dcopt + 'u=' + dfp_u + ';tile=' + dfp_tile + ';sz=' + '300x250' + ';ord=' + dfp_ord + '?" type="text/javascript"%3E%3C/script%3E'));
+        
+        dfp_tile = dfp_tile + 1;
+        dfp_dcopt = ''; 
+    }
+</script>
+             </div>
+         </div>
+    </div><!-- .yui-b -->
+        </div>
+         
+    </div>
+
+    <div class="sinfo">
+        
+    </div>
+      <div id="ft" class="clearfix">
+        <div class="yui-b">
+          <div class="cols clearfix">
+            <div class="col first">
+          <h4>About SourceForge</h4>
+              <ul>
+                <li><a href="/about">About SourceForge</a></li>
+                <li><a href="/support">Contact Us</a></li>
+                <li><a href="http://geek.net/careers/">Jobs @ Geeknet</a></li>
+                <li><a href="http://geek.net/advertising/">Advertising</a></li>
+              </ul>
+            </div>
+            <div class="col">
+          <h4>Find Software</h4>
+              <ul>
+        <li><a href="/search/">Search Software</a></li>
+                <li><a href="/directory/">Browse by Category</a></li>
+                <li><a href="/top/topalltime.php?type=downloads">Most Popular Overall</a></li>
+                <li><a href="/top/mostactive.php">Most Active Overall</a></li>
+              </ul>
+            </div>
+            <div class="col">
+          <h4>Develop Software</h4>
+              <ul>
+                <li><a href="/register/">Create Project</a></li>
+                <li><a href="/people/">Project Help Wanted</a></li>
+                <li><a href="/new/new_projects.php">New Projects</a></li>
+              </ul>
+            </div>
+            <div class="col">
+          <h4>Community</h4>
+              <ul>
+                <li><a href="/blog/">The Blog</a></li>
+                <li><a href="http://twitter.com/sourceforge" rel="nofollow">@sourceforge on Twitter</a></li>
+              </ul>
+
+            </div>
+            <div class="col">
+          <h4>Help</h4>
+              <ul>
+                <li><a href="/apps/trac/sourceforge/wiki/WikiStart">Site Documentation</a></li>
+                <li><a href="/apps/trac/sourceforge/wiki/Support">Submit Support Requests</a></li>
+                <li><a href="/apps/wordpress/sourceforge/">Site Outages</a></li>
+              </ul>
+            </div>
+          </div>
+          <p class="copyright">&copy; 2010 <a title="Network which provides and promotes Open Source software downloads, development, discussion and news." href="http://geek.net">Geeknet, Inc.</a> <a href="http://p.sf.net/sourceforge/terms">Terms of Use</a> <a href="http://p.sf.net/sourceforge/privacy">Privacy Policy</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!--[if IE]></div><![endif]-->
+    <!--[if IE 6]></div><![endif]-->
+    <!--[if IE 7]></div><![endif]-->
+
+    <script type="text/javascript">
+    jQuery(function ($) {
+        var $tree = $(".treeTable");
+        $tree.treeTable({ clickableNodeNames: true, indent: 27 });// open first folder
+        $('tbody tr:not(".header"):not(".latest"):first', $tree).toggleBranch();
+    });
+</script>
+
+
+
+    <!-- expose some data for use in JS -->
+    <script type="text/javascript">
+        net.sf.antixsrf = unescape('%3Cinput type="hidden" name="_visit_cookie" value="4ce0129c91aa917a150026ba"/%3E');
+        net.sf.cdn_url = 'http://a.fsdn.com/con';
+        net.sf.is_admin = false;
+    </script>
+
+    <!-- Collective tag -->
+    <img src="//b.collective-media.net/seg/cm/cm_aa_gn1" width="1" height="1" alt=""/>
+    <!-- End Collective tag -->
+
+    
+
+    
+    
+
+    <!-- Begin comScore Tag -->
+    <script type="text/javascript">
+        document.write(unescape("%3Cscript src='" + (document.location.protocol === "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js' %3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        COMSCORE.beacon({
+            c1: 2,
+            c2: 6035546,
+            c3: "",
+            c4: "",
+            c5: "",
+            c6: "",
+            c15: ""
+        });
+    </script>
+    <noscript>
+        <img src="http://b.scorecardresearch.com/p?c1=2&amp;c2=6035546&amp;c3=&amp;c4=&amp;c5=&amp;c6=&amp;c15=&amp;cj=1" alt="comScore2" />
+    </noscript>
+    <!-- End comScore Tag -->
+    
+  </body>
+</html>

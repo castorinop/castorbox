@@ -1,0 +1,280 @@
+--- work/main.d/findutils-4.4.0/config.cache	2008-09-02 16:58:12.000000000 -0300
++++ config.cache	2008-09-02 16:56:29.000000000 -0300
+@@ -11,50 +11,49 @@
+ # loading this file, other *unset* `ac_cv_foo' will be assigned the
+ # following values.
+ 
+-ac_cv_build=${ac_cv_build=x86_64-manbo-linux-gnu}
++ac_cv_build=${ac_cv_build=x86_64-unknown-linux-gnu}
+ ac_cv_c_compiler_gnu=${ac_cv_c_compiler_gnu=yes}
+ ac_cv_c_flexmember=${ac_cv_c_flexmember=yes}
+ ac_cv_c_inline=${ac_cv_c_inline=inline}
+ ac_cv_c_restrict=${ac_cv_c_restrict=__restrict}
+ ac_cv_d_type=${ac_cv_d_type=yes}
+ ac_cv_debug=${ac_cv_debug=no}
+-ac_cv_env_CC_set=set
+-ac_cv_env_CC_value=i586-castorbox-linux-gnu-gcc
+-ac_cv_env_CFLAGS_set=set
+-ac_cv_env_CFLAGS_value='-pipe -march=c3-2 -mtune=c3-2 -Os -mfpmath=sse -m32'
+-ac_cv_env_CPPFLAGS_set=set
++ac_cv_env_CC_set=
++ac_cv_env_CC_value=
++ac_cv_env_CFLAGS_set=
++ac_cv_env_CFLAGS_value=
++ac_cv_env_CPPFLAGS_set=
+ ac_cv_env_CPPFLAGS_value=
+-ac_cv_env_CPP_set=set
+-ac_cv_env_CPP_value=i586-castorbox-linux-gnu-cpp
++ac_cv_env_CPP_set=
++ac_cv_env_CPP_value=
+ ac_cv_env_DEFAULT_ARG_SIZE_set=
+ ac_cv_env_DEFAULT_ARG_SIZE_value=
+-ac_cv_env_LDFLAGS_set=set
+-ac_cv_env_LDFLAGS_value=-Wl,--as-needed
++ac_cv_env_LDFLAGS_set=
++ac_cv_env_LDFLAGS_value=
+ ac_cv_env_LIBS_set=
+ ac_cv_env_LIBS_value=
+ ac_cv_env_YACC_set=
+ ac_cv_env_YACC_value=
+ ac_cv_env_YFLAGS_set=
+ ac_cv_env_YFLAGS_value=
+-ac_cv_env_build_alias_set=set
+-ac_cv_env_build_alias_value=x86_64-manbo-linux-gnu
+-ac_cv_env_host_alias_set=set
+-ac_cv_env_host_alias_value=i586-castorbox-linux-gnu
++ac_cv_env_build_alias_set=
++ac_cv_env_build_alias_value=
++ac_cv_env_host_alias_set=
++ac_cv_env_host_alias_value=
+ ac_cv_env_target_alias_set=
+ ac_cv_env_target_alias_value=
+ ac_cv_func___fpending=${ac_cv_func___fpending=yes}
+ ac_cv_func___fpurge=${ac_cv_func___fpurge=yes}
+ ac_cv_func___freading=${ac_cv_func___freading=yes}
+ ac_cv_func__doprnt=${ac_cv_func__doprnt=no}
+-ac_cv_func__ftime=${ac_cv_func__ftime=no}
+ ac_cv_func_alarm=${ac_cv_func_alarm=yes}
+ ac_cv_func_alloca_works=${ac_cv_func_alloca_works=yes}
+ ac_cv_func_btowc=${ac_cv_func_btowc=yes}
+ ac_cv_func_canonicalize_file_name=${ac_cv_func_canonicalize_file_name=yes}
+-ac_cv_func_chown_works=${ac_cv_func_chown_works=no}
++ac_cv_func_chown_works=${ac_cv_func_chown_works=yes}
+ ac_cv_func_clock_gettime=${ac_cv_func_clock_gettime=yes}
+ ac_cv_func_clock_settime=${ac_cv_func_clock_settime=yes}
+-ac_cv_func_closedir_void=${ac_cv_func_closedir_void=yes}
++ac_cv_func_closedir_void=${ac_cv_func_closedir_void=no}
+ ac_cv_func_dirfd=${ac_cv_func_dirfd=yes}
+ ac_cv_func_dup2=${ac_cv_func_dup2=yes}
+ ac_cv_func_endgrent=${ac_cv_func_endgrent=yes}
+@@ -62,10 +61,9 @@
+ ac_cv_func_endpwent=${ac_cv_func_endpwent=yes}
+ ac_cv_func_fchdir=${ac_cv_func_fchdir=yes}
+ ac_cv_func_fchmodat=${ac_cv_func_fchmodat=yes}
+-ac_cv_func_fchown=${ac_cv_func_fchown=yes}
+ ac_cv_func_fchownat=${ac_cv_func_fchownat=yes}
+ ac_cv_func_fdopendir=${ac_cv_func_fdopendir=yes}
+-ac_cv_func_fnmatch_gnu=${ac_cv_func_fnmatch_gnu=cross}
++ac_cv_func_fnmatch_gnu=${ac_cv_func_fnmatch_gnu=yes}
+ ac_cv_func_forcefindlib=${ac_cv_func_forcefindlib=no}
+ ac_cv_func_fpurge=${ac_cv_func_fpurge=no}
+ ac_cv_func_getcwd=${ac_cv_func_getcwd=yes}
+@@ -74,6 +72,7 @@
+ ac_cv_func_getmntent=${ac_cv_func_getmntent=yes}
+ ac_cv_func_getmntinfo=${ac_cv_func_getmntinfo=no}
+ ac_cv_func_getopt_long_only=${ac_cv_func_getopt_long_only=yes}
++ac_cv_func_getpagesize=${ac_cv_func_getpagesize=yes}
+ ac_cv_func_getpwnam=${ac_cv_func_getpwnam=yes}
+ ac_cv_func_gettimeofday=${ac_cv_func_gettimeofday=yes}
+ ac_cv_func_isblank=${ac_cv_func_isblank=yes}
+@@ -83,8 +82,8 @@
+ ac_cv_func_lchown=${ac_cv_func_lchown=yes}
+ ac_cv_func_listmntent=${ac_cv_func_listmntent=no}
+ ac_cv_func_lstat=${ac_cv_func_lstat=yes}
+-ac_cv_func_lstat_dereferences_slashed_symlink=${ac_cv_func_lstat_dereferences_slashed_symlink=no}
+-ac_cv_func_malloc_0_nonnull=${ac_cv_func_malloc_0_nonnull=no}
++ac_cv_func_lstat_dereferences_slashed_symlink=${ac_cv_func_lstat_dereferences_slashed_symlink=yes}
++ac_cv_func_malloc_0_nonnull=${ac_cv_func_malloc_0_nonnull=yes}
+ ac_cv_func_mblen=${ac_cv_func_mblen=yes}
+ ac_cv_func_mbrlen=${ac_cv_func_mbrlen=yes}
+ ac_cv_func_mbrtowc=${ac_cv_func_mbrtowc=yes}
+@@ -92,7 +91,7 @@
+ ac_cv_func_mbsrtowcs=${ac_cv_func_mbsrtowcs=yes}
+ ac_cv_func_memchr=${ac_cv_func_memchr=yes}
+ ac_cv_func_memcmp=${ac_cv_func_memcmp=yes}
+-ac_cv_func_memcmp_working=${ac_cv_func_memcmp_working=no}
++ac_cv_func_memcmp_working=${ac_cv_func_memcmp_working=yes}
+ ac_cv_func_mempcpy=${ac_cv_func_mempcpy=yes}
+ ac_cv_func_memrchr=${ac_cv_func_memrchr=yes}
+ ac_cv_func_memset=${ac_cv_func_memset=yes}
+@@ -102,7 +101,7 @@
+ ac_cv_func_pathconf=${ac_cv_func_pathconf=yes}
+ ac_cv_func_pipe=${ac_cv_func_pipe=yes}
+ ac_cv_func_readlink=${ac_cv_func_readlink=yes}
+-ac_cv_func_realloc_0_nonnull=${ac_cv_func_realloc_0_nonnull=no}
++ac_cv_func_realloc_0_nonnull=${ac_cv_func_realloc_0_nonnull=yes}
+ ac_cv_func_resolvepath=${ac_cv_func_resolvepath=no}
+ ac_cv_func_rpmatch=${ac_cv_func_rpmatch=yes}
+ ac_cv_func_setenv=${ac_cv_func_setenv=yes}
+@@ -116,8 +115,7 @@
+ ac_cv_func_strerror_r=${ac_cv_func_strerror_r=yes}
+ ac_cv_func_strerror_r_char_p=${ac_cv_func_strerror_r_char_p=yes}
+ ac_cv_func_strftime=${ac_cv_func_strftime=yes}
+-ac_cv_func_strndup=${ac_cv_func_strndup=yes}
+-ac_cv_func_strnlen_working=${ac_cv_func_strnlen_working=no}
++ac_cv_func_strnlen_working=${ac_cv_func_strnlen_working=yes}
+ ac_cv_func_strspn=${ac_cv_func_strspn=yes}
+ ac_cv_func_strstr=${ac_cv_func_strstr=yes}
+ ac_cv_func_strtoimax=${ac_cv_func_strtoimax=yes}
+@@ -136,7 +134,7 @@
+ ac_cv_func_wmemchr=${ac_cv_func_wmemchr=yes}
+ ac_cv_func_wmemcpy=${ac_cv_func_wmemcpy=yes}
+ ac_cv_func_wmempcpy=${ac_cv_func_wmempcpy=yes}
+-ac_cv_func_working_mktime=${ac_cv_func_working_mktime=no}
++ac_cv_func_working_mktime=${ac_cv_func_working_mktime=yes}
+ ac_cv_gnu_library_2_1=${ac_cv_gnu_library_2_1=yes}
+ ac_cv_have_decl___fpending=${ac_cv_have_decl___fpending=yes}
+ ac_cv_have_decl_canonicalize_file_name=${ac_cv_have_decl_canonicalize_file_name=yes}
+@@ -147,7 +145,6 @@
+ ac_cv_have_decl_getdelim=${ac_cv_have_decl_getdelim=yes}
+ ac_cv_have_decl_getenv=${ac_cv_have_decl_getenv=yes}
+ ac_cv_have_decl_getline=${ac_cv_have_decl_getline=yes}
+-ac_cv_have_decl_getopt_clip=${ac_cv_have_decl_getopt_clip=no}
+ ac_cv_have_decl_imaxabs=${ac_cv_have_decl_imaxabs=yes}
+ ac_cv_have_decl_imaxdiv=${ac_cv_have_decl_imaxdiv=yes}
+ ac_cv_have_decl_isblank=${ac_cv_have_decl_isblank=yes}
+@@ -193,7 +190,6 @@
+ ac_cv_header_sys_stat_h=${ac_cv_header_sys_stat_h=yes}
+ ac_cv_header_sys_statvfs_h=${ac_cv_header_sys_statvfs_h=yes}
+ ac_cv_header_sys_time_h=${ac_cv_header_sys_time_h=yes}
+-ac_cv_header_sys_timeb_h=${ac_cv_header_sys_timeb_h=yes}
+ ac_cv_header_sys_types_h=${ac_cv_header_sys_types_h=yes}
+ ac_cv_header_sys_types_h_makedev=${ac_cv_header_sys_types_h_makedev=yes}
+ ac_cv_header_sys_ucred_h=${ac_cv_header_sys_ucred_h=no}
+@@ -203,7 +199,7 @@
+ ac_cv_header_unistd_h=${ac_cv_header_unistd_h=yes}
+ ac_cv_header_wchar_h=${ac_cv_header_wchar_h=yes}
+ ac_cv_header_wctype_h=${ac_cv_header_wctype_h=yes}
+-ac_cv_host=${ac_cv_host=i586-castorbox-linux-gnu}
++ac_cv_host=${ac_cv_host=x86_64-unknown-linux-gnu}
+ ac_cv_leaf_optimisation=${ac_cv_leaf_optimisation=yes}
+ ac_cv_lib_error_at_line=${ac_cv_lib_error_at_line=yes}
+ ac_cv_lib_m_fabs=${ac_cv_lib_m_fabs=yes}
+@@ -220,24 +216,23 @@
+ ac_cv_member_struct_tm_tm_gmtoff=${ac_cv_member_struct_tm_tm_gmtoff=yes}
+ ac_cv_member_struct_tm_tm_zone=${ac_cv_member_struct_tm_tm_zone=yes}
+ ac_cv_objext=${ac_cv_objext=o}
+-ac_cv_path_EGREP=${ac_cv_path_EGREP='//home/pablo/gar-castorbox/images/build/usr/bin/grep -E'}
+-ac_cv_path_GMSGFMT=${ac_cv_path_GMSGFMT=//home/pablo/gar-castorbox/images/build/usr/bin/msgfmt}
+-ac_cv_path_GREP=${ac_cv_path_GREP=//home/pablo/gar-castorbox/images/build/usr/bin/grep}
+-ac_cv_path_MSGFMT=${ac_cv_path_MSGFMT=//home/pablo/gar-castorbox/images/build/usr/bin/msgfmt}
+-ac_cv_path_MSGMERGE=${ac_cv_path_MSGMERGE=//home/pablo/gar-castorbox/images/build/usr/bin/msgmerge}
+-ac_cv_path_SORT=${ac_cv_path_SORT=//home/pablo/gar-castorbox/images/build/usr/bin/sort}
+-ac_cv_path_XGETTEXT=${ac_cv_path_XGETTEXT=//home/pablo/gar-castorbox/images/build/usr/bin/xgettext}
+-ac_cv_path_install=${ac_cv_path_install='//home/pablo/gar-castorbox/images/build/usr/bin/install -c'}
+-ac_cv_path_mkdir=${ac_cv_path_mkdir=//home/pablo/gar-castorbox/images/build/usr/bin/mkdir}
++ac_cv_path_EGREP=${ac_cv_path_EGREP='/bin/grep -E'}
++ac_cv_path_GMSGFMT=${ac_cv_path_GMSGFMT=/usr/bin/msgfmt}
++ac_cv_path_GREP=${ac_cv_path_GREP=/bin/grep}
++ac_cv_path_MSGFMT=${ac_cv_path_MSGFMT=/usr/bin/msgfmt}
++ac_cv_path_MSGMERGE=${ac_cv_path_MSGMERGE=/usr/bin/msgmerge}
++ac_cv_path_SORT=${ac_cv_path_SORT=/bin/sort}
++ac_cv_path_XGETTEXT=${ac_cv_path_XGETTEXT=/usr/bin/xgettext}
++ac_cv_path_install=${ac_cv_path_install='/usr/bin/install -c'}
++ac_cv_path_mkdir=${ac_cv_path_mkdir=/bin/mkdir}
+ ac_cv_prog_AWK=${ac_cv_prog_AWK=gawk}
+-ac_cv_prog_CC=${ac_cv_prog_CC=i586-castorbox-linux-gnu-gcc}
+-ac_cv_prog_CPP=${ac_cv_prog_CPP=i586-castorbox-linux-gnu-cpp}
+-ac_cv_prog_RANLIB=${ac_cv_prog_RANLIB=i586-castorbox-linux-gnu-ranlib}
+-ac_cv_prog_STRIP=${ac_cv_prog_STRIP=i586-castorbox-linux-gnu-strip}
++ac_cv_prog_CPP=${ac_cv_prog_CPP='gcc -E'}
++ac_cv_prog_ac_ct_CC=${ac_cv_prog_ac_ct_CC=gcc}
++ac_cv_prog_ac_ct_RANLIB=${ac_cv_prog_ac_ct_RANLIB=ranlib}
+ ac_cv_prog_cc_c89=${ac_cv_prog_cc_c89=}
+ ac_cv_prog_cc_c99=${ac_cv_prog_cc_c99=-std=gnu99}
+ ac_cv_prog_cc_g=${ac_cv_prog_cc_g=yes}
+-ac_cv_prog_cc_i586_castorbox_linux_gnu_gcc_c_o=${ac_cv_prog_cc_i586_castorbox_linux_gnu_gcc_c_o=yes}
++ac_cv_prog_cc_gcc_c_o=${ac_cv_prog_cc_gcc_c_o=yes}
+ ac_cv_prog_cc_stdc=${ac_cv_prog_cc_stdc=-std=gnu99}
+ ac_cv_prog_make_make_set=${ac_cv_prog_make_make_set=yes}
+ ac_cv_safe_to_define___extensions__=${ac_cv_safe_to_define___extensions__=yes}
+@@ -246,7 +241,7 @@
+ ac_cv_search_opendir=${ac_cv_search_opendir='none required'}
+ ac_cv_struct_st_dm_mode=${ac_cv_struct_st_dm_mode=no}
+ ac_cv_struct_tm=${ac_cv_struct_tm=time.h}
+-ac_cv_sys_file_offset_bits=${ac_cv_sys_file_offset_bits=64}
++ac_cv_sys_file_offset_bits=${ac_cv_sys_file_offset_bits=no}
+ ac_cv_sys_largefile_CC=${ac_cv_sys_largefile_CC=no}
+ ac_cv_sys_largefile_source=${ac_cv_sys_largefile_source=no}
+ ac_cv_sys_long_file_names=${ac_cv_sys_long_file_names=yes}
+@@ -271,7 +266,7 @@
+ acl_cv_libext=${acl_cv_libext=a}
+ acl_cv_libname_spec=${acl_cv_libname_spec='lib$name'}
+ acl_cv_library_names_spec=${acl_cv_library_names_spec='$libname$shrext'}
+-acl_cv_path_LD=${acl_cv_path_LD=i586-castorbox-linux-gnu-ld}
++acl_cv_path_LD=${acl_cv_path_LD=/usr/bin/ld}
+ acl_cv_prog_gnu_ld=${acl_cv_prog_gnu_ld=yes}
+ acl_cv_rpath=${acl_cv_rpath=done}
+ acl_cv_shlibext=${acl_cv_shlibext=so}
+@@ -284,33 +279,34 @@
+ fu_cv_sys_mounted_vmount=${fu_cv_sys_mounted_vmount=no}
+ gl_cv_c_inline_effective=${gl_cv_c_inline_effective=yes}
+ gl_cv_compound_literals=${gl_cv_compound_literals=no}
+-gl_cv_double_slash_root=${gl_cv_double_slash_root='unknown, assuming no'}
++gl_cv_double_slash_root=${gl_cv_double_slash_root=no}
+ gl_cv_func_chown_follows_symlink=${gl_cv_func_chown_follows_symlink=yes}
+ gl_cv_func_dirfd_macro=${gl_cv_func_dirfd_macro=no}
+-gl_cv_func_fchownat_nofollow_works=${gl_cv_func_fchownat_nofollow_works=no}
+-gl_cv_func_fflush_stdin=${gl_cv_func_fflush_stdin=no}
++gl_cv_func_fchownat_nofollow_works=${gl_cv_func_fchownat_nofollow_works=yes}
++gl_cv_func_fflush_stdin=${gl_cv_func_fflush_stdin=yes}
+ gl_cv_func_fseeko=${gl_cv_func_fseeko=yes}
+ gl_cv_func_ftello=${gl_cv_func_ftello=yes}
+-gl_cv_func_getcwd_null=${gl_cv_func_getcwd_null=no}
+-gl_cv_func_gettimeofday_clobber=${gl_cv_func_gettimeofday_clobber=yes}
++gl_cv_func_getcwd_abort_bug=${gl_cv_func_getcwd_abort_bug=no}
++gl_cv_func_getcwd_null=${gl_cv_func_getcwd_null=yes}
++gl_cv_func_getcwd_path_max=${gl_cv_func_getcwd_path_max='no, but it is partly working'}
++gl_cv_func_gettimeofday_clobber=${gl_cv_func_gettimeofday_clobber=no}
+ gl_cv_func_gettimeofday_posix_signature=${gl_cv_func_gettimeofday_posix_signature=yes}
+ gl_cv_func_gnu_getopt=${gl_cv_func_gnu_getopt=yes}
+ gl_cv_func_lseek_pipe=${gl_cv_func_lseek_pipe=yes}
+-gl_cv_func_malloc_0_nonnull=${gl_cv_func_malloc_0_nonnull=0}
++gl_cv_func_malloc_0_nonnull=${gl_cv_func_malloc_0_nonnull=1}
+ gl_cv_func_malloc_posix=${gl_cv_func_malloc_posix=yes}
+ gl_cv_func_mbrtowc=${gl_cv_func_mbrtowc=yes}
+ gl_cv_func_re_compile_pattern_working=${gl_cv_func_re_compile_pattern_working=no}
+-gl_cv_func_stdin=${gl_cv_func_stdin=yes}
+ gl_cv_func_strndup=${gl_cv_func_strndup=yes}
+ gl_cv_func_strtoimax_macro=${gl_cv_func_strtoimax_macro=no}
+ gl_cv_func_strtoumax_macro=${gl_cv_func_strtoumax_macro=no}
+ gl_cv_func_va_copy=${gl_cv_func_va_copy=yes}
+-gl_cv_func_wcwidth_works=${gl_cv_func_wcwidth_works='guessing no'}
++gl_cv_func_wcwidth_works=${gl_cv_func_wcwidth_works=yes}
+ gl_cv_func_working_strerror=${gl_cv_func_working_strerror=yes}
+ gl_cv_have_arbitrary_file_name_length_limit=${gl_cv_have_arbitrary_file_name_length_limit=yes}
+ gl_cv_have_include_next=${gl_cv_have_include_next=yes}
+ gl_cv_header_wchar_h_standalone=${gl_cv_header_wchar_h_standalone=yes}
+-gl_cv_header_working_fcntl_h=${gl_cv_header_working_fcntl_h=cross-compiling}
++gl_cv_header_working_fcntl_h=${gl_cv_header_working_fcntl_h=yes}
+ gl_cv_header_working_inttypes_h=${gl_cv_header_working_inttypes_h=yes}
+ gl_cv_header_working_stdint_h=${gl_cv_header_working_stdint_h=yes}
+ gl_cv_list_mounted_fs=${gl_cv_list_mounted_fs=yes}
+@@ -327,14 +323,14 @@
+ gl_cv_next_wchar_h=${gl_cv_next_wchar_h='<wchar.h>'}
+ gl_cv_next_wctype_h=${gl_cv_next_wctype_h='<wctype.h>'}
+ gl_cv_rpl_alloca=${gl_cv_rpl_alloca=yes}
+-gl_cv_struct_dirent_d_ino=${gl_cv_struct_dirent_d_ino=no}
++gl_cv_struct_dirent_d_ino=${gl_cv_struct_dirent_d_ino=yes}
+ gl_cv_struct_dirent_d_type=${gl_cv_struct_dirent_d_type=yes}
+ gl_cv_sys_struct_timespec_in_time_h=${gl_cv_sys_struct_timespec_in_time_h=yes}
+ gl_cv_sys_struct_timeval=${gl_cv_sys_struct_timeval=yes}
+ gl_cv_test_INT32_MAX_LT_INTMAX_MAX=${gl_cv_test_INT32_MAX_LT_INTMAX_MAX=yes}
+-gl_cv_test_INT64_MAX_EQ_LONG_MAX=${gl_cv_test_INT64_MAX_EQ_LONG_MAX=no}
++gl_cv_test_INT64_MAX_EQ_LONG_MAX=${gl_cv_test_INT64_MAX_EQ_LONG_MAX=yes}
+ gl_cv_test_UINT32_MAX_LT_UINTMAX_MAX=${gl_cv_test_UINT32_MAX_LT_UINTMAX_MAX=yes}
+-gl_cv_test_UINT64_MAX_EQ_ULONG_MAX=${gl_cv_test_UINT64_MAX_EQ_ULONG_MAX=no}
++gl_cv_test_UINT64_MAX_EQ_ULONG_MAX=${gl_cv_test_UINT64_MAX_EQ_ULONG_MAX=yes}
+ gl_cv_time_r_posix=${gl_cv_time_r_posix=yes}
+ gl_cv_var_stdin_large_offset=${gl_cv_var_stdin_large_offset=yes}
+ gt_cv_c_wchar_t=${gt_cv_c_wchar_t=yes}

@@ -1,0 +1,49 @@
+diff -Naur NVIDIA-Linux-x86_64-270.41.19-old/kernel/conftest.sh NVIDIA-Linux-x86_64-270.41.19-new/kernel/conftest.sh
+--- NVIDIA-Linux-x86_64-270.41.19-old/kernel/conftest.sh	2011-05-16 23:32:19.000000000 -0700
++++ NVIDIA-Linux-x86_64-270.41.19-new/kernel/conftest.sh	2011-07-22 16:02:29.000000000 -0700
+@@ -76,7 +76,7 @@
+ }
+ 
+ build_cflags() {
+-    BASE_CFLAGS="-D__KERNEL__ \
++    BASE_CFLAGS="-O2 -D__KERNEL__ \
+ -DKBUILD_BASENAME=\"#conftest$$\" -DKBUILD_MODNAME=\"#conftest$$\" \
+ -nostdinc -isystem $ISYSTEM"
+ 
+@@ -1510,11 +1510,11 @@
+             #if defined(TEST_2_4) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0))
+               #error \"!KERNEL_2_4\"
+             #endif
+-            #if defined(TEST_2_6) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
+-              #error \"!KERNEL_2_6\"
++            #if defined(TEST_2_6_OR_3) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
++              #error \"!KERNEL_2_6_OR_3\"
+             #endif" > conftest$$.c
+ 
+-            $CC $CFLAGS -DTEST_2_6 -c conftest$$.c > /dev/null 2>&1
++            $CC $CFLAGS -DTEST_2_6_OR_3 -c conftest$$.c > /dev/null 2>&1
+ 
+             if [ -f conftest$$.o ]; then
+                 if [ -f Makefile.rmlite ]; then
+@@ -1847,7 +1847,8 @@
+         # Run a series of compile tests to determine the set of interfaces
+         # and features available in the target kernel.
+         #
+-        FILES="linux/semaphore.h generated/autoconf.h"
++        FILES="linux/semaphore.h generated/autoconf.h generated/compile.h"
++        FILES="$FILES generated/utsrelease.h"
+         shift 5
+ 
+         rm -f conftest.h
+diff -Naur NVIDIA-Linux-x86_64-270.41.19-old/kernel/nv-linux.h NVIDIA-Linux-x86_64-270.41.19-new/kernel/nv-linux.h
+--- NVIDIA-Linux-x86_64-270.41.19-old/kernel/nv-linux.h	2011-05-16 23:32:19.000000000 -0700
++++ NVIDIA-Linux-x86_64-270.41.19-new/kernel/nv-linux.h	2011-07-22 16:02:29.000000000 -0700
+@@ -34,6 +34,8 @@
+ #  error This driver does not support 2.5 kernels!
+ #elif LINUX_VERSION_CODE < KERNEL_VERSION(2, 7, 0)
+ #  define KERNEL_2_6
++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0)
++#  define KERNEL_3
+ #else
+ #  error This driver does not support development kernels!
+ #endif

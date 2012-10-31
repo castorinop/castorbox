@@ -1,0 +1,704 @@
+Binary files tmp/mms-1.1.0-1664/audio-library/audio-library.o and work/main.d/mms-1.1.0-1664/audio-library/audio-library.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/audio-library/Makefile work/main.d/mms-1.1.0-1664/audio-library/Makefile
+--- old-mms-1.1.0-1664/audio-library/Makefile	2008-06-03 21:08:50.000000000 -0300
++++ new-mms-1.1.0-1664/audio-library/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -18,10 +18,10 @@
+ 
+ DEP_OBJS = ../*.o
+ 
+-LIBS += `imlib2-config --libs`
++LIBS += `$(IMLIB2CONFIG) --libs`
+ 
+-CXXFLAGS += `pkg-config --cflags taglib`
+-LIBS += `pkg-config --libs taglib`
++CXXFLAGS += `$(PKGCONFIG) --cflags taglib`
++LIBS += `$(PKGCONFIG) --libs taglib`
+ 
+ ifeq ($(INOTIFY),yes)
+ LIBS += -linotifytools
+@@ -39,7 +39,7 @@
+ $(PRG): audio-library.o
+ 	@if test -f ../mms.o; then rm ../mms.o; fi
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lsqlite3 -lz -ltag
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lsqlite3 -lz -ltag
+ 	@rm -r .libs
+ 
+ install: $(PRG)
+Binary files tmp/mms-1.1.0-1664/audio-library/mms-audio-library and work/main.d/mms-1.1.0-1664/audio-library/mms-audio-library differ
+Binary files tmp/mms-1.1.0-1664/busy_indicator.o and work/main.d/mms-1.1.0-1664/busy_indicator.o differ
+Binary files tmp/mms-1.1.0-1664/cd.o and work/main.d/mms-1.1.0-1664/cd.o differ
+Binary files tmp/mms-1.1.0-1664/common.o and work/main.d/mms-1.1.0-1664/common.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/Makefile work/main.d/mms-1.1.0-1664/Makefile
+--- old-mms-1.1.0-1664/Makefile	2008-06-03 21:08:50.000000000 -0300
++++ new-mms-1.1.0-1664/Makefile	2008-06-04 11:45:21.000000000 -0300
+@@ -94,14 +94,14 @@
+ $(PRG): $(MMS_DEP)
+ 	$(DO_MAKE)
+ 	make mms.o
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
+-	-rdynamic --export-dynamic $(OBJS) $(COMMON_LIBS) `imlib2-config --libs`
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
++	-rdynamic --export-dynamic $(OBJS) $(COMMON_LIBS) `$(IMLIB2CONFIG) --libs`
+ 	@rm -r .libs
+ 
+ core: $(MMS_DEP)
+ 	make mms.o
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
+-	-rdynamic --export-dynamic $(OBJS) $(COMMON_LIBS) `imlib2-config --libs`
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
++	-rdynamic --export-dynamic $(OBJS) $(COMMON_LIBS) `$(IMLIB2CONFIG) --libs`
+ 	@rm -r .libs
+ 
+ # ./configure must be run if it changed
+@@ -274,7 +274,7 @@
+ endif
+ 
+         # create cache dir
+-	if test ! -d $(DESTDIR)/var/cache/mms ; then mkdir -m 777 -p $(DESTDIR)/var/cache/mms ; fi
++	#if test ! -d $(DESTDIR)/var/cache/mms ; then mkdir -m 777 -p $(DESTDIR)/var/cache/mms ; fi
+ 
+ 	@echo " Installation complete!"
+ 	@echo ""
+Binary files tmp/mms-1.1.0-1664/mms and work/main.d/mms-1.1.0-1664/mms differ
+Binary files tmp/mms-1.1.0-1664/mms.o and work/main.d/mms-1.1.0-1664/mms.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/movie-library/Makefile work/main.d/mms-1.1.0-1664/movie-library/Makefile
+--- old-mms-1.1.0-1664/movie-library/Makefile	2008-06-03 21:10:28.000000000 -0300
++++ new-mms-1.1.0-1664/movie-library/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -19,8 +19,8 @@
+ ifeq ($(FFMPEG_THUMBNAILER), yes)
+   OBJS += ../plugins/feature/movie/thumbnailer.o
+   ifeq ($(FFMPEG_EXTERNAL), yes)
+-    CXXFLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-    FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++    CXXFLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++    FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+   else
+   CXXFLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+   CXXFLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+@@ -36,10 +36,10 @@
+ 
+ DEP_OBJS = ../*.o
+ 
+-LIBS += `imlib2-config --libs`
++LIBS += `$(IMLIB2CONFIG) --libs`
+ 
+-CXXFLAGS += `pkg-config --cflags taglib`
+-LIBS += `pkg-config --libs taglib`
++CXXFLAGS += `$(PKGCONFIG) --cflags taglib`
++LIBS += `$(PKGCONFIG) --libs taglib`
+ 
+ ifeq ($(INOTIFY),yes)
+ LIBS += -linotifytools
+@@ -57,7 +57,7 @@
+ $(PRG): movie-library.o
+ 	@if test -f ../mms.o; then rm ../mms.o; fi
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
+ 	@rm -r .libs
+ 
+ install: $(PRG)
+Binary files tmp/mms-1.1.0-1664/movie-library/mms-movie-library and work/main.d/mms-1.1.0-1664/movie-library/mms-movie-library differ
+Binary files tmp/mms-1.1.0-1664/movie-library/movie-library.o and work/main.d/mms-1.1.0-1664/movie-library/movie-library.o differ
+Binary files tmp/mms-1.1.0-1664/notify_area.o and work/main.d/mms-1.1.0-1664/notify_area.o differ
+Binary files tmp/mms-1.1.0-1664/notify.o and work/main.d/mms-1.1.0-1664/notify.o differ
+Binary files tmp/mms-1.1.0-1664/option.o and work/main.d/mms-1.1.0-1664/option.o differ
+Binary files tmp/mms-1.1.0-1664/options.o and work/main.d/mms-1.1.0-1664/options.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/pic-library/Makefile work/main.d/mms-1.1.0-1664/pic-library/Makefile
+--- old-mms-1.1.0-1664/pic-library/Makefile	2008-06-03 21:10:29.000000000 -0300
++++ new-mms-1.1.0-1664/pic-library/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -18,7 +18,7 @@
+ 
+ DEP_OBJS = ../*.o
+ 
+-LIBS += `imlib2-config --libs`
++LIBS += `$(IMLIB2CONFIG) --libs`
+ 
+ ifeq ($(INOTIFY),yes)
+ LIBS += -linotifytools
+@@ -36,7 +36,7 @@
+ $(PRG): pic-library.o
+ 	@if test -f ../mms.o; then rm ../mms.o; fi
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
+ 	@rm -r .libs
+ 
+ install: $(PRG)
+Binary files tmp/mms-1.1.0-1664/pic-library/mms-pic-library and work/main.d/mms-1.1.0-1664/pic-library/mms-pic-library differ
+Binary files tmp/mms-1.1.0-1664/pic-library/pic-library.o and work/main.d/mms-1.1.0-1664/pic-library/pic-library.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/audio_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/audio_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/audio.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/audio.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/audio_opts.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/audio_opts.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/audio_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/audio_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/audio_s.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/audio_s.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/base64.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/base64.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/CD_Tag.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/CD_Tag.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/clientstubbase.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/clientstubbase.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/dbaudiofile.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/dbaudiofile.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/graphical_audio.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/graphical_audio.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/lastfm.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/lastfm.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/lib_feature_audio.so and work/main.d/mms-1.1.0-1664/plugins/feature/audio/lib_feature_audio.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/lyrics.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/lyrics.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/audio/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/audio/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/audio/Makefile	2008-06-03 21:10:30.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/audio/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -24,15 +24,15 @@
+ ifeq ($(FAUDIO), yes)
+ SRCS += dbaudiofile.cpp graphical_audio.cpp
+ OBJS += dbaudiofile.o graphical_audio.o
+-CXXFLAGS += `pkg-config --cflags taglib` `pkg-config --silence-errors --cflags libccext2`
+-LINKOPTS += `pkg-config --libs taglib` `pkg-config --silence-errors --libs libccext2`
++CXXFLAGS += `$(PKGCONFIG) --cflags taglib`  `$(PKGCONFIG) --silence-errors --cflags libccext2`
++LINKOPTS += `$(PKGCONFIG) --libs taglib` `$(PKGCONFIG) --silence-errors --libs libccext2`
+ endif
+ 
+ ifeq ($(IMMS), yes)
+ SRCS += clientstubbase.cc
+ OBJS += clientstubbase.o
+-CXXFLAGS += `pkg-config --cflags glib-2.0`
+-LINKOPTS += `pkg-config glib-2.0 --libs`
++CXXFLAGS += `$(PKGCONFIG) --cflags glib-2.0`
++LINKOPTS += `$(PKGCONFIG) glib-2.0 --libs`
+ endif
+ 
+ CFLAGS += -fPIC
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/alsaplayer_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/alsaplayer_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/alsaplayer.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/alsaplayer.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/alsaplayer_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/alsaplayer_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/lib_feature_audio_player_alsaplayer.so and work/main.d/mms-1.1.0-1664/plugins/feature/audio/players/alsaplayer/lib_feature_audio_player_alsaplayer.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/players/audio_player.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/players/audio_player.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/audio/players/gstreamer/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/audio/players/gstreamer/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/audio/players/gstreamer/Makefile	2008-06-03 21:10:33.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/audio/players/gstreamer/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -12,10 +12,10 @@
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../../../ -I../../../../ \
+ 	-I../../../../../ -I../../../../output/ \
+ 	-I../../../../input/ -fPIC -shared \
+-	`pkg-config --cflags gstreamer-0.10`
++	`$(PKGCONFIG) --cflags gstreamer-0.10`
+ 
+ all: $(OBJS)
+-	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) `pkg-config --libs gstreamer-0.10` $(NEEDED_PLAYER_OBJS)
++	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) `$(PKGCONFIG) --libs gstreamer-0.10` $(NEEDED_PLAYER_OBJS)
+ 
+ install:
+ 	$(INSTALL) $(PLUGIN_NAME) $(DESTDIR)$(PLUGINDIR)/$(PLUGIN_NAME)
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/audio/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/sha1.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/sha1.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/shoutcast.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/shoutcast.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/shuffle_list.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/shuffle_list.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/audio/simple_audio.o and work/main.d/mms-1.1.0-1664/plugins/feature/audio/simple_audio.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/alarm_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/clock/alarm_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/clock_alarms.o and work/main.d/mms-1.1.0-1664/plugins/feature/clock/clock_alarms.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/clock_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/clock/clock_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/clock.o and work/main.d/mms-1.1.0-1664/plugins/feature/clock/clock.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/clock_opts.o and work/main.d/mms-1.1.0-1664/plugins/feature/clock/clock_opts.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/clock_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/clock/clock_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/lib_feature_clock.so and work/main.d/mms-1.1.0-1664/plugins/feature/clock/lib_feature_clock.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/clock/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/clock/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/common-feature.o and work/main.d/mms-1.1.0-1664/plugins/feature/common-feature.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/feature.o and work/main.d/mms-1.1.0-1664/plugins/feature/feature.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/game_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/game/game_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/game.o and work/main.d/mms-1.1.0-1664/plugins/feature/game/game.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/game_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/game/game_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/lib_feature_game.so and work/main.d/mms-1.1.0-1664/plugins/feature/game/lib_feature_game.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/game/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/game/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/gsimplefile.o and work/main.d/mms-1.1.0-1664/plugins/feature/gsimplefile.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/Makefile	2008-06-03 21:10:29.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -101,14 +101,14 @@
+ ifdef XML_DIR 
+ 	make -C $(XML_DIR)
+ endif
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o feature.o $(OBJS) $(XML_LIB)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o feature.o $(OBJS) $(XML_LIB)
+ 
+ feature: $(OBJS) $(DEP)
+ 	$(DO_MAKE)
+ ifdef XML_DIR
+ 	make -C $(XML_DIR)
+ endif
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o feature.o $(OBJS) $(XML_LIB)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o feature.o $(OBJS) $(XML_LIB)
+ 
+ install:
+ 	@for i in $(INSTALLDIRS); do $(MAKE) -C $$i install; done
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/lib_feature_media_rss.so and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/lib_feature_media_rss.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_autodownload_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_autodownload_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/media_rss.o and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/media_rss.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_opts.o and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_opts.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/media_rss_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/regexx.o and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/regexx.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/media-rss/rss_item.o and work/main.d/mms-1.1.0-1664/plugins/feature/media-rss/rss_item.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/module.o and work/main.d/mms-1.1.0-1664/plugins/feature/module.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/collection.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/collection.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/graphical_movie.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/graphical_movie.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/imdb_movie.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/imdb_movie.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/imdb.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/imdb.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/lib_feature_movie_collection.so and work/main.d/mms-1.1.0-1664/plugins/feature/movie/lib_feature_movie_collection.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/lib_feature_movie.so and work/main.d/mms-1.1.0-1664/plugins/feature/movie/lib_feature_movie.so differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/movie/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/movie/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/movie/Makefile	2008-06-03 21:10:40.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/movie/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -30,8 +30,8 @@
+ SRCS += thumbnailer.cpp
+ OBJS += thumbnailer.o
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-CXXFLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++CXXFLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+ else
+ CXXFLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ CXXFLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/movie_collection_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/movie_collection_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/movie_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/movie_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/movie_db.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/movie_db.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/Movie_info.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/Movie_info.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/movie.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/movie.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/movie_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/movie_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/genericplayer_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/genericplayer_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/genericplayer.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/genericplayer.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/genericplayer_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/genericplayer_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/lib_feature_movie_player_genericplayer.so and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/lib_feature_movie_player_genericplayer.so differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/Makefile	2008-06-03 21:10:41.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -15,8 +15,8 @@
+ 
+ ifeq ($(FFMPEG_THUMBNAILER), yes)
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-CXXFLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++CXXFLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+ else
+ CXXFLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ CXXFLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/genericplayer/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/movie_player.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/movie_player.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/lib_feature_movie_player_mplayer.so and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/lib_feature_movie_player_mplayer.so differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/movie/players/mplayer/Makefile	2008-06-03 21:10:42.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/movie/players/mplayer/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -15,8 +15,8 @@
+ 
+ ifeq ($(FFMPEG_THUMBNAILER), yes)
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-CXXFLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++CXXFLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+ else
+ CXXFLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ CXXFLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/mplayer_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/mplayer_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/mplayer.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/mplayer.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/mplayer_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/mplayer_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/mplayer/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/xine/lib_feature_movie_player_xine.so and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/xine/lib_feature_movie_player_xine.so differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/movie/players/xine/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/xine/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/movie/players/xine/Makefile	2008-06-03 21:10:42.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/movie/players/xine/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -15,8 +15,8 @@
+ 
+ ifeq ($(FFMPEG_THUMBNAILER), yes)
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-CXXFLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++CXXFLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+ else
+ CXXFLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ CXXFLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/xine/xine_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/xine/xine_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/xine/xine.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/xine/xine.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/players/xine/xine_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/players/xine/xine_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/movie/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/simple_movie.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/simple_movie.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/movie/thumbnailer.o and work/main.d/mms-1.1.0-1664/plugins/feature/movie/thumbnailer.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/lib_feature_pictures.so and work/main.d/mms-1.1.0-1664/plugins/feature/picture/lib_feature_pictures.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/picture_config.o and work/main.d/mms-1.1.0-1664/plugins/feature/picture/picture_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/pictures.o and work/main.d/mms-1.1.0-1664/plugins/feature/picture/pictures.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/pictures_plugin.o and work/main.d/mms-1.1.0-1664/plugins/feature/picture/pictures_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/picture/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/feature/picture/po/sv.mo differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/python/libgui/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/python/libgui/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/python/libgui/Makefile	2008-06-03 21:10:44.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/python/libgui/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -16,7 +16,7 @@
+ all: libgui
+ 
+ libgui: $(OBJS)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o libgui.o $(OBJS)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o libgui.o $(OBJS)
+ 
+ clean:
+ 	@if test -f libgui.o ; then rm *.o ; fi
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/feature/python/libpython/Makefile work/main.d/mms-1.1.0-1664/plugins/feature/python/libpython/Makefile
+--- old-mms-1.1.0-1664/plugins/feature/python/libpython/Makefile	2008-06-03 21:10:45.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/feature/python/libpython/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -12,7 +12,7 @@
+ all:	deps libpython
+ 
+ libpython:	$(OBJS)
+-		/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o libpython.o $(OBJS)
++		$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o libpython.o $(OBJS)
+ 
+ deps:
+ 	make -C mmsv2
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/htmlutil.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/htmlutil.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/lex_util.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/lex_util.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/main.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/main.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/node_set.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/node_set.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/tinystr.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/tinystr.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxmlerror.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxmlerror.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxml.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxml.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxmlparser.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxmlparser.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxpath and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/tinyxpath differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/tokenlist.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/tokenlist.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/xml_util.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/xml_util.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_expression.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_expression.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_processor.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_processor.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_stack.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_stack.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_static.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_static.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_stream.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_stream.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_syntax.o and work/main.d/mms-1.1.0-1664/plugins/feature/tinyxml/xpath_syntax.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/feature/wget_wrapper.o and work/main.d/mms-1.1.0-1664/plugins/feature/wget_wrapper.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/input-base.o and work/main.d/mms-1.1.0-1664/plugins/input/input-base.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/input_device.o and work/main.d/mms-1.1.0-1664/plugins/input/input_device.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/input.o and work/main.d/mms-1.1.0-1664/plugins/input/input.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/keyboard/keyboard.o and work/main.d/mms-1.1.0-1664/plugins/input/keyboard/keyboard.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/keyboard/keyboard_plugin.o and work/main.d/mms-1.1.0-1664/plugins/input/keyboard/keyboard_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/keyboard/lib_ainput_keyboard.so and work/main.d/mms-1.1.0-1664/plugins/input/keyboard/lib_ainput_keyboard.so differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/input/keyboard/Makefile work/main.d/mms-1.1.0-1664/plugins/input/keyboard/Makefile
+--- old-mms-1.1.0-1664/plugins/input/keyboard/Makefile	2008-06-03 21:10:51.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/input/keyboard/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -15,7 +15,7 @@
+ COMMON_LIBS += -lncurses
+ 
+ ifeq ($(VO_SDL),yes)
+-EXTRA_OBJS = `sdl-config --libs`
++EXTRA_OBJS = `$(SDLCONFIG) --libs`
+ endif
+ 
+ all: $(OBJS)
+Binary files tmp/mms-1.1.0-1664/plugins/input/keyboard/termio/getch2.o and work/main.d/mms-1.1.0-1664/plugins/input/keyboard/termio/getch2.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/lib_ainput_lirc.so and work/main.d/mms-1.1.0-1664/plugins/input/lirc/lib_ainput_lirc.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/lirc_config.o and work/main.d/mms-1.1.0-1664/plugins/input/lirc/lirc_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/lirc.o and work/main.d/mms-1.1.0-1664/plugins/input/lirc/lirc.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/lirc_plugin.o and work/main.d/mms-1.1.0-1664/plugins/input/lirc/lirc_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/lirc/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/input/lirc/po/sv.mo differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/input/Makefile work/main.d/mms-1.1.0-1664/plugins/input/Makefile
+--- old-mms-1.1.0-1664/plugins/input/Makefile	2008-06-03 21:10:50.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/input/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -22,11 +22,11 @@
+ CXXFLAGS += -I../ -I../../ -I../output/ -Ilirc/
+ 
+ input-base: $(OBJS) $(DEP)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o input-base.o $(OBJS)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o input-base.o $(OBJS)
+ 
+ input: $(OBJS) $(DEP)
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o input-base.o $(OBJS)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o input-base.o $(OBJS)
+ 
+ install:
+ 	@for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+Binary files tmp/mms-1.1.0-1664/plugins/input/remote_config.o and work/main.d/mms-1.1.0-1664/plugins/input/remote_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/remote.o and work/main.d/mms-1.1.0-1664/plugins/input/remote.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/replay/lib_ainput_replay.so and work/main.d/mms-1.1.0-1664/plugins/input/replay/lib_ainput_replay.so differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/replay/replay_device.o and work/main.d/mms-1.1.0-1664/plugins/input/replay/replay_device.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/input/replay/replay_device_plugin.o and work/main.d/mms-1.1.0-1664/plugins/input/replay/replay_device_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/common-output.o and work/main.d/mms-1.1.0-1664/plugins/output/common-output.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/graphic_object.o and work/main.d/mms-1.1.0-1664/plugins/output/graphic_object.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/image.o and work/main.d/mms-1.1.0-1664/plugins/output/image.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/output/Makefile work/main.d/mms-1.1.0-1664/plugins/output/Makefile
+--- old-mms-1.1.0-1664/plugins/output/Makefile	2008-06-03 21:10:52.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/output/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -39,11 +39,11 @@
+ endif
+ 
+ output-base: $(OBJS) $(DEP)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o output.o $(OBJS)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o output.o $(OBJS)
+ 
+ output: $(OBJS) $(DEP)
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o output.o $(OBJS)
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o output.o $(OBJS)
+ 
+ install:
+ 	@for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+Binary files tmp/mms-1.1.0-1664/plugins/output/movie_object.o and work/main.d/mms-1.1.0-1664/plugins/output/movie_object.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/output/mpeg/dvb/Makefile work/main.d/mms-1.1.0-1664/plugins/output/mpeg/dvb/Makefile
+--- old-mms-1.1.0-1664/plugins/output/mpeg/dvb/Makefile	2008-06-03 21:10:53.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/output/mpeg/dvb/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -14,8 +14,8 @@
+ SUBDIRS += po
+ 
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-FFMPEG_FLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++FFMPEG_FLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+ else
+ FFMPEG_FLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ FFMPEG_FLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/output/mpeg/dxr3/Makefile work/main.d/mms-1.1.0-1664/plugins/output/mpeg/dxr3/Makefile
+--- old-mms-1.1.0-1664/plugins/output/mpeg/dxr3/Makefile	2008-06-03 21:10:55.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/output/mpeg/dxr3/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -14,8 +14,8 @@
+ SUBDIRS += po
+ 
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-FFMPEG_FLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++FFMPEG_FLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+ else
+ FFMPEG_FLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ FFMPEG_FLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/output/mpeg/Makefile work/main.d/mms-1.1.0-1664/plugins/output/mpeg/Makefile
+--- old-mms-1.1.0-1664/plugins/output/mpeg/Makefile	2008-06-03 21:10:53.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/output/mpeg/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -9,7 +9,7 @@
+ CXXFLAGS += -I../ -I../../ -I../../../ -fPIC -shared
+ 
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-CXXFLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
++CXXFLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
+ else
+ CXXFLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ CXXFLAGS +=-I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/output/mpeg/mpeg/Makefile work/main.d/mms-1.1.0-1664/plugins/output/mpeg/mpeg/Makefile
+--- old-mms-1.1.0-1664/plugins/output/mpeg/mpeg/Makefile	2008-06-03 21:10:55.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/output/mpeg/mpeg/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -14,8 +14,8 @@
+ SUBDIRS += po
+ 
+ ifeq ($(FFMPEG_EXTERNAL), yes)
+-FFMPEG_FLAGS += `pkg-config --cflags libavcodec libavutil libswscale libavformat`
+-FFMPEG_LIBS += `pkg-config --libs libavcodec libavutil libswscale libavformat`
++FFMPEG_FLAGS += `$(PKGCONFIG) --cflags libavcodec libavutil libswscale libavformat`
++FFMPEG_LIBS += `$(PKGCONFIG) --libs libavcodec libavutil libswscale libavformat`
+ else
+ FFMPEG_FLAGS += -isystem$(MMSDIR)/libs/ffmpeg/libavcodec/ -isystem$(MMSDIR)/libs/ffmpeg/libavutil/ -isystem$(MMSDIR)/libs/ffmpeg/libswscale/ -isystem$(MMSDIR)/libs/ffmpeg/libavformat/
+ FFMPEG_FLAGS += -I$(MMSDIR)/libs/ffmpeg/ -I$(MMSDIR)/libs/ffmpeg/libavcodec/ -I$(MMSDIR)/libs/ffmpeg/libavutil/ -I$(MMSDIR)/libs/ffmpeg/libswscale/ -I$(MMSDIR)/libs/ffmpeg/libavformat/
+Binary files tmp/mms-1.1.0-1664/plugins/output/opengl/lib_output_opengl.so and work/main.d/mms-1.1.0-1664/plugins/output/opengl/lib_output_opengl.so differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/plugins/output/opengl/Makefile work/main.d/mms-1.1.0-1664/plugins/output/opengl/Makefile
+--- old-mms-1.1.0-1664/plugins/output/opengl/Makefile	2008-06-03 21:10:56.000000000 -0300
++++ new-mms-1.1.0-1664/plugins/output/opengl/Makefile	2008-06-04 00:25:18.000000000 -0300
+@@ -14,7 +14,7 @@
+ 
+ all: $(OBJS)
+ 	$(DO_MAKE)
+-	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `sdl-config --libs`  -lGL
++	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `$(SDLCONFIG) --libs`  -lGL
+ 
+ install:
+ 	$(INSTALL) $(PLUGIN_NAME) $(DESTDIR)$(PLUGINDIR)/$(PLUGIN_NAME)
+Binary files tmp/mms-1.1.0-1664/plugins/output/opengl/opengl_config.o and work/main.d/mms-1.1.0-1664/plugins/output/opengl/opengl_config.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/opengl/opengl.o and work/main.d/mms-1.1.0-1664/plugins/output/opengl/opengl.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/opengl/openglout_plugin.o and work/main.d/mms-1.1.0-1664/plugins/output/opengl/openglout_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/opengl/SDL_GLout.o and work/main.d/mms-1.1.0-1664/plugins/output/opengl/SDL_GLout.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/output.o and work/main.d/mms-1.1.0-1664/plugins/output/output.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/pic_object.o and work/main.d/mms-1.1.0-1664/plugins/output/pic_object.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/rectangle_object.o and work/main.d/mms-1.1.0-1664/plugins/output/rectangle_object.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/render_device.o and work/main.d/mms-1.1.0-1664/plugins/output/render_device.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/renderer.o and work/main.d/mms-1.1.0-1664/plugins/output/renderer.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/lib_output_sdl.so and work/main.d/mms-1.1.0-1664/plugins/output/sdl/lib_output_sdl.so differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1734/plugins/output/sdl/Makefile work/main.d/mms-1.1.0-1734/plugins/output/sdl/Makefile
+--- tmp/mms-1.1.0-1734/plugins/output/sdl/Makefile	2009-01-03 21:38:42.000000000 -0300
++++ new-mms-1.1.0-1734/plugins/output/sdl/Makefile	2009-01-03 21:45:09.000000000 -0300
+@@ -21,9 +21,9 @@
+ 	$(DO_MAKE)
+ 	make -C po
+ ifeq ($(X11),yes)
+-	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `sdl-config --libs` -lXfixes
++	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `$(SDLCONFIG) --libs` -lXfixes
+ else
+-	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `sdl-config --libs`
++	$(CXX) $(CXXFLAGS) -Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS) `$(SDLCONFIG) --libs`
+ endif
+ 
+ install:
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/cs.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/da.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/de.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/es.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/fi.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/fr.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/it.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/it.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/pl.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/pt.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/ru.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/po/sv.mo and work/main.d/mms-1.1.0-1664/plugins/output/sdl/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/sdlout.o and work/main.d/mms-1.1.0-1664/plugins/output/sdl/sdlout.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/sdl/sdlout_plugin.o and work/main.d/mms-1.1.0-1664/plugins/output/sdl/sdlout_plugin.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/SSaverobj.o and work/main.d/mms-1.1.0-1664/plugins/output/SSaverobj.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/output/text_object.o and work/main.d/mms-1.1.0-1664/plugins/output/text_object.o differ
+Binary files tmp/mms-1.1.0-1664/plugins/plugins.o and work/main.d/mms-1.1.0-1664/plugins/plugins.o differ
+Binary files tmp/mms-1.1.0-1664/po/cs.mo and work/main.d/mms-1.1.0-1664/po/cs.mo differ
+Binary files tmp/mms-1.1.0-1664/po/da.mo and work/main.d/mms-1.1.0-1664/po/da.mo differ
+Binary files tmp/mms-1.1.0-1664/po/de.mo and work/main.d/mms-1.1.0-1664/po/de.mo differ
+Binary files tmp/mms-1.1.0-1664/po/es.mo and work/main.d/mms-1.1.0-1664/po/es.mo differ
+Binary files tmp/mms-1.1.0-1664/po/fi.mo and work/main.d/mms-1.1.0-1664/po/fi.mo differ
+Binary files tmp/mms-1.1.0-1664/po/fr.mo and work/main.d/mms-1.1.0-1664/po/fr.mo differ
+Binary files tmp/mms-1.1.0-1664/po/it.mo and work/main.d/mms-1.1.0-1664/po/it.mo differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1664/po/Makefile work/main.d/mms-1.1.0-1664/po/Makefile
+--- old-mms-1.1.0-1664/po/Makefile	2008-06-03 21:10:56.000000000 -0300
++++ new-mms-1.1.0-1664/po/Makefile	2008-06-04 00:27:12.000000000 -0300
+@@ -37,4 +37,4 @@
+ 	done
+ 
+ tool:
+-	g++ `imlib2-config --cflags --libs` check-size.cpp -o check-size
++	$(CXX) `$(IMLIB2CONFIG) --cflags --libs` check-size.cpp -o check-size
+Binary files tmp/mms-1.1.0-1664/po/pl.mo and work/main.d/mms-1.1.0-1664/po/pl.mo differ
+Binary files tmp/mms-1.1.0-1664/po/pt.mo and work/main.d/mms-1.1.0-1664/po/pt.mo differ
+Binary files tmp/mms-1.1.0-1664/po/ru.mo and work/main.d/mms-1.1.0-1664/po/ru.mo differ
+Binary files tmp/mms-1.1.0-1664/po/sv.mo and work/main.d/mms-1.1.0-1664/po/sv.mo differ
+Binary files tmp/mms-1.1.0-1664/print.o and work/main.d/mms-1.1.0-1664/print.o differ
+Binary files tmp/mms-1.1.0-1664/rand.o and work/main.d/mms-1.1.0-1664/rand.o differ
+Binary files tmp/mms-1.1.0-1664/replay.o and work/main.d/mms-1.1.0-1664/replay.o differ
+Binary files tmp/mms-1.1.0-1664/resolution.o and work/main.d/mms-1.1.0-1664/resolution.o differ
+Binary files tmp/mms-1.1.0-1664/search.o and work/main.d/mms-1.1.0-1664/search.o differ
+Binary files tmp/mms-1.1.0-1664/shutdown.o and work/main.d/mms-1.1.0-1664/shutdown.o differ
+Binary files tmp/mms-1.1.0-1664/simplefile.o and work/main.d/mms-1.1.0-1664/simplefile.o differ
+Binary files tmp/mms-1.1.0-1664/startmenu.o and work/main.d/mms-1.1.0-1664/startmenu.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1769/plugins/feature/dbus/Makefile work/main.d/mms-1.1.0-1769/plugins/feature/dbus/Makefile
+--- old-mms-1.1.0-1769/plugins/feature/dbus/Makefile	2009-06-23 00:12:47.000000000 -0300
++++ new-mms-1.1.0-1769/plugins/feature/dbus/Makefile	2009-07-05 10:53:59.000000000 -0300
+@@ -10,7 +10,7 @@
+ OBJS = dbus.o dbus_plugin.o
+ 
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../output/ -I../tinyxml \
+-	-I../../input/ `pkg-config dbus-cxx-1.0 --cflags --libs` -fPIC -shared -std=c++0x 
++	-I../../input/ `$(PKGCONFIG) dbus-cxx-1.0 --cflags --libs` -fPIC -shared -std=c++0x 
+ 
+ #SUBDIRS += po 
+ all: $(OBJS)
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/media-rss/Makefile work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/Makefile
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/Makefile	2010-03-12 15:45:49.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/Makefile	2010-03-12 15:44:30.000000000 -0300
+@@ -22,12 +22,10 @@
+ 
+ PRG_DEP_OBJS += ../../../*.o
+ 
+-LIBS += `imlib2-config --libs`
+-
+-LIBS += `imlib2-config --libs`
++LIBS += `$(IMLIB2CONFIG) --libs`
+ 
+-PRG_CXXFLAGS += `pkg-config --cflags taglib`
+-LIBS += `pkg-config --libs taglib`
++PRG_CXXFLAGS += `$(PKGCONFIG) --cflags taglib`
++LIBS += `$(PKGCONFIG) --libs taglib`
+ 
+ ifeq ($(INOTIFY),yes)
+ LIBS += -linotifytools
+@@ -52,7 +50,7 @@
+ 	-Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS)
+ 
+ $(PRG): $(PRG_OBJS) $(DEP)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(PRG_CXXFLAGS) -o $(PRG) \
++	$(LIBTOOL) --mode=link $(LIBTOOL_OPTS) $(CXX) $(PRG_CXXFLAGS) -o $(PRG) \
+ 	-rdynamic --export-dynamic $(PRG_OBJS) $(COMMON_LIBS) $(LIBS) \
+ 	-lmms-core -lmms-gui -lmms-plugins -lmms-input -lmms-output -lmms-feature -L$(MMSDIR)/libmms
+ 	@rm -r .libs 

@@ -1,0 +1,397 @@
+[===== NOW BUILDING:	libproxy-0.2.3	=====]
+	[fetch] complete for libproxy.
+	[checksum] complete for libproxy.
+	[extract] complete for libproxy.
+	[patch] complete for libproxy.
+	[configure] complete for libproxy.
+ ==> Running make in work/main.d/libproxy-0.2.3
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3'
+Making all in src
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src'
+Making all in lib
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src/lib'
+make[3]: Nothing to be done for `all'.
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src/lib'
+Making all in plugins
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src/plugins'
+make  all-am
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src/plugins'
+/bin/sh ../../libtool --tag=CC   --mode=compile i586-castorbox-linux-gnu-gcc -DPACKAGE_NAME=\"libproxy\" -DPACKAGE_TARNAME=\"libproxy\" -DPACKAGE_VERSION=\"0.2.3\" -DPACKAGE_STRING=\"libproxy\ 0.2.3\" -DPACKAGE_BUGREPORT=\"nathaniel@natemccallum.com\" -DPACKAGE=\"libproxy\" -DVERSION=\"0.2.3\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DSTDC_HEADERS=1 -DHAVE__BOOL=1 -DHAVE_STDBOOL_H=1 -DHAVE_STDLIB_H=1 -DHAVE_MALLOC=1 -I.    -I../../src/lib -I/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0   -g -std=c99 -pipe -march=pentium-mmx -mtune=generic -Os -m32 -g -DPLUGINDIR=\"/usr/lib/libproxy/0.2.3/plugins\" -DSYSCONFDIR=\"/etc\" -D_POSIX_C_SOURCE=1 -MT mozjs_la-mozjs.lo -MD -MP -MF .deps/mozjs_la-mozjs.Tpo -c -o mozjs_la-mozjs.lo `test -f 'mozjs.c' || echo './'`mozjs.c
+libtool: compile:  i586-castorbox-linux-gnu-gcc -DPACKAGE_NAME=\"libproxy\" -DPACKAGE_TARNAME=\"libproxy\" -DPACKAGE_VERSION=\"0.2.3\" "-DPACKAGE_STRING=\"libproxy 0.2.3\"" -DPACKAGE_BUGREPORT=\"nathaniel@natemccallum.com\" -DPACKAGE=\"libproxy\" -DVERSION=\"0.2.3\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DSTDC_HEADERS=1 -DHAVE__BOOL=1 -DHAVE_STDBOOL_H=1 -DHAVE_STDLIB_H=1 -DHAVE_MALLOC=1 -I. -I../../src/lib -I/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0 -g -std=c99 -pipe -march=pentium-mmx -mtune=generic -Os -m32 -g -DPLUGINDIR=\"/usr/lib/libproxy/0.2.3/plugins\" -DSYSCONFDIR=\"/etc\" -D_POSIX_C_SOURCE=1 -MT mozjs_la-mozjs.lo -MD -MP -MF .deps/mozjs_la-mozjs.Tpo -c mozjs.c  -fPIC -DPIC -o .libs/mozjs_la-mozjs.o
+In file included from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:45,
+                 from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:47,
+                 from mozjs.c:32:
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:248:6: error: #error "Must define one of XP_BEOS, XP_OS2, XP_WIN or XP_UNIX"
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:264:2: error: #error No suitable type for JSInt8/JSUint8
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:277:2: error: #error No suitable type for JSInt16/JSUint16
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:297:2: error: #error No suitable type for JSInt32/JSUint32
+In file included from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:45,
+                 from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:47,
+                 from mozjs.c:32:
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:329: error: expected specifier-qualifier-list before ‘JSUint32’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:348:2: error: #error 'sizeof(int)' not sufficient for platform use
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:393: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JSBool’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:403: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JSPackedBool’
+In file included from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jstypes.h:416,
+                 from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:45,
+                 from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:47,
+                 from mozjs.c:32:
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:73: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:76: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uintn’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:79: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint32’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:83: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint16’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:84: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uint8’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:87: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘intn’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:106: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int32’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:110: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int16’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsotypes.h:111: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘int8’
+In file included from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:46,
+                 from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:47,
+                 from mozjs.c:32:
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jscompat.h:51: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘intN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jscompat.h:52: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘uintN’
+In file included from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:47,
+                 from mozjs.c:32:
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:51: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:52: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:53: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jsuint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:57: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘jsrefcount’
+In file included from /home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:47,
+                 from mozjs.c:32:
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:159: error: expected declaration specifiers or ‘...’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:160: warning: type defaults to ‘int’ in declaration of ‘JSBool’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:160: error: ‘JSBool’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:192: error: ‘JSNewEnumerateOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:199: error: ‘JSEnumerateOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:214: error: ‘JSResolveOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:247: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:247: error: ‘JSNewResolveOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:255: error: ‘JSConvertOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:313: error: ‘JSCheckAccessOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:320: error: ‘JSXDRObjectOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:329: error: ‘JSHasInstanceOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:350: error: expected declaration specifiers or ‘...’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:350: warning: type defaults to ‘int’ in declaration of ‘uint32’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:350: error: ‘uint32’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:365: error: ‘JSReserveSlotsOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:383: error: expected declaration specifiers or ‘...’ before ‘jsrefcount’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:413: error: ‘JSLookupPropOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:430: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:430: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:431: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:431: error: ‘JSDefinePropOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:443: error: ‘JSPropertyIdOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:453: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:453: error: ‘JSAttributesOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:463: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:463: error: ‘JSCheckAccessIdOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:490: error: ‘JSSetObjectSlotOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:511: error: ‘JSSetRequiredSlotOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:519: error: ‘JSSetMethodOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:524: error: ‘JSEnumerateValuesOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:528: error: ‘JSEqualityOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:532: error: ‘JSConcatenateOp’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:537: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:538: error: ‘JSNative’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:561: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:561: error: ‘JSContextCallback’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:571: error: ‘JSGCCallback’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:574: error: ‘JSBranchCallback’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:603: error: expected specifier-qualifier-list before ‘uint16’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:611: warning: type defaults to ‘int’ in declaration of ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:611: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:624: error: ‘JSLocaleToUpperCase’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:628: error: ‘JSLocaleToLowerCase’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:633: error: ‘JSLocaleCompare’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:636: error: ‘JSLocaleToUnicode’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jspubtd.h:652: error: ‘JSPrincipalsTranscoder’ declared as function returning a function
+In file included from mozjs.c:32:
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:266: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:267: error: ‘JS_ConvertArguments’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:347: error: ‘JS_ConvertValue’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:350: error: ‘JS_ValueToObject’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:362: error: ‘JS_ValueToNumber’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:369: error: expected declaration specifiers or ‘...’ before ‘int32’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:369: error: ‘JS_ValueToECMAInt32’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:376: error: ‘JS_ValueToECMAUint32’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:384: error: expected declaration specifiers or ‘...’ before ‘int32’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:384: error: ‘JS_ValueToInt32’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:390: error: expected declaration specifiers or ‘...’ before ‘uint16’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:390: error: ‘JS_ValueToUint16’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:393: error: ‘JS_ValueToBoolean’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:568: error: ‘JS_GetOptions’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:571: error: ‘JS_SetOptions’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:574: error: ‘JS_ToggleOptions’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:593: error: ‘JS_InitStandardClasses’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:610: error: ‘JS_ResolveStandardClass’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:613: error: ‘JS_EnumerateStandardClasses’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:626: error: ‘JS_GetClassObject’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:647: error: ‘JS_NewDoubleValue’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:650: error: ‘JS_NewNumberValue’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:669: error: ‘JS_AddRoot’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:678: error: ‘JS_AddNamedRoot’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:681: error: ‘JS_AddNamedRootRT’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:684: error: ‘JS_RemoveRoot’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:687: error: ‘JS_RemoveRootRT’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:757: error: ‘JS_EnterLocalRootScope’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:827: error: expected declaration specifiers or ‘...’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:827: warning: type defaults to ‘int’ in declaration of ‘intN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:827: error: ‘intN’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:830: error: expected declaration specifiers or ‘...’ before ‘JSGCRootMapFun’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:830: error: ‘JS_MapGCRoots’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:833: error: ‘JS_LockGCThing’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:836: error: ‘JS_LockGCThingRT’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:839: error: ‘JS_UnlockGCThing’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:842: error: ‘JS_UnlockGCThingRT’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:873: error: ‘JS_IsAboutToBeFinalized’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:896: error: ‘JS_AddExternalStringFinalizer’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:912: error: ‘JS_RemoveExternalStringFinalizer’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:920: error: expected declaration specifiers or ‘...’ before ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:927: error: ‘JS_GetExternalStringGCType’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:946: error: field ‘flags’ declared as a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:949: error: expected specifier-qualifier-list before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1070: error: expected specifier-qualifier-list before ‘JSMarkOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1100: error: expected specifier-qualifier-list before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1108: error: ‘JS_ValueToId’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1111: error: ‘JS_IdToValue’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1130: error: ‘JS_PropertyStub’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1133: error: ‘JS_EnumerateStub’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1136: error: ‘JS_ResolveStub’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1139: error: ‘JS_ConvertStub’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1147: error: expected specifier-qualifier-list before ‘uint8’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1158: error: expected specifier-qualifier-list before ‘int8’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1172: error: expected specifier-qualifier-list before ‘uint16’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1183: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1200: error: ‘JS_InstanceOf’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1203: error: ‘JS_HasInstance’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1209: error: ‘JS_SetPrivate’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1219: error: ‘JS_SetPrototype’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1225: error: ‘JS_SetParent’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1236: error: ‘JS_GetObjectId’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1242: error: ‘JS_SealObject’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1250: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1254: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1257: error: ‘JS_DefineConstDoubles’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1260: error: ‘JS_DefineProperties’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1264: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1264: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1264: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1264: error: ‘JS_DefineProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1274: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1274: error: ‘JS_GetPropertyAttributes’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1284: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1285: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1286: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1286: error: ‘JS_GetPropertyAttrsGetterAndSetter’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1296: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1296: error: ‘JS_SetPropertyAttributes’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1300: error: expected declaration specifiers or ‘...’ before ‘int8’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1301: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1301: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1302: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1302: error: ‘JS_DefinePropertyWithTinyId’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1306: error: ‘JS_AliasProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1309: error: ‘JS_HasProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1312: error: ‘JS_LookupProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1316: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1316: error: ‘JS_LookupPropertyWithFlags’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1319: error: ‘JS_GetProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1323: error: ‘JS_GetMethodById’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1327: error: ‘JS_GetMethod’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1330: error: ‘JS_SetProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1333: error: ‘JS_DeleteProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1337: error: ‘JS_DeleteProperty2’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1341: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1341: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1353: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1353: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1363: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1363: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1376: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1376: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1382: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1382: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1389: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1389: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1394: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1394: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1399: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1399: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1404: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1404: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1409: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1409: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1413: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1416: error: ‘JS_IsArrayObject’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1419: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1419: error: ‘JS_GetArrayLength’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1422: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1422: error: ‘JS_SetArrayLength’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1425: error: expected declaration specifiers or ‘...’ before ‘jsuint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1425: error: ‘JS_HasArrayLength’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1428: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1429: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1429: error: expected declaration specifiers or ‘...’ before ‘JSPropertyOp’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1429: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1429: error: ‘JS_DefineElement’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1432: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1432: error: ‘JS_AliasElement’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1435: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1435: error: ‘JS_HasElement’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1438: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1438: error: ‘JS_LookupElement’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1441: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1441: error: ‘JS_GetElement’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1444: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1444: error: ‘JS_SetElement’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1447: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1447: error: ‘JS_DeleteElement’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1450: error: expected declaration specifiers or ‘...’ before ‘jsint’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1450: error: ‘JS_DeleteElement2’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1472: error: ‘JS_NextProperty’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1476: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1476: error: ‘JS_CheckAccess’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1482: error: ‘JS_GetReservedSlot’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1485: error: ‘JS_SetReservedSlot’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1497: error: ‘globalPrivilegesEnabled’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1500: error: expected specifier-qualifier-list before ‘jsrefcount’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1536: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1536: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1566: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_GetFunctionFlags’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1572: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘JS_GetFunctionArity’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1581: error: ‘JS_ObjectIsFunction’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1584: error: ‘JS_DefineFunctions’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1588: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1588: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1592: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1592: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1607: error: ‘JS_BufferIsCompilableUnit’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1619: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1625: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1629: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1629: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1635: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1635: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1681: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1683: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1688: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1690: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1694: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1695: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1695: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1701: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1702: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1702: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1707: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1716: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1719: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1757: error: ‘JS_ExecuteScript’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1767: error: ‘JS_ExecuteScriptPart’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1771: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1772: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1773: error: ‘JS_EvaluateScript’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1778: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1779: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1780: error: ‘JS_EvaluateScriptForPrincipals’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1784: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1784: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1791: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1791: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1796: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1797: error: ‘JS_CallFunction’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1800: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1801: error: ‘JS_CallFunctionName’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1804: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1805: error: ‘JS_CallFunctionValue’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1811: error: ‘JS_IsRunning’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1814: error: ‘JS_IsConstructing’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1822: error: ‘JS_IsAssigning’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1878: error: expected declaration specifiers or ‘...’ before ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1881: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1881: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1884: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1884: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1887: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1887: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1890: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1890: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1895: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1902: error: ‘JS_CompareStrings’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1924: error: expected declaration specifiers or ‘...’ before ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1949: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1957: error: ‘JS_MakeStringImmutable’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1965: error: ‘JS_CStringsAreUTF8’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1990: warning: type defaults to ‘int’ in declaration of ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1990: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1994: error: expected declaration specifiers or ‘...’ before ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1995: error: ‘JS_DecodeBytes’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2007: error: expected specifier-qualifier-list before ‘JSErrorCallback’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2043: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2044: warning: type defaults to ‘int’ in declaration of ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2044: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2050: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2051: warning: type defaults to ‘int’ in declaration of ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2051: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2060: error: ‘JS_ReportWarning’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2063: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2064: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2065: warning: type defaults to ‘int’ in declaration of ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2065: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2068: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2069: error: expected declaration specifiers or ‘...’ before ‘JSErrorCallback’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2070: warning: type defaults to ‘int’ in declaration of ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2070: error: expected ‘;’, ‘,’ or ‘)’ before ‘errorNumber’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2080: error: expected specifier-qualifier-list before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2123: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2126: error: expected declaration specifiers or ‘...’ before ‘jschar’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2126: error: expected declaration specifiers or ‘...’ before ‘uintN’
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2142: error: ‘JS_IsExceptionPending’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2145: error: ‘JS_GetPendingException’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2154: error: ‘JS_ReportPendingException’ declared as function returning a function
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:2192: error: ‘JS_ThrowReportedError’ declared as function returning a function
+mozjs.c:35: error: expected declaration specifiers or ‘...’ before ‘uintN’
+mozjs.c:35: error: ‘dnsResolve’ declared as function returning a function
+mozjs.c:70: error: expected declaration specifiers or ‘...’ before ‘uintN’
+mozjs.c:70: error: ‘myIpAddress’ declared as function returning a function
+mozjs.c: In function ‘myIpAddress’:
+mozjs.c:75: warning: passing argument 3 of ‘dnsResolve’ makes pointer from integer without a cast
+mozjs.c:35: note: expected ‘jsval *’ but argument is of type ‘int’
+mozjs.c:75: error: too many arguments to function ‘dnsResolve’
+mozjs.c: In function ‘ctxs_new’:
+mozjs.c:111: error: ‘JSClass’ has no member named ‘addProperty’
+mozjs.c:112: error: ‘JSClass’ has no member named ‘delProperty’
+mozjs.c:113: error: ‘JSClass’ has no member named ‘getProperty’
+mozjs.c:114: error: ‘JSClass’ has no member named ‘setProperty’
+mozjs.c:115: error: ‘JSClass’ has no member named ‘enumerate’
+mozjs.c:116: error: ‘JSClass’ has no member named ‘resolve’
+mozjs.c:117: error: ‘JSClass’ has no member named ‘convert’
+mozjs.c:118: error: ‘JSClass’ has no member named ‘finalize’
+mozjs.c:121: warning: passing argument 1 of ‘JS_Init’ makes pointer from integer without a cast
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:412: note: expected ‘int (*)()’ but argument is of type ‘int’
+mozjs.c:127: error: too many arguments to function ‘JS_DefineFunction’
+mozjs.c:128: error: too many arguments to function ‘JS_DefineFunction’
+mozjs.c:130: warning: passing argument 4 of ‘JS_EvaluateScript’ makes pointer from integer without a cast
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1770: note: expected ‘const char *’ but argument is of type ‘unsigned int’
+mozjs.c:130: warning: passing argument 5 of ‘JS_EvaluateScript’ from incompatible pointer type
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1770: note: expected ‘jsval *’ but argument is of type ‘char *’
+mozjs.c:130: error: too many arguments to function ‘JS_EvaluateScript’
+mozjs.c:136: warning: passing argument 4 of ‘JS_EvaluateScript’ makes pointer from integer without a cast
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1770: note: expected ‘const char *’ but argument is of type ‘size_t’
+mozjs.c:136: warning: passing argument 5 of ‘JS_EvaluateScript’ from incompatible pointer type
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1770: note: expected ‘jsval *’ but argument is of type ‘const char *’
+mozjs.c:136: error: too many arguments to function ‘JS_EvaluateScript’
+mozjs.c: In function ‘mozjs_pacrunner’:
+mozjs.c:183: error: function ‘result’ is initialized like a variable
+mozjs.c:183: warning: passing argument 4 of ‘JS_CallFunctionName’ makes pointer from integer without a cast
+/home/pablo/gar-castorbox/images/main/usr/include/js-1.7.0/jsapi.h:1800: note: expected ‘jsval *’ but argument is of type ‘int’
+mozjs.c:183: error: too many arguments to function ‘JS_CallFunctionName’
+mozjs.c:183: error: nested function ‘result’ declared but never defined
+make[4]: *** [mozjs_la-mozjs.lo] Error 1
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src/plugins'
+make[3]: *** [all] Error 2
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src/plugins'
+make[2]: *** [all-recursive] Error 1
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3/src'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/lib/libproxy/work/main.d/libproxy-0.2.3'
+make: *** [build-work/main.d/libproxy-0.2.3/Makefile] Error 2

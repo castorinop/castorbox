@@ -1,0 +1,20 @@
+diff -Naur libX11-1.4.3-old/configure.ac libX11-1.4.3-new/configure.ac
+--- libX11-1.4.3-old/configure.ac	2011-04-05 13:28:42.000000000 -0700
++++ libX11-1.4.3-new/configure.ac	2011-04-05 14:29:44.000000000 -0700
+@@ -34,6 +34,7 @@
+ 
+ # Required when PKG_CHECK_MODULES called within an if statement
+ PKG_PROG_PKG_CONFIG
++m4_pattern_allow([^PKG_CONFIG_SYSROOT_DIR$])
+ 
+ if test x"$CC_FOR_BUILD" = x; then
+ 	if test x"$cross_compiling" = xyes; then
+@@ -310,7 +311,7 @@
+ # Find keysymdef.h
+ #
+ AC_MSG_CHECKING([keysym definitions])
+-KEYSYMDEFDIR=`$PKG_CONFIG --variable=includedir xproto`/X11
++KEYSYMDEFDIR=$PKG_CONFIG_SYSROOT_DIR`$PKG_CONFIG --variable=includedir xproto`/X11
+ FILES="keysymdef.h XF86keysym.h Sunkeysym.h DECkeysym.h HPkeysym.h"
+ for i in $FILES; do
+     if test -f "$KEYSYMDEFDIR/$i"; then

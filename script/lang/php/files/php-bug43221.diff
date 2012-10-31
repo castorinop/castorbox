@@ -1,0 +1,17 @@
+diff -u -3 -p -r1.151.2.22.2.35 -r1.151.2.22.2.36
+--- old/ext/simplexml/simplexml.c	31 Jul 2007 15:40:49 -0000	1.151.2.22.2.35
++++ new/ext/simplexml/simplexml.c	12 Nov 2007 18:59:26 -0000	1.151.2.22.2.36
+@@ -1635,6 +1635,13 @@ SXE_METHOD(addAttribute)
+ 
+ 	localname = xmlSplitQName2((xmlChar *)qname, &prefix);
+ 	if (localname == NULL) {
++		if (nsuri_len > 0) {
++			if (prefix != NULL) {
++				xmlFree(prefix);
++			}
++			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Attribute requires prefix for namespace");
++			return;
++		}
+ 		localname = xmlStrdup((xmlChar *)qname);
+ 	}
+ 

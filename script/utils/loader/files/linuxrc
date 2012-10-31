@@ -1,0 +1,141 @@
+#!/bin/sh -e
+
+if [ -n "${CBX_DBG}" ]; then
+	set -x
+fi
+
+loadmodules() {
+LOADMODS="$1"
+for module in ${LOADMODS}; do
+	case "${module}" in
+		loop)
+			PARAMS="max_loop=64"
+			;;
+		*)
+			PARAMS=""
+			;;
+		esac
+	/bin/insmod /lib/${module}.ko ${PARAMS}
+	echo "Loading ${module}.ko ${PARAMS} module $?"
+done
+
+}
+
+waitfor() {
+while [ ! -f "$1" ]; do
+    echo "wait for $1"
+    sleep 1
+done
+}
+
+on_error() {
+echo "catch error... "
+if [ -n "${CBX_DBG}" ]; then
+	/bin/sh
+else
+	echo "rebooting in 5\"..."
+	sleep 5
+	reboot -f
+fi
+}
+
+trap on_error EXIT
+
+#echo Mounting /proc filesystem
+mount -n -t proc /proc /proc
+#echo Mounting sysfs
+mount -n -t sysfs none /sys
+#echo Creating device files
+
+CBX_IMGBASE=default.img
+CBX_CFGBASE=config
+CBX_ROOT=LABEL=CBX_CORE
+CBX_USB_DELAY=8
+
+for cmd in `cat /proc/cmdline`; do 
+  if test  -n "` echo ${cmd} |grep CBX_`"; then
+	 export ${cmd};
+  fi
+done
+
+if [ -n "${CBX_CFG}" ]; then
+	export CBX_CFGBASE=config-${CBX_CFG}
+fi
+
+mount -n -t tmpfs tmpfs /dev -o mode=755,size=32M
+echo -n /sbin/mdev > /proc/sys/kernel/hotplug
+mkdir /dev/.udevdb
+mdev -s
+
+/bin/mount -n -t tmpfs none /fs -o size=64M
+
+#init splash
+if [ -z "${CBX_NO_SPLASH}" -a -e "/dev/fb0" ]; then
+/bin/mkdir -p  /fs/root/splash/cache
+/sbin/fbsplashd.static -t CastorBOX --type=bootup --effect=fadein
+	echo "set autoverbose 0" 	> /fs/root/splash/cache/.splash
+	echo "set tty silent tty1"  	> /fs/root/splash/cache/.splash
+	echo "set mode silent"	 	> /fs/root/splash/cache/.splash
+	echo "paint" 		 	> /fs/root/splash/cache/.splash
+fi
+
+echo FIRMWARE LOADER ...
+
+if [ -n "${CBX_USB}" ]; then
+	loadmodules "@USB_MODULES@"
+	mount -t usbfs /proc/bus/usb /proc/bus/usb
+	waitfor /proc/bus/usb/devices
+	sleep ${CBX_USB_DELAY}
+fi
+
+loadmodules "@ATA_MODULES@"
+
+loadmodules "@DEF_MODULES@"	
+
+echo Mounting core
+
+mount -n ${CBX_ROOT} /system
+if [ "$?" -ne "0" ]; then
+	echo mount -n ${CBX_ROOT} /system
+	/bin/sh
+fi
+
+echo Load config on /system/${CBX_CFGBASE}...
+if test -f /system/${CBX_CFGBASE}; then
+. /system/${CBX_CFGBASE}
+else
+echo failed !!! Load default config...
+. /system/config
+fi
+
+echo Setting up loopback device on /roms/${CBX_IMGBASE}
+losetup /dev/loop0 /system/roms/${CBX_IMGBASE}
+mkdir -p /fs/core
+mount -n -r -t squashfs /dev/loop0 /fs/core
+/bin/mkdir -p /fs/root
+/bin/mount -n -t unionfs -o dirs=/fs/root=rw:/fs/core=ro none /image
+
+if [ -n "${CBX_CFGEXTRA}" ]; then 
+	count=1
+	for LABEL in ${CBX_CFGEXTRA}; do
+		echo Setting up loopback device on /roms/${LABEL}
+		eval value=$`echo CBX_IMG_$LABEL`
+		#. /system/config-${LABEL}
+		losetup /dev/loop${count} /system/roms/${value}
+		mkdir -p /fs/${LABEL}
+		mount -n -r -t squashfs /dev/loop${count} /fs/${LABEL}
+		/bin/mount -n -t unionfs -o remount,add=:/fs/${LABEL}=ro none /image
+		let count=count+1
+	done
+fi
+
+cd /image
+/bin/mkdir -p initrd
+/sbin/pivot_root . initrd
+echo Init ROM...
+if [ -f "sbin/init" ]; then
+	exec /usr/sbin/chroot . ./bin/sh -c 'exec /sbin/init' <dev/console >dev/console 2>&1
+else
+	echo "can't find /sbin/init on ${CBX_IMGBASE}"
+	exit 1
+fi

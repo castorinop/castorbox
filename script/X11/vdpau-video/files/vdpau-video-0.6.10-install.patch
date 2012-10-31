@@ -1,0 +1,22 @@
+diff -Naur vdpau-video-0.6.10-old/src/Makefile.am vdpau-video-0.6.10-new/src/Makefile.am
+--- vdpau-video-0.6.10-old/src/Makefile.am	2010-03-07 02:52:27.000000000 -0800
++++ vdpau-video-0.6.10-new/src/Makefile.am	2010-07-08 20:45:33.000000000 -0700
+@@ -67,6 +67,7 @@
+ install-data-hook:
+ 	cd $(DESTDIR)$(LIBVA_DRIVERS_PATH) ;			\
+ 	for drv in $(DRIVERS); do				\
++	    rm -f $${drv}_drv_video.so;                         \
+ 	    ln -s vdpau_drv_video.so $${drv}_drv_video.so;	\
+ 	done
+ 
+diff -Naur vdpau-video-0.6.10-old/src/Makefile.in vdpau-video-0.6.10-new/src/Makefile.in
+--- vdpau-video-0.6.10-old/src/Makefile.in	2010-07-08 01:51:30.000000000 -0700
++++ vdpau-video-0.6.10-new/src/Makefile.in	2010-07-08 20:45:33.000000000 -0700
+@@ -583,6 +583,7 @@
+ install-data-hook:
+ 	cd $(DESTDIR)$(LIBVA_DRIVERS_PATH) ;			\
+ 	for drv in $(DRIVERS); do				\
++	    rm -f $${drv}_drv_video.so;                         \
+ 	    ln -s vdpau_drv_video.so $${drv}_drv_video.so;	\
+ 	done
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.

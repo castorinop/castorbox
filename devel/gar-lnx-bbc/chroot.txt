@@ -1,0 +1,122 @@
+Building the LNX-BBC in a known-good chroot environment.
+
+The following is taken from an
+<http://zork.net/pipermail/lnx-bbc-devel/2002-November/002102.html
+e-mail Sneakums sent to lnx-bbc-devel>.  We now use this mechanism to
+produce the release candidate and final release ISOs of the LNX-BBC.
+Please send us feedback on
+<http://zork.net/mailman/listinfo/lnx-bbc-devel lnx-bbc-devel>!
+
+== [Lnx-bbc-devel] Building in a chroot ==
+
+I just completed a test build of the LNX-BBC in a Debian chroot, which
+yielded an ISO that looks about the right size.  A copy of this chroot
+is at <http://zork.net/~sneakums/Debian-3.0r1.tar.bz2>; it's about 34M
+compressed, 125M uncompressed, and contains all of the packages I have
+found necessary to complete a build (for reference: the Debian base
+system, plus build-essential, rsync, wget, bison, flex, texinfo,
+gettext, unzip, bzip2, ccache and bin86).
+
+Packages not essential to the build, such as cvs, have been omitted.
+If you wish to use cvs inside the chroot, simply run "apt-get install
+cvs" as root once you have logged in as outlined below.
+
+Using the chroot is fairly straightforward, although I should really
+wrap some of this up in a script for convenience.
+
+I do my builds under my own account using a tree and garchive in my
+homedir, so the way I use the chroot reflects this.  If your garchive
+is elsewhere, it's just one extra step to have it visible in the
+chroot, so that is no great obstacle.  Note that you need to be
+running on Linux 2.4, for the "mount --bind" stuff.  You also need to
+have root; any command below that has the "#" prompt before it *must* be
+run as root.  This is especially important for the unpacking of the chroot, 
+since otherwise device nodes will not be created and the permissions will
+be all wrong.
+
+== ENTERING THE CHROOT ==
+
+---8<---
+# tar xfj Debian-3.0r1.tar.bz2
+# chroot Debian-3.0r1 /bin/bash
+# mount -t proc proc /proc
+# mount -t devpts devpts /dev/pts
+---8<---
+
+Note that the bz2 option for your tar may be I or --bzip2 instead of
+j.  You may also wish to run bunzip2 on the tarball manually.
+
+== ADD YOUR USER (one-time procedure) ==
+
+You should now add a user to the chroot whose name, UID and homedir
+are the same as the *your user* on the host system. For example,
+on my machines, my username is "sneakums" and my UID is 1000, so I
+do the following:
+
+---8<---
+# groupadd -g 1000 sneakums
+# useradd -u 1000 -g 1000 sneakums
+# mkdir /home/sneakums
+---8<---
+
+(You don't need to worry about the permissions on the homedir.)
+
+You should configure /etc/resolv.conf at this point, unless you do not 
+need network access inside the chroot.  Copying the /etc/resolv.conf from
+the host system should suffice.
+
+== ENTERING THE CHROOT (2) ==
+
+From *outside* the chroot, bind your home directory into the chroot,
+like so:
+
+---8<---
+# mount --bind /home/sneakums /home/sneakums/chroots/Debian-3.0r1/home/sneakums
+---8<---
+
+You can now su to your user inside the chroot:
+
+---8<---
+# su - sneakums
+---8<---
+
+And you now are ready to build.
+
+Any additional directories you need to have available inside the
+chroot can simply be bound as above, for example, if you have a
+system-wide garchive, from outside the chroot just do:
+
+---8<---
+# mkdir -p /home/sneakums/chroots/Debian-3.0r1/var/cache/gar/garchive
+# mount --bind /var/cache/gar/garchive \
+        /home/sneakums/chroots/Debian-3.0r1/var/cache/gar/garchive
+---8<---
+
+== USING CCACHE IN DEBIAN ==
+
+The chroot has ccache installed.  Debian's ccache package installs a set of
+symlinks in /usr/lib/ccache, so all you need to do before starting a build is
+set CCACHE_DIR and then do:
+
+---8<---
+export PATH=/usr/lib/ccache:$PATH
+---8<---
+
+== EXITING THE CHROOT ==
+
+Log out of your user shell, and then umount /dev/pts and /proc.  You
+can exit the root shell and umount the bindings you made above, and
+things should be as they were.
+
+-- 
+
+---8<---
+ /                          |
+[|] Sean Neakums            |  Questions are a burden to others;
+[|] <sneakums@zork.net>     |      answers a prison for oneself.
+ \                          |
+---8<---
+
+
+
+

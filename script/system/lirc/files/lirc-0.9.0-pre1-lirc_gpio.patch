@@ -1,0 +1,11 @@
+diff -Naur lirc-0.9.0-pre1-old/configure.ac lirc-0.9.0-pre1-new/configure.ac
+--- lirc-0.9.0-pre1-old/configure.ac	2010-10-26 10:32:18.000000000 -0700
++++ lirc-0.9.0-pre1-new/configure.ac	2010-10-26 13:32:11.000000000 -0700
+@@ -1553,6 +1553,7 @@
+ 	lirc_atiusb \
+ 	lirc_bt829 \
+ 	lirc_ene0100 \
++	lirc_gpio \
+ 	lirc_i2c \
+ 	lirc_igorplugusb \
+ 	lirc_imon \

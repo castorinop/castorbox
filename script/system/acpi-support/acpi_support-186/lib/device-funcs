@@ -1,0 +1,10 @@
+
+DeviceConfig() {
+
+    # Use a cached copy of the DMI data if it is available as we may
+    # not be running with privileges necessary to access /dev/mem
+    manufacturer=`cat /var/lib/acpi-support/system-manufacturer||dmidecode --string system-manufacturer|sed -e 's/ *$//'`
+    model=`cat /var/lib/acpi-support/system-product-name||dmidecode --string system-product-name|sed -e 's/ *$//'`
+    version=`cat /var/lib/acpi-support/system-version||dmidecode --string system-version|sed -e 's/ *$//'`
+    bios_version=`cat /var/lib/acpi-support/bios-version||dmidecode --string bios-version|sed -e 's/ *$//'`
+}

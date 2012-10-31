@@ -1,0 +1,120 @@
+Sample document
+
+== Yowwy wow wow =
+
+Lo and behold <http://zork.net me hearties>, the *land of the lubber* lubbers.
+/*Yoinkta*/ _smirka_.
+
+
+# Okay, so I want to be able to have output broken up into
+# numerically-indexed files, and for there to be a central
+# navigation file somewhere.
+
+# When you process a file, you have it and a list of all the
+# other files for the top-level navbar, in order.  Okay, good.
+# Then you parse the file, spitting out HTML to the numbered
+# output files.  Then when you're done, you have a full daturbase
+# to spit out, full of context, on the end of the files (thanks
+# to my table-fu).  Keen gear.
+
+Foo:
+This is how we describe a foo
+isn't it nice?
+  -----==-----
+Yeah baby
+
+Bar:
+# Tricky things to handle:  doubled-up formatting stuff,
+# overloaded symbols (star is bold, but is also used for
+# unnumbered lists).
+
+	Yeah, so now this is all part of that bar thing above.  Neat like my
+feet.
+
+	#  * Headers can contain Emphasis
+#  * Emphasis can contain URLs, Emphasis
+#  * URLs can contain Emphasis
+#  * Rules stand alone
+#  * Lists can contain Emphasis, URLs
+#  * Citations can contain Emphasis, URLs, Rules, Citations, and
+#       Blockquotes
+#  	* no, citations cannot contain other citations -- it looks bad
+#  	in lynx anyway
+#  * Blockquotes stand alone
+
+Baz:
+yo yo yo G
+
+	 * Yeah
+ * go baby go
+   * in da hoooouuuusssseee
+
+# so we just keep a stack of opened tags, and use a function to
+# run through each paragraph and  find each regexp and replace it
+# with the tag, pushing stack state all the while.  A close
+# symbol will search the stack and try to pop back until it finds
+# the right tag to close, and closes all those above it.
+
+# So we have Headers, Emphasis, Urls, Rules, Lists, Citations,
+# Blockquotes, and maybe Footnotes (use URL syntax minus URL).
+
+#  * Headers can contain Emphasis
+#  * Emphasis can contain URLs, Emphasis
+#  * URLs can contain Emphasis
+#  * Rules stand alone
+#  * Lists can contain Emphasis, URLs
+#  * Citations can contain Emphasis, URLs, Rules, Citations, and
+#       Blockquotes
+#  	* no, citations cannot contain other citations -- it looks bad
+#  	in lynx anyway
+#  * Blockquotes stand alone
+
+# B (short circuit), R (same), C, L, H, U, E
+
+ 
+ 
+  
+----8<----
+this is a test
+
+to see if we can do
+
+# When you process a file, you have it and a list of all the
+# other files for the top-level navbar, in order.  Okay, good.
+# Then you parse the file, spitting out HTML to the numbered
+# output files.  Then when you're done, you have a full daturbase
+# to spit out, full of context, on the end of the files (thanks
+# to my table-fu).  Keen gear.
+
+normal blockquotes
+----8<----
+
+----8<----
+
+test two
+ 
+two two
+
+----8<----
+
+ZZZ
+
+	* Yo yo yo _G_
+	*   Avast, me hearties! [heartiness not actually verified]
+	1. Yeah yeah yeah
+		* <http://google.com google!>
+
+> yo yo yo
+> to and fro
+> 
+>  
+> hey baby fdsa fdsa as sa sa fds sfd fdsajkdlfj sadkf ksd sak ksd
+> jfkasdjfksajdfksadfjdsa fsa df sadfjsad fsa df
+
+
+# yo yo yo
+# to and fro
+# 
+#  
+# hey baby fdsa fdsa as sa sa fds sfd fdsajkdlfj sadkf ksd sak ksd
+# jfkasdjfksajdfksadfjdsa fsa df sadfjsad fsa df

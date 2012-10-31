@@ -1,0 +1,20 @@
+--- tmp/module-init-tools-3.2.2/Makefile.in	2005-12-07 01:43:46.000000000 -0300
++++ module-init-tools-3.2.2/Makefile.in	2007-09-06 15:28:00.000000000 -0300
+@@ -112,7 +112,7 @@
+ 
+ EXTRA_DIST = generate-modprobe.conf modprobe.devfs FAQ CODING stress_modules.sh install-with-care $(SGML) $(man_MANS) $(TESTSUITE)Makefile.in
+ 
+-sbin_PROGRAMS = insmod modprobe rmmod depmod modinfo insmod.static
++sbin_PROGRAMS = insmod modprobe rmmod depmod modinfo
+ bin_PROGRAMS = lsmod
+ sbin_SCRIPTS = generate-modprobe.conf
+ 
+@@ -130,7 +130,7 @@
+ CONFIG_CLEAN_FILES =
+ bin_PROGRAMS = lsmod$(EXEEXT)
+ sbin_PROGRAMS = insmod$(EXEEXT) modprobe$(EXEEXT) rmmod$(EXEEXT) \
+-	depmod$(EXEEXT) modinfo$(EXEEXT) insmod.static$(EXEEXT)
++	depmod$(EXEEXT) modinfo$(EXEEXT) 
+ PROGRAMS = $(bin_PROGRAMS) $(sbin_PROGRAMS)
+ 
+ am_depmod_OBJECTS = depmod.$(OBJEXT) moduleops.$(OBJEXT) \

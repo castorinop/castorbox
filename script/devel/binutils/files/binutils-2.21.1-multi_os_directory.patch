@@ -1,0 +1,96 @@
+diff -Naur binutils-2.21.1-old/bfd/configure binutils-2.21.1-new/bfd/configure
+--- binutils-2.21.1-old/bfd/configure	2011-06-27 18:34:40.000000000 -0700
++++ binutils-2.21.1-new/bfd/configure	2011-06-27 18:36:28.000000000 -0700
+@@ -10326,7 +10326,7 @@
+   # Ok, now we have the path, separated by spaces, we can step through it
+   # and add multilib dir if necessary.
+   lt_tmp_lt_search_path_spec=
+-  lt_multi_os_dir=`$CC $CPPFLAGS $CFLAGS $LDFLAGS -print-multi-os-directory 2>/dev/null`
++  lt_multi_os_dir='../lib'
+   for lt_sys_path in $lt_search_path_spec; do
+     if test -d "$lt_sys_path/$lt_multi_os_dir"; then
+       lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path/$lt_multi_os_dir"
+diff -Naur binutils-2.21.1-old/binutils/configure binutils-2.21.1-new/binutils/configure
+--- binutils-2.21.1-old/binutils/configure	2011-06-27 18:34:40.000000000 -0700
++++ binutils-2.21.1-new/binutils/configure	2011-06-27 18:36:28.000000000 -0700
+@@ -10120,7 +10120,7 @@
+   # Ok, now we have the path, separated by spaces, we can step through it
+   # and add multilib dir if necessary.
+   lt_tmp_lt_search_path_spec=
+-  lt_multi_os_dir=`$CC $CPPFLAGS $CFLAGS $LDFLAGS -print-multi-os-directory 2>/dev/null`
++  lt_multi_os_dir='../lib'
+   for lt_sys_path in $lt_search_path_spec; do
+     if test -d "$lt_sys_path/$lt_multi_os_dir"; then
+       lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path/$lt_multi_os_dir"
+diff -Naur binutils-2.21.1-old/gas/configure binutils-2.21.1-new/gas/configure
+--- binutils-2.21.1-old/gas/configure	2011-06-27 18:34:40.000000000 -0700
++++ binutils-2.21.1-new/gas/configure	2011-06-27 18:36:28.000000000 -0700
+@@ -10109,7 +10109,7 @@
+   # Ok, now we have the path, separated by spaces, we can step through it
+   # and add multilib dir if necessary.
+   lt_tmp_lt_search_path_spec=
+-  lt_multi_os_dir=`$CC $CPPFLAGS $CFLAGS $LDFLAGS -print-multi-os-directory 2>/dev/null`
++  lt_multi_os_dir='../lib'
+   for lt_sys_path in $lt_search_path_spec; do
+     if test -d "$lt_sys_path/$lt_multi_os_dir"; then
+       lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path/$lt_multi_os_dir"
+diff -Naur binutils-2.21.1-old/gprof/configure binutils-2.21.1-new/gprof/configure
+--- binutils-2.21.1-old/gprof/configure	2011-06-27 18:34:41.000000000 -0700
++++ binutils-2.21.1-new/gprof/configure	2011-06-27 18:36:28.000000000 -0700
+@@ -10039,7 +10039,7 @@
+   # Ok, now we have the path, separated by spaces, we can step through it
+   # and add multilib dir if necessary.
+   lt_tmp_lt_search_path_spec=
+-  lt_multi_os_dir=`$CC $CPPFLAGS $CFLAGS $LDFLAGS -print-multi-os-directory 2>/dev/null`
++  lt_multi_os_dir='../lib'
+   for lt_sys_path in $lt_search_path_spec; do
+     if test -d "$lt_sys_path/$lt_multi_os_dir"; then
+       lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path/$lt_multi_os_dir"
+diff -Naur binutils-2.21.1-old/ld/configure binutils-2.21.1-new/ld/configure
+--- binutils-2.21.1-old/ld/configure	2011-06-27 18:34:41.000000000 -0700
++++ binutils-2.21.1-new/ld/configure	2011-06-27 18:36:28.000000000 -0700
+@@ -11056,7 +11056,7 @@
+   # Ok, now we have the path, separated by spaces, we can step through it
+   # and add multilib dir if necessary.
+   lt_tmp_lt_search_path_spec=
+-  lt_multi_os_dir=`$CC $CPPFLAGS $CFLAGS $LDFLAGS -print-multi-os-directory 2>/dev/null`
++  lt_multi_os_dir='../lib'
+   for lt_sys_path in $lt_search_path_spec; do
+     if test -d "$lt_sys_path/$lt_multi_os_dir"; then
+       lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path/$lt_multi_os_dir"
+diff -Naur binutils-2.21.1-old/libiberty/Makefile.in binutils-2.21.1-new/libiberty/Makefile.in
+--- binutils-2.21.1-old/libiberty/Makefile.in	2011-06-27 18:34:41.000000000 -0700
++++ binutils-2.21.1-new/libiberty/Makefile.in	2011-06-27 18:36:28.000000000 -0700
+@@ -346,7 +346,7 @@
+ # multilib-specific flags, it's overridden by FLAGS_TO_PASS from the
+ # default multilib, so we have to take CFLAGS into account as well,
+ # since it will be passed the multilib flags.
+-MULTIOSDIR = `$(CC) $(CFLAGS) -print-multi-os-directory`
++MULTIOSDIR = '../lib'
+ install_to_libdir: all
+ 	${mkinstalldirs} $(DESTDIR)$(libdir)/$(MULTIOSDIR)
+ 	$(INSTALL_DATA) $(TARGETLIB) $(DESTDIR)$(libdir)/$(MULTIOSDIR)/$(TARGETLIB)n
+diff -Naur binutils-2.21.1-old/libtool.m4 binutils-2.21.1-new/libtool.m4
+--- binutils-2.21.1-old/libtool.m4	2011-06-27 18:34:41.000000000 -0700
++++ binutils-2.21.1-new/libtool.m4	2011-06-27 18:36:28.000000000 -0700
+@@ -2043,7 +2043,7 @@
+   # Ok, now we have the path, separated by spaces, we can step through it
+   # and add multilib dir if necessary.
+   lt_tmp_lt_search_path_spec=
+-  lt_multi_os_dir=`$CC $CPPFLAGS $CFLAGS $LDFLAGS -print-multi-os-directory 2>/dev/null`
++  lt_multi_os_dir='../lib'
+   for lt_sys_path in $lt_search_path_spec; do
+     if test -d "$lt_sys_path/$lt_multi_os_dir"; then
+       lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path/$lt_multi_os_dir"
+diff -Naur binutils-2.21.1-old/opcodes/configure binutils-2.21.1-new/opcodes/configure
+--- binutils-2.21.1-old/opcodes/configure	2011-06-27 18:34:41.000000000 -0700
++++ binutils-2.21.1-new/opcodes/configure	2011-06-27 18:36:28.000000000 -0700
+@@ -10056,7 +10056,7 @@
+   # Ok, now we have the path, separated by spaces, we can step through it
+   # and add multilib dir if necessary.
+   lt_tmp_lt_search_path_spec=
+-  lt_multi_os_dir=`$CC $CPPFLAGS $CFLAGS $LDFLAGS -print-multi-os-directory 2>/dev/null`
++  lt_multi_os_dir='../lib'
+   for lt_sys_path in $lt_search_path_spec; do
+     if test -d "$lt_sys_path/$lt_multi_os_dir"; then
+       lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path/$lt_multi_os_dir"

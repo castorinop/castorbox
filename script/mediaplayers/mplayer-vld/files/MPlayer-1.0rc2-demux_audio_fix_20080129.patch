@@ -1,0 +1,12 @@
+diff -Naur MPlayer-1.0rc2-old/libmpdemux/demux_audio.c MPlayer-1.0rc2-new/libmpdemux/demux_audio.c
+--- MPlayer-1.0rc2-old/libmpdemux/demux_audio.c	2007-10-07 12:49:33.000000000 -0700
++++ MPlayer-1.0rc2-new/libmpdemux/demux_audio.c	2008-01-31 17:11:08.000000000 -0800
+@@ -229,6 +229,8 @@
+           ptr += 4;
+ 
+           comment = ptr;
++          if (&comment[length] < comments || &comment[length] >= &comments[blk_len])
++            return;
+           c = comment[length];
+           comment[length] = 0;
+ 

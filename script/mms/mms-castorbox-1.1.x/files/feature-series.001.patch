@@ -1,0 +1,2447 @@
+=== modified file 'common.cpp'
+--- old/common.cpp	2009-05-10 12:29:22 +0000
++++ new/common.cpp	2009-08-30 18:37:47 +0000
+@@ -495,6 +495,12 @@
+ 
+ }
+ 
++string string_format::double_zero(int value)
++{
++  char buffer [512];
++  snprintf(buffer, 512, "%02d", value);
++  return buffer;
++}
+ 
+ string string_format::get_line(const string& text, int &pos, int width, const string& font)
+ {
+=== modified file 'common.hpp'
+--- old/common.hpp	2009-05-10 12:29:22 +0000
++++ new/common.hpp	2009-08-30 18:35:54 +0000
+@@ -120,6 +123,9 @@
+   
+   /* replaces mblen() for utf-8 strings. This does not depend on LC_CTYPE */
+   int utflen(const char *s, size_t n);
++
++ /* retunr a string with double zero */
++  std::string double_zero(int value);
+ }
+ 
+ namespace time_helper {
+
+=== modified file 'plugins/feature/module.cpp'
+--- old/plugins/feature/module.cpp	2009-04-26 12:31:19 +0000
++++ new/plugins/feature/module.cpp	2009-08-29 16:11:22 +0000
+@@ -227,12 +227,12 @@
+ }
+ 
+ void Module::print_range_top(int int_position, int list_size, int element_size,
+-			     int& y, int& start, int& range)
++			     int& y, int& start, int& range, int offset)
+ {
+   string header_font = graphics::resolution_dependant_font_wrapper(28, conf);
+   std::pair<int, int> header_size = string_format::calculate_string_size("abcltuwHPMjJg", header_font);
+ 
+-  y = 10 * 2 + header_size.second;
++  y = 10 * 2 + header_size.second + offset;
+ 
+   if (search_mode)
+     y += search_top_size + static_cast<int>((conf->p_v_res()*1.0/600)*25);
+
+=== modified file 'plugins/feature/module.hpp'
+--- old/plugins/feature/module.hpp	2009-01-02 02:11:23 +0000
++++ new/plugins/feature/module.hpp	2009-08-29 16:05:47 +0000
+@@ -67,14 +67,14 @@
+   void force_search_print_cleanup();
+ 
+   void print_range_top(int int_position, int list_size, int element_size,
+-		       int& y, int& start, int& range);
++		       int& y, int& start, int& range, int offset = 0);
+ 
+   template<typename T>
+   void print_range(const std::vector<T>& files, const T& position, const int int_position,
+-		   const boost::function<void (const T&, const T&, int)>& print_func, const int element_size)
++		   const boost::function<void (const T&, const T&, int)>& print_func, const int element_size, int offset = 0)
+   {
+     int y, start, range;
+-    print_range_top(int_position, files.size(), element_size, y, start, range);
++    print_range_top(int_position, files.size(), element_size, y, start, range, offset);
+ 
+     // goto start of print
+     typename std::vector<T>::const_iterator iter = files.begin() + start;
+@@ -94,10 +94,10 @@
+   void print_range_modifying(std::vector<T>& files, const T& position,
+ 			     const int int_position,
+ 			     const boost::function<void (T&, const T&, int)>& print_func,
+-			     const int element_size)
++			     const int element_size, const int offset = 0)
+   {
+     int y, start, range;
+-    print_range_top(int_position, files.size(), element_size, y, start, range);
++    print_range_top(int_position, files.size(), element_size, y, start, range, offset);
+ 
+     // goto start of print
+     typename std::vector<T>::iterator iter = files.begin() + start;
+
+=== modified file 'plugins/feature/movie/Makefile'
+--- old/plugins/feature/movie/Makefile	2008-12-07 15:34:34 +0000
++++ new/plugins/feature/movie/Makefile	2009-08-19 17:27:48 +0000
+@@ -8,6 +8,7 @@
+ include $(MMSDIR)/common.mak
+ 
+ PLUGIN_NAME = lib_feature_movie.so
++PLUGIN_SERIES_NAME = lib_feature_movie_series.so
+ PLUGIN_COLL_NAME = lib_feature_movie_collection.so
+ FFMPEG_LIBS =
+ SRCS = movie_config.cpp movie.cpp simple_movie.cpp movie_plugin.cpp
+@@ -24,6 +25,7 @@
+ COLL += movie.o movie_collection_plugin.o \
+ 	movie_db.o imdb.o imdb_movie.o \
+ 	collection.o
++SERIES += series.o series_db.o series_plugin.o
+ endif
+ 
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../tinyxml -I../../output/ \
+@@ -46,11 +48,14 @@
+ 
+ SUBDIRS += players
+ 
+-all: $(OBJS) $(COLL)
++all: $(OBJS) $(COLL) $(SERIES)
+ 	$(DO_MAKE)
+ 	make -C po
+ 	$(CXX) $(CXXFLAGS) \
+ 	-Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) players/movie_player.o  $(FFMPEG_LIBS)
++	$(CXX) $(CXXFLAGS) \
++	-Wl,-nostdlib -o $(PLUGIN_SERIES_NAME) $(SERIES) players/movie_player.o  $(FFMPEG_LIBS)
++
+ ifeq ($(FMOVIE),yes)
+ 	$(CXX) $(CXXFLAGS) \
+ 	-Wl,-nostdlib -o $(PLUGIN_COLL_NAME) $(COLL)
+@@ -59,6 +64,7 @@
+ install:
+ 	@for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+ 	$(INSTALL) $(PLUGIN_NAME) $(DESTDIR)$(PLUGINDIR)/
++	$(INSTALL) $(PLUGIN_SERIES_NAME) $(DESTDIR)$(PLUGINDIR)/
+ ifeq ($(FMOVIE),yes)
+ 	$(INSTALL) $(PLUGIN_COLL_NAME) $(DESTDIR)$(PLUGINDIR)/
+ endif
+
+=== modified file 'plugins/feature/movie/movie_config_parameters'
+--- old/plugins/feature/movie/movie_config_parameters	2008-12-23 02:10:25 +0000
++++ new/plugins/feature/movie/movie_config_parameters	2009-08-19 15:47:41 +0000
+@@ -9,6 +9,7 @@
+ 
+ PARAMETER_LIST("mov_dir",          movie_dirs)
+ PARAMETER_LIST("mov_dir_no_watch",          movie_dirs_no_watch)
++PARAMETER_LIST("serie_dir",          serie_dirs)
+ PARAMETER_BOOL("graphical_movie_mode",  graphical_movie_mode,	true)
+ PARAMETER_BOOL("movie_db",         movie_db,           true)
+ PARAMETER_STR("information_source",         information_source,           "english")
+
+=== modified file 'plugins/feature/movie/movie_plugin.cpp'
+--- old/plugins/feature/movie/movie_plugin.cpp	2009-01-14 12:42:08 +0000
++++ new/plugins/feature/movie/movie_plugin.cpp	2009-08-27 03:23:05 +0000
+@@ -6,6 +6,7 @@
+ 
+ #ifdef use_graphical_movie
+ #include "graphical_movie.hpp"
++#include "series.hpp"
+ #endif
+ 
+ #include "themes.hpp"
+@@ -23,6 +24,29 @@
+   pdialog.print();
+ }
+ 
++void series()
++{
++  Series *mov = get_class<Series>(dgettext("mms-movie", "Serie"));
++
++  /*if (!mov->loaded_correctly) {
++    mov->read_dirs();
++    mov->loaded_correctly = true;
++  }*/
++
++  /* if (mov->reload_needed) {
++    DialogWaitPrint pdialog(dgettext("mms-movie", "Reloading directories"), 1000);
++    mov->read_dirs();
++  } */
++
++  /*if (mov->files_size() == 0) {
++    no_movies_error();
++    mov->reload_needed = true;
++  } else {
++    mov->reload_needed = false; */
++    mov->mainloop();
++  //}
++}
++
+ void movie_fromhd()
+ {
+   Movie *mov = get_class<Movie>(dgettext("mms-movie", "Video"));
+@@ -62,6 +86,7 @@
+ class MoviePlugin : public FeaturePlugin
+ {
+ public:
++
+   bool plugin_post_init(){
+     S_InputMaster::get_instance()->parse_keys("movie", "5");
+     return true;
+@@ -74,9 +99,9 @@
+     movie_conf->parse_configuration_file(conf->p_homedir());
+ 
+ #ifdef use_graphical_movie
+-    if (movie_conf->p_graphical_movie_mode())
++    if (movie_conf->p_graphical_movie_mode()) {
+       module = new GraphicalMovie();
+-    else
++    } else
+ #endif
+       module = new SimpleMovie();
+ 
+@@ -99,6 +124,9 @@
+ 
+     features.push_back(startmenu_item(text, "movie_hd", themes->startmenu_movie_dir, 0, &movie_fromhd));
+ 
++    text = dgettext("mms-movie", "Play Series");
++    features.push_back(startmenu_item(text, "series", themes->startmenu_movie_dir, 0, &series));
++
+     if (conf->p_media()) {
+       text = dgettext("mms-movie", "Play a dvd/vcd/svcd");
+       features.push_back(startmenu_item(text, "movie_disc", themes->startmenu_movie_cd, 1, &movie_cd));
+
+=== added file 'plugins/feature/movie/series.cpp'
+--- old/plugins/feature/movie/series.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/movie/series.cpp	2009-08-31 21:11:55 +0000
+@@ -0,0 +1,1740 @@
++//#define DLOG
++
++#include "series.hpp"
++
++#include "libfspp.hpp"
++
++#include "search.hpp"
++#include "graphics.hpp"
++#include "busy_indicator.hpp"
++#include "shutdown.hpp"
++#include "touch.hpp"
++#include "rand.hpp"
++
++#include "Movie_info.h"
++
++#include "boost.hpp"
++// ostringstream
++#include <sstream>
++#include <fstream>
++
++#include <assert.h>
++
++using std::string;
++using std::vector;
++using std::list;
++
++Series::Series()
++  : SerieDB("seriehd.db", true), reload_dirs(true), in_series(true), update_needed(true),
++				 pos_serie(0), pos_season(0), pos_episode(0)
++{
++/*  if (!recurse_mkdir(conf->p_var_data_dir(),"movies", &imdb_dir))
++    print_critical(dgettext("mms-movie", "Could not create directory ") + imdb_dir, "MOVIE"); */
++
++  ext_mask = file_tools::create_ext_mask(movie_conf->p_filetypes_m());
++  visible = false;
++}
++
++void Series::startup_updater()
++{
++#ifndef use_ffmpeg_thumbnailer
++  Plugins *plugins = S_Plugins::get_instance();
++  thumbnailer = plugins->find(plugins->movie_players, "MPlayer");
++
++  if (thumbnailer == 0)
++    std::cerr << "Warning, thumbnailer not found, please install mplayer plugin" << std::endl;
++#endif
++
++  set_folders();
++  check_db_consistency();
++
++  S_BackgroundUpdater::get_instance()->run_once(boost::bind(&Series::check_for_changes, this));
++
++  /* S_Search::get_instance()->register_module(SearchModule(dgettext("mms-movie", "Videos"),
++							 boost::bind(&Series::gen_search_list, this, _1),
++							 boost::bind(&Series::reenter, this, _1))); */
++  Movie::startup_updater();
++
++  list_font_small = graphics::resolution_dependant_font_wrapper(12, conf);
++}
++
++int Series::find_position_in_folder_list(const list<string>& files,
++						 const string& filename)
++{
++  int pos = 0;
++  bool pos_found = false;
++  foreach (const string& file, files) {
++    vector<Multifile> templist = rdir(file);
++    std::sort(templist.begin(), templist.end(), file_sort());
++    pos = 0;
++    foreach (Multifile& movie, templist) {
++      if ((filename[filename.size()-1] == '/' && filename == movie.path) ||
++	  filename == movie.filenames.front()) {
++	pos_found = true;
++	break;
++      } else
++	++pos;
++    }
++    if (pos_found)
++      break;
++  }
++  return pos;
++}
++
++void Series::action_random()
++{
++    Rand *rand = S_Rand::get_instance();
++    pos_episode = rand->number(episode.size());
++    action_play();
++}
++
++void Series::action_play()
++{
++  string filename = vector_lookup(episode, pos_episode).filename;
++  MyPair filetype = check_type(filename, movie_conf->p_filetypes_m());
++  Multifile e = addfile(filename, filetype);
++  Multifile m = Multifile(e);
++  playmovie(e);
++}
++
++string Series::path_of_imdb_movie(const Multifile& c)
++{
++  if (!c.path.empty())
++    return c.path;
++  else
++    return c.filenames.front();
++}
++
++bool Series::reload_dir(const string& path)
++{
++  std::cout << "reload_dir(" << path << ")" << std::endl;
++  bool db_load_succes = false;
++
++  vector<Multifile> hdfiles = rdir_hd(path, db_load_succes, false);
++
++  vector<Multifile> dbfiles = rdir(path);
++
++  // find what is new and what is removed
++  vector<string> new_list;
++  foreach (Multifile& movie, hdfiles)
++    new_list.push_back(path_of_imdb_movie(movie));
++
++  vector<string> old_list;
++  foreach (Multifile& movie, dbfiles)
++    old_list.push_back(path_of_imdb_movie(movie));
++
++  vector<string> new_files;
++  vector<string> removed_files;
++
++  folder_difference(new_list, old_list, new_files, removed_files);
++
++  // insert new into db
++  foreach (string& path, new_files) {
++    string original_path = path;
++
++    if (path[path.size() - 1] == '/')
++      path = path.substr(0, path.size()-1);
++
++    string::size_type pos_backslash = path.rfind('/');
++    if (pos_backslash != string::npos) {
++      path = path.substr(0, pos_backslash+1);
++    }
++
++    insert_file_into_db(original_path);
++  }
++
++  db_mutex.enterMutex();
++
++  // remove old from db
++  foreach (string& path, removed_files) {
++
++    char *tmp = sqlite3_mprintf("DELETE FROM Episode WHERE filename LIKE '%q%%'", path.c_str());
++    db.execute(tmp);
++    sqlite3_free(tmp);
++  }
++
++  db_mutex.leaveMutex();
++
++  return (removed_files.size() > 0 || new_files.size() > 0);
++}
++
++void Series::reload_current_dirs()
++{
++  check_for_changes();
++  series = getSeries();
++}
++
++bool Series::change_dir_to_id(int db_id)
++{
++  reset();
++
++  db_mutex.enterMutex();
++
++  SQLQuery *q = db.query("Folders", ("SELECT * FROM %t WHERE id='" + conv::itos(db_id) + "'").c_str());
++
++  if (q && q->numberOfTuples() > 0) {
++
++    string filename = (*q)[0]["filename"];
++    string original_filename = (*q)[0]["filename"];
++
++    delete q;
++    db_mutex.leaveMutex();
++
++    string cur_dir_path;
++
++    if (filename[filename.size() - 1] == '/')
++      filename = filename.substr(0, filename.size() - 1);
++
++    list<string> dirs = movie_conf->p_serie_dirs();
++
++    int pos;
++    foreach (string& dir, dirs)
++      if ((pos = filename.rfind(dir)) != string::npos) {
++	cur_dir_path = filename.substr(0, dir.size()+1);
++	filename = filename.substr(dir.size()+1);
++      }
++
++    if (!filename.empty()) {
++      while ((pos = filename.find("/")) != string::npos) {
++	folders.top().second = find_position_in_folder_list(folders.top().first, cur_dir_path + filename.substr(0, pos + 1));
++
++	list<string> templs; templs.push_back(cur_dir_path + filename.substr(0, pos + 1));
++	folders.push(std::make_pair(templs, 0));
++	cur_dir_path += filename.substr(0, pos+1);
++	filename = filename.substr(pos+1);
++      }
++    }
++
++    // we should now be in the correct folder, find the correct file
++    folders.top().second = find_position_in_folder_list(folders.top().first, original_filename);
++
++    reload_current_dirs();
++
++    S_BackgroundUpdater::get_instance()->run_once(boost::bind(&Series::check_for_changes, this));
++
++    return true;
++  } else {
++    delete q;
++    db_mutex.leaveMutex();
++    return false;
++  }
++}
++
++void Series::reenter(int db_id)
++{
++  if (change_dir_to_id(db_id))
++    mainloop();
++}
++
++std::vector<std::pair<std::string, int> > Series::gen_search_list(const std::string& search_word)
++{
++  string parent = "", movie_parent = "";
++
++  if (input_master->current_saved_map() == "movie" && search_depth == dgettext("mms-movie", "current folder")) {
++    string parent_sql_str = "SELECT id FROM %t WHERE";
++
++    list<string> current_folders = folders.top().first;
++    bool first = true;
++    foreach (string& folder, current_folders) {
++      if (first) {
++	parent_sql_str += " filename='" + folder + "'";
++	first = false;
++      } else
++	parent_sql_str += " OR filename='" + folder + "'";
++    }
++
++    string parent_ids = "";
++
++    db_mutex.enterMutex();
++
++    SQLQuery *q0 = db.query("Folders", parent_sql_str.c_str());
++
++    if (q0) {
++      for (int i = 0; i < q0->numberOfTuples(); ++i) {
++	SQLRow &row = (*q0)[i];
++	if (i > 0)
++	  parent_ids += ", " + row["id"];
++	else
++	  parent_ids += row["id"];
++      }
++    }
++    delete q0;
++
++    db_mutex.leaveMutex();
++
++    parent = "parent in (" + parent_ids + ") AND";
++    movie_parent = "path = (SELECT filename FROM Folders WHERE parent in (" + parent_ids + ")) AND";
++  }
++
++  std::vector<std::pair<std::string, int> > result;
++  vector<int> ids_already_found;
++
++  db_mutex.enterMutex();
++
++  // folders
++  SQLQuery *q = db.query("Folders", ("SELECT id, parent, filename, name, is_folder FROM %t WHERE " + parent + " fuzzycmp('" + search_word + "', lname, 1)").c_str());
++
++  if (q) {
++
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++
++      SQLRow &row = (*q)[i];
++
++      string out;
++
++      bool result_ok = false;
++
++      if (input_master->current_saved_map() == "movie" && search_depth == dgettext("mms-movie", "current folder")) {
++	foreach (string& folder, folders.top().first)
++	  if (row["filename"].find(folder) != string::npos) {
++	    result_ok = true;
++	    break;
++	  }
++      } else
++	result_ok = true;
++
++      if (result_ok && row["parent"] != "0") {
++	if (row["is_folder"] == "1")
++	  out = row["name"] + "/";
++	else
++	  out = row["name"];
++
++	int id = conv::atoi(row["id"]);
++	result.push_back(std::make_pair(string_format::convert(out), id));
++	ids_already_found.push_back(id);
++      }
++    }
++  }
++  delete q;
++
++  q = db.query("HDMovie", ("SELECT path, title, Folders.id as id FROM %t, Folders WHERE " + movie_parent + " fuzzycmp('" + search_word + "', ltitle, 1) AND Folders.filename = HDMovie.path").c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++
++      SQLRow &row = (*q)[i];
++
++      int id = conv::atoi(row["id"]);
++
++      bool found_match = false;
++      foreach (int id_already_found, ids_already_found)
++	if (id == id_already_found) {
++	  found_match = true;
++	  break;
++	}
++
++      if (!found_match)
++	result.push_back(std::make_pair(row["title"], id));
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return result;
++}
++
++// commands
++void Series::secondary_menu()
++{
++  ExtraMenu em;
++
++  if (in_series) {
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Enter serie"), input_master->find_shortcut("action"),
++			      boost::bind(&Series::enter_serie, this)));
++  
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Play all files in dir"), input_master->find_shortcut("play_movie"),
++			      boost::bind(&Series::action_play, this)));
++  } else {
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Play movie"), input_master->find_shortcut("action"),
++			      boost::bind(&Series::action_play, this)));
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Random play movie"), input_master->find_shortcut("play_movie"),
++			      boost::bind(&Series::action_random, this)));
++  }
++
++  /* if (!vector_lookup(files, folders.top().second).m_strTitle.empty()) {
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Update imdb information"), 
++			      input_master->find_shortcut("reget"),
++			      boost::bind(&Series::reget_movie_information, this)));
++
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Delete imdb information"),
++			      input_master->find_shortcut("delete_file_info"),
++			      boost::bind(&Series::remove_from_db, this,
++					  folders.top().second)));
++  } else {
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Get information on imdb"), 
++			      input_master->find_shortcut("reget"),
++			      boost::bind(&Series::reget_movie_information, this)));
++  } */
++
++/*  if (vector_lookup(files, folders.top().second).type == "file")
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Print file information"), input_master->find_shortcut("print_file_info"),
++			      boost::bind(&Series::print_movie_info, this)));
++
++  em.add_item(ExtraMenuItem(dgettext("mms-movie", "Print imdb information"), input_master->find_shortcut("info"),
++			    boost::bind(&Series::print_info, this))); */
++
++  /* if (folders.size() > 1) {
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Go up one directory"), input_master->find_shortcut("back"),
++			      boost::bind(&Series::go_back, this)));
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Return to startmenu"), input_master->find_shortcut("startmenu"),
++			      boost::bind(&Series::exit, this)));
++  } else
++    em.add_item(ExtraMenuItem(dgettext("mms-movie", "Return to startmenu"), input_master->find_shortcut("back"),
++			      boost::bind(&Series::exit, this)));
++*/
++  add_standard(em);
++
++  foreach (ExtraMenuItem& item, global->menu_items)
++    em.add_persistent_item(item);
++
++  conf->s_sam(true);
++
++  em.mainloop();
++}
++
++void Series::print_movie_info()
++{
++  Multifile mf = vector_lookup(files, folders.top().second);
++
++  if (mf.type == "file" && mf.filenames.size() > 0) {
++
++    Movie_info *mv = new Movie_info;
++
++    int x = conf->p_v_res()/3*2;
++
++    foreach (const string &filename, mf.filenames) {
++      if ((mv->probe_movie(filename))){
++	vector<string> vec;
++	MOVIE_RESPONSE_INFO a;
++	mv->Fetch_Movie_data(&a);
++	Print pdialog(Print::SCREEN);
++	bool got_lines = (!a.general_info.empty() || !a.video_info.empty() || !a.audio_info.empty());
++
++	if (!got_lines){
++	  pdialog.add_line(dgettext("mms-movie", "No available information about this file"));
++	  pdialog.print();
++	} else {
++	  //general information
++	  if (string_format::wrap_strings(a.general_info, extra_information_font, x, vec) > 0){
++	    pdialog.add_line(dgettext("mms-movie", "General information:"));
++	    foreach (const string &str, vec)
++	      pdialog.add_line(str);
++	    pdialog.add_line("--");
++	  }
++
++	  if (string_format::wrap_strings(a.video_info, extra_information_font, x, vec) > 0){
++	    pdialog.add_line(dgettext("mms-movie", "Video details:"));
++	    foreach (const string &str, vec)
++	      pdialog.add_line(str);
++	    pdialog.add_line("--");
++	  }
++
++	  if (string_format::wrap_strings(a.audio_info, extra_information_font, x, vec) > 0){
++	    pdialog.add_line(dgettext("mms-movie", "Audio details:"));
++	    foreach (const string &str, vec)
++	      pdialog.add_line(str);
++	    pdialog.add_line("--");
++	  }
++	  pdialog.print();
++	}
++      }
++    }
++
++    delete mv;
++  }
++}
++
++void Series::enter_dir()
++{
++  if (vector_lookup(files, folders.top().second).type != "file") {
++    string temp_cur_dir = vector_lookup(files ,folders.top().second).path;
++    vector<Multifile> templist = rdir(temp_cur_dir);
++
++    if (templist.size())
++      for (size_t t = 0; t < templist.size(); ++t){
++	Xprintf("%s\n", templist[t].name.c_str());
++	if (string_format::lowercase(templist[t].name) == "video_ts"){
++	  action_play();
++	  return;
++	}
++      }
++
++    if ((templist.size() == 0 && string_format::lowercase(temp_cur_dir).rfind("video_ts") != string::npos ) ) {
++      action_play();
++      return;
++    }
++
++    if (templist.size() != 0) {
++      list<string> templs; templs.push_back(temp_cur_dir);
++      folders.push(std::make_pair(templs, 0));
++      files = templist;
++      std::sort(files.begin(), files.end(), file_sort());
++
++      S_BackgroundUpdater::get_instance()->run_once(boost::bind(&Series::check_for_changes, this));
++    } else{
++      Xprintf("Graphicalmovie says Folder is empty\n");
++
++      DialogWaitPrint pdialog(dgettext("mms-movie", "Folder is empty"), 1000);
++    }
++  }
++}
++
++void Series::check_for_changes()
++{
++  std::cout << "Series::check_for_changes()" << std::endl;
++
++  std::stack<string> queued_dirs;
++
++  foreach (string& dir, serie_folders)
++    queued_dirs.push(dir);
++
++  while (!queued_dirs.empty()) {
++    string cur_dir = queued_dirs.top();
++    queued_dirs.pop();
++
++    for (file_iterator<file_t, default_order> i (cur_dir); i != i.end (); i.advance(false)) {
++
++      string cur_file = string_format::remove_doubles(i->getName());
++
++      if (isDirectory(cur_file)) {
++	//insert_file_into_db(cur_file, cur_dir, db);
++	queued_dirs.push(cur_file);
++      } else {
++	if (check_type(cur_file, movie_conf->p_filetypes_m()) == emptyMyPair)
++	  continue;
++
++	insert_file_into_db(cur_file);
++
++	/* string thumbnail = "";
++
++	string::size_type dot_pos = cur_file.rfind(".");
++	if (dot_pos != string::npos) {
++
++	  int full_width = static_cast<int>(image_width * 1.35);
++	  int full_height = static_cast<int>(image_height * 1.35);
++
++	  // list view
++	  thumbnail = S_Render::get_instance()->image_get_fullpath(cur_file, full_width, full_height);
++
++	  // try thumbnail
++	  if (!file_exists(thumbnail))
++	    create_thumbnail(cur_file, thumbnail, full_width, full_height, thumbnailer);
++
++	  // list view
++	  thumbnail = conf->p_temp_image_loc() + cur_file.substr(0, dot_pos) + "_" + conv::itos(info_width) + "_" + conv::itos(info_height) + "_thumb.jpg";
++
++          if (!file_exists(thumbnail))
++	    create_thumbnail(cur_file, thumbnail, info_width, info_height, thumbnailer); 
++	}*/
++      }
++    }
++  }
++
++/*  bool reload = false;
++
++  foreach (string& dir, serie_folders)
++    if (reload_dir(dir))
++      reload = true; // no break since we want to update the db for all folders
++
++  reload_dirs = reload; */
++}
++
++void Series::prev()
++{
++  int pos = (in_series ? pos_serie : pos_episode);
++  if (pos != 0)
++    --pos;
++  else
++    pos = (in_series ? series.size() : episode.size()) -1;
++
++  if (in_series) { 
++	pos_serie = pos; 
++	pos_episode = 0; 
++  } else 
++	pos_episode = pos;
++}
++
++void Series::next()
++{
++  int pos = (in_series ? pos_serie : pos_episode);
++  if (pos != (in_series ? series.size() : episode.size()) -1)
++    ++pos;
++  else
++    pos = 0;
++  if (in_series) { 
++	pos_serie = pos; 
++	pos_episode = 0; 
++  } else 
++	pos_episode = pos;
++}
++
++void Series::left()
++{
++  if (pos_season != 0)
++    --pos_season;
++  else
++    pos_season = seasons.size() -1;
++    pos_episode = 0;
++    enter_serie();
++}
++
++void Series::right()
++{
++  if (pos_season != seasons.size() -1)
++    ++pos_season;
++  else
++    pos_season = 0; 
++    pos_episode = 0;
++    enter_serie();
++}
++
++void Series::enter_serie() {
++	int id =  vector_lookup(series, pos_serie).id;
++        seasons = getSeasons(id);
++	episode = getEpisodes(id);
++	update_needed = true;
++	in_series = false;
++}
++
++void Series::leave_serie() {
++	update_needed = true;
++	in_series = true;
++        pos_season = 0;
++        pos_episode = 0;
++}
++
++
++string Series::mainloop()
++{
++  visible = true;
++
++  BusyIndicator *busy_indicator = S_BusyIndicator::get_instance();
++  Shutdown *sd = S_Shutdown::get_instance();
++
++  input_master->set_map("movie");
++
++  Input input;
++
++  update_needed = true;
++
++  render->device->animation_section_begin(true);
++  int curlayer = render->device->get_current_layer();
++  render->device->switch_to_layer(curlayer+1);
++  render->device->reset_layout_attribs_nowait();
++  render->device->set_layout_alpha(0.0, curlayer+1);
++  render->device->animation_zoom(3,3,1,1,40,curlayer+1);
++  render->device->animation_fade(0,1,50,curlayer+1);
++  render->device->animation_fade(1,0,50,curlayer);
++  render->device->animation_section_end();
++
++  while (!exit_loop)
++    {
++      if (reload_dirs) {
++	reload_current_dirs();
++	update_needed = true;
++	reload_dirs = false;
++	if (exit_loop)
++	  break;
++      }
++
++      if (update_needed) {
++	if (in_series)
++  	  print(series);
++	else 
++	  print(episode);
++	print_lcd_menu();
++      }
++
++      input = input_master->get_input_busy_wrapped(busy_indicator);
++
++      if (sd->is_enabled()) {
++	sd->cancel();
++	continue;
++      }
++
++      update_needed = true;
++
++      if (input.key == "touch_input") {
++	S_Touch::get_instance()->run_callback();
++	continue;
++      }
++
++      if (fullscreen_check(input))
++	continue;
++
++      if (input.command == "prev")
++ 	{
++	      prev();
++ 	}
++      else if (input.command == "next")
++ 	{
++	      next();
++ 	}
++      else if (input.command == "left")
++	{
++	    left();
++	}
++      else if (input.command == "right")
++	{
++	    right();
++	}
++      else if (input.command == "reget")
++	{
++	  //reget_movie_information();
++	}
++      else if (input.command == "search_imdb")
++	{
++	  //search_imdb();
++	}
++      else if (input.command == "info" && input.mode == "graphical" &&
++	       vector_lookup(files, folders.top().second).type != "multi-dir")
++	{
++	  //print_info();
++	}
++      else if (input.command == "print_file_info")
++	{
++	  print_movie_info();
++	}
++      else if (input.command == "action")
++	{
++	  if (in_series)
++	     enter_serie();
++	  else
++	     action_play();
++	}
++      else if (input.command == "search")
++	{
++	  search_func();
++        }
++      else if (input.command == "second_action")
++	{
++	  secondary_menu();
++	}
++      else if(input.command == "back")
++      {
++         if(in_series)
++            exit();
++         else
++            leave_serie();
++      }
++      else if (input.command == "startmenu" && input.mode == "general")
++        {
++	   exit();
++        }
++      else
++	MovieTemplate<Multifile>::movie_mainloop_common(input);
++
++      update_needed = !global->check_commands(input);
++    }
++
++  render->device->animation_section_begin();
++  render->device->switch_to_layer(curlayer);
++  render->device->reset_layout_attribs_nowait();
++  render->device->animation_fade(0,1,80,curlayer);
++  render->device->animation_zoom(1,1,4,4,40,curlayer+1);
++  render->device->animation_fade(1,0,40,curlayer+1);
++  render->device->animation_section_end();
++
++  exit_loop = false;
++
++  visible = false;
++
++  return "";
++}
++
++void Series::print(const std::vector<Serie>& cur_files)
++{
++  render->prepare_new_image();
++
++  render->current.add(new PObj(themes->movie_background, 0, 0, 0, SCALE_FULL));
++
++  std::pair<int, int> header_size = string_format::calculate_string_size("abcltuwHPMjJg", header_font);
++  int header_box_size = static_cast<int>(header_size.second * 0.75);
++
++  render->current.add(new PFObj(themes->startmenu_movie_dir, 25, 10, header_box_size, header_box_size, 2, true));
++
++  if (themes->show_header) {
++
++    string header = dgettext("mms-movie", "Series");
++
++    if (folders.size() > 1) {
++      string top_folder = folders.top().first.front();
++
++      if (top_folder[top_folder.size()-1] == '/')
++	top_folder = top_folder.substr(0, top_folder.size()-1);
++
++      assert(top_folder.rfind('/') != string::npos);
++      header += " - " + top_folder.substr(top_folder.rfind('/')+1);
++      string_format::format_to_size(header, header_font, conf->p_h_res()-220, false);
++    }
++
++    std::pair<int, int> header_size = string_format::calculate_string_size(header, header_font);
++
++    render->current.add(new TObj(header, header_font, 100, (70-header_size.second)/2,
++				 themes->movie_header_font1, themes->movie_header_font2,
++				 themes->movie_header_font3, 2));
++  }
++
++  if (search_mode) {
++    int y = 10 + header_box_size + 10;
++
++    std::pair<int, int> search_text_size = string_format::calculate_string_size("abcltuwHPMjJg", search_font);
++    int search_size = static_cast<int>(search_text_size.second * 0.75);
++
++    if (offset == -1)
++      render->current.add(new RObj(0, y, conf->p_h_res(), search_size + 5, 0, 0, 0, 215, 2));
++    else
++      render->current.add(new RObj(0, y, conf->p_h_res(), search_size + 5,
++				   themes->general_search_rectangle_color1,
++				   themes->general_search_rectangle_color2,
++				   themes->general_search_rectangle_color3,
++				   themes->general_search_rectangle_color4, 2));
++    
++    render->current.add(new PFObj(themes->general_search, 47, y, search_size, search_size, 3, true));
++    
++    std::pair<int, int> search_select_sizes = string_format::calculate_string_size(search_depth, search_select_font);
++
++    int max_x = conf->p_h_res()-search_select_sizes.first - 25;
++
++    string sw = search_str;
++
++    string s = dgettext("mms-movie", "Search: ");
++    int x_size = string_format::calculate_string_width(s, search_font);
++    string_format::format_to_size(sw, search_font, max_x-x_size, true);
++
++    int search_text_height = string_format::calculate_string_size(s + sw, search_font).second;
++
++    render->current.add(new TObj(s + sw, search_font, 47 + search_size + 10,
++				 y + (search_size + 5 - search_text_height)/2,
++				 themes->search_font1, themes->search_font2, themes->search_font3, 3));
++  }
++
++  if (cur_files.size() > 0) {
++    int pos = folders.top().second;
++    if (search_mode && cur_files.size() > 0)
++        pos = offset % cur_files.size();
++
++    print_range<Serie>(cur_files, vector_lookup(cur_files, pos_serie), pos_serie,
++			   boost::bind(&Series::print_serie_element, this, _1, _2, _3), list_font_height * 2);
++  }
++
++   std::ostringstream pos;
++
++  if (search_mode)
++    if (cur_files.size() > 0)
++      pos << (offset % cur_files.size()) + 1 << "/" << cur_files.size();
++    else
++      pos << "";
++  else
++    pos << pos_serie + 1 << "/" << cur_files.size();
++
++  int x = string_format::calculate_string_width(pos.str(), position_font);
++
++  render->current.add(new TObj(pos.str(), position_font, conf->p_h_res()-(60+x), 20,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));
++
++  render->draw_and_release("serie");
++}
++
++void Series::print(const std::vector<Episode>& cur_files)
++{
++  render->prepare_new_image();
++
++  render->current.add(new PObj(themes->movie_background, 0, 0, 0, SCALE_FULL));
++
++  std::pair<int, int> header_size = string_format::calculate_string_size("abcltuwHPMjJg", header_font);
++  int header_box_size = static_cast<int>(header_size.second * 0.75);
++
++  render->current.add(new PFObj(themes->startmenu_movie_dir, 25, 10, header_box_size, header_box_size, 2, true));
++
++  if (themes->show_header) {
++
++    string header = string(dgettext("mms-movie", "Series")) + " - " + vector_lookup(series, pos_serie).name;
++
++    if (folders.size() > 1) {
++      string top_folder = folders.top().first.front();
++
++      if (top_folder[top_folder.size()-1] == '/')
++	top_folder = top_folder.substr(0, top_folder.size()-1);
++
++      assert(top_folder.rfind('/') != string::npos);
++      header += " - " + top_folder.substr(top_folder.rfind('/')+1);
++      string_format::format_to_size(header, header_font, conf->p_h_res()-220, false);
++    }
++
++    std::pair<int, int> header_size = string_format::calculate_string_size(header, header_font);
++
++    render->current.add(new TObj(header, header_font, 100, (70-header_size.second)/2,
++				 themes->movie_header_font1, themes->movie_header_font2,
++				 themes->movie_header_font3, 2));
++  } 
++
++  int season_size = 0;
++  if (search_mode) {
++    int y = 10 + header_box_size + 10;
++
++    std::pair<int, int> search_text_size = string_format::calculate_string_size("abcltuwHPMjJg", search_font);
++    int search_size = static_cast<int>(search_text_size.second * 0.75);
++
++    if (offset == -1)
++      render->current.add(new RObj(0, y, conf->p_h_res(), search_size + 5, 0, 0, 0, 215, 2));
++    else
++      render->current.add(new RObj(0, y, conf->p_h_res(), search_size + 5,
++				   themes->general_search_rectangle_color1,
++				   themes->general_search_rectangle_color2,
++				   themes->general_search_rectangle_color3,
++				   themes->general_search_rectangle_color4, 2));
++    
++    render->current.add(new PFObj(themes->general_search, 47, y, search_size, search_size, 3, true));
++    
++    std::pair<int, int> search_select_sizes = string_format::calculate_string_size(search_depth, search_select_font);
++
++    int max_x = conf->p_h_res()-search_select_sizes.first - 25;
++
++    string sw = search_str;
++
++    string s = dgettext("mms-movie", "Search: ");
++    int x_size = string_format::calculate_string_width(s, search_font);
++    string_format::format_to_size(sw, search_font, max_x-x_size, true);
++
++    int search_text_height = string_format::calculate_string_size(s + sw, search_font).second;
++
++    render->current.add(new TObj(s + sw, search_font, 47 + search_size + 10,
++				 y + (search_size + 5 - search_text_height)/2,
++				 themes->search_font1, themes->search_font2, themes->search_font3, 3));
++  } else {
++    int y = 10 + header_box_size + 10;
++
++    std::pair<int, int> search_text_size = string_format::calculate_string_size("abcltuwHPMjJg", list_font);
++    season_size = static_cast<int>(search_text_size.second * 0.75);
++
++    if (offset == -1)
++      render->current.add(new RObj(0, y, conf->p_h_res(), season_size + 5, 0, 0, 0, 215, 2));
++    else
++      render->current.add(new RObj(0, y, conf->p_h_res(), season_size + 5,
++				   themes->general_search_rectangle_color1,
++				   themes->general_search_rectangle_color2,
++				   themes->general_search_rectangle_color3,
++				   themes->general_search_rectangle_color4, 2));
++        
++    std::pair<int, int> search_select_sizes = string_format::calculate_string_size(search_depth, list_font);
++
++    int max_x = conf->p_h_res()-search_select_sizes.first - 25;
++
++    string sw = search_str;
++
++    string s = dgettext("mms-movie", "Season: ");
++    int x_size = string_format::calculate_string_width(s, list_font);
++    string_format::format_to_size(sw, list_font, max_x-x_size, true);
++
++    int search_text_height = string_format::calculate_string_size(s + sw, search_font).second;
++
++    render->current.add(new TObj(s + sw, list_font, 60,
++				 y + (season_size - list_font_height)/2,
++				 themes->movie_font1, themes->movie_font2, themes->movie_font3, 3));
++
++    int x_season = 0;
++    int ses_size;
++
++    foreach (string& season, seasons) {
++      ses_size = string_format::calculate_string_width(season, list_font);
++
++      if (season == vector_lookup(seasons, pos_season))
++        render->current.add(new RObj(60 + x_size + (x_season ? x_season : 5) - ses_size/2 , y, 
++			     	     ses_size + 10, season_size + 5, 
++				     0, 0, 0, 215, 3));
++
++        render->current.add(new TObj(season, list_font, 60 + x_size + x_season,
++				 y + (season_size - list_font_height)/2,
++				 themes->movie_font1, themes->movie_font2, themes->movie_font3, 4));
++	x_season += ses_size + 5;
++    }
++  }
++
++  if (cur_files.size() > 0) {
++    int pos = folders.top().second;
++    if (search_mode && cur_files.size() > 0)
++        pos = offset % cur_files.size();
++
++    print_range<Episode>(cur_files, vector_lookup(cur_files, pos_episode), pos_episode,
++			   boost::bind(&Series::print_episode_element, this, _1, _2, _3), list_font_height * 2, season_size + 10);
++  }
++
++   std::ostringstream pos;
++
++  if (search_mode)
++    if (cur_files.size() > 0)
++      pos << (offset % cur_files.size()) + 1 << "/" << cur_files.size();
++    else
++      pos << "";
++  else
++    pos << pos_serie + 1 << "/" << cur_files.size();
++
++  int x = string_format::calculate_string_width(pos.str(), position_font);
++
++  render->current.add(new TObj(pos.str(), position_font, conf->p_h_res()-(60+x), 20,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));
++
++  render->draw_and_release("serie");
++}
++
++// print a video element
++void Series::print_episode_element(const Episode& r, const Episode& position, int y)
++{
++  string name = r.name;
++  string ep = string_format::double_zero(r.season) + "x" + string_format::double_zero(r.episode);
++/*  if (r.type != "file")
++    name += "/"; */
++
++  string_format::format_to_size(name, list_font, conf->p_h_res()-75-155, true);
++
++  if (r == position)
++    render->current.add(new PFObj(themes->general_marked_large, 60, y+2,
++				  conf->p_h_res()-2*60, list_font_height * 2, 2, true));
++
++//  std::ostringstream out; out << r.filenames.size();
++
++  render->current.add(new TObj(name, list_font, 75, y,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));
++  render->current.add(new TObj(ep, list_font_small, 75, y + list_font_height,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));
++/*  render->current.add(new TObj(out.str(), list_font, conf->p_h_res()-85, y,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));*/
++}
++
++void Series::print_serie_element(const Serie& r, const Serie& position, int y)
++{
++  string name = r.name;
++  string episodes = string(dgettext("mms-movie", "episodes")) + ": " + conv::itos(r.episodes);
++
++/*  if (r.type != "file")
++    name += "/"; */
++
++  string_format::format_to_size(name, list_font, conf->p_h_res()-75-155, true);
++
++  if (r == position)
++    render->current.add(new PFObj(themes->general_marked_large, 60, y+2,
++				  conf->p_h_res()-2*60, list_font_height * 2, 2, true));
++
++//  std::ostringstream out; out << r.filenames.size();
++
++  render->current.add(new TObj(name, list_font, 75, y,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));
++  render->current.add(new TObj(episodes, list_font_small, 75, y + list_font_height,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));
++/*  render->current.add(new TObj(out.str(), list_font, conf->p_h_res()-85, y,
++			       themes->movie_font1, themes->movie_font2,
++			       themes->movie_font3, 3));*/
++}
++
++
++bool Series::movie_inside() {
++	
++	string first = ""; 
++        string temp_cur_dir = vector_lookup(files ,folders.top().second).path;
++	vector<Multifile> templist = rdir(temp_cur_dir);  
++	int j;
++	for (j = 0; j < templist.size(); ++j) {
++	 	Multifile s = vector_lookup(templist, j);
++		if (s.type != "file") 
++			return false;
++		string name = s.name;
++/*		if (!s.real_name.empty()) 
++			name = s.real_name; */
++		if (first.empty()) 
++			first = name; 
++		if (!check_name_movie(first,name))
++	  		return false;	  		
++	}
++	if (j > 0) return true;
++	return false;
++}
++
++bool Series::check_name_movie(const std::string& f, const std::string& c) 
++{
++	if (!(f.empty() || c.empty()) && f == c  ) return true;
++	
++	string name1, name2 ="";
++	 string::size_type pos;
++	
++	if ((pos = f.length()) != string::npos) {
++   	 name1 = f.substr(0, pos -1);
++	}
++	
++	if ((pos = c.length()) != string::npos) {
++   	 name2 = c.substr(0, pos -1);
++	}
++
++	if (name1.empty() || name2.empty()) 
++	 return false;
++
++	if (name1 == name2) 
++	 return true; 
++
++	return false;
++}
++
++
++vector<Multifile> Series::parse_dir(const list<string>& dirs)
++{
++  vector<Multifile> vec_files;
++  foreach (const string& dir, dirs) {
++    vector<Multifile> tempfiles = rdir(dir);
++    vec_files.insert(vec_files.end(), tempfiles.begin(), tempfiles.end());
++  }
++
++  return vec_files;
++}
++
++vector<string> Series::check_db_for_folders(const string& parent)
++{
++  vector<string> names;
++
++  string good_parent = string_format::unique_folder_name(parent);
++
++  db_mutex.enterMutex();
++
++  SQLQuery *q = db.query("Episode", ("SELECT id FROM %t WHERE filename='" + string_format::escape_db_string(good_parent) + "'").c_str());
++  if (q && q->numberOfTuples() > 0) {
++    assert(q->numberOfTuples() == 1);
++    SQLRow &row = (*q)[0];
++    string parent_id = row["id"];
++
++    SQLQuery *q2;
++
++    if (opts.dir_order() == dgettext("mms-movie", "directories first"))
++      q2 = db.query("Folders", ("SELECT filename, upper(name) as key FROM %t WHERE parent='" + parent_id + "' ORDER BY is_folder desc, key").c_str());
++    else
++      q2 = db.query("Folders", ("SELECT filename, upper(name) as key FROM %t WHERE parent='" + parent_id + "' ORDER BY key").c_str());
++
++    if (q2) {
++      for (int i = 0; i < q2->numberOfTuples(); ++i) {
++	SQLRow &row = (*q2)[i];
++	names.push_back(row["filename"]);
++      }
++    }
++    delete q2;
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return names;
++}
++
++
++vector<Serie> Series::getSeries() 
++{
++  vector<Serie> names;
++
++  db_mutex.enterMutex();
++
++  string query = "SELECT Series.id_serie, Series.name, COUNT(Series.id_serie) as episodes FROM Episode JOIN Series ON Episode.id_serie = Series.id_serie GROUP By Series.id_serie;";
++  SQLQuery *q = db.query("Episode", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       Serie ns = Serie();
++       ns.id = conv::atoi(row["id_serie"]);
++       ns.episodes = conv::atoi(row["episodes"]);
++       ns.name = row["name"];
++       names.push_back(ns);
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return names;
++
++}
++
++vector<Episode> Series::getEpisodes(int id_serie) 
++{
++  vector<Episode> names;
++
++  db_mutex.enterMutex();
++ 
++  string season = vector_lookup(seasons, pos_season);
++
++  string query = "SELECT * FROM Episode WHERE id_serie = '" + conv::itos(id_serie) + "'"
++	 + (season != dgettext("mms-movie", "all") ? " AND season = '" + season + "'" : "")
++	 + " ORDER BY season,episode;";
++  //std::cout << "getEpisodes " << query << std::endl;
++
++  SQLQuery *q = db.query("Episode", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       Episode ns = Episode();
++       ns.id = conv::atoi(row["id_episode"]);
++       ns.season = conv::atoi(row["season"]);
++       ns.episode = conv::atoi(row["episode"]);
++       ns.name = row["name"];
++       ns.filename = row["filename"];
++       names.push_back(ns);
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return names;
++
++}
++
++vector<string> Series::getSeasons(int id_serie) 
++{
++  vector<string> seasons;
++  seasons.push_back(dgettext("mms-movie", "all"));
++
++  db_mutex.enterMutex();
++
++  string query = "SELECT season FROM Episode WHERE id_serie = '" + conv::itos(id_serie) + "' GROUP BY season";
++  SQLQuery *q = db.query("Episode", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       seasons.push_back(row["season"]);
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return seasons;
++
++}
++
++bool Series::rdir_internal(const string& original_name, const string& argv,
++				   vector<Multifile> &cur_files, bool& db_load_succes,
++				   bool file_in_db)
++{
++  if (global->check_stop_bit()) {
++    cur_files.clear();
++    return false;
++  }
++
++  string filename = original_name;
++
++  bool inside_movie_directory = false;
++  list<string> filenames;
++
++  // if the directory where the files reside is known to be a movie, use it
++  // instead of trying to fetch information. But use the names of the files
++  // to differentiate files like CD1.avi CD2.avi etc.
++
++  string small_name = "";
++
++  if (filename[filename.size()-1] == '/')
++    filename = filename.substr(0, filename.size()-1);
++
++  string::size_type pos_parent = filename.rfind("/");
++  if (pos_parent != string::npos) {
++    small_name = filename.substr(pos_parent+1);
++    filename = filename.substr(0, pos_parent);
++  }
++
++  filename = original_name;
++
++  if (filename[filename.size()-1] == '/')
++    filename = filename.substr(0, filename.size()-1);
++
++  if (isDirectory (filename)) { // dir
++
++    if(!file_tools::dir_contains_known_files(filename, ext_mask, 10))
++      return true;
++    Xprintf("%s contains know files\n", filename.c_str());
++
++    Multifile dir = add_dir(filename);
++    dir.path += "/";
++    if (dir.filenames.size() != 0 || dir.filetype == "dir") {
++      Multifile m = Multifile(dir);
++      if (file_in_db) {
++	std::pair<int, bool> info = db_info(m.path, true);
++/*	m.db_id = info.first;
++	m.thumbnailed_before_failed = info.second; */
++      }
++      db_mutex.enterMutex();
++/*      if (m.Load(physical, db))
++	db_load_succes = true; */
++      db_mutex.leaveMutex();
++      if (inside_movie_directory) {
++	/* m.real_name = small_name;
++	if (conf->p_convert())
++	  m.real_name = string_format::convert(m.real_name); */
++	m.type = "file"; // we don't want to enter anything inside a
++	// movie directory
++	m.filenames = filenames;
++      }
++      cur_files.push_back(m);
++    }
++  } else { // file
++    MyPair filetype = check_type(filename, movie_conf->p_filetypes_m());
++    if (filetype != emptyMyPair) {
++      Multifile e = addfile(filename, filetype);
++      Multifile m = Multifile(e);
++      if (file_in_db) {
++	std::pair<int, bool> info = db_info(filename, false);
++	//m.db_id = info.first;
++	//m.thumbnailed_before_failed = info.second;
++      }
++      db_mutex.enterMutex();
++    /*  if (m.Load(physical, db))
++	db_load_succes = true; */
++      db_mutex.leaveMutex();
++      cur_files.push_back(m);
++    }
++  }
++
++  return true;
++}
++
++void Series::insert_file_into_db(const string& filename)
++{
++  bool is_dir = isDirectory(filename);
++
++  string good_filename;
++  string cut_filename;
++
++  if (is_dir) {
++    good_filename = string_format::unique_folder_name(filename);
++    cut_filename = good_filename.substr(0, good_filename.size()-1);
++  } else {
++    good_filename = filename;
++    cut_filename = filename;
++  }
++
++  db_mutex.enterMutex();
++
++  // check if already exists
++  SQLQuery *q = db.query("Episode", ("SELECT id_episode FROM %t WHERE filename='" + string_format::escape_db_string(good_filename) + "'").c_str());
++  if (q && q->numberOfTuples() > 0) {
++    delete q;
++    db_mutex.leaveMutex();
++    return;
++  } else
++    delete q;
++
++  //string parent_id = get_parent_id_movie(parent, db, navigating_media ? top_media_folders : serie_folders);
++
++  string::size_type i;
++  if ((i = cut_filename.rfind('/')) == string::npos)
++    i = 0;
++  string name = cut_filename.substr((i != 0) ? i+1 : i);
++  string path = cut_filename.substr(0,i+1);
++
++  if (!is_dir && (i = name.rfind('.')) != string::npos)
++    name = name.substr(0, i);  
++
++  string serie, season, episode, title;
++  std::vector<std::string> vec;
++  std::cout << "filename = " << name << std::endl;
++
++  // case: serie name - 01x01 - title
++  vec = regex_tools::regex_matches(name, "^(.*?) - ([0-9]{1,2})x([0-9]{1,2}) - (.*?)$");
++  for (unsigned int t = 0; t < vec.size(); t++){
++    switch (t) {
++      case 0: serie   = vec[t].c_str(); break;
++      case 1: season  = vec[t].c_str(); break;
++      case 2: episode = vec[t].c_str(); break;
++      case 3: title   = vec[t].c_str(); break;
++    }
++  }
++  std::cout << "serie = " << serie << ", season = " << season << ", episode = " << episode << ", title = " << title << std::endl;
++  
++  // case: serie name - 01x01
++  if (!serie.size() || !season.size() || !episode.size()) {
++    vec = regex_tools::regex_matches(name, "^(.*?) - ([0-9]{1,2})x([0-9]{1,2})$");
++    for (unsigned int t = 0; t < vec.size(); t++){
++       switch (t) {
++	case 0: serie   = vec[t].c_str(); break;
++	case 1: season  = vec[t].c_str(); break;
++	case 3: episode = vec[t].c_str(); break;
++      }
++    }
++    std::cout << "serie = " << serie << ", season = " << season << ", episode = " << episode << ", title = " << title << std::endl;
++  }
++
++  // case: 01x01 - title
++  if (!serie.size() || !season.size() || !episode.size()) {
++    vec = regex_tools::regex_matches(name, "([0-9]{1,2})x([0-9]{1,2}) - (.*?)$");
++    for (unsigned int t = 0; t < vec.size(); t++){
++      switch (t) {
++	case 0: season  = vec[t].c_str(); break;
++	case 1: episode = vec[t].c_str(); break;
++	case 2: title   = vec[t].c_str(); break;
++      }
++    }
++    std::cout << "serie = " << serie << ", season = " << season << ", episode = " << episode << ", title = " << title << std::endl;
++  }
++
++  // case: 01x01
++  if (!serie.size() || !season.size() || !episode.size()) {
++    vec = regex_tools::regex_matches(name, "([0-9]{1,2})x([0-9]{1,2})");
++    for (unsigned int t = 0; t < vec.size(); t++){
++      switch (t) {
++	case 0: season  = vec[t].c_str(); break;
++	case 1: episode = vec[t].c_str(); break;
++      }    
++    }    
++    std::cout << "serie = " << serie << ", season = " << season << ", episode = " << episode << ", title = " << title << std::endl;
++  }
++
++  // case: 01 - title
++  if (!serie.size() || !season.size() || !episode.size()) {
++    vec = regex_tools::regex_matches(name, "([0-9]{1,2}) - (.*?)$");
++    for (unsigned int t = 0; t < vec.size(); t++){
++      switch (t) {
++	case 0: episode  = vec[t].c_str(); break;
++	case 1: title = vec[t].c_str(); break;
++      }    
++    }    
++    std::cout << "serie = " << serie << ", season = " << season << ", episode = " << episode << ", title = " << title << std::endl;
++  }
++
++  string seek, fold;
++  if (!serie.size()) {
++    foreach (const string& dir, serie_folders ) {
++      i = 0;
++//      std::cout << "path = " << path << std::endl;
++//      std::cout << "dir = " << dir << std::endl;
++      i = dir.find_last_of(path);
++//            std::cout << "i = " << i << std::endl;
++            seek = path.substr(i);
++	    //path = cut_filename.substr(i);
++    }
++
++  std::cout << "seek = " << seek << std::endl;
++  while ((i = seek.rfind("/")) != string::npos) {
++        //std::cout << " folder: " << path.substr(0,i) << std::endl;
++//	std::cout << " file: " << seek.substr(i+1) << std::endl;
++//	std::cout << "basedir = " << path.substr(0, i+1) << std::endl;
++	fold = seek.substr(i+1);
++        seek = seek.substr(0, i);
++
++        vec = regex_tools::regex_matches(fold, "season ([0-9]{1,2})", true);
++        if (vec.size() > 0 && season.empty()) 
++	  season = vec[0].c_str();
++      }
++      std::cout << " serie = " << fold << std::endl;
++      if (serie.empty()) 
++	serie = fold;
++  }
++
++  if (!serie.size() || !season.size() || !episode.size()) {
++    std::cout << "can't extract season and episode" << std::endl;
++     db_mutex.leaveMutex();
++     return;
++  }
++  std::cout << "serie = " << serie << ", season = " << season << ", episode = " << episode << ", title = " << title << std::endl;
++
++
++  int id_serie = idSerie(serie);
++  
++  struct stat64 file_hs;
++  int tstamp = 0;
++  if (stat64(good_filename.c_str(), &file_hs) == 0)
++    tstamp = file_hs.st_mtime;
++
++  char *tmp_insert = sqlite3_mprintf("INSERT INTO Episode (id_serie, filename, name, season, episode, mtime) VALUES ('%q', '%q', '%q', '%q', '%q', %q)",
++		conv::itos(id_serie).c_str(), good_filename.c_str(), title.c_str(), season.c_str(), episode.c_str(), conv::itos(tstamp).c_str()); 
++
++  db.execute(tmp_insert);
++  std::cout << "inserting " << tmp_insert << std::endl;
++  sqlite3_free(tmp_insert);
++
++  db_mutex.leaveMutex();
++}
++
++int Series::get_id_serie(const string& name)
++{
++
++  int id = 0;
++  db_mutex.enterMutex();
++
++  // check if already exists
++  string query = "SELECT id_serie FROM Series WHERE name LIKE '" + name + "'";
++  //std::cout << "query " << query << std::endl;
++  SQLQuery *q = db.query("Series", query.c_str());
++  if (q && q->numberOfTuples() > 0) {
++    SQLRow &row = (*q)[0];
++    id = conv::atoi(row["id_serie"]);
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++  return id;
++}
++
++int Series::idSerie(const string& name)
++{
++   int id = get_id_serie(name);
++   if (id == 0) {
++     db_mutex.enterMutex();
++     char *tmp_insert = sqlite3_mprintf("INSERT INTO Series (name) VALUES ('%q')", name.c_str());
++     db.execute(tmp_insert);
++     //std::cout << "inserting " << tmp_insert << std::endl;
++     sqlite3_free(tmp_insert);
++     id = get_id_serie(name);
++     db_mutex.leaveMutex();
++   }
++   return id;
++}
++
++/* void Series::update_thumbnailed_status(int id)
++{
++  db_mutex.enterMutex();
++  char *tmp_insert = sqlite3_mprintf("UPDATE Folders SET is_thumbnailed=1 where id='%q'",
++				     conv::itos(id).c_str());
++  db.execute(tmp_insert);
++  sqlite3_free(tmp_insert);
++  db_mutex.leaveMutex();
++} */
++
++std::pair<int, bool> Series::db_info(const string& file, bool is_dir)
++{
++  int i = -1;
++  int is_thumbnailed = 0;
++
++  string good_file;
++
++  if (is_dir)
++    good_file = string_format::unique_folder_name(file);
++  else
++    good_file = file;
++
++  db_mutex.enterMutex();
++
++  SQLQuery *q = db.query("Folders", ("SELECT id, is_thumbnailed FROM %t WHERE filename='" + string_format::escape_db_string(good_file) + "'").c_str());
++  if (q && q->numberOfTuples() > 0) {
++    SQLRow &row = (*q)[0];
++    i = conv::atoi(row["id"]);
++    is_thumbnailed = conv::atoi(row["is_thumbnailed"]);
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return std::make_pair(i, is_thumbnailed == 1);
++}
++
++void Series::check_db_consistency()
++{
++  std::cout << "FIXME: REWORK!!!" <<std::endl;
++  return;
++
++  db_mutex.enterMutex();
++
++  if (!db.hasTable("Episode")) {
++    db_mutex.leaveMutex();
++    return;
++  }
++
++  //Need to call rdir for each folder listed in serie_folders, so that the "parent" db row is updated. Probably there's a better way of doing it
++  foreach (const string& dir, serie_folders ) {
++    vector<Multifile> tempfiles = rdir(dir);
++  }
++
++
++  SQLQuery *q = db.query("Episodes", "SELECT id, filename FROM %t WHERE parent==0");
++  if (q->numberOfTuples() >  serie_folders.size()) { //if there's more "root" dirs in DB than in config file, db should be updated
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++      string filename = (*q)[i]["filename"].c_str();
++      bool found = false;
++      foreach (string& dir, serie_folders) {
++	if ( dir == filename )
++	  found=true;
++      }
++      if (!found) {
++	foreach (string& dir, serie_folders)
++	  if ( filename.find(dir, 0) != string::npos ) {
++	    SQLQuery *q = db.query("Folders", ( "SELECT id FROM %t WHERE filename='"+dir + "'").c_str());
++	    string parent_id =  (*q)[0]["id"].c_str();
++	    db.execute(("UPDATE Folders SET parent = '" + parent_id + "' WHERE filename = '" + filename + "'").c_str());
++	  }
++      }
++    }
++  }
++  db_mutex.leaveMutex();
++}
++
++vector<Multifile> Series::rdir_hd(const string& argv, bool& db_load_succes, bool insert_into_db)
++{
++  vector<Multifile> cur_files;
++
++  libfs_set_folders_first(opts.dir_order());
++
++  if (insert_into_db) {
++    for (file_iterator<file_t, default_order> i (argv); i != i.end (); i.advance(false)) {
++      string filename = filesystem::FExpand(i->getName());
++      if (check_type(filename, movie_conf->p_filetypes_m()) != emptyMyPair)
++	insert_file_into_db(filename);
++    }
++
++    vector<string> db_files = check_db_for_folders(argv);
++
++    if (db_files.size() > 0) {
++      foreach (string& file, db_files)
++	if (!rdir_internal(file, argv, cur_files, db_load_succes, true))
++	  break;
++    }
++  } else {
++    for (file_iterator<file_t, default_order> i (argv); i != i.end (); i.advance(false)) {
++      string filename = filesystem::FExpand(i->getName());
++      if (!rdir_internal(filename, argv, cur_files, db_load_succes, true))
++	break;
++    }
++  }
++
++  return cur_files;
++}
++
++// read a dir and spit out a list of files and dirs.
++vector<Multifile> Series::rdir(const string& argv)
++{
++  vector<Multifile> cur_files;
++
++  vector<string> db_files = check_db_for_folders(argv);
++
++  bool db_load_succes = false;
++
++  if (db_files.size() > 0) {
++    foreach (string& file, db_files)
++      if (!rdir_internal(file, argv, cur_files, db_load_succes, true))
++	break;
++  } else {
++    cur_files = rdir_hd(argv, db_load_succes, true);
++  }
++
++  // check if it's a root dir, we don't want to display the message for all
++  // folders
++  bool root_dir = false;
++
++  foreach (const string& dir, movie_conf->p_serie_dirs())
++    if (dir == argv) {
++      root_dir = true;
++      break;
++    }
++
++  if (!db_load_succes && imdb_message_not_displayed && root_dir) {
++    DialogWaitPrint pdialog(5000);
++    pdialog.add_line(dgettext("mms-movie", "No IMDb information found about videos"));
++    pdialog.add_line(dgettext("mms-movie", "Use the reget video information action"));
++    pdialog.add_line(dgettext("mms-movie", "to download information about a video"));
++    pdialog.print();
++    imdb_message_not_displayed = false;
++  }
++
++  return cur_files;
++}
++
++void Series::set_folders()
++{
++  list<string> movie_dirs = movie_conf->p_serie_dirs(); // make compiler happy
++  // make sure movie folders are not malformed
++  foreach (string& dir, movie_dirs)
++    if (dir[dir.size()-1] != '/') {
++      serie_folders.push_back(dir + '/');
++    } else
++      serie_folders.push_back(dir);
++
++#ifdef use_inotify
++  S_Notify::get_instance()->register_plugin("series", serie_folders,
++					    boost::bind(&Series::fs_change, this, _1, _2));
++#endif
++  
++  reset();
++}
++
++#ifdef use_inotify
++  // notify
++void Series::fs_change(NotifyUpdate::notify_update_type type, const std::string& path)
++  {
++    std::string file, ext;
++    std::string dir =  filesystem::FExpand(path);
++    if (dir.empty())
++      dir = "/";
++    else if (!file_tools::is_directory(dir)) {
++      dir = dir.substr(0, dir.rfind('/')+1);
++      file = path.substr(path.rfind('/')+1, path.size() - path.rfind('/')+1);
++      ext = file.substr(file.rfind(".")+1, file.size() - file.rfind(".")+1);
++    } else
++      dir +="/"; 
++
++/*
++    if (type == NotifyUpdate::CREATE_DIR || type == NotifyUpdate::MOVE || type == NotifyUpdate::DELETE_DIR)
++      reload_dir(dir);
++
++    // check if a xml file is created */
++    if ((type == NotifyUpdate::WRITE_CLOSE_FILE || type == NotifyUpdate::MOVE)) {
++	if (check_type(file, movie_conf->p_filetypes_m()) != emptyMyPair)
++ 	  insert_file_into_db(path);
++    }
++
++/*    bool reparsed_current_dir = false;
++
++    do{
++      foreach (std::string& p, folders.top().first)
++	if (dir == p) {
++	  reparse_current_dir();
++	  reparsed_current_dir = true;
++	  break;
++	}
++      if (reparsed_current_dir || dir == "/" || dir.size() < 2)
++	break;
++      dir = dir.substr(0, dir.rfind('/', dir.size()-2)+1); /* go 1 directory up */
++/*    } while(true);
++     
++    if (type == NotifyUpdate::DELETE_DIR || type == NotifyUpdate::DELETE_FILE) {
++      bool current_dir_ok = false;
++
++      while (!current_dir_ok) {
++	load_current_dirs();
++	if (files.size() == 0) {
++	  if (folders.size() == 1) {
++	    exit();
++	    input_master->add_input(Input(), ""); // exit mainloop
++	    return;
++	  } else {
++	    folders.pop();
++	    reparsed_current_dir = true;
++	  }
++	} else
++	  current_dir_ok = true;
++      }
++    }
++
++    // sanity check
++    if (folders.top().second > files.size()-1)
++      folders.top().second = files.size()-1;
++
++    if (!(active_control_player() && active_player->fullscreen()) &&
++	!global->playback_in_fullscreen && !printing_information && visible && reparsed_current_dir)
++      print(files); */
++  }
++#endif
++
++/* void Series::save_runtime_settings()
++{
++  std::ofstream file;
++
++  string path = conf->p_var_data_dir() + "options/MovieGraphicalRuntime";
++
++  file.open(path.c_str());
++
++  if (!file) {
++    print_critical(dgettext("mms-movie", "Could not write options to file ") + path, "MOVIE");
++  } else {
++    file << "imdb_warning_displayed," << imdb_message_not_displayed << std::endl;
++  }
++
++  file.close();
++} */
+
+=== added file 'plugins/feature/movie/series.hpp'
+--- old/plugins/feature/movie/series.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/movie/series.hpp	2009-08-31 21:06:15 +0000
+@@ -0,0 +1,111 @@
++#ifndef SERIES_HPP
++#define SERIES_HPP
++
++#include "series_db.hpp"
++#include "series_element.hpp"
++#include "singleton.hpp"
++
++#include <list>
++#include <string>
++
++class Series : public SerieDB
++{
++private:
++  // commands
++  void secondary_menu();
++  void enter_dir();
++  void print_movie_info();
++
++  void action_play();
++  void action_random();
++
++  bool change_dir_to_id(int db_id);
++
++  std::vector<Multifile> rdir_hd(const std::string& argv, bool& db_load_succes, bool insert_into_db);
++
++  bool rdir_internal(const std::string& filename, const std::string& argv,
++		     std::vector<Multifile> &cur_files, bool& db_load_succes, bool file_in_db);
++  void insert_file_into_db(const std::string& filename);
++  int get_id_serie(const std::string& name);
++  int idSerie(const std::string& name);
++  std::pair<int, bool> db_info(const std::string& file, bool is_dir);
++  std::vector<std::string> check_db_for_folders(const std::string& parent);
++
++  std::string path_of_imdb_movie(const Multifile& c);
++
++  // list of folders from config, the names are normalized to have / at the end
++  std::list<std::string> serie_folders;
++
++  void check_for_changes();
++
++  bool reload_dir(const std::string& path);
++  void reload_current_dirs();
++
++  void reenter(int id);
++  std::vector<std::pair<std::string, int> > gen_search_list(const std::string& search_word);
++
++  int find_position_in_folder_list(const std::list<std::string>& files, const std::string& filename);
++
++  std::vector<Multifile> parse_dir(const std::list<std::string>& dirs);
++  std::vector<Multifile> rdir(const std::string& argv);
++
++  bool imdb_message_not_displayed;
++
++  bool movie_inside();
++  bool check_name_movie(const std::string& f, const std::string& c);
++
++  bool reload_dirs;
++  /* for dir_contains_known_files() */
++  std::string ext_mask;
++
++  void print(const std::vector<Multifile>& files) {}
++
++  void print(const std::vector<Serie>& files);
++  void print_serie_element(const Serie& r, const Serie& position, int y);
++  void print(const std::vector<Episode>& files);
++  void print_episode_element(const Episode& r, const Episode& position, int y);
++  void search_func() {}
++  void page_up() {}
++  void page_down() {}
++  void next();
++  void prev();
++  void left();
++  void right();
++  void enter_serie();
++  void leave_serie();
++
++  bool update_needed;
++  bool in_series;
++  int pos_serie;
++  int pos_episode;
++  int pos_season;
++
++  std::vector<Serie> series;
++  std::vector<Episode> episode;
++  std::vector<std::string> seasons;
++
++  std::vector<Serie> getSeries();
++  std::vector<std::string> getSeasons(int id_serie);
++  std::vector<Episode> getEpisodes(int id_serie);
++
++  std::string list_font_small;
++
++public:
++
++  Series();
++
++  void startup_updater();
++
++  void check_db_consistency();
++
++  std::string mainloop();
++
++  void set_folders();
++#ifdef use_inotify
++  // notify
++  void fs_change(NotifyUpdate::notify_update_type type, const std::string& path);
++#endif
++
++};
++
++#endif
+
+=== added file 'plugins/feature/movie/series_db.cpp'
+--- old/plugins/feature/movie/series_db.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/movie/series_db.cpp	2009-08-29 11:29:30 +0000
+@@ -0,0 +1,234 @@
++#include "series_db.hpp"
++
++#include "common-feature.hpp"
++#include "graphics.hpp"
++#include "updater.hpp"
++#include "busy_indicator.hpp"
++#include "touch.hpp"
++#include "resolution.hpp"
++
++#include "Movie_info.h"
++
++#include "tinyxml.h"
++
++// ostringstream
++#include <sstream>
++
++#include <vector>
++#include <string>
++
++#include <iostream>
++
++using std::vector;
++using std::string;
++using std::list;
++using string_format::str_printf;
++
++SerieDB::SerieDB(const string& filename, bool p)
++  : db((conf->p_var_data_dir() + filename).c_str())
++{
++  check_db();
++
++#ifdef use_ffmpeg_thumbnailer
++/*   MovieConfig * _mc = S_MovieConfig::get_instance();
++  thumb_deepval = (_mc->p_thumbnail_accur() >= 0 && _mc->p_thumbnail_accur() < 10) ? _mc->p_thumbnail_accur() : 3;
++  thumb_skipblanks = _mc->p_thumbnail_noblanks();
++  if (thumb_skipblanks > 0)
++    print_warning("Internal thumbnailing: skip blank frames mode is active");
++  if (thumb_skipblanks > 2)
++    print_warning(str_printf("Skip blank frames mode is set to %d,\n thumbnailing will be much slower\n",thumb_skipblanks));
++
++  thumb_verbosity = S_Config::get_instance()->p_debug_level();
++*/
++#else
++  thumbnailer = 0;
++#endif
++
++  if (!db)
++    print_critical(dgettext("mms-movie", "Series database could not be opened or created"), "MOVIE");
++
++  /* if (!recurse_mkdir(conf->p_var_data_dir(),"movies", &imdb_dir))
++    print_critical(dgettext("mms-movie", "Could not create directory ") + imdb_dir, "MOVIE"); */
++
++  //res_dependant_calc_2();
++
++  //S_ResolutionManagement::get_instance()->register_callback(boost::bind(&SerieDB::res_dependant_calc_2, this));
++}
++
++/* void SerieDB::res_dependant_calc_2()
++{
++  // resolution dependent stuff
++
++  int search_box_height = 40;
++  if (list_contains(conf->p_input(), string("lirc")) || list_contains(conf->p_input(), string("evdev")))
++    search_box_height = 60;
++
++  rows = 3;
++  rows_search = 2;
++
++  if (conf->p_v_res() <= 600) {
++    int search_box_height = 35;
++    if (list_contains(conf->p_input(), string("lirc")) || list_contains(conf->p_input(), string("evdev")))
++      search_box_height = 50;
++
++    if (conf->p_v_res() <= 500)
++      rows = 2;
++  }
++
++  int top_height = 10 * 2 + header_size.second;
++
++  string button_playback_font = "Vera/" + conv::itos(resolution_dependant_font_size(17, conf->p_v_res()));
++  std::pair<int, int> element_size = string_format::calculate_string_size("abcltuwHPMjJg", button_playback_font);
++  int button_playback_height = element_size.second - 5;
++
++  int bottom_height = static_cast<int>(2 * button_playback_height * 0.85);
++
++  // resolution independant stuff
++
++  AspectRatio ar = aspect_ratio(conf->p_h_res(), conf->p_v_res());
++
++  images_per_row = 5; // 4:3
++
++  if (ar == SIXTEEN_NINE)
++    images_per_row = 6;
++  else if (ar == SIXTEEN_TEN)
++    images_per_row = 6;
++
++  image_height_all = (conf->p_v_res() - top_height - bottom_height)/rows;
++  image_height = image_height_all - normal_font_height*2 + 3;
++
++  image_height = static_cast<int>(image_height/1.35); // zoom
++  image_height_all_eks_text = image_height + 6;
++
++  image_width_all = (conf->p_h_res()-2*25)/images_per_row;
++  image_width = image_width_all - 20;
++
++  image_width = static_cast<int>(image_width/1.35); // zoom
++
++  if (rows != rows_search)
++    image_height_all_search = image_height_all;
++  else {
++    image_height_all_search = (conf->p_v_res() - top_height - bottom_height - search_box_height)/rows_search;
++
++    image_height = image_height_all - normal_font_height*2;
++
++    image_height = static_cast<int>(image_height/1.35); // zoom
++    image_height_all_eks_text = image_height + 6;
++  }
++
++  y_start = top_height;
++} */
++
++SerieDB::~SerieDB()
++{
++  db_mutex.enterMutex();
++  db.close();
++  db_mutex.leaveMutex();
++}
++
++void SerieDB::create_db()
++{
++  vector<string> fields;
++  fields.push_back("version INTEGER NOT NULL");
++  db.createTable("Schema", fields);
++
++  db.execute("INSERT INTO Schema VALUES('1')");
++
++  fields.clear();
++  fields.push_back("id_episode INTEGER PRIMARY KEY");
++  fields.push_back("id_serie INTEGER");
++  fields.push_back("id_season INTEGER");
++  fields.push_back("filename TEXT");
++  fields.push_back("mtime DATE");
++  fields.push_back("season INTEGER");
++  fields.push_back("episode INTEGER");
++  fields.push_back("viewed INTEGER"); // 1 is true
++  fields.push_back("name TEXT");
++  fields.push_back("lname TEXT");
++  fields.push_back("rating TEXT");
++  fields.push_back("overview TEXT");
++  fields.push_back("airdate DATE");
++  fields.push_back("guests TEXT");
++  fields.push_back("lang TEXT");
++  fields.push_back("director TEXT");
++  fields.push_back("writer TEXT");
++  db.createTable("Episode", fields);
++
++  fields.clear();
++  fields.push_back("id_serie INTEGER PRIMARY KEY");
++  fields.push_back("name TEXT");
++  fields.push_back("lname TEXT");
++  fields.push_back("actors TEXT");
++  fields.push_back("airday TEXT");
++  fields.push_back("airtime TEXT");
++  fields.push_back("airdate DATE");
++  fields.push_back("genre TEXT");
++  fields.push_back("imdbid TEXT");
++  fields.push_back("lang TEXT");
++  fields.push_back("network TEXT");
++  fields.push_back("overview TEXT");
++  fields.push_back("rating TEXT");
++  fields.push_back("runtime TEXT");
++  fields.push_back("status TEXT");
++  fields.push_back("lastupdated TEXT");
++  db.createTable("Series", fields);
++
++  create_indexes();
++}
++
++void SerieDB::create_indexes()
++{
++  db.execute("CREATE INDEX idx_folders_name ON Episode (name)");
++  db.execute("CREATE INDEX idx_folders_lname ON Episode (lname)");
++  db.execute("CREATE INDEX idx_folders_season ON Episode (season)");
++  db.execute("CREATE INDEX idx_folders_episode ON Episode (episode)");
++  db.execute("CREATE INDEX idx_folders_filename ON Episode (filename)");
++
++  db.execute("CREATE INDEX idx_series_name ON Series (name)");
++  db.execute("CREATE INDEX idx_series_lname ON Series (lname)");
++}
++
++void SerieDB::check_db()
++{
++  if (db.hasTable("Schema")) {
++    // check for correct version
++   /*  SQLQuery *q = db.query("Schema", "SELECT version FROM %t");
++    if (q && q->numberOfTuples() > 0) {
++      SQLRow &row = (*q)[0];
++      if (row["version"] == "4")
++	; // correct version
++      else if (row["version"] == "3") {
++	Print print(gettext("Upgrading video database schema"), Print::INFO);
++	db.execute("ALTER TABLE Folders ADD is_thumbnailed INTEGER");
++	db.execute("UPDATE Schema SET version=4");
++      }	else if (row["version"] != "3") {
++
++	Print print(gettext("Upgrading video database schema"), Print::INFO);
++
++	SQLQuery *dq = db.query("sqlite_master", "SELECT name FROM %t WHERE type='table'");
++	if (dq) {
++	  for (int i = 0; i < dq->numberOfTuples(); ++i) {
++	    db.execute(("DROP TABLE " + (*dq)[i]["name"]).c_str());
++	  }
++	}
++
++	delete dq;
++
++	dq = db.query("sqlite_master", "SELECT name FROM %t WHERE type='index'");
++	if (dq) {
++	  for (int i = 0; i < dq->numberOfTuples(); ++i) {
++	    db.execute(("DROP INDEX " + (*dq)[i]["name"]).c_str());
++	  }
++	}
++
++	delete dq;
++
++	create_db();
++      }
++    } 
++    delete q; */
++  } else {
++    // create the whole db
++    create_db();
++  }
++}
+
+=== added file 'plugins/feature/movie/series_db.hpp'
+--- old/plugins/feature/movie/series_db.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/movie/series_db.hpp	2009-08-29 11:29:30 +0000
+@@ -0,0 +1,39 @@
++#ifndef SERIE_DB_HPP
++#define SERIE_DB_HPP
++
++#include "config.h"
++
++#include "movie.hpp"
++#include "imdb.hpp"
++
++#include "cpp_sqlitepp.hpp"
++#include "singleton.hpp"
++
++#ifdef use_ffmpeg_thumbnailer
++#include "thumbnailer.h"
++#endif
++
++class SerieDB : public MovieTemplate<Multifile>
++{
++protected:
++  SQLDatabase db;
++//  SQLDatabase db_video;
++
++  ost::Mutex db_mutex;
++
++  void check_db();
++  void create_db();
++  void create_indexes();
++
++public:
++
++  SQLDatabase* get_db() { return &db; }
++
++  // physical means that it exists on the hd
++  SerieDB(const std::string& filename, bool physical);
++
++  void imdb_filexml(const std::string& dir, const std::string& path) {}
++  ~SerieDB();
++};
++
++#endif
+
+=== added file 'plugins/feature/movie/series_element.hpp'
+--- old/plugins/feature/movie/series_element.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/movie/series_element.hpp	2009-08-29 13:39:13 +0000
+@@ -0,0 +1,33 @@
++#ifndef SERIES_ELEMENT_HPP
++#define SERIES_ELEMENT_HPP
++
++#include <string>
++
++class Serie
++{
++public:
++	int id;
++	int episodes;
++	std::string name;
++	
++	bool operator==(const Serie& rhs) const
++	{
++		  return id == rhs.id;
++	}
++};
++
++class Episode
++{
++public:
++	int id;
++	int season;
++	int episode;
++	std::string name;
++	std::string filename;
++
++	bool operator==(const Episode& rhs) const
++	{
++		  return id == rhs.id;
++	}
++};
++#endif
+
+=== added file 'plugins/feature/movie/series_plugin.cpp'
+--- old/plugins/feature/movie/series_plugin.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/movie/series_plugin.cpp	2009-08-29 11:29:30 +0000
+@@ -0,0 +1,48 @@
++#include "config.h"
++
++#include "plugin.hpp"
++
++#ifdef use_graphical_movie
++#include "series.hpp"
++#endif
++
++#include "themes.hpp"
++#include "print.hpp"
++#include "cd.hpp"
++#include "config.hpp"
++
++class SeriePlugin : public FeaturePlugin
++{
++public:
++
++  bool plugin_post_init(){
++    S_InputMaster::get_instance()->parse_keys("movie", "5");
++    return true;
++  }
++
++  SeriePlugin() {
++    Config *conf = S_Config::get_instance();
++    MovieConfig *movie_conf = S_MovieConfig::get_instance();
++
++    movie_conf->parse_configuration_file(conf->p_homedir());
++
++#ifdef use_graphical_movie
++    if (movie_conf->p_graphical_movie_mode()) {
++      module = new Series();
++    }
++#endif
++  }
++
++  ~SeriePlugin()
++  {
++   // (static_cast<Movie *>(module))->save_runtime_settings();
++    delete module;
++    module = 0;
++  }
++
++  std::string plugin_name() const { return dgettext("mms-movie", "Serie"); }
++  int priority() const { return 3; }
++  unsigned long capability() const { return 0; }
++};
++
++MMS_PLUGIN(SeriePlugin)
+

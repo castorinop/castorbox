@@ -1,0 +1,11 @@
++++ hal/hald/hald_dbus.c.singleton_connection	2009-02-26 08:55:36.000000000 +0100
+--- hal/hald/hald_dbus.c	2009-06-21 13:48:15.000000000 +0200
+@@ -3476,7 +3476,7 @@ singleton_signal_device_changed (DBusCon
+ 	if (dbus_connection_send_with_reply (connection,
+ 					     message,
+ 					     &pending_call,
+-					     /*-1*/ 8000)) {
++					     /*-1*/ 8000) && pending_call) {
+ 		/*HAL_INFO (("connection=%x message=%x", connection, message));*/
+ 		dbus_pending_call_set_notify (pending_call,
+ 					      reply_from_singleton_device_changed,

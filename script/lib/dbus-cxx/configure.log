@@ -1,0 +1,769 @@
+[===== NOW BUILDING:	dbus-cxx-0.4.3	=====]
+	[fetch] complete for dbus-cxx.
+	[checksum] complete for dbus-cxx.
+	[extract] complete for dbus-cxx.
+	[patch] complete for dbus-cxx.
+	[configure] complete for dbus-cxx.
+ ==> Running make in work/main.d/dbus-cxx-0.4.3
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3'
+make  all-recursive
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3'
+Making all in dbus-cxx
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3/dbus-cxx'
+make  all-am
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3/dbus-cxx'
+/bin/sh ../libtool --tag=CXX   --mode=compile i586-castorbox-linux-gnu-g++ -DHAVE_CONFIG_H -I. -I.. -I../. -I../. -I/home/pablo/gar-castorbox/images/main/usr/include/dbus-1.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/dbus-1.0/include -I/home/pablo/gar-castorbox/images/main/usr/include/sigc++-2.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/sigc++-2.0/include      -pipe -march=pentium-mmx -mtune=generic -Os -m32 -MT callmessage.lo -MD -MP -MF .deps/callmessage.Tpo -c -o callmessage.lo callmessage.cpp
+/bin/sh ../libtool --tag=CXX   --mode=compile i586-castorbox-linux-gnu-g++ -DHAVE_CONFIG_H -I. -I.. -I../. -I../. -I/home/pablo/gar-castorbox/images/main/usr/include/dbus-1.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/dbus-1.0/include -I/home/pablo/gar-castorbox/images/main/usr/include/sigc++-2.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/sigc++-2.0/include      -pipe -march=pentium-mmx -mtune=generic -Os -m32 -MT connection.lo -MD -MP -MF .deps/connection.Tpo -c -o connection.lo connection.cpp
+libtool: compile:  i586-castorbox-linux-gnu-g++ -DHAVE_CONFIG_H -I. -I.. -I../. -I../. -I/home/pablo/gar-castorbox/images/main/usr/include/dbus-1.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/dbus-1.0/include -I/home/pablo/gar-castorbox/images/main/usr/include/sigc++-2.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/sigc++-2.0/include -pipe -march=pentium-mmx -mtune=generic -Os -m32 -MT callmessage.lo -MD -MP -MF .deps/callmessage.Tpo -c callmessage.cpp  -fPIC -DPIC -o .libs/callmessage.o
+libtool: compile:  i586-castorbox-linux-gnu-g++ -DHAVE_CONFIG_H -I. -I.. -I../. -I../. -I/home/pablo/gar-castorbox/images/main/usr/include/dbus-1.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/dbus-1.0/include -I/home/pablo/gar-castorbox/images/main/usr/include/sigc++-2.0 -I/home/pablo/gar-castorbox/images/main/usr/lib/sigc++-2.0/include -pipe -march=pentium-mmx -mtune=generic -Os -m32 -MT connection.lo -MD -MP -MF .deps/connection.Tpo -c connection.cpp  -fPIC -DPIC -o .libs/connection.o
+In file included from ../dbus-cxx/messageiterator.h:27:0,
+                 from ../dbus-cxx/message.h:30,
+                 from callmessage.h:22,
+                 from callmessage.cpp:19:
+../dbus-cxx/utility.h:104:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:104:33: error: ‘uint8_t’ was not declared in this scope
+../dbus-cxx/utility.h:104:47: error: expected ‘,’ or ‘;’ before ‘{’ token
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(bool)’:
+../dbus-cxx/utility.h:105:38: error: ‘std::string DBus::signature(bool)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int16_t)’:
+../dbus-cxx/utility.h:106:41: error: ‘std::string DBus::signature(int16_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:107:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:107:33: error: redefinition of ‘std::string DBus::signature’
+../dbus-cxx/utility.h:104:33: error: ‘std::string DBus::signature’ previously declared here
+../dbus-cxx/utility.h:107:33: error: ‘uint16_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int32_t)’:
+../dbus-cxx/utility.h:108:41: error: ‘std::string DBus::signature(int32_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:109:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:109:33: error: redefinition of ‘std::string DBus::signature’
+../dbus-cxx/utility.h:104:33: error: ‘std::string DBus::signature’ previously declared here
+../dbus-cxx/utility.h:109:33: error: ‘uint32_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int64_t)’:
+../dbus-cxx/utility.h:110:41: error: ‘std::string DBus::signature(int64_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:111:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:111:33: error: redefinition of ‘std::string DBus::signature’
+../dbus-cxx/utility.h:104:33: error: ‘std::string DBus::signature’ previously declared here
+../dbus-cxx/utility.h:111:33: error: ‘uint64_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(double)’:
+../dbus-cxx/utility.h:112:40: error: ‘std::string DBus::signature(double)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(std::string)’:
+../dbus-cxx/utility.h:113:45: error: ‘std::string DBus::signature(std::string)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(DBus::Signature)’:
+../dbus-cxx/utility.h:114:43: error: ‘std::string DBus::signature(DBus::Signature)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(DBus::Path)’:
+../dbus-cxx/utility.h:115:38: error: ‘std::string DBus::signature(DBus::Path)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(char)’:
+../dbus-cxx/utility.h:117:38: error: ‘std::string DBus::signature(char)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int8_t)’:
+../dbus-cxx/utility.h:118:40: error: ‘std::string DBus::signature(int8_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(long int)’:
+../dbus-cxx/utility.h:121:42: error: ‘std::string DBus::signature(long int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(long unsigned int)’:
+../dbus-cxx/utility.h:122:51: error: ‘std::string DBus::signature(long unsigned int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(float)’:
+../dbus-cxx/utility.h:125:39: error: ‘std::string DBus::signature(float)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:127:54: error: ‘template<class T> std::string DBus::signature()’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+In file included from ../dbus-cxx/messageiterator.h:27:0,
+                 from ../dbus-cxx/message.h:30,
+                 from callmessage.h:22,
+                 from callmessage.cpp:19:
+../dbus-cxx/utility.h:128:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:129:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:130:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:131:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:132:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:133:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:134:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:135:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:136:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:137:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:138:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:139:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:141:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:142:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:145:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:146:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:149:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:213:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:213:21: error: ‘uint8_t’ was not declared in this scope
+../dbus-cxx/utility.h:213:42: error: expected ‘,’ or ‘;’ before ‘{’ token
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(bool)’:
+../dbus-cxx/utility.h:214:26: error: ‘DBus::Type DBus::type(bool)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int16_t)’:
+../dbus-cxx/utility.h:215:29: error: ‘DBus::Type DBus::type(int16_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:216:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:216:21: error: redefinition of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h:213:21: error: ‘DBus::Type DBus::type’ previously defined here
+../dbus-cxx/utility.h:216:21: error: ‘uint16_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int32_t)’:
+../dbus-cxx/utility.h:217:29: error: ‘DBus::Type DBus::type(int32_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:218:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:218:21: error: redefinition of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h:213:21: error: ‘DBus::Type DBus::type’ previously defined here
+../dbus-cxx/utility.h:218:21: error: ‘uint32_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int64_t)’:
+../dbus-cxx/utility.h:219:29: error: ‘DBus::Type DBus::type(int64_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:220:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:220:21: error: redefinition of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h:213:21: error: ‘DBus::Type DBus::type’ previously defined here
+../dbus-cxx/utility.h:220:21: error: ‘uint64_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(double)’:
+../dbus-cxx/utility.h:221:28: error: ‘DBus::Type DBus::type(double)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(const std::string&)’:
+../dbus-cxx/utility.h:222:40: error: ‘DBus::Type DBus::type(const std::string&)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(const char*)’:
+../dbus-cxx/utility.h:223:33: error: ‘DBus::Type DBus::type(const char*)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(DBus::Path)’:
+../dbus-cxx/utility.h:224:26: error: ‘DBus::Type DBus::type(DBus::Path)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(DBus::Signature)’:
+../dbus-cxx/utility.h:225:31: error: ‘DBus::Type DBus::type(DBus::Signature)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(char)’:
+../dbus-cxx/utility.h:228:26: error: ‘DBus::Type DBus::type(char)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int8_t)’:
+../dbus-cxx/utility.h:229:28: error: ‘DBus::Type DBus::type(int8_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(long int)’:
+../dbus-cxx/utility.h:232:30: error: ‘DBus::Type DBus::type(long int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(long unsigned int)’:
+../dbus-cxx/utility.h:233:39: error: ‘DBus::Type DBus::type(long unsigned int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(float)’:
+../dbus-cxx/utility.h:236:27: error: ‘DBus::Type DBus::type(float)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:262:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:262:35: error: ‘uint8_t’ was not declared in this scope
+../dbus-cxx/utility.h:262:49: error: expected ‘,’ or ‘;’ before ‘{’ token
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(bool)’:
+../dbus-cxx/utility.h:263:40: error: ‘std::string DBus::type_string(bool)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(int16_t)’:
+../dbus-cxx/utility.h:264:43: error: ‘std::string DBus::type_string(int16_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:265:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:265:35: error: redefinition of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h:262:35: error: ‘std::string DBus::type_string’ previously declared here
+../dbus-cxx/utility.h:265:35: error: ‘uint16_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(int32_t)’:
+../dbus-cxx/utility.h:266:43: error: ‘std::string DBus::type_string(int32_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:267:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:267:35: error: redefinition of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h:262:35: error: ‘std::string DBus::type_string’ previously declared here
+../dbus-cxx/utility.h:267:35: error: ‘uint32_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(int64_t)’:
+../dbus-cxx/utility.h:268:43: error: ‘std::string DBus::type_string(int64_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:269:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:269:35: error: redefinition of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h:262:35: error: ‘std::string DBus::type_string’ previously declared here
+../dbus-cxx/utility.h:269:35: error: ‘uint64_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(double)’:
+../dbus-cxx/utility.h:270:42: error: ‘std::string DBus::type_string(double)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(std::string)’:
+../dbus-cxx/utility.h:271:47: error: ‘std::string DBus::type_string(std::string)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(DBus::Path)’:
+../dbus-cxx/utility.h:272:40: error: ‘std::string DBus::type_string(DBus::Path)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(DBus::Signature)’:
+../dbus-cxx/utility.h:273:45: error: ‘std::string DBus::type_string(DBus::Signature)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+In file included from ../dbus-cxx/message.h:30:0,
+                 from callmessage.h:22,
+                 from callmessage.cpp:19:
+../dbus-cxx/messageiterator.h: At global scope:
+../dbus-cxx/messageiterator.h:247:16: error: expected type-specifier before ‘uint8_t’
+../dbus-cxx/messageiterator.h:248:16: error: expected type-specifier before ‘uint16_t’
+../dbus-cxx/messageiterator.h:250:16: error: expected type-specifier before ‘uint32_t’
+../dbus-cxx/messageiterator.h:252:16: error: expected type-specifier before ‘uint64_t’
+../dbus-cxx/messageiterator.h:267:7: error: ‘uint8_t’ does not name a type
+../dbus-cxx/messageiterator.h:268:7: error: ‘uint16_t’ does not name a type
+../dbus-cxx/messageiterator.h:270:7: error: ‘uint32_t’ does not name a type
+../dbus-cxx/messageiterator.h:272:7: error: ‘uint64_t’ does not name a type
+In file included from ../dbus-cxx/message.h:31:0,
+                 from callmessage.h:22,
+                 from callmessage.cpp:19:
+../dbus-cxx/messageappenditerator.h:77:20: error: ‘uint8_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:79:20: error: ‘uint16_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:79:12: error: ‘bool DBus::MessageAppendIterator::append(int)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+../dbus-cxx/messageappenditerator.h:80:12: error: ‘bool DBus::MessageAppendIterator::append(int32_t)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+../dbus-cxx/messageappenditerator.h:81:20: error: ‘uint32_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:81:12: error: ‘bool DBus::MessageAppendIterator::append(int)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+../dbus-cxx/messageappenditerator.h:83:20: error: ‘uint64_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:83:12: error: ‘bool DBus::MessageAppendIterator::append(int)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+In file included from callmessage.h:22:0,
+                 from callmessage.cpp:19:
+../dbus-cxx/message.h:107:7: error: ‘uint32_t’ does not name a type
+In file included from callmessage.cpp:21:0:
+returnmessage.h:72:30: error: ‘uint32_t’ has not been declared
+returnmessage.h:74:7: error: ‘uint32_t’ does not name a type
+callmessage.cpp: In function ‘void DBus::callmsg_wp_deleter(void*)’:
+callmessage.cpp:88:12: warning: possible problem detected in invocation of delete operator:
+callmessage.cpp:87:32: warning: ‘wp’ has incomplete type
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: warning: declaration of ‘struct boost::weak_ptr<DBus::CallMessage>’
+callmessage.cpp:88:12: note: neither the destructor nor the class-specific operator delete will be called, even if they are declared when the class is defined.
+make[4]: *** [callmessage.lo] Error 1
+make[4]: *** Waiting for unfinished jobs....
+In file included from ../dbus-cxx/messageiterator.h:27:0,
+                 from ../dbus-cxx/message.h:30,
+                 from connection.h:26,
+                 from connection.cpp:20:
+../dbus-cxx/utility.h:104:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:104:33: error: ‘uint8_t’ was not declared in this scope
+../dbus-cxx/utility.h:104:47: error: expected ‘,’ or ‘;’ before ‘{’ token
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(bool)’:
+../dbus-cxx/utility.h:105:38: error: ‘std::string DBus::signature(bool)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int16_t)’:
+../dbus-cxx/utility.h:106:41: error: ‘std::string DBus::signature(int16_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:107:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:107:33: error: redefinition of ‘std::string DBus::signature’
+../dbus-cxx/utility.h:104:33: error: ‘std::string DBus::signature’ previously declared here
+../dbus-cxx/utility.h:107:33: error: ‘uint16_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int32_t)’:
+../dbus-cxx/utility.h:108:41: error: ‘std::string DBus::signature(int32_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:109:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:109:33: error: redefinition of ‘std::string DBus::signature’
+../dbus-cxx/utility.h:104:33: error: ‘std::string DBus::signature’ previously declared here
+../dbus-cxx/utility.h:109:33: error: ‘uint32_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int64_t)’:
+../dbus-cxx/utility.h:110:41: error: ‘std::string DBus::signature(int64_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:111:33: error: ‘DBus::signature’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:111:33: error: redefinition of ‘std::string DBus::signature’
+../dbus-cxx/utility.h:104:33: error: ‘std::string DBus::signature’ previously declared here
+../dbus-cxx/utility.h:111:33: error: ‘uint64_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(double)’:
+../dbus-cxx/utility.h:112:40: error: ‘std::string DBus::signature(double)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(std::string)’:
+../dbus-cxx/utility.h:113:45: error: ‘std::string DBus::signature(std::string)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(DBus::Signature)’:
+../dbus-cxx/utility.h:114:43: error: ‘std::string DBus::signature(DBus::Signature)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(DBus::Path)’:
+../dbus-cxx/utility.h:115:38: error: ‘std::string DBus::signature(DBus::Path)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(char)’:
+../dbus-cxx/utility.h:117:38: error: ‘std::string DBus::signature(char)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(int8_t)’:
+../dbus-cxx/utility.h:118:40: error: ‘std::string DBus::signature(int8_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(long int)’:
+../dbus-cxx/utility.h:121:42: error: ‘std::string DBus::signature(long int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(long unsigned int)’:
+../dbus-cxx/utility.h:122:51: error: ‘std::string DBus::signature(long unsigned int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: In function ‘std::string DBus::signature(float)’:
+../dbus-cxx/utility.h:125:39: error: ‘std::string DBus::signature(float)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:127:54: error: ‘template<class T> std::string DBus::signature()’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:104:33: error: previous declaration of ‘std::string DBus::signature’
+In file included from ../dbus-cxx/messageiterator.h:27:0,
+                 from ../dbus-cxx/message.h:30,
+                 from connection.h:26,
+                 from connection.cpp:20:
+../dbus-cxx/utility.h:128:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:129:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:130:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:131:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:132:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:133:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:134:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:135:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:136:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:137:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:138:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:139:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:141:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:142:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:145:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:146:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:149:42: error: expected initializer before ‘<’ token
+../dbus-cxx/utility.h:213:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:213:21: error: ‘uint8_t’ was not declared in this scope
+../dbus-cxx/utility.h:213:42: error: expected ‘,’ or ‘;’ before ‘{’ token
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(bool)’:
+../dbus-cxx/utility.h:214:26: error: ‘DBus::Type DBus::type(bool)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int16_t)’:
+../dbus-cxx/utility.h:215:29: error: ‘DBus::Type DBus::type(int16_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:216:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:216:21: error: redefinition of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h:213:21: error: ‘DBus::Type DBus::type’ previously defined here
+../dbus-cxx/utility.h:216:21: error: ‘uint16_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int32_t)’:
+../dbus-cxx/utility.h:217:29: error: ‘DBus::Type DBus::type(int32_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:218:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:218:21: error: redefinition of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h:213:21: error: ‘DBus::Type DBus::type’ previously defined here
+../dbus-cxx/utility.h:218:21: error: ‘uint32_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int64_t)’:
+../dbus-cxx/utility.h:219:29: error: ‘DBus::Type DBus::type(int64_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:220:21: error: ‘DBus::type’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:220:21: error: redefinition of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h:213:21: error: ‘DBus::Type DBus::type’ previously defined here
+../dbus-cxx/utility.h:220:21: error: ‘uint64_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(double)’:
+../dbus-cxx/utility.h:221:28: error: ‘DBus::Type DBus::type(double)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(const std::string&)’:
+../dbus-cxx/utility.h:222:40: error: ‘DBus::Type DBus::type(const std::string&)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(const char*)’:
+../dbus-cxx/utility.h:223:33: error: ‘DBus::Type DBus::type(const char*)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(DBus::Path)’:
+../dbus-cxx/utility.h:224:26: error: ‘DBus::Type DBus::type(DBus::Path)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(DBus::Signature)’:
+../dbus-cxx/utility.h:225:31: error: ‘DBus::Type DBus::type(DBus::Signature)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(char)’:
+../dbus-cxx/utility.h:228:26: error: ‘DBus::Type DBus::type(char)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(int8_t)’:
+../dbus-cxx/utility.h:229:28: error: ‘DBus::Type DBus::type(int8_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(long int)’:
+../dbus-cxx/utility.h:232:30: error: ‘DBus::Type DBus::type(long int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(long unsigned int)’:
+../dbus-cxx/utility.h:233:39: error: ‘DBus::Type DBus::type(long unsigned int)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: In function ‘DBus::Type DBus::type(float)’:
+../dbus-cxx/utility.h:236:27: error: ‘DBus::Type DBus::type(float)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:213:21: error: previous declaration of ‘DBus::Type DBus::type’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:262:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:262:35: error: ‘uint8_t’ was not declared in this scope
+../dbus-cxx/utility.h:262:49: error: expected ‘,’ or ‘;’ before ‘{’ token
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(bool)’:
+../dbus-cxx/utility.h:263:40: error: ‘std::string DBus::type_string(bool)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(int16_t)’:
+../dbus-cxx/utility.h:264:43: error: ‘std::string DBus::type_string(int16_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:265:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:265:35: error: redefinition of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h:262:35: error: ‘std::string DBus::type_string’ previously declared here
+../dbus-cxx/utility.h:265:35: error: ‘uint16_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(int32_t)’:
+../dbus-cxx/utility.h:266:43: error: ‘std::string DBus::type_string(int32_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:267:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:267:35: error: redefinition of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h:262:35: error: ‘std::string DBus::type_string’ previously declared here
+../dbus-cxx/utility.h:267:35: error: ‘uint32_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(int64_t)’:
+../dbus-cxx/utility.h:268:43: error: ‘std::string DBus::type_string(int64_t)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: At global scope:
+../dbus-cxx/utility.h:269:35: error: ‘DBus::type_string’ declared as an ‘inline’ variable
+../dbus-cxx/utility.h:269:35: error: redefinition of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h:262:35: error: ‘std::string DBus::type_string’ previously declared here
+../dbus-cxx/utility.h:269:35: error: ‘uint64_t’ was not declared in this scope
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(double)’:
+../dbus-cxx/utility.h:270:42: error: ‘std::string DBus::type_string(double)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(std::string)’:
+../dbus-cxx/utility.h:271:47: error: ‘std::string DBus::type_string(std::string)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(DBus::Path)’:
+../dbus-cxx/utility.h:272:40: error: ‘std::string DBus::type_string(DBus::Path)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+../dbus-cxx/utility.h: In function ‘std::string DBus::type_string(DBus::Signature)’:
+../dbus-cxx/utility.h:273:45: error: ‘std::string DBus::type_string(DBus::Signature)’ redeclared as different kind of symbol
+../dbus-cxx/utility.h:262:35: error: previous declaration of ‘std::string DBus::type_string’
+In file included from ../dbus-cxx/message.h:30:0,
+                 from connection.h:26,
+                 from connection.cpp:20:
+../dbus-cxx/messageiterator.h: At global scope:
+../dbus-cxx/messageiterator.h:247:16: error: expected type-specifier before ‘uint8_t’
+../dbus-cxx/messageiterator.h:248:16: error: expected type-specifier before ‘uint16_t’
+../dbus-cxx/messageiterator.h:250:16: error: expected type-specifier before ‘uint32_t’
+../dbus-cxx/messageiterator.h:252:16: error: expected type-specifier before ‘uint64_t’
+../dbus-cxx/messageiterator.h:267:7: error: ‘uint8_t’ does not name a type
+../dbus-cxx/messageiterator.h:268:7: error: ‘uint16_t’ does not name a type
+../dbus-cxx/messageiterator.h:270:7: error: ‘uint32_t’ does not name a type
+../dbus-cxx/messageiterator.h:272:7: error: ‘uint64_t’ does not name a type
+In file included from ../dbus-cxx/message.h:31:0,
+                 from connection.h:26,
+                 from connection.cpp:20:
+../dbus-cxx/messageappenditerator.h:77:20: error: ‘uint8_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:79:20: error: ‘uint16_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:79:12: error: ‘bool DBus::MessageAppendIterator::append(int)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+../dbus-cxx/messageappenditerator.h:80:12: error: ‘bool DBus::MessageAppendIterator::append(int32_t)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+../dbus-cxx/messageappenditerator.h:81:20: error: ‘uint32_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:81:12: error: ‘bool DBus::MessageAppendIterator::append(int)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+../dbus-cxx/messageappenditerator.h:83:20: error: ‘uint64_t’ has not been declared
+../dbus-cxx/messageappenditerator.h:83:12: error: ‘bool DBus::MessageAppendIterator::append(int)’ cannot be overloaded
+../dbus-cxx/messageappenditerator.h:77:12: error: with ‘bool DBus::MessageAppendIterator::append(int)’
+In file included from connection.h:26:0,
+                 from connection.cpp:20:
+../dbus-cxx/message.h:107:7: error: ‘uint32_t’ does not name a type
+In file included from connection.h:27:0,
+                 from connection.cpp:20:
+../dbus-cxx/returnmessage.h:72:30: error: ‘uint32_t’ has not been declared
+../dbus-cxx/returnmessage.h:74:7: error: ‘uint32_t’ does not name a type
+In file included from ../dbus-cxx/interface.h:15:0,
+                 from ../dbus-cxx/object.h:14,
+                 from connection.h:32,
+                 from connection.cpp:20:
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, T_arg6, T_arg7>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:66:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, T_arg6, T_arg7>::introspect(int) const’:
+../dbus-cxx/method.h:87:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:87:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:89:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:89:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:90:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:90:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:91:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:91:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:92:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:92:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:93:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:93:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:94:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:94:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:95:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:95:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:156:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method.h:177:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:177:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, T_arg1, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:247:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, T_arg1, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method.h:268:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:268:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:270:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:270:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, T_arg1, T_arg2, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:340:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, T_arg1, T_arg2, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method.h:361:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:361:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:363:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:363:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:364:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:364:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, T_arg1, T_arg2, T_arg3, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:435:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, T_arg1, T_arg2, T_arg3, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method.h:456:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:456:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:458:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:458:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:459:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:459:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:460:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:460:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, sigc::nil, sigc::nil, sigc::nil>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:532:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method.h:553:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:553:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:555:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:555:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:556:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:556:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:557:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:557:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:558:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:558:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, sigc::nil, sigc::nil>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:631:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method.h:652:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:652:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:654:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:654:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:655:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:655:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:656:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:656:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:657:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:657:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:658:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:658:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h: In member function ‘virtual DBus::HandlerResult DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, T_arg6, sigc::nil>::handle_call_message(boost::shared_ptr<DBus::Connection>, DBus::CallMessage::const_pointer)’:
+../dbus-cxx/method.h:732:21: error: no match for ‘operator<<’ in ‘connection << retmsg’
+../dbus-cxx/signature.h:92:15: note: candidate is: std::ostream& operator<<(std::ostream&, const DBus::Signature&)
+../dbus-cxx/method.h: In member function ‘virtual std::string DBus::Method<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, T_arg6, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method.h:753:97: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:753:99: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:755:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:755:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:756:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:756:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:757:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:757:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:758:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:758:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:759:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:759:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method.h:760:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method.h:760:101: error: expected primary-expression before ‘)’ token
+In file included from ../dbus-cxx/dbus_signal.h:9:0,
+                 from ../dbus-cxx/interface.h:16,
+                 from ../dbus-cxx/object.h:14,
+                 from connection.h:32,
+                 from connection.cpp:20:
+../dbus-cxx/signal_base.h: At global scope:
+../dbus-cxx/signal_base.h:107:38: error: field ‘m_connection’ has incomplete type
+In file included from ../dbus-cxx/interface.h:16:0,
+                 from ../dbus-cxx/object.h:14,
+                 from connection.h:32,
+                 from connection.cpp:20:
+../dbus-cxx/dbus_signal.h: In member function ‘virtual std::string DBus::signal<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, T_arg6, T_arg7>::introspect(int) const’:
+../dbus-cxx/dbus_signal.h:196:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:196:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:197:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:197:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:198:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:198:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:199:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:199:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:200:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:200:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:201:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:201:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:202:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:202:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h: In member function ‘virtual std::string DBus::signal<T_return, T_arg1, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/dbus_signal.h:629:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:629:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h: In member function ‘virtual std::string DBus::signal<T_return, T_arg1, T_arg2, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/dbus_signal.h:844:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:844:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:845:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:845:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h: In member function ‘virtual std::string DBus::signal<T_return, T_arg1, T_arg2, T_arg3, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/dbus_signal.h:1061:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1061:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1062:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1062:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1063:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1063:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h: In member function ‘virtual std::string DBus::signal<T_return, T_arg1, T_arg2, T_arg3, T_arg4, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/dbus_signal.h:1280:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1280:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1281:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1281:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1282:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1282:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1283:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1283:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h: In member function ‘virtual std::string DBus::signal<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/dbus_signal.h:1501:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1501:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1502:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1502:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1503:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1503:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1504:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1504:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1505:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1505:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h: In member function ‘virtual std::string DBus::signal<T_return, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, T_arg6, sigc::nil>::introspect(int) const’:
+../dbus-cxx/dbus_signal.h:1724:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1724:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1725:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1725:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1726:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1726:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1727:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1727:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1728:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1728:97: error: expected primary-expression before ‘)’ token
+../dbus-cxx/dbus_signal.h:1729:95: error: expected primary-expression before ‘>’ token
+../dbus-cxx/dbus_signal.h:1729:97: error: expected primary-expression before ‘)’ token
+In file included from ../dbus-cxx/object.h:14:0,
+                 from connection.h:32,
+                 from connection.cpp:20:
+../dbus-cxx/interface.h: At global scope:
+../dbus-cxx/interface.h:75:129: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+../dbus-cxx/interface.h:201:129: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+In file included from connection.h:32:0,
+                 from connection.cpp:20:
+../dbus-cxx/object.h:393:133: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+../dbus-cxx/object.h:405:155: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+In file included from ../dbus-cxx/objectproxy.h:14:0,
+                 from connection.h:33,
+                 from connection.cpp:20:
+../dbus-cxx/interfaceproxy.h:75:134: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+../dbus-cxx/interfaceproxy.h:105:139: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+In file included from connection.h:33:0,
+                 from connection.cpp:20:
+../dbus-cxx/objectproxy.h:243:176: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+../dbus-cxx/objectproxy.h:251:174: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+In file included from connection.cpp:20:0:
+connection.h:131:58: error: ‘uint32_t’ has not been declared
+connection.h:155:7: error: ‘uint32_t’ does not name a type
+In file included from connection.cpp:20:0:
+connection.h:288:171: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+connection.h:297:196: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+connection.h:328:159: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+connection.h:336:184: error: default template arguments may not be used in function templates without -std=c++0x or -std=gnu++0x
+In file included from connection.h:493:0,
+                 from connection.cpp:20:
+../dbus-cxx/method_impl.h: In member function ‘virtual std::string DBus::Method<void, T_arg1, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method_impl.h:155:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:155:101: error: expected primary-expression before ‘)’ token
+In file included from connection.h:493:0,
+                 from connection.cpp:20:
+../dbus-cxx/method_impl.h: In member function ‘virtual std::string DBus::Method<void, T_arg1, T_arg2, sigc::nil, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method_impl.h:243:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:243:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:244:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:244:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h: In member function ‘virtual std::string DBus::Method<void, T_arg1, T_arg2, T_arg3, sigc::nil, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method_impl.h:333:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:333:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:334:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:334:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:335:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:335:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h: In member function ‘virtual std::string DBus::Method<void, T_arg1, T_arg2, T_arg3, T_arg4, sigc::nil, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method_impl.h:425:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:425:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:426:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:426:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:427:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:427:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:428:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:428:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h: In member function ‘virtual std::string DBus::Method<void, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, sigc::nil, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method_impl.h:519:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:519:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:520:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:520:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:521:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:521:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:522:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:522:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:523:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:523:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h: In member function ‘virtual std::string DBus::Method<void, T_arg1, T_arg2, T_arg3, T_arg4, T_arg5, T_arg6, sigc::nil>::introspect(int) const’:
+../dbus-cxx/method_impl.h:615:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:615:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:616:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:616:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:617:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:617:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:618:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:618:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:619:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:619:101: error: expected primary-expression before ‘)’ token
+../dbus-cxx/method_impl.h:620:99: error: expected primary-expression before ‘>’ token
+../dbus-cxx/method_impl.h:620:101: error: expected primary-expression before ‘)’ token
+connection.cpp: In function ‘void DBus::conn_wp_deleter(void*)’:
+connection.cpp:74:12: warning: possible problem detected in invocation of delete operator:
+connection.cpp:73:31: warning: ‘wp’ has incomplete type
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: warning: declaration of ‘struct boost::weak_ptr<DBus::Connection>’
+connection.cpp:74:12: note: neither the destructor nor the class-specific operator delete will be called, even if they are declared when the class is defined.
+connection.cpp: In static member function ‘static DBus::Connection::pointer DBus::Connection::create(DBusConnection*, bool)’:
+connection.cpp:85:30: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp:86:13: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp: In static member function ‘static DBus::Connection::pointer DBus::Connection::create(DBus::BusType, bool)’:
+connection.cpp:102:30: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp:103:13: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp: In static member function ‘static DBus::Connection::pointer DBus::Connection::create(const DBus::Connection&)’:
+connection.cpp:119:30: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp:120:13: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp: In member function ‘DBus::Connection::pointer DBus::Connection::self()’:
+connection.cpp:145:19: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp: In static member function ‘static DBus::Connection::pointer DBus::Connection::self(DBusConnection*)’:
+connection.cpp:160:19: error: invalid use of incomplete type ‘struct DBus::Connection::weak_pointer’
+/home/pablo/gar-castorbox/images/main/usr/include/boost/smart_ptr/shared_ptr.hpp:62:25: error: declaration of ‘struct DBus::Connection::weak_pointer’
+connection.cpp: At global scope:
+connection.cpp:253:66: error: ‘uint32_t’ has not been declared
+connection.cpp:332:3: error: ‘uint32_t’ does not name a type
+connection.cpp: In member function ‘DBus::Connection& DBus::Connection::operator<<(DBus::Message::const_pointer)’:
+connection.cpp:343:31: error: ‘class DBus::Connection’ has no member named ‘send’
+make[4]: *** [connection.lo] Error 1
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3/dbus-cxx'
+make[3]: *** [all] Error 2
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3/dbus-cxx'
+make[2]: *** [all-recursive] Error 1
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3'
+make[1]: *** [all] Error 2
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/lib/dbus-cxx/work/main.d/dbus-cxx-0.4.3'
+make: *** [build-work/main.d/dbus-cxx-0.4.3/Makefile] Error 2

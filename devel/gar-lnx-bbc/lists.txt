@@ -1,0 +1,51 @@
+Mailing Lists
+
+The LNX-BBC project has a number of e-mail mailing lists.  Each
+list has its own Web page from which you can subscribe or change
+your subscription options, as well as a complete archive on the
+Web.  
+
+
+<http://zork.net/mailman/listinfo/lnx-bbc lnx-bbc>:
+This is the general discussion and help list.  Users who have
+questions about the LNX-BBC should direct them here. 
+Also available as a <news://news.gmane.org/gmane.linux.bbc.general
+newsgroup>.
+
+<http://zork.net/mailman/listinfo/lnx-bbc-announce lnx-bbc-announce>:
+Announcements of new releases, public meetings (typically in San
+Francisco or Berkeley, California), and other notable events
+occur here.  It is very low-volume, and is designed for those who
+cannot handle even the digested version of the other lists.
+
+<http://zork.net/mailman/listinfo/lnx-bbc-devel lnx-bbc-devel>:
+This list is for discussion of future direction of the LNX-BBC
+project and its associated tools and projects.  Most notably,
+discussion of the GAR system goes on here.
+Also available as a <news://news.gmane.org/gmane.linux.bbc.devel
+newsgroup>.
+
+<http://zork.net/mailman/listinfo/lnx-bbc-cvs lnx-bbc-cvs>:
+This list receives the changelog for each CVS checkin that occurs
+for the project.  It can be high-volume, so check out those
+archives before subscribing.
+Also available as a <news://news.gmane.org/gmane.linux.bbc.cvs
+newsgroup>.
+
+<http://zork.net/mailman/listinfo/lnx-bbc-bugs lnx-bbc-bugs>:
+Every single piece of activity relating to the bug tracking system
+sends a mail to this list.  It can also be high-volume, just like the
+CVS list, so check out the archives before you decide to subscribe.
+Also available as a <news://news.gmane.org/gmane.linux.bbc.bugs
+newsgroup>.
+
+Please do not send mail to the lnx-bbc-bugs list.  Instead, send mail
+to submit@bugs.lnx-bbc.org with a line like "Package: bash" (to file a
+bug against bash).  Sending mail to the list directly is almost a
+guarantee your mail will be ignored or bounced.
+
+<http://slashnet.org/ SlashNet IRC>, channel <http://www.slashnet.org/channels/lnx-bbc/ #lnx-bbc>:
+While not actually a mailing list, most of the developers hang out in
+this channel, usually including <http://slashnet.org/~crackmonkey Nick
+Moffitt> and <http://slashnet.org/~inkblot Nate Riffe>.  Feel free to
+have fun with our bot, <http://slashnet.org/~dumont Dumont>!

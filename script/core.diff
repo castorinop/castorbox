@@ -1,0 +1,74 @@
+/home/pablo/build/minimyth-svn/gar-minimyth/script/category.mk
+/home/pablo/build/minimyth-svn/gar-minimyth/script/gar.bugs.mk
+/home/pablo/build/minimyth-svn/gar-minimyth/script/gar.conf.mk
+--- gar.conf.mk	2008-08-31 11:20:32.000000000 -0300
++++ /home/pablo/build/minimyth-svn/gar-minimyth/script/gar.conf.mk	2009-01-29 16:57:41.000000000 -0300
+--- gar.lib.mk	2008-10-08 21:03:33.000000000 -0300
++++ /home/pablo/build/minimyth-svn/gar-minimyth/script/gar.lib.mk	2009-05-12 10:59:04.000000000 -0300
+@@ -319,7 +319,7 @@
+ # just run make install and hope for the best.
+ install-%/Makefile:
+ 	@echo " ==> Running make install in $*"
+-	$(INSTALL_ENV) $(MAKE) DESTDIR=$(DESTDIR) $(foreach TTT,$(INSTALL_OVERRIDE_DIRS),$(TTT)="$(DESTDIR)$($(TTT))") -C $* $(INSTALL_ARGS) install
++	@$(INSTALL_ENV) $(MAKE) DESTDIR=$(DESTDIR) $(foreach TTT,$(INSTALL_OVERRIDE_DIRS),$(TTT)="$(DESTDIR)$($(TTT))") -C $* $(INSTALL_ARGS) install
+ 	@$(MAKECOOKIE)
+ 
+ install-%/makefile:
+@@ -338,11 +338,13 @@
+ 
+ FDL_LICENSE_TEXT = $(LICENSEDIR)/FDL.txt
+ FDL1_2_LICENSE_TEXT = $(LICENSEDIR)/FDL1_2.txt
++FDL1_3_LICENSE_TEXT = $(LICENSEDIR)/FDL1_3.txt
+ BSD_2_Clause_LICENSE_TEXT = $(LICENSEDIR)/BSD_2_Clause.txt
+ BSD_3_Clause_LICENSE_TEXT = $(LICENSEDIR)/BSD_3_Clause.txt
+ BSD_4_Clause_LICENSE_TEXT = $(LICENSEDIR)/BSD_4_Clause.txt
+ MIT_Modified_LICENSE_TEXT = $(LICENSEDIR)/MIT_Modified.txt
+ MPL1_1_LICENSE_TEXT = $(LICENSEDIR)/MPL1_1.txt
++LGPL3_LICENSE_TEXT = $(LICENSEDIR)/LGPL3.txt
+ GPL_LICENSE_TEXT = $(LICENSEDIR)/GPL.txt
+ GPL1_LICENSE_TEXT = $(LICENSEDIR)/GPL1.txt
+ GPL2_LICENSE_TEXT = $(LICENSEDIR)/GPL2.txt
+/home/pablo/build/minimyth-svn/gar-minimyth/script/minimyth.lib.mk
+--- minimyth.lib.mk	2009-05-03 13:00:48.000000000 -0300
++++ /home/pablo/build/minimyth-svn/gar-minimyth/script/minimyth.lib.mk	2009-01-29 16:57:41.000000000 -0300
+@@ -126,27 +126,16 @@
+ 	rm -rf $(strip $(3))                                            ; \
+ 	rm -rf $(strip $(3)).tar.bz2                                    ; \
+ 	svn co -r $(strip $(2)) $(strip $(1)) $(strip $(3))             ; \
+-	if [ ! -d $(strip $(3)) ] ; then                                  \
++	if [ $$? -ne 0 ] ; then                                           \
+ 		rm -rf $(strip $(3))                                    ; \
+-		rm -rf $(strip $(3)).tar.bz2                            ; \
+-		exit 1                                                  ; \
+ 	fi                                                              ; \
+-	tar --exclude '*/.svn' -jcf $(strip $(3)).tar.bz2 $(strip $(3)) ; \
+-	rm -rf $(strip $(3))
+-
+-# $(call FETCH_BZR, <svn_url>, <svn_revision>, <file_base>)
+-FETCH_BZR = \
+-	mkdir -p $(PARTIALDIR)                                          ; \
+-	cd $(PARTIALDIR)                                                ; \
+-	rm -rf $(strip $(3))                                            ; \
+-	rm -rf $(strip $(3)).tar.bz2                                    ; \
+-	/usr/bin/bzr export -r $(strip $(2)) $(strip $(3)) $(strip $(1))         ; \
++	ls -l . ; \
+ 	if [ ! -d $(strip $(3)) ] ; then                                  \
+ 		rm -rf $(strip $(3))                                    ; \
+ 		rm -rf $(strip $(3)).tar.bz2                            ; \
+ 		exit 1                                                  ; \
+ 	fi                                                              ; \
+-	tar --exclude '*/.bzr' -jcf $(strip $(3)).tar.bz2 $(strip $(3)) ; \
++	tar --exclude '*/.svn' -jcf $(strip $(3)).tar.bz2 $(strip $(3)) ; \
+ 	rm -rf $(strip $(3))
+ 
+ clean-image:
+@@ -156,8 +145,7 @@
+ 	@rm -rf $(WORKROOTDIR)/$(DESTIMG).d
+ 
+ garchive-touch:
+-	@$(if $(strip $(ALLFILES)), touch $(GARCHIVEDIR))
+-
++	@$(if $(strip $(ALLFILES)), $(if $(wildcard $(GARCHIVEDIR)), touch $(GARCHIVEDIR)))
+ 
+ patch-%.gar: gar-patch-%.gar
+ 	@$(MAKECOOKIE)

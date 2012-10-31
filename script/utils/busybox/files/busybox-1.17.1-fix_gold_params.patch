@@ -1,0 +1,13 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/busybox-1.17.1/scripts/trylink work/main.d/busybox-1.17.1/scripts/trylink
+--- tmp/busybox-1.17.1/scripts/trylink	2010-07-05 23:25:54.000000000 -0300
++++ new-busybox-1.17.1/scripts/trylink	2010-07-26 21:59:27.000000000 -0300
+@@ -83,7 +83,7 @@
+ LDLIBS="$7"
+ 
+ # The --sort-section option is not supported by older versions of ld
+-SORT_SECTION=`check_cc "-Wl,--sort-section,alignment" ""`
++#SORT_SECTION=`check_cc "-Wl,--sort-section,alignment" ""`
+ 
+ START_GROUP="-Wl,--start-group"
+ END_GROUP="-Wl,--end-group"
+

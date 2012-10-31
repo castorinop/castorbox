@@ -1,0 +1,11 @@
+diff -p -up VirtualBox-2.0.2/src/VBox/Frontends/VirtualBox4/Makefile.kmk.versioncheck VirtualBox-2.0.2/src/VBox/Frontends/VirtualBox4/Makefile.kmk
+--- VirtualBox-2.0.2/src/VBox/Frontends/VirtualBox4/Makefile.kmk.versioncheck	2008-09-12 12:01:44.000000000 +0200
++++ VirtualBox-2.0.2/src/VBox/Frontends/VirtualBox4/Makefile.kmk	2008-09-15 11:36:03.000000000 +0200
+@@ -35,7 +35,6 @@ VBOX_WITH_REGISTRATION_REQUEST := 1
+ 
+ # Show the update notifier dialog during startup. If this setting is disabled
+ # the user can still update using the menu if desired.
+-VBOX_WITH_UPDATE_REQUEST := 1
+ 
+ 
+ #

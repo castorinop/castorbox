@@ -1,0 +1,13 @@
+if [ `pidof xscreensaver` ]; then
+	su $user -c "(xscreensaver-command -throttle)"
+		if [ x$LOCK_SCREEN = xtrue ]; then	
+		su $user -c "(xscreensaver-command -lock)"
+	fi
+elif [ `pidof dcopserver` ]; then
+	dcop kdesktop KScreensaverIface lock
+fi
+
+xset dpms force off
+if [ x$RADEON_LIGHT = xtrue ]; then
+    [ -x /usr/sbin/radeontool ] && radeontool light off
+fi

@@ -1,0 +1,444 @@
+=== modified file 'plugins/feature/audio/audio.hpp'
+--- plugins/feature/audio/audio.hpp	2009-12-18 16:13:41 +0000
++++ new/plugins/feature/audio/audio.hpp	2010-01-17 16:53:34 +0000
+@@ -2286,6 +2289,7 @@
+ 	saverrunning = true;
+ 	was_saverrunning = true;
+ 	prepare_audio_fullscreen();
++	render->device->ssaver_off();
+       }
+ 
+       if (!saverrunning) {
+@@ -2375,6 +2379,7 @@
+     saverrunning = false;
+     pthread_cond_broadcast(&ssaver_switch); /* wakes thread up */
+     pthread_mutex_unlock(&ssaver_mut);
++    render->device->ssaver_on();
+   }
+   
+   void start_ssaver(){
+@@ -2383,6 +2388,7 @@
+     S_Config::get_instance()->s_last_key(0); /* TODO: find a better way, this can't be called by an input hook */
+     pthread_cond_broadcast(&ssaver_switch); /* wakes thread up */
+     pthread_mutex_unlock(&ssaver_mut);
++    render->device->ssaver_off();
+   }
+ 
+   virtual std::vector<T> rdir(const std::string& argv) = 0;
+=== modified file 'plugins/feature/movie/movie.cpp'
+--- plugins/feature/movie/movie.cpp	2009-02-26 18:17:49 +0000
++++ new/plugins/feature/movie/movie.cpp	2010-01-17 14:08:15 +0000
+@@ -501,6 +501,22 @@
+     mmsUsleep(100*1000);
+   }
+ 
++/*  render->device->animation_section_begin(true);
++  int curlayer = render->device->get_current_layer();
++  render->device->switch_to_layer(curlayer+1);
++  render->device->reset_layout_attribs_nowait();
++  render->device->set_layout_alpha(0.0, curlayer+1);
++  //render->device->animation_zoom(3,3,1,1,40,curlayer+1);
++  render->device->animation_fade(0,1,50,curlayer+1);
++  render->device->animation_fade(1,0,50,curlayer);
++  render->device->animation_section_end();
++
++  render->prepare_new_image();  
++  render->current.add(new RObj(0, 0, conf->p_h_res(), conf->p_v_res(), 0, 0, 0, 255, 2));
++  render->draw_and_release("movie startplaying"); */
++
++  render->device->ssaver_off();
++
+   if (file.filetype == "dvd")
+     active_player->play_dvd(file.filenames.front());
+   else if (file.filetype == "vcd")
+@@ -526,9 +542,19 @@
+   // make sure the screensaver doesn't kick in right after movie finishes
+   conf->s_last_key(time(0));
+ 
++ render->device->ssaver_on();
++
+   if (!active_player->wants_exclusivity())
+     render->complete_redraw();
+ 
++  /* render->device->animation_section_begin();
++  render->device->switch_to_layer(curlayer);
++  render->device->reset_layout_attribs_nowait();
++  render->device->animation_fade(0,1,80,curlayer);
++  render->device->animation_fade(1,0,40,curlayer+1);
++  render->device->animation_section_end(); */
++
++
+   S_BusyIndicator::get_instance()->enable();
+ }
+ 
+
+=== modified file 'plugins/output/opengl/SDL_GLout.cpp'
+--- plugins/output/opengl/SDL_GLout.cpp	2009-05-13 15:30:49 +0000
++++ new/plugins/output/opengl/SDL_GLout.cpp	2010-01-17 15:30:29 +0000
+@@ -25,6 +25,13 @@
+ #include <ctime>
+ #include <errno.h>
+ #include <cstdio>
++#include "config.h";
++#include <iostream>;
++
++#ifdef CONFIG_XDPMS
++#include <X11/extensions/dpms.h>
++#endif
++
+ #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+ 
+ #define RMASK 0xff000000
+@@ -59,7 +66,7 @@
+ }
+ 
+ SDL_GLout::SDL_GLout()
+-  :initted(false), IsOnHold(false) {
++  :initted(false), IsOnHold(false), dpms_disabled(true) {
+     //these mutexes can be initted at runtime, as long as the single instance one is initted before.
+ 
+     pthread_mutex_init(&initmutex,NULL);
+@@ -1415,4 +1422,99 @@
+   struct timespec ts;
+   clock_gettime(CLOCK_REALTIME, &ts);
+   return static_cast<uint64_t>(ts.tv_sec)*1000L + ts.tv_nsec/1000000L - bench_timer;
+-} 
++}
++
++void SDL_GLout::ssaver_on(){
++
++/*    if (!screensaver_off)
++        return;
++    screensaver_off = 0;
++    if (xss_suspend(False))
++        return; */
++#ifdef CONFIG_XDPMS
++  std::cout << "SDL_GLout::ssaver_on check" << std::endl;
++  SDL_SysWMinfo info;
++  SDL_VERSION(&info.version);
++
++  int parent;
++  if (SDL_GetWMInfo(&info) > 0) {
++    info.info.x11.lock_func();
++    std::cout << "SDL_GLout::ssaver_on getted info" << std::endl;
++    if (dpms_disabled)
++    {
++        int nothing;
++        if (DPMSQueryExtension(info.info.x11.display, &nothing, &nothing))
++        {
++	    std::cout << "SDL_GLout::ssaver_on DPMS checked extension" << std::endl;
++            if (!DPMSEnable(info.info.x11.display))
++            {                   // restoring power saving settings
++		std::cout << "DPMS not available?" << std::endl;
++            } else
++            {
++                // DPMS does not seem to be enabled unless we call DPMSInfo
++                BOOL onoff;
++                CARD16 state;
++
++                DPMSForceLevel(info.info.x11.display, DPMSModeOn);
++                DPMSInfo(info.info.x11.display, &state, &onoff);
++                if (onoff)
++                {
++			std::cout << "Successfully enabled DPMS" << std::endl;
++                } else
++                {
++		    std::cout << "Could not enable DPMS" << std::endl;
++                }
++            }
++        } else
++		    std::cout << "SDL_GLout::ssaver_on DPMS no extension" << std::endl;
++        dpms_disabled = false;
++    }
++    info.info.x11.unlock_func();
++  }
++#else
++    std::cout << "DPMS disabled at build" << std::endl;
++#endif
++}
++
++void SDL_GLout::ssaver_off()
++{
++    int nothing;
++
++/*    if (screensaver_off)
++        return;
++    screensaver_off = 1;
++    if (xss_suspend(True))
++        return; */
++#ifdef CONFIG_XDPMS
++  std::cout << "SDL_GLout::ssaver_off check" << std::endl;
++  SDL_SysWMinfo info;
++  SDL_VERSION(&info.version);
++
++  int parent;
++  if (SDL_GetWMInfo(&info) > 0) {
++    std::cout << "SDL_GLout::ssaver_off getted info" << std::endl;
++    info.info.x11.lock_func();
++
++    if (DPMSQueryExtension(info.info.x11.display, &nothing, &nothing))
++    {
++        BOOL onoff;
++        CARD16 state;
++
++        DPMSInfo(info.info.x11.display, &state, &onoff);
++        if (onoff)
++        {
++            Status stat;
++
++            std::cout << "Disabling DPMS" << std::endl;
++            dpms_disabled = 1;
++            stat = DPMSDisable(info.info.x11.display);       // monitor powersave off
++            std::cout << "DPMSDisable stat: " << stat << std::endl;
++        }
++    }
++  info.info.x11.unlock_func();
++  }
++#else
++    std::cout << "DPMS disabled at build" << std::endl;
++#endif
++}
++ 
+
+=== modified file 'plugins/output/opengl/SDL_GLout.h'
+--- plugins/output/opengl/SDL_GLout.h	2008-10-25 08:44:05 +0000
++++ new/plugins/output/opengl/SDL_GLout.h	2010-01-17 15:15:09 +0000
+@@ -176,6 +176,7 @@
+   int original_screen_x;
+   int original_screen_y;
+   int original_screen_bpp;
++  bool dpms_disabled;
+ 
+ 
+   //GL extensions are linked *dynamically*
+@@ -271,6 +272,8 @@
+   void SetLayoutFitScreen(unsigned int layoutnum, bool fits);
+   void ForceInputHandling();
+ 
++  void ssaver_on();
++  void ssaver_off();
+ 
+   void HoldDrawing(){
+     if (!quit){
+
+=== modified file 'plugins/output/opengl/opengl.cpp'
+--- plugins/output/opengl/opengl.cpp	2009-05-13 15:30:49 +0000
++++ new/plugins/output/opengl/opengl.cpp	2010-01-17 15:22:41 +0000
+@@ -2,6 +2,7 @@
+ #include <cassert>
+ #include <cstdio>
+ #include "opengl_config.hpp"
++
+ OpenGLdev::OpenGLdev(){
+ }
+ 
+@@ -82,6 +83,8 @@
+   SDLGL->SetLayoutRGB(0,1,1,1);
+   firstdraw = true;
+   currentlayer = 0;
++
++  ssaver_on();
+ }
+ 
+ 
+@@ -227,6 +230,15 @@
+ 
+ }
+ 
++void OpenGLdev::ssaver_on(){
++  SDLGL->ssaver_on();
++}
++
++void OpenGLdev::ssaver_off()
++{
++  SDLGL->ssaver_off();
++}
++
+ void OpenGLdev::make_actions_expire(int layoutnum) {
+   SDLGL->MakeActionsExpire(layoutnum);
+ }
+
+=== modified file 'plugins/output/opengl/opengl.hpp'
+--- plugins/output/opengl/opengl.hpp	2008-10-25 08:44:05 +0000
++++ new/plugins/output/opengl/opengl.hpp	2010-01-17 15:19:23 +0000
+@@ -86,6 +86,8 @@
+   unsigned int convert_ymouse(int y);
+   void sdlpump();
+ 
++ void ssaver_on();
++ void ssaver_off();
+ 
+  protected:
+ // Config *conf;
+
+=== modified file 'plugins/output/render_device.cpp'
+--- plugins/output/render_device.cpp	2008-10-20 22:15:40 +0000
++++ new/plugins/output/render_device.cpp	2010-01-17 13:43:30 +0000
+@@ -1,7 +1,7 @@
+ #include "render_device.hpp"
+ 
+ RenderDevice::RenderDevice()
+-  : drawing(false), new_to_draw(false)
++  : drawing(false), new_to_draw(false), dpms_disabled(true)
+ {
+   conf = S_Config::get_instance();
+ }
+
+=== modified file 'plugins/output/render_device.hpp'
+--- plugins/output/render_device.hpp	2008-10-25 08:44:05 +0000
++++ new/plugins/output/render_device.hpp	2010-01-17 13:43:30 +0000
+@@ -109,6 +109,9 @@
+   virtual void refresh_screen(){};
+   virtual void set_layout_alpha(float, int = -1) {};
+ 
++  /* External Screensaver / DPMS methods */
++  virtual void ssaver_on() {};
++  virtual void ssaver_off() {};
+ 
+ protected:
+   Config *conf;
+@@ -117,6 +120,7 @@
+ 
+   bool drawing;
+   bool new_to_draw;
++  bool dpms_disabled;
+ 
+ private:
+   virtual void run() = 0;
+
+=== modified file 'plugins/output/sdl/sdlout.cpp'
+--- old/plugins/output/sdl/sdlout.cpp	2009-05-10 12:29:22 +0000
++++ new/plugins/output/sdl/sdlout.cpp	2010-01-19 14:11:01 +0000
+@@ -35,6 +35,10 @@
+ #include "X11/extensions/Xfixes.h"
+ #endif
+ 
++#ifdef CONFIG_XDPMS
++#include <X11/extensions/dpms.h>
++#endif
++
+ #include "themes.hpp"
+ #include "theme.hpp"
+ 
+@@ -71,6 +75,7 @@
+   while (initialized != 1){
+     mmsUsleep(20*1000);
+   }
++  ssaver_on();
+ }
+ 
+ void SDLdev::_init()
+@@ -529,3 +534,98 @@
+   render->new_resolution();
+ 
+ }
++
++void SDLdev::ssaver_on(){
++
++/*    if (!screensaver_off)
++        return;
++    screensaver_off = 0;
++    if (xss_suspend(False))
++        return; */
++#ifdef CONFIG_XDPMS
++  std::cout << "SDLdev::ssaver_on check" << std::endl;
++  SDL_SysWMinfo info;
++  SDL_VERSION(&info.version);
++
++  int parent;
++  if (SDL_GetWMInfo(&info) > 0) {
++    info.info.x11.lock_func();
++    std::cout << "SDLdev::ssaver_on getted info" << std::endl;
++    if (dpms_disabled)
++    {
++        int nothing;
++        if (DPMSQueryExtension(info.info.x11.display, &nothing, &nothing))
++        {
++	    std::cout << "SDLdev::ssaver_on DPMS checked extension" << std::endl;
++            if (!DPMSEnable(info.info.x11.display))
++            {                   // restoring power saving settings
++		std::cout << "SDLdev::ssaver_on DPMS not available?" << std::endl;
++            } else
++            {
++                // DPMS does not seem to be enabled unless we call DPMSInfo
++                BOOL onoff;
++                CARD16 state;
++
++                DPMSForceLevel(info.info.x11.display, DPMSModeOn);
++                DPMSInfo(info.info.x11.display, &state, &onoff);
++                if (onoff)
++                {
++			std::cout << "SDLdev::ssaver_on Successfully enabled DPMS" << std::endl;
++                } else
++                {
++		    std::cout << "SDLdev::ssaver_on Could not enable DPMS" << std::endl;
++                }
++            }
++        } else
++		    std::cout << "SDLdev::ssaver_on DPMS no extension" << std::endl;
++        dpms_disabled = false;
++    }
++    info.info.x11.unlock_func();
++  }
++#else
++    std::cout << "SDLdev::ssaver_on DPMS disabled at build" << std::endl;
++#endif
++}
++
++void SDLdev::ssaver_off()
++{
++    int nothing;
++
++/*    if (screensaver_off)
++        return;
++    screensaver_off = 1;
++    if (xss_suspend(True))
++        return; */
++#ifdef CONFIG_XDPMS
++  std::cout << "SDLdev::ssaver_off check" << std::endl;
++  SDL_SysWMinfo info;
++  SDL_VERSION(&info.version);
++
++  int parent;
++  if (SDL_GetWMInfo(&info) > 0) {
++    std::cout << "SDLdev::ssaver_off getted info" << std::endl;
++    info.info.x11.lock_func();
++
++    if (DPMSQueryExtension(info.info.x11.display, &nothing, &nothing))
++    {
++        BOOL onoff;
++        CARD16 state;
++
++        DPMSInfo(info.info.x11.display, &state, &onoff);
++        if (onoff)
++        {
++            Status stat;
++
++            std::cout << "SDLdev::ssaver_off Disabling DPMS" << std::endl;
++            dpms_disabled = 1;
++            stat = DPMSDisable(info.info.x11.display);       // monitor powersave off
++            std::cout << "SDLdev::ssaver_off DPMSDisable stat: " << stat << std::endl;
++        }
++    }
++  info.info.x11.unlock_func();
++  }
++#else
++    std::cout << "SDLdev::ssaver_off DPMS disabled at build" << std::endl;
++#endif
++}
++
+
+=== modified file 'plugins/output/sdl/sdlout.hpp'
+--- old/plugins/output/sdl/sdlout.hpp	2008-07-15 14:15:00 +0000
++++ new/plugins/output/sdl/sdlout.hpp	2010-01-19 14:07:38 +0000
+@@ -96,6 +96,9 @@
+ 
+   void switch_mode();
+ 
++  void ssaver_on();
++  void ssaver_off();
++
+  private:
+   void run();
+ };
+

@@ -1,0 +1,3094 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/configure work/main.d/hal-0.5.13/configure
+--- tmp/hal-0.5.13/configure	2009-07-15 04:03:05.000000000 -0300
++++ work/main.d/hal-0.5.13/configure	2009-07-23 00:15:33.000000000 -0300
+@@ -19204,7 +19204,9 @@
+ 
+ # Check whether --enable-console-kit was given.
+ if test "${enable_console_kit+set}" = set; then
+-  enableval=$enable_console_kit; enable_console_kit=$enableval,enable_console_kit=yes
++  enableval=$enable_console_kit; enable_console_kit=$enableval
++else
++  enable_console_kit=yes
+ fi
+ 
+ msg_conkit=no
+@@ -19217,7 +19219,7 @@
+   HAVE_CONKIT_FALSE=
+ fi
+ 
+-
++if test "x$enable_console_kit" != "xno"; then
+ cat >>confdefs.h <<\_ACEOF
+ #define HAVE_CONKIT /**/
+ _ACEOF
+@@ -19250,6 +19252,7 @@
+      fi
+    fi
+ fi
++fi
+ 
+ # Extract the first word of "gperf", so it can be a program name with args.
+ set dummy gperf; ac_word=$2
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/configure.in work/main.d/hal-0.5.13/configure.in
+--- tmp/hal-0.5.13/configure.in	2009-07-15 03:52:51.000000000 -0300
++++ work/main.d/hal-0.5.13/configure.in	2009-07-23 00:16:18.000000000 -0300
+@@ -511,7 +511,7 @@
+ 
+ # check for ConsoleKit
+ AM_CONDITIONAL(HAVE_CONKIT, false)
+-AC_ARG_ENABLE([console-kit], AS_HELP_STRING([--enable-console-kit], [Use ConsoleKit]), [enable_console_kit=$enableval,enable_console_kit=yes])
++AC_ARG_ENABLE([console-kit], AS_HELP_STRING([--enable-console-kit], [Use ConsoleKit]), [enable_console_kit=$enableval] ,[enable_console_kit=yes])
+ msg_conkit=no
+ if test "x$enable_console_kit" != "xno"; then
+    AM_CONDITIONAL(HAVE_CONKIT, true)
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/doc/api/libhal/tmpl/libhal.sgml work/main.d/hal-0.5.13/doc/api/libhal/tmpl/libhal.sgml
+--- tmp/hal-0.5.13/doc/api/libhal/tmpl/libhal.sgml	2009-07-15 04:09:29.000000000 -0300
++++ work/main.d/hal-0.5.13/doc/api/libhal/tmpl/libhal.sgml	1969-12-31 21:00:00.000000000 -0300
+@@ -1,1354 +0,0 @@
+-<!-- ##### SECTION Title ##### -->
+-libhal
+-
+-<!-- ##### SECTION Short_Description ##### -->
+-
+-
+-<!-- ##### SECTION Long_Description ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### SECTION See_Also ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### SECTION Stability_Level ##### -->
+-
+-
+-<!-- ##### MACRO DBUS_API_SUBJECT_TO_CHANGE ##### -->
+-<para>
+-
+-</para>
+-
+-
+-
+-<!-- ##### MACRO LIBHAL_DEPRECATED ##### -->
+-<para>
+-
+-</para>
+-
+-
+-
+-<!-- ##### MACRO LIBHAL_FREE_DBUS_ERROR ##### -->
+-<para>
+-
+-</para>
+-
+-@_dbus_error_: 
+-
+-
+-<!-- ##### MACRO LIBHAL_CHECK_LIBHALCONTEXT ##### -->
+-<para>
+-
+-</para>
+-
+-@_ctx_: 
+-@_ret_: 
+-
+-
+-<!-- ##### ENUM LibHalPropertyType ##### -->
+-<para>
+-
+-</para>
+-
+-@LIBHAL_PROPERTY_TYPE_INVALID: 
+-@LIBHAL_PROPERTY_TYPE_INT32: 
+-@LIBHAL_PROPERTY_TYPE_UINT64: 
+-@LIBHAL_PROPERTY_TYPE_DOUBLE: 
+-@LIBHAL_PROPERTY_TYPE_BOOLEAN: 
+-@LIBHAL_PROPERTY_TYPE_STRING: 
+-@LIBHAL_PROPERTY_TYPE_STRLIST: 
+-
+-<!-- ##### TYPEDEF LibHalContext ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### TYPEDEF LibHalProperty ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### TYPEDEF LibHalPropertySet ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### USER_FUNCTION LibHalIntegrateDBusIntoMainLoop ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@dbus_connection: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalDeviceAdded ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalDeviceRemoved ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalDeviceNewCapability ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@capability: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalDeviceLostCapability ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@capability: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalDevicePropertyModified ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@is_removed: 
+-@is_added: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalDeviceCondition ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@condition_name: 
+-@condition_detail: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalGlobalInterfaceLockAcquired ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@interface_name: 
+-@lock_owner: 
+-@num_locks: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalGlobalInterfaceLockReleased ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@interface_name: 
+-@lock_owner: 
+-@num_locks: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalInterfaceLockAcquired ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@interface_name: 
+-@lock_owner: 
+-@num_locks: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalInterfaceLockReleased ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@interface_name: 
+-@lock_owner: 
+-@num_locks: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalSingletonDeviceAdded ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@properties: 
+-
+-
+-<!-- ##### USER_FUNCTION LibHalSingletonDeviceRemoved ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@properties: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_new ##### -->
+-<para>
+-
+-</para>
+-
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_cache ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@use_cache: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_dbus_connection ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@conn: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_get_dbus_connection ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_user_data ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@user_data: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_get_user_data ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_device_added ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_device_removed ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_device_new_capability ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_device_lost_capability ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_device_property_modified ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_device_condition ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_global_interface_lock_acquired ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_global_interface_lock_released ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_interface_lock_acquired ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_interface_lock_released ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_singleton_device_added ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_set_singleton_device_removed ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@callback: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_init ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_shutdown ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_free ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ctx_init_direct ##### -->
+-<para>
+-
+-</para>
+-
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_get_all_devices ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@num_devices: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_exists ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_print ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_property_exists ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_property_string ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_property_int ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_property_uint64 ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_property_double ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_property_bool ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_property_strlist ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_set_property_string ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_set_property_int ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_set_property_uint64 ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_set_property_double ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_set_property_bool ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_property_strlist_append ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_property_strlist_prepend ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_property_strlist_remove_index ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@idx: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_property_strlist_remove ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@value: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_remove_property ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_property_type ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@key: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### STRUCT LibHalChangeSet_s ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### TYPEDEF LibHalChangeSet ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### FUNCTION libhal_device_new_changeset ##### -->
+-<para>
+-
+-</para>
+-
+-@udi: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_changeset_set_property_string ##### -->
+-<para>
+-
+-</para>
+-
+-@changeset: 
+-@key: 
+-@value: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_changeset_set_property_int ##### -->
+-<para>
+-
+-</para>
+-
+-@changeset: 
+-@key: 
+-@value: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_changeset_set_property_uint64 ##### -->
+-<para>
+-
+-</para>
+-
+-@changeset: 
+-@key: 
+-@value: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_changeset_set_property_double ##### -->
+-<para>
+-
+-</para>
+-
+-@changeset: 
+-@key: 
+-@value: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_changeset_set_property_bool ##### -->
+-<para>
+-
+-</para>
+-
+-@changeset: 
+-@key: 
+-@value: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_changeset_set_property_strlist ##### -->
+-<para>
+-
+-</para>
+-
+-@changeset: 
+-@key: 
+-@value: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_commit_changeset ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@changeset: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_free_changeset ##### -->
+-<para>
+-
+-</para>
+-
+-@changeset: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_get_all_properties ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_get_all_devices_with_properties ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@out_num_devices: 
+-@out_udi: 
+-@out_properties: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_property_set_sort ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-
+-
+-<!-- ##### FUNCTION libhal_free_property_set ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-
+-
+-<!-- ##### FUNCTION libhal_property_set_get_num_elems ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ps_get_type ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-@key: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ps_get_string ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-@key: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ps_get_int32 ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-@key: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ps_get_uint64 ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-@key: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ps_get_double ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-@key: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_ps_get_bool ##### -->
+-<para>
+-
+-</para>
+-
+-@set: 
+-@key: 
+-@Returns: 
+-
+-
+-<!-- ##### TYPEDEF LibHalPropertySetIterator ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### FUNCTION libhal_psi_init ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@set: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_has_more ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_next ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_type ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_key ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_string ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_int ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_uint64 ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_double ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_bool ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_psi_get_strlist ##### -->
+-<para>
+-
+-</para>
+-
+-@iter: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_string_array_length ##### -->
+-<para>
+-
+-</para>
+-
+-@str_array: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_free_string_array ##### -->
+-<para>
+-
+-</para>
+-
+-@str_array: 
+-
+-
+-<!-- ##### FUNCTION libhal_free_string ##### -->
+-<para>
+-
+-</para>
+-
+-@str: 
+-
+-
+-<!-- ##### FUNCTION libhal_new_device ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_commit_to_gdl ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@temp_udi: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_remove_device ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_merge_properties ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@target_udi: 
+-@source_udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_matches ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi1: 
+-@udi2: 
+-@property_namespace: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_manager_find_device_string_match ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@key: 
+-@value: 
+-@num_devices: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_add_capability ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@capability: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_query_capability ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@capability: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_find_device_by_capability ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@capability: 
+-@num_devices: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_property_watch_all ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_add_property_watch ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_remove_property_watch ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_lock ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@reason_to_lock: 
+-@reason_why_locked: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_unlock ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_rescan ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_reprobe ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_emit_condition ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@condition_name: 
+-@condition_details: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_claim_interface ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@interface_name: 
+-@introspection_xml: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_addon_is_ready ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_singleton_addon_is_ready ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@command_line: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_acquire_interface_lock ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@interface: 
+-@exclusive: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_release_interface_lock ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@interface: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_acquire_global_interface_lock ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@interface: 
+-@exclusive: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_release_global_interface_lock ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@interface: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_is_caller_locked_out ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@interface: 
+-@caller: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_is_locked_by_others ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@interface: 
+-@error: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_device_is_caller_privileged ##### -->
+-<para>
+-
+-</para>
+-
+-@ctx: 
+-@udi: 
+-@action: 
+-@caller: 
+-@error: 
+-@Returns: 
+-
+-
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/doc/api/libhal/tmpl/uthash.sgml work/main.d/hal-0.5.13/doc/api/libhal/tmpl/uthash.sgml
+--- tmp/hal-0.5.13/doc/api/libhal/tmpl/uthash.sgml	2009-07-15 04:09:29.000000000 -0300
++++ work/main.d/hal-0.5.13/doc/api/libhal/tmpl/uthash.sgml	1969-12-31 21:00:00.000000000 -0300
+@@ -1,428 +0,0 @@
+-<!-- ##### SECTION Title ##### -->
+-uthash
+-
+-<!-- ##### SECTION Short_Description ##### -->
+-
+-
+-<!-- ##### SECTION Long_Description ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### SECTION See_Also ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### SECTION Stability_Level ##### -->
+-
+-
+-<!-- ##### MACRO uthash_fatal ##### -->
+-<para>
+-
+-</para>
+-
+-@msg: 
+-
+-
+-<!-- ##### MACRO uthash_bkt_malloc ##### -->
+-<para>
+-
+-</para>
+-
+-@sz: 
+-
+-
+-<!-- ##### MACRO uthash_bkt_free ##### -->
+-<para>
+-
+-</para>
+-
+-@ptr: 
+-
+-
+-<!-- ##### MACRO uthash_tbl_malloc ##### -->
+-<para>
+-
+-</para>
+-
+-@sz: 
+-
+-
+-<!-- ##### MACRO uthash_tbl_free ##### -->
+-<para>
+-
+-</para>
+-
+-@ptr: 
+-
+-
+-<!-- ##### MACRO uthash_noexpand_fyi ##### -->
+-<para>
+-
+-</para>
+-
+-@tbl: 
+-
+-
+-<!-- ##### MACRO uthash_expand_fyi ##### -->
+-<para>
+-
+-</para>
+-
+-@tbl: 
+-
+-
+-<!-- ##### MACRO HASH_INITIAL_NUM_BUCKETS ##### -->
+-<para>
+-
+-</para>
+-
+-
+-
+-<!-- ##### MACRO HASH_BKT_CAPACITY_THRESH ##### -->
+-<para>
+-
+-</para>
+-
+-
+-
+-<!-- ##### MACRO HASH_FIND ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@keyptr: 
+-@keylen_in: 
+-@out: 
+-
+-
+-<!-- ##### MACRO HASH_ADD ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@fieldname: 
+-@keylen_in: 
+-@add: 
+-
+-
+-<!-- ##### MACRO HASH_ADD_KEYPTR ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@keyptr: 
+-@keylen_in: 
+-@add: 
+-
+-
+-<!-- ##### MACRO HASH_DELETE ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@delptr: 
+-
+-
+-<!-- ##### MACRO HASH_FIND_STR ##### -->
+-<para>
+-
+-</para>
+-
+-@head: 
+-@findstr: 
+-@out: 
+-
+-
+-<!-- ##### MACRO HASH_ADD_STR ##### -->
+-<para>
+-
+-</para>
+-
+-@head: 
+-@strfield: 
+-@add: 
+-
+-
+-<!-- ##### MACRO HASH_FIND_INT ##### -->
+-<para>
+-
+-</para>
+-
+-@head: 
+-@findint: 
+-@out: 
+-
+-
+-<!-- ##### MACRO HASH_ADD_INT ##### -->
+-<para>
+-
+-</para>
+-
+-@head: 
+-@intfield: 
+-@add: 
+-
+-
+-<!-- ##### MACRO HASH_DEL ##### -->
+-<para>
+-
+-</para>
+-
+-@head: 
+-@delptr: 
+-
+-
+-<!-- ##### MACRO HASH_OOPS ##### -->
+-<para>
+-
+-</para>
+-
+-@...: 
+-
+-
+-<!-- ##### MACRO HASH_FSCK ##### -->
+-<para>
+-
+-</para>
+-
+-@head: 
+-
+-
+-<!-- ##### MACRO HASH_EMIT_KEY ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@keyptr: 
+-@fieldlen: 
+-
+-
+-<!-- ##### MACRO HASH_FCN ##### -->
+-<para>
+-
+-</para>
+-
+-
+-
+-<!-- ##### MACRO HASH_BER ##### -->
+-<para>
+-
+-</para>
+-
+-@key: 
+-@keylen: 
+-@num_bkts: 
+-@bkt: 
+-@i: 
+-@j: 
+-@k: 
+-
+-
+-<!-- ##### MACRO HASH_SAX ##### -->
+-<para>
+-
+-</para>
+-
+-@key: 
+-@keylen: 
+-@num_bkts: 
+-@bkt: 
+-@i: 
+-@j: 
+-@k: 
+-
+-
+-<!-- ##### MACRO HASH_FNV ##### -->
+-<para>
+-
+-</para>
+-
+-@key: 
+-@keylen: 
+-@num_bkts: 
+-@bkt: 
+-@i: 
+-@j: 
+-@k: 
+-
+-
+-<!-- ##### MACRO HASH_OAT ##### -->
+-<para>
+-
+-</para>
+-
+-@key: 
+-@keylen: 
+-@num_bkts: 
+-@bkt: 
+-@i: 
+-@j: 
+-@k: 
+-
+-
+-<!-- ##### MACRO HASH_JEN_MIX ##### -->
+-<para>
+-
+-</para>
+-
+-@a: 
+-@b: 
+-@c: 
+-
+-
+-<!-- ##### MACRO HASH_JEN ##### -->
+-<para>
+-
+-</para>
+-
+-@key: 
+-@keylen: 
+-@num_bkts: 
+-@bkt: 
+-@i: 
+-@j: 
+-@k: 
+-
+-
+-<!-- ##### MACRO HASH_JSW ##### -->
+-<para>
+-
+-</para>
+-
+-@key: 
+-@keylen: 
+-@num_bkts: 
+-@bkt: 
+-@i: 
+-@j: 
+-@k: 
+-
+-
+-<!-- ##### MACRO HASH_KEYCMP ##### -->
+-<para>
+-
+-</para>
+-
+-@a: 
+-@b: 
+-@len: 
+-
+-
+-<!-- ##### MACRO HASH_FIND_IN_BKT ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@keyptr: 
+-@keylen_in: 
+-@out: 
+-
+-
+-<!-- ##### MACRO HASH_ADD_TO_BKT ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@add: 
+-
+-
+-<!-- ##### MACRO HASH_DEL_IN_BKT ##### -->
+-<para>
+-
+-</para>
+-
+-@hh: 
+-@head: 
+-@delptr: 
+-
+-
+-<!-- ##### MACRO HASH_EXPAND_BUCKETS ##### -->
+-<para>
+-
+-</para>
+-
+-@tbl: 
+-
+-
+-<!-- ##### MACRO HASH_SORT ##### -->
+-<para>
+-
+-</para>
+-
+-@head: 
+-@cmpfcn: 
+-
+-
+-<!-- ##### STRUCT UT_hash_bucket ##### -->
+-<para>
+-
+-</para>
+-
+-@hh_head: 
+-
+-<!-- ##### STRUCT UT_hash_table ##### -->
+-<para>
+-
+-</para>
+-
+-@buckets: 
+-@noexpand: 
+-@hash_q: 
+-@tail: 
+-@name: 
+-@hho: 
+-@key: 
+-@keylen: 
+-@i: 
+-@j: 
+-@k: 
+-@new_buckets: 
+-@newbkt: 
+-@hh: 
+-@hh_nxt: 
+-@bkt_ideal: 
+-@sum_of_deltas: 
+-@new_hash_q: 
+-@looping: 
+-@nmerges: 
+-@insize: 
+-@psize: 
+-@qsize: 
+-@p: 
+-@q: 
+-@e: 
+-@list: 
+-@tale: 
+-
+-<!-- ##### STRUCT UT_hash_handle ##### -->
+-<para>
+-
+-</para>
+-
+-@tbl: 
+-@elmt: 
+-@prev: 
+-@next: 
+-@hh_prev: 
+-@hh_next: 
+-@key: 
+-@keylen: 
+-
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/doc/api/libhal/version.xml work/main.d/hal-0.5.13/doc/api/libhal/version.xml
+--- tmp/hal-0.5.13/doc/api/libhal/version.xml	2009-07-15 04:03:40.000000000 -0300
++++ work/main.d/hal-0.5.13/doc/api/libhal/version.xml	1969-12-31 21:00:00.000000000 -0300
+@@ -1 +0,0 @@
+-0.5.13
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/doc/api/libhal-storage/tmpl/libhal-storage.sgml work/main.d/hal-0.5.13/doc/api/libhal-storage/tmpl/libhal-storage.sgml
+--- tmp/hal-0.5.13/doc/api/libhal-storage/tmpl/libhal-storage.sgml	2009-07-15 04:09:29.000000000 -0300
++++ work/main.d/hal-0.5.13/doc/api/libhal-storage/tmpl/libhal-storage.sgml	1969-12-31 21:00:00.000000000 -0300
+@@ -1,744 +0,0 @@
+-<!-- ##### SECTION Title ##### -->
+-libhal-storage
+-
+-<!-- ##### SECTION Short_Description ##### -->
+-
+-
+-<!-- ##### SECTION Long_Description ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### SECTION See_Also ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### SECTION Stability_Level ##### -->
+-
+-
+-<!-- ##### STRUCT LibHalDrive_s ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### TYPEDEF LibHalDrive ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### STRUCT LibHalVolume_s ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### TYPEDEF LibHalVolume ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### STRUCT LibHalStoragePolicy_s ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### TYPEDEF LibHalStoragePolicy ##### -->
+-<para>
+-
+-</para>
+-
+-
+-<!-- ##### ENUM LibHalStoragePolicyIcon ##### -->
+-<para>
+-
+-</para>
+-
+-@LIBHAL_STORAGE_ICON_DRIVE_REMOVABLE_DISK: 
+-@LIBHAL_STORAGE_ICON_DRIVE_REMOVABLE_DISK_IDE: 
+-@LIBHAL_STORAGE_ICON_DRIVE_REMOVABLE_DISK_SCSI: 
+-@LIBHAL_STORAGE_ICON_DRIVE_REMOVABLE_DISK_USB: 
+-@LIBHAL_STORAGE_ICON_DRIVE_REMOVABLE_DISK_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_DRIVE_DISK: 
+-@LIBHAL_STORAGE_ICON_DRIVE_DISK_IDE: 
+-@LIBHAL_STORAGE_ICON_DRIVE_DISK_SCSI: 
+-@LIBHAL_STORAGE_ICON_DRIVE_DISK_USB: 
+-@LIBHAL_STORAGE_ICON_DRIVE_DISK_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_DRIVE_CDROM: 
+-@LIBHAL_STORAGE_ICON_DRIVE_CDROM_IDE: 
+-@LIBHAL_STORAGE_ICON_DRIVE_CDROM_SCSI: 
+-@LIBHAL_STORAGE_ICON_DRIVE_CDROM_USB: 
+-@LIBHAL_STORAGE_ICON_DRIVE_CDROM_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_DRIVE_FLOPPY: 
+-@LIBHAL_STORAGE_ICON_DRIVE_FLOPPY_IDE: 
+-@LIBHAL_STORAGE_ICON_DRIVE_FLOPPY_SCSI: 
+-@LIBHAL_STORAGE_ICON_DRIVE_FLOPPY_USB: 
+-@LIBHAL_STORAGE_ICON_DRIVE_FLOPPY_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_DRIVE_TAPE: 
+-@LIBHAL_STORAGE_ICON_DRIVE_COMPACT_FLASH: 
+-@LIBHAL_STORAGE_ICON_DRIVE_MEMORY_STICK: 
+-@LIBHAL_STORAGE_ICON_DRIVE_SMART_MEDIA: 
+-@LIBHAL_STORAGE_ICON_DRIVE_SD_MMC: 
+-@LIBHAL_STORAGE_ICON_DRIVE_CAMERA: 
+-@LIBHAL_STORAGE_ICON_DRIVE_PORTABLE_AUDIO_PLAYER: 
+-@LIBHAL_STORAGE_ICON_DRIVE_ZIP: 
+-@LIBHAL_STORAGE_ICON_DRIVE_JAZ: 
+-@LIBHAL_STORAGE_ICON_DRIVE_FLASH_KEY: 
+-@LIBHAL_STORAGE_ICON_VOLUME_REMOVABLE_DISK: 
+-@LIBHAL_STORAGE_ICON_VOLUME_REMOVABLE_DISK_IDE: 
+-@LIBHAL_STORAGE_ICON_VOLUME_REMOVABLE_DISK_SCSI: 
+-@LIBHAL_STORAGE_ICON_VOLUME_REMOVABLE_DISK_USB: 
+-@LIBHAL_STORAGE_ICON_VOLUME_REMOVABLE_DISK_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_VOLUME_DISK: 
+-@LIBHAL_STORAGE_ICON_VOLUME_DISK_IDE: 
+-@LIBHAL_STORAGE_ICON_VOLUME_DISK_SCSI: 
+-@LIBHAL_STORAGE_ICON_VOLUME_DISK_USB: 
+-@LIBHAL_STORAGE_ICON_VOLUME_DISK_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_VOLUME_CDROM: 
+-@LIBHAL_STORAGE_ICON_VOLUME_CDROM_IDE: 
+-@LIBHAL_STORAGE_ICON_VOLUME_CDROM_SCSI: 
+-@LIBHAL_STORAGE_ICON_VOLUME_CDROM_USB: 
+-@LIBHAL_STORAGE_ICON_VOLUME_CDROM_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_VOLUME_FLOPPY: 
+-@LIBHAL_STORAGE_ICON_VOLUME_FLOPPY_IDE: 
+-@LIBHAL_STORAGE_ICON_VOLUME_FLOPPY_SCSI: 
+-@LIBHAL_STORAGE_ICON_VOLUME_FLOPPY_USB: 
+-@LIBHAL_STORAGE_ICON_VOLUME_FLOPPY_IEEE1394: 
+-@LIBHAL_STORAGE_ICON_VOLUME_TAPE: 
+-@LIBHAL_STORAGE_ICON_VOLUME_COMPACT_FLASH: 
+-@LIBHAL_STORAGE_ICON_VOLUME_MEMORY_STICK: 
+-@LIBHAL_STORAGE_ICON_VOLUME_SMART_MEDIA: 
+-@LIBHAL_STORAGE_ICON_VOLUME_SD_MMC: 
+-@LIBHAL_STORAGE_ICON_VOLUME_CAMERA: 
+-@LIBHAL_STORAGE_ICON_VOLUME_PORTABLE_AUDIO_PLAYER: 
+-@LIBHAL_STORAGE_ICON_VOLUME_ZIP: 
+-@LIBHAL_STORAGE_ICON_VOLUME_JAZ: 
+-@LIBHAL_STORAGE_ICON_VOLUME_FLASH_KEY: 
+-@LIBHAL_STORAGE_ICON_DISC_CDROM: 
+-@LIBHAL_STORAGE_ICON_DISC_CDR: 
+-@LIBHAL_STORAGE_ICON_DISC_CDRW: 
+-@LIBHAL_STORAGE_ICON_DISC_DVDROM: 
+-@LIBHAL_STORAGE_ICON_DISC_DVDRAM: 
+-@LIBHAL_STORAGE_ICON_DISC_DVDR: 
+-@LIBHAL_STORAGE_ICON_DISC_DVDRW: 
+-@LIBHAL_STORAGE_ICON_DISC_DVDPLUSR: 
+-@LIBHAL_STORAGE_ICON_DISC_DVDPLUSRW: 
+-@LIBHAL_STORAGE_ICON_DISC_DVDPLUSRWDL: 
+-@LIBHAL_STORAGE_ICON_DISC_BDROM: 
+-@LIBHAL_STORAGE_ICON_DISC_BDR: 
+-@LIBHAL_STORAGE_ICON_DISC_BDRE: 
+-@LIBHAL_STORAGE_ICON_DISC_HDDVDROM: 
+-@LIBHAL_STORAGE_ICON_DISC_HDDVDR: 
+-@LIBHAL_STORAGE_ICON_DISC_HDDVDRW: 
+-@LIBHAL_STORAGE_ICON_DISC_MRW: 
+-@LIBHAL_STORAGE_ICON_DISC_MRWW: 
+-@LIBHAL_STORAGE_ICON_DISC_MO: 
+-
+-<!-- ##### STRUCT LibHalStoragePolicyIconPair ##### -->
+-<para>
+-
+-</para>
+-
+-@icon: 
+-@icon_path: 
+-
+-<!-- ##### FUNCTION libhal_storage_policy_new ##### -->
+-<para>
+-
+-</para>
+-
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_from_device_file ##### -->
+-<para>
+-
+-</para>
+-
+-@hal_ctx: 
+-@device_file: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_free ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_is_hotpluggable ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_uses_removable_media ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_is_media_detected ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_is_media_detection_automatic ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_size ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_media_size ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_partition_scheme ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_no_partitions_hint ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_requires_eject ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_type ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_bus ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_cdrom_caps ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_device_major ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_device_minor ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_type_textual ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_device_file ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_udi ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_serial ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_firmware_version ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_model ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_vendor ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_physical_device_udi ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_dedicated_icon_drive ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_get_dedicated_icon_volume ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_policy_compute_display_name ##### -->
+-<para>
+-
+-</para>
+-
+-@drive: 
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_drive_policy_default_get_mount_root ##### -->
+-<para>
+-
+-</para>
+-
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_from_device_file ##### -->
+-<para>
+-
+-</para>
+-
+-@hal_ctx: 
+-@device_file: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_from_mount_point ##### -->
+-<para>
+-
+-</para>
+-
+-@hal_ctx: 
+-@mount_point: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_free ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_size ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_disc_capacity ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_udi ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_device_file ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_device_major ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_device_minor ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_fstype ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_fsversion ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_fsusage ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_is_mounted ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_is_mounted_read_only ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_is_partition ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_is_disc ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_scheme ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_type ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_label ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_uuid ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_flags ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_number ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_start_offset ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_partition_media_size ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_label ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_mount_point ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_uuid ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_storage_device_udi ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_crypto_get_backing_volume_udi ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_crypto_get_clear_volume_udi ##### -->
+-<para>
+-
+-</para>
+-
+-@hal_ctx: 
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_disc_has_audio ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_disc_has_data ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_disc_is_blank ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_disc_is_rewritable ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_disc_is_appendable ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_disc_type ##### -->
+-<para>
+-
+-</para>
+-
+-@volume: 
+-@Returns: 
+-
+-
+-<!-- ##### FUNCTION libhal_volume_get_msdos_part_table_type ##### -->
+-<para>
+-
+-</para>
+-
+-@Returns: 
+-
+-
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/doc/api/libhal-storage/version.xml work/main.d/hal-0.5.13/doc/api/libhal-storage/version.xml
+--- tmp/hal-0.5.13/doc/api/libhal-storage/version.xml	2009-07-15 04:03:40.000000000 -0300
++++ work/main.d/hal-0.5.13/doc/api/libhal-storage/version.xml	1969-12-31 21:00:00.000000000 -0300
+@@ -1 +0,0 @@
+-0.5.13
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/doc/spec/hal-spec.xml.in work/main.d/hal-0.5.13/doc/spec/hal-spec.xml.in
+--- tmp/hal-0.5.13/doc/spec/hal-spec.xml.in	2009-07-15 04:03:40.000000000 -0300
++++ work/main.d/hal-0.5.13/doc/spec/hal-spec.xml.in	1969-12-31 21:00:00.000000000 -0300
+@@ -1,29 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+-
+-<book id="index">
+-  <bookinfo>
+-    <title>HAL 0.5.13 Specification</title>
+-    <releaseinfo>Version 0.5.13</releaseinfo>
+-    <date>March 24th, 2007</date> <!-- Update this manually -->
+-    <authorgroup>
+-      <author>
+-        <firstname>David</firstname>
+-        <surname>Zeuthen</surname>
+-        <affiliation>
+-          <address>
+-           <email>david@fubar.dk</email>
+-          </address>
+-        </affiliation>
+-      </author>
+-    </authorgroup>
+-  </bookinfo>
+-
+-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="hal-spec-introduction.xml" />
+-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="hal-spec-fdi-files.xml" />
+-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="hal-spec-access-control.xml" />
+-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="hal-spec-locking.xml" />
+-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="hal-spec-properties.xml" />
+-  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="hal-spec-interfaces.xml" />
+-  
+-</book>
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/hal.conf work/main.d/hal-0.5.13/hal.conf
+--- tmp/hal-0.5.13/hal.conf	2009-07-15 04:03:38.000000000 -0300
++++ work/main.d/hal-0.5.13/hal.conf	1969-12-31 21:00:00.000000000 -0300
+@@ -1,59 +0,0 @@
+-<!DOCTYPE busconfig PUBLIC
+- "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+- "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+-<busconfig>
+-
+-  <!-- This configuration file specifies the required security policies
+-       for the HAL to work. -->
+-
+-  <!-- Only root or user haldaemon can own the HAL service -->
+-  <policy user="haldaemon">
+-    <allow own="org.freedesktop.Hal"/>
+-  </policy>
+-  <policy user="root">
+-    <allow own="org.freedesktop.Hal"/>
+-  </policy>
+-
+-  <!-- Allow anyone to invoke methods on the Manager and Device interfaces -->
+-  <policy context="default">
+-    <allow send_destination="org.freedesktop.Hal"
+-           send_interface="org.freedesktop.DBus.Introspectable"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-           send_interface="org.freedesktop.DBus.Properties" />
+-
+-    <allow send_destination="org.freedesktop.Hal"
+-           send_interface="org.freedesktop.Hal.Device"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-           send_interface="org.freedesktop.Hal.Manager"/>
+-
+-    <allow send_destination="org.freedesktop.Hal"
+-           send_interface="org.freedesktop.Hal.Device.CPUFreq"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.DockStation"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.KillSwitch"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.KeyboardBacklight"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.LaptopPanel"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.Leds"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.LightSensor"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.Storage"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.Storage.Removable"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.SystemPowerManagement"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.Volume"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.Volume.Crypto"/>
+-    <allow send_destination="org.freedesktop.Hal"
+-    	   send_interface="org.freedesktop.Hal.Device.WakeOnLan"/>
+-
+-  </policy>
+-
+-</busconfig>
+-
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/hald/hald_marshal.c work/main.d/hal-0.5.13/hald/hald_marshal.c
+--- tmp/hal-0.5.13/hald/hald_marshal.c	2009-07-15 04:03:57.000000000 -0300
++++ work/main.d/hal-0.5.13/hald/hald_marshal.c	1969-12-31 21:00:00.000000000 -0300
+@@ -1,321 +0,0 @@
+-#include "hald_marshal.h"
+-
+-#include	<glib-object.h>
+-
+-
+-#ifdef G_ENABLE_DEBUG
+-#define g_marshal_value_peek_boolean(v)  g_value_get_boolean (v)
+-#define g_marshal_value_peek_char(v)     g_value_get_char (v)
+-#define g_marshal_value_peek_uchar(v)    g_value_get_uchar (v)
+-#define g_marshal_value_peek_int(v)      g_value_get_int (v)
+-#define g_marshal_value_peek_uint(v)     g_value_get_uint (v)
+-#define g_marshal_value_peek_long(v)     g_value_get_long (v)
+-#define g_marshal_value_peek_ulong(v)    g_value_get_ulong (v)
+-#define g_marshal_value_peek_int64(v)    g_value_get_int64 (v)
+-#define g_marshal_value_peek_uint64(v)   g_value_get_uint64 (v)
+-#define g_marshal_value_peek_enum(v)     g_value_get_enum (v)
+-#define g_marshal_value_peek_flags(v)    g_value_get_flags (v)
+-#define g_marshal_value_peek_float(v)    g_value_get_float (v)
+-#define g_marshal_value_peek_double(v)   g_value_get_double (v)
+-#define g_marshal_value_peek_string(v)   (char*) g_value_get_string (v)
+-#define g_marshal_value_peek_param(v)    g_value_get_param (v)
+-#define g_marshal_value_peek_boxed(v)    g_value_get_boxed (v)
+-#define g_marshal_value_peek_pointer(v)  g_value_get_pointer (v)
+-#define g_marshal_value_peek_object(v)   g_value_get_object (v)
+-#else /* !G_ENABLE_DEBUG */
+-/* WARNING: This code accesses GValues directly, which is UNSUPPORTED API.
+- *          Do not access GValues directly in your code. Instead, use the
+- *          g_value_get_*() functions
+- */
+-#define g_marshal_value_peek_boolean(v)  (v)->data[0].v_int
+-#define g_marshal_value_peek_char(v)     (v)->data[0].v_int
+-#define g_marshal_value_peek_uchar(v)    (v)->data[0].v_uint
+-#define g_marshal_value_peek_int(v)      (v)->data[0].v_int
+-#define g_marshal_value_peek_uint(v)     (v)->data[0].v_uint
+-#define g_marshal_value_peek_long(v)     (v)->data[0].v_long
+-#define g_marshal_value_peek_ulong(v)    (v)->data[0].v_ulong
+-#define g_marshal_value_peek_int64(v)    (v)->data[0].v_int64
+-#define g_marshal_value_peek_uint64(v)   (v)->data[0].v_uint64
+-#define g_marshal_value_peek_enum(v)     (v)->data[0].v_long
+-#define g_marshal_value_peek_flags(v)    (v)->data[0].v_ulong
+-#define g_marshal_value_peek_float(v)    (v)->data[0].v_float
+-#define g_marshal_value_peek_double(v)   (v)->data[0].v_double
+-#define g_marshal_value_peek_string(v)   (v)->data[0].v_pointer
+-#define g_marshal_value_peek_param(v)    (v)->data[0].v_pointer
+-#define g_marshal_value_peek_boxed(v)    (v)->data[0].v_pointer
+-#define g_marshal_value_peek_pointer(v)  (v)->data[0].v_pointer
+-#define g_marshal_value_peek_object(v)   (v)->data[0].v_pointer
+-#endif /* !G_ENABLE_DEBUG */
+-
+-
+-/* VOID:OBJECT,STRING,STRING (hald_marshal.list:1) */
+-void
+-hald_marshal_VOID__OBJECT_STRING_STRING (GClosure     *closure,
+-                                         GValue       *return_value G_GNUC_UNUSED,
+-                                         guint         n_param_values,
+-                                         const GValue *param_values,
+-                                         gpointer      invocation_hint G_GNUC_UNUSED,
+-                                         gpointer      marshal_data)
+-{
+-  typedef void (*GMarshalFunc_VOID__OBJECT_STRING_STRING) (gpointer     data1,
+-                                                           gpointer     arg_1,
+-                                                           gpointer     arg_2,
+-                                                           gpointer     arg_3,
+-                                                           gpointer     data2);
+-  register GMarshalFunc_VOID__OBJECT_STRING_STRING callback;
+-  register GCClosure *cc = (GCClosure*) closure;
+-  register gpointer data1, data2;
+-
+-  g_return_if_fail (n_param_values == 4);
+-
+-  if (G_CCLOSURE_SWAP_DATA (closure))
+-    {
+-      data1 = closure->data;
+-      data2 = g_value_peek_pointer (param_values + 0);
+-    }
+-  else
+-    {
+-      data1 = g_value_peek_pointer (param_values + 0);
+-      data2 = closure->data;
+-    }
+-  callback = (GMarshalFunc_VOID__OBJECT_STRING_STRING) (marshal_data ? marshal_data : cc->callback);
+-
+-  callback (data1,
+-            g_marshal_value_peek_object (param_values + 1),
+-            g_marshal_value_peek_string (param_values + 2),
+-            g_marshal_value_peek_string (param_values + 3),
+-            data2);
+-}
+-
+-/* VOID:STRING,STRING (hald_marshal.list:2) */
+-void
+-hald_marshal_VOID__STRING_STRING (GClosure     *closure,
+-                                  GValue       *return_value G_GNUC_UNUSED,
+-                                  guint         n_param_values,
+-                                  const GValue *param_values,
+-                                  gpointer      invocation_hint G_GNUC_UNUSED,
+-                                  gpointer      marshal_data)
+-{
+-  typedef void (*GMarshalFunc_VOID__STRING_STRING) (gpointer     data1,
+-                                                    gpointer     arg_1,
+-                                                    gpointer     arg_2,
+-                                                    gpointer     data2);
+-  register GMarshalFunc_VOID__STRING_STRING callback;
+-  register GCClosure *cc = (GCClosure*) closure;
+-  register gpointer data1, data2;
+-
+-  g_return_if_fail (n_param_values == 3);
+-
+-  if (G_CCLOSURE_SWAP_DATA (closure))
+-    {
+-      data1 = closure->data;
+-      data2 = g_value_peek_pointer (param_values + 0);
+-    }
+-  else
+-    {
+-      data1 = g_value_peek_pointer (param_values + 0);
+-      data2 = closure->data;
+-    }
+-  callback = (GMarshalFunc_VOID__STRING_STRING) (marshal_data ? marshal_data : cc->callback);
+-
+-  callback (data1,
+-            g_marshal_value_peek_string (param_values + 1),
+-            g_marshal_value_peek_string (param_values + 2),
+-            data2);
+-}
+-
+-/* VOID:STRING,BOOL,BOOL (hald_marshal.list:3) */
+-void
+-hald_marshal_VOID__STRING_BOOLEAN_BOOLEAN (GClosure     *closure,
+-                                           GValue       *return_value G_GNUC_UNUSED,
+-                                           guint         n_param_values,
+-                                           const GValue *param_values,
+-                                           gpointer      invocation_hint G_GNUC_UNUSED,
+-                                           gpointer      marshal_data)
+-{
+-  typedef void (*GMarshalFunc_VOID__STRING_BOOLEAN_BOOLEAN) (gpointer     data1,
+-                                                             gpointer     arg_1,
+-                                                             gboolean     arg_2,
+-                                                             gboolean     arg_3,
+-                                                             gpointer     data2);
+-  register GMarshalFunc_VOID__STRING_BOOLEAN_BOOLEAN callback;
+-  register GCClosure *cc = (GCClosure*) closure;
+-  register gpointer data1, data2;
+-
+-  g_return_if_fail (n_param_values == 4);
+-
+-  if (G_CCLOSURE_SWAP_DATA (closure))
+-    {
+-      data1 = closure->data;
+-      data2 = g_value_peek_pointer (param_values + 0);
+-    }
+-  else
+-    {
+-      data1 = g_value_peek_pointer (param_values + 0);
+-      data2 = closure->data;
+-    }
+-  callback = (GMarshalFunc_VOID__STRING_BOOLEAN_BOOLEAN) (marshal_data ? marshal_data : cc->callback);
+-
+-  callback (data1,
+-            g_marshal_value_peek_string (param_values + 1),
+-            g_marshal_value_peek_boolean (param_values + 2),
+-            g_marshal_value_peek_boolean (param_values + 3),
+-            data2);
+-}
+-
+-/* VOID:STRING,BOOL (hald_marshal.list:4) */
+-void
+-hald_marshal_VOID__STRING_BOOLEAN (GClosure     *closure,
+-                                   GValue       *return_value G_GNUC_UNUSED,
+-                                   guint         n_param_values,
+-                                   const GValue *param_values,
+-                                   gpointer      invocation_hint G_GNUC_UNUSED,
+-                                   gpointer      marshal_data)
+-{
+-  typedef void (*GMarshalFunc_VOID__STRING_BOOLEAN) (gpointer     data1,
+-                                                     gpointer     arg_1,
+-                                                     gboolean     arg_2,
+-                                                     gpointer     data2);
+-  register GMarshalFunc_VOID__STRING_BOOLEAN callback;
+-  register GCClosure *cc = (GCClosure*) closure;
+-  register gpointer data1, data2;
+-
+-  g_return_if_fail (n_param_values == 3);
+-
+-  if (G_CCLOSURE_SWAP_DATA (closure))
+-    {
+-      data1 = closure->data;
+-      data2 = g_value_peek_pointer (param_values + 0);
+-    }
+-  else
+-    {
+-      data1 = g_value_peek_pointer (param_values + 0);
+-      data2 = closure->data;
+-    }
+-  callback = (GMarshalFunc_VOID__STRING_BOOLEAN) (marshal_data ? marshal_data : cc->callback);
+-
+-  callback (data1,
+-            g_marshal_value_peek_string (param_values + 1),
+-            g_marshal_value_peek_boolean (param_values + 2),
+-            data2);
+-}
+-
+-/* VOID:STRING (hald_marshal.list:5) */
+-
+-/* VOID:OBJECT,BOOL (hald_marshal.list:6) */
+-void
+-hald_marshal_VOID__OBJECT_BOOLEAN (GClosure     *closure,
+-                                   GValue       *return_value G_GNUC_UNUSED,
+-                                   guint         n_param_values,
+-                                   const GValue *param_values,
+-                                   gpointer      invocation_hint G_GNUC_UNUSED,
+-                                   gpointer      marshal_data)
+-{
+-  typedef void (*GMarshalFunc_VOID__OBJECT_BOOLEAN) (gpointer     data1,
+-                                                     gpointer     arg_1,
+-                                                     gboolean     arg_2,
+-                                                     gpointer     data2);
+-  register GMarshalFunc_VOID__OBJECT_BOOLEAN callback;
+-  register GCClosure *cc = (GCClosure*) closure;
+-  register gpointer data1, data2;
+-
+-  g_return_if_fail (n_param_values == 3);
+-
+-  if (G_CCLOSURE_SWAP_DATA (closure))
+-    {
+-      data1 = closure->data;
+-      data2 = g_value_peek_pointer (param_values + 0);
+-    }
+-  else
+-    {
+-      data1 = g_value_peek_pointer (param_values + 0);
+-      data2 = closure->data;
+-    }
+-  callback = (GMarshalFunc_VOID__OBJECT_BOOLEAN) (marshal_data ? marshal_data : cc->callback);
+-
+-  callback (data1,
+-            g_marshal_value_peek_object (param_values + 1),
+-            g_marshal_value_peek_boolean (param_values + 2),
+-            data2);
+-}
+-
+-/* VOID:OBJECT,STRING,BOOL,BOOL (hald_marshal.list:7) */
+-void
+-hald_marshal_VOID__OBJECT_STRING_BOOLEAN_BOOLEAN (GClosure     *closure,
+-                                                  GValue       *return_value G_GNUC_UNUSED,
+-                                                  guint         n_param_values,
+-                                                  const GValue *param_values,
+-                                                  gpointer      invocation_hint G_GNUC_UNUSED,
+-                                                  gpointer      marshal_data)
+-{
+-  typedef void (*GMarshalFunc_VOID__OBJECT_STRING_BOOLEAN_BOOLEAN) (gpointer     data1,
+-                                                                    gpointer     arg_1,
+-                                                                    gpointer     arg_2,
+-                                                                    gboolean     arg_3,
+-                                                                    gboolean     arg_4,
+-                                                                    gpointer     data2);
+-  register GMarshalFunc_VOID__OBJECT_STRING_BOOLEAN_BOOLEAN callback;
+-  register GCClosure *cc = (GCClosure*) closure;
+-  register gpointer data1, data2;
+-
+-  g_return_if_fail (n_param_values == 5);
+-
+-  if (G_CCLOSURE_SWAP_DATA (closure))
+-    {
+-      data1 = closure->data;
+-      data2 = g_value_peek_pointer (param_values + 0);
+-    }
+-  else
+-    {
+-      data1 = g_value_peek_pointer (param_values + 0);
+-      data2 = closure->data;
+-    }
+-  callback = (GMarshalFunc_VOID__OBJECT_STRING_BOOLEAN_BOOLEAN) (marshal_data ? marshal_data : cc->callback);
+-
+-  callback (data1,
+-            g_marshal_value_peek_object (param_values + 1),
+-            g_marshal_value_peek_string (param_values + 2),
+-            g_marshal_value_peek_boolean (param_values + 3),
+-            g_marshal_value_peek_boolean (param_values + 4),
+-            data2);
+-}
+-
+-/* VOID:OBJECT,STRING (hald_marshal.list:8) */
+-void
+-hald_marshal_VOID__OBJECT_STRING (GClosure     *closure,
+-                                  GValue       *return_value G_GNUC_UNUSED,
+-                                  guint         n_param_values,
+-                                  const GValue *param_values,
+-                                  gpointer      invocation_hint G_GNUC_UNUSED,
+-                                  gpointer      marshal_data)
+-{
+-  typedef void (*GMarshalFunc_VOID__OBJECT_STRING) (gpointer     data1,
+-                                                    gpointer     arg_1,
+-                                                    gpointer     arg_2,
+-                                                    gpointer     data2);
+-  register GMarshalFunc_VOID__OBJECT_STRING callback;
+-  register GCClosure *cc = (GCClosure*) closure;
+-  register gpointer data1, data2;
+-
+-  g_return_if_fail (n_param_values == 3);
+-
+-  if (G_CCLOSURE_SWAP_DATA (closure))
+-    {
+-      data1 = closure->data;
+-      data2 = g_value_peek_pointer (param_values + 0);
+-    }
+-  else
+-    {
+-      data1 = g_value_peek_pointer (param_values + 0);
+-      data2 = closure->data;
+-    }
+-  callback = (GMarshalFunc_VOID__OBJECT_STRING) (marshal_data ? marshal_data : cc->callback);
+-
+-  callback (data1,
+-            g_marshal_value_peek_object (param_values + 1),
+-            g_marshal_value_peek_string (param_values + 2),
+-            data2);
+-}
+-
+-/* VOID:VOID (hald_marshal.list:9) */
+-
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/hal-0.5.13/hald/hald_marshal.h work/main.d/hal-0.5.13/hald/hald_marshal.h
+--- tmp/hal-0.5.13/hald/hald_marshal.h	2009-07-15 04:03:57.000000000 -0300
++++ work/main.d/hal-0.5.13/hald/hald_marshal.h	1969-12-31 21:00:00.000000000 -0300
+@@ -1,78 +0,0 @@
+-
+-#ifndef __hald_marshal_MARSHAL_H__
+-#define __hald_marshal_MARSHAL_H__
+-
+-#include	<glib-object.h>
+-
+-G_BEGIN_DECLS
+-
+-/* VOID:OBJECT,STRING,STRING (hald_marshal.list:1) */
+-extern void hald_marshal_VOID__OBJECT_STRING_STRING (GClosure     *closure,
+-                                                     GValue       *return_value,
+-                                                     guint         n_param_values,
+-                                                     const GValue *param_values,
+-                                                     gpointer      invocation_hint,
+-                                                     gpointer      marshal_data);
+-
+-/* VOID:STRING,STRING (hald_marshal.list:2) */
+-extern void hald_marshal_VOID__STRING_STRING (GClosure     *closure,
+-                                              GValue       *return_value,
+-                                              guint         n_param_values,
+-                                              const GValue *param_values,
+-                                              gpointer      invocation_hint,
+-                                              gpointer      marshal_data);
+-
+-/* VOID:STRING,BOOL,BOOL (hald_marshal.list:3) */
+-extern void hald_marshal_VOID__STRING_BOOLEAN_BOOLEAN (GClosure     *closure,
+-                                                       GValue       *return_value,
+-                                                       guint         n_param_values,
+-                                                       const GValue *param_values,
+-                                                       gpointer      invocation_hint,
+-                                                       gpointer      marshal_data);
+-#define hald_marshal_VOID__STRING_BOOL_BOOL	hald_marshal_VOID__STRING_BOOLEAN_BOOLEAN
+-
+-/* VOID:STRING,BOOL (hald_marshal.list:4) */
+-extern void hald_marshal_VOID__STRING_BOOLEAN (GClosure     *closure,
+-                                               GValue       *return_value,
+-                                               guint         n_param_values,
+-                                               const GValue *param_values,
+-                                               gpointer      invocation_hint,
+-                                               gpointer      marshal_data);
+-#define hald_marshal_VOID__STRING_BOOL	hald_marshal_VOID__STRING_BOOLEAN
+-
+-/* VOID:STRING (hald_marshal.list:5) */
+-#define hald_marshal_VOID__STRING	g_cclosure_marshal_VOID__STRING
+-
+-/* VOID:OBJECT,BOOL (hald_marshal.list:6) */
+-extern void hald_marshal_VOID__OBJECT_BOOLEAN (GClosure     *closure,
+-                                               GValue       *return_value,
+-                                               guint         n_param_values,
+-                                               const GValue *param_values,
+-                                               gpointer      invocation_hint,
+-                                               gpointer      marshal_data);
+-#define hald_marshal_VOID__OBJECT_BOOL	hald_marshal_VOID__OBJECT_BOOLEAN
+-
+-/* VOID:OBJECT,STRING,BOOL,BOOL (hald_marshal.list:7) */
+-extern void hald_marshal_VOID__OBJECT_STRING_BOOLEAN_BOOLEAN (GClosure     *closure,
+-                                                              GValue       *return_value,
+-                                                              guint         n_param_values,
+-                                                              const GValue *param_values,
+-                                                              gpointer      invocation_hint,
+-                                                              gpointer      marshal_data);
+-#define hald_marshal_VOID__OBJECT_STRING_BOOL_BOOL	hald_marshal_VOID__OBJECT_STRING_BOOLEAN_BOOLEAN
+-
+-/* VOID:OBJECT,STRING (hald_marshal.list:8) */
+-extern void hald_marshal_VOID__OBJECT_STRING (GClosure     *closure,
+-                                              GValue       *return_value,
+-                                              guint         n_param_values,
+-                                              const GValue *param_values,
+-                                              gpointer      invocation_hint,
+-                                              gpointer      marshal_data);
+-
+-/* VOID:VOID (hald_marshal.list:9) */
+-#define hald_marshal_VOID__VOID	g_cclosure_marshal_VOID__VOID
+-
+-G_END_DECLS
+-
+-#endif /* __hald_marshal_MARSHAL_H__ */
+-

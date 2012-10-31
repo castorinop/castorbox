@@ -1,0 +1,35 @@
+diff --speed-large-files --minimal -Nru tmp/xwelltris-1.0.1/src/Make.common.in work/main.d/xwelltris-1.0.1/src/Make.common.in
+--- xwelltris-1.0.1/src/Make.common.in	2003-02-21 08:40:33.000000000 -0300
++++ xwelltris-1.0.1/src/Make.common.in	2007-07-10 21:23:09.000000000 -0300
+@@ -8,12 +8,12 @@
+ SHELL = /bin/sh
+ 
+ # Installation target directories & other installation stuff
+-prefix = @prefix@
+-exec_prefix = @exec_prefix@
+-binprefix =
+-manprefix =
+-bindir = @bindir@
+-mandir = @mandir@/man1
++prefix = $(DESTDIR)/@prefix@
++exec_prefix = $(DESTDIR)/@exec_prefix@
++binprefix = $(DESTDIR)
++manprefix = $(DESTDIR)
++bindir = $(DESTDIR)/@bindir@
++mandir = $(DESTDIR)/@mandir@/man1
+ manext = 1
+ 
+ # Tools & program stuff
+@@ -31,9 +31,9 @@
+ INSM=@INSTALL@  -m 644
+ INSD=@INSTALL@ -d -m 755
+ INSOWN=@INSTALL@
+-INSTDIR=@prefix@/bin
+-INSTLIB=@prefix@/share/xwelltris
+-INSTMAN=@prefix@/man
++INSTDIR=$(DESTDIR)/@prefix@/bin
++INSTLIB=$(DESTDIR)/@prefix@/share/xwelltris
++INSTMAN=$(DESTDIR)/@prefix@/man
+ DEB=@DEB@
+ STRIPPING=
+ XINC=@X_CFLAGS@

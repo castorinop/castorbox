@@ -1,0 +1,12 @@
+diff -Naur xorg-server-1.9.3-old/hw/xfree86/common/xf86pciBus.c xorg-server-1.9.3-new/hw/xfree86/common/xf86pciBus.c
+--- xorg-server-1.9.3-old/hw/xfree86/common/xf86pciBus.c	2010-12-13 19:13:56.000000000 -0800
++++ xorg-server-1.9.3-new/hw/xfree86/common/xf86pciBus.c	2010-12-13 19:14:41.000000000 -0800
+@@ -1118,7 +1118,7 @@
+ 	    break;
+ 	case 0x102b:		    driverList[0] = "mga";	break;
+ 	case 0x10c8:		    driverList[0] = "neomagic"; break;
+-	case 0x10de: case 0x12d2:   driverList[0] = "nv";	break;
++	case 0x10de: case 0x12d2:   driverList[0] = "nouveau";	break;
+ 	case 0x1106:		    driverList[0] = "openchrome"; break;
+         case 0x1b36:		    driverList[0] = "qxl"; break;
+ 	case 0x1163:		    driverList[0] = "rendition"; break;

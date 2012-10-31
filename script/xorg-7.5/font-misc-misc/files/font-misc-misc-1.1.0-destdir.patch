@@ -1,0 +1,24 @@
+diff -Naur font-misc-misc-1.1.0-old/Makefile.am font-misc-misc-1.1.0-new/Makefile.am
+--- font-misc-misc-1.1.0-old/Makefile.am	2009-10-07 19:13:28.000000000 -0700
++++ font-misc-misc-1.1.0-new/Makefile.am	2009-10-10 22:33:09.000000000 -0700
+@@ -184,7 +184,7 @@
+ JISX0201_PCF_FILES = $(BDF2UCS_JISX0201_FONT_FILES:%=%-JISX0201.1976-0.pcf$(COMPRESS_SUFFIX))
+ endif
+ 
+-UTIL_DIR = @MAPFILES_PATH@
++UTIL_DIR = $(DESTDIR)@MAPFILES_PATH@
+ 
+ SUFFIXES = .bdf .pcf$(COMPRESS_SUFFIX) t.bdf \
+ 	-ISO8859-1.bdf \
+diff -Naur font-misc-misc-1.1.0-old/Makefile.in font-misc-misc-1.1.0-new/Makefile.in
+--- font-misc-misc-1.1.0-old/Makefile.in	2009-10-10 18:23:06.000000000 -0700
++++ font-misc-misc-1.1.0-new/Makefile.in	2009-10-10 22:33:03.000000000 -0700
+@@ -353,7 +353,7 @@
+ @KOI8_R_TRUE@KOI8_R_PCF_FILES = $(BDF2UCS_KOI8_FONT_FILES:%=%-KOI8-R.pcf$(COMPRESS_SUFFIX))
+ @JISX0201_TRUE@JISX0201_BDF_FILES = $(BDF2UCS_JISX0201_FONT_FILES:%=%-JISX0201.1976-0.bdf)
+ @JISX0201_TRUE@JISX0201_PCF_FILES = $(BDF2UCS_JISX0201_FONT_FILES:%=%-JISX0201.1976-0.pcf$(COMPRESS_SUFFIX))
+-UTIL_DIR = @MAPFILES_PATH@
++UTIL_DIR = $(DESTDIR)@MAPFILES_PATH@
+ SUFFIXES = .bdf .pcf$(COMPRESS_SUFFIX) t.bdf \
+ 	-ISO8859-1.bdf \
+ 	-ISO8859-2.bdf \

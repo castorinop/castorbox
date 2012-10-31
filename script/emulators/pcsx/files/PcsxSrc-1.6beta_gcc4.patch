@@ -1,0 +1,144 @@
+diff --speed-large-files --minimal -Nru tmp/PcsxSrc-1.6beta/PsxBios.c work/main.d/PcsxSrc-1.6beta/PsxBios.c
+--- PcsxSrc-1.6beta/PsxBios.c	2003-05-04 22:26:24.000000000 -0300
++++ PcsxSrc-1.6beta/PsxBios.c	2007-03-06 16:58:03.000000000 -0300
+@@ -2253,7 +2253,7 @@
+ 		if (ptr) psxRu32ref(base) = SWAPu32((u32)ptr - (u32)psxM); \
+ 		else psxRu32ref(base) = 0; \
+ 	} else { \
+-		if (psxRu32(base)) (u8*)ptr = (u8*)(psxM + psxRu32(base)); \
++		if (psxRu32(base)) ptr = (psxM + psxRu32(base)); \
+ 		else ptr = NULL; \
+ 	} \
+ 	base+=4;
+diff --speed-large-files --minimal -Nru tmp/PcsxSrc-1.6beta/PsxInterpreter.c work/main.d/PcsxSrc-1.6beta/PsxInterpreter.c
+--- PcsxSrc-1.6beta/PsxInterpreter.c	2003-05-21 11:42:52.000000000 -0300
++++ PcsxSrc-1.6beta/PsxInterpreter.c	2007-03-06 17:03:55.000000000 -0300
+@@ -347,7 +347,7 @@
+ void psxANDI() 	{ if (!_Rt_) return; _rRt_ = _u32(_rRs_) & _ImmU_; }		// Rt = Rs And Im
+ void psxORI() 	{ if (!_Rt_) return; _rRt_ = _u32(_rRs_) | _ImmU_; }		// Rt = Rs Or  Im
+ void psxXORI() 	{ if (!_Rt_) return; _rRt_ = _u32(_rRs_) ^ _ImmU_; }		// Rt = Rs Xor Im
+-void psxSLTI() 	{ if (!_Rt_) return; _rRt_ = _i32(_rRs_) < _Imm_ ; }		// Rt = Rs < Im		(Signed)
++void psxSLTI() 	{ if (!_Rt_) return; _rRt_ = _rRs_ < _Imm_ ; }		// Rt = Rs < Im		(Signed)
+ void psxSLTIU() { if (!_Rt_) return; _rRt_ = _u32(_rRs_) < ((u32)_Imm_); }		// Rt = Rs < Im		(Unsigned)
+ 
+ /*********************************************************
+@@ -362,7 +362,7 @@
+ void psxOR() 	{ if (!_Rd_) return; _rRd_ = _u32(_rRs_) | _u32(_rRt_); }	// Rd = Rs Or  Rt
+ void psxXOR() 	{ if (!_Rd_) return; _rRd_ = _u32(_rRs_) ^ _u32(_rRt_); }	// Rd = Rs Xor Rt
+ void psxNOR() 	{ if (!_Rd_) return; _rRd_ =~(_u32(_rRs_) | _u32(_rRt_)); }// Rd = Rs Nor Rt
+-void psxSLT() 	{ if (!_Rd_) return; _rRd_ = _i32(_rRs_) < _i32(_rRt_); }	// Rd = Rs < Rt		(Signed)
++void psxSLT() 	{ if (!_Rd_) return; _rRd_ = _rRs_ < _rRt_; }	// Rd = Rs < Rt		(Signed)
+ void psxSLTU() 	{ if (!_Rd_) return; _rRd_ = _u32(_rRs_) < _u32(_rRt_); }	// Rd = Rs < Rt		(Unsigned)
+ 
+ /*********************************************************
+@@ -370,9 +370,9 @@
+ * Format:  OP rs, rt                                     *
+ *********************************************************/
+ void psxDIV() {
+-	if (_i32(_rRt_) != 0) {
+-		_i32(_rLo_) = _i32(_rRs_) / _i32(_rRt_);
+-		_i32(_rHi_) = _i32(_rRs_) % _i32(_rRt_);
++	if (_rRt_ != 0) {
++		_rLo_ = _rRs_ / _rRt_;
++		_rHi_ = _rRs_ % _rRt_;
+ 	}
+ }
+ 
+@@ -384,7 +384,7 @@
+ }
+ 
+ void psxMULT() {
+-	u64 res = (s64)((s64)_i32(_rRs_) * (s64)_i32(_rRt_));
++	u64 res = (s64)((s64)_rRs_ * (s64)_rRt_);
+ 
+ 	psxRegs.GPR.n.lo = (unsigned long)(res & 0xffffffff);
+ 	psxRegs.GPR.n.hi = (unsigned long)((res >> 32) & 0xffffffff);
+@@ -401,8 +401,8 @@
+ * Register branch logic                                  *
+ * Format:  OP rs, offset                                 *
+ *********************************************************/
+-#define RepZBranchi32(op)      if(_i32(_rRs_) op 0) doBranch(_BranchTarget_);
+-#define RepZBranchLinki32(op)  if(_i32(_rRs_) op 0) { _SetLink(31); doBranch(_BranchTarget_); }
++#define RepZBranchi32(op)      if(_rRs_ op 0) doBranch(_BranchTarget_);
++#define RepZBranchLinki32(op)  if(_rRs_ op 0) { _SetLink(31); doBranch(_BranchTarget_); }
+ 
+ void psxBGEZ()   { RepZBranchi32(>=) }      // Branch if Rs >= 0
+ void psxBGEZAL() { RepZBranchLinki32(>=) }  // Branch if Rs >= 0 and link
+@@ -415,23 +415,23 @@
+ * Shift arithmetic with constant shift                   *
+ * Format:  OP rd, rt, sa                                 *
+ *********************************************************/
+-void psxSLL() { if (!_Rd_) return; _u32(_rRd_) = _u32(_rRt_) << _Sa_; } // Rd = Rt << sa
+-void psxSRA() { if (!_Rd_) return; _i32(_rRd_) = _i32(_rRt_) >> _Sa_; } // Rd = Rt >> sa (arithmetic)
+-void psxSRL() { if (!_Rd_) return; _u32(_rRd_) = _u32(_rRt_) >> _Sa_; } // Rd = Rt >> sa (logical)
++void psxSLL() { if (!_Rd_) return; _rRd_ = _rRt_ << _Sa_; } // Rd = Rt << sa
++void psxSRA() { if (!_Rd_) return; _rRd_ = _rRt_ >> _Sa_; } // Rd = Rt >> sa (arithmetic)
++void psxSRL() { if (!_Rd_) return; _rRd_ = _rRt_ >> _Sa_; } // Rd = Rt >> sa (logical)
+ 
+ /*********************************************************
+ * Shift arithmetic with variant register shift           *
+ * Format:  OP rd, rt, rs                                 *
+ *********************************************************/
+-void psxSLLV() { if (!_Rd_) return; _u32(_rRd_) = _u32(_rRt_) << _u32(_rRs_); } // Rd = Rt << rs
+-void psxSRAV() { if (!_Rd_) return; _i32(_rRd_) = _i32(_rRt_) >> _u32(_rRs_); } // Rd = Rt >> rs (arithmetic)
+-void psxSRLV() { if (!_Rd_) return; _u32(_rRd_) = _u32(_rRt_) >> _u32(_rRs_); } // Rd = Rt >> rs (logical)
++void psxSLLV() { if (!_Rd_) return; _rRd_ = _rRt_ << _rRs_; } // Rd = Rt << rs
++void psxSRAV() { if (!_Rd_) return; _rRd_ = _rRt_ >> _rRs_; } // Rd = Rt >> rs (arithmetic)
++void psxSRLV() { if (!_Rd_) return; _rRd_ = _rRt_ >> _rRs_; } // Rd = Rt >> rs (logical)
+ 
+ /*********************************************************
+ * Load higher 16 bits of the first word in GPR with imm  *
+ * Format:  OP rt, immediate                              *
+ *********************************************************/
+-void psxLUI() { if (!_Rt_) return; _u32(_rRt_) = psxRegs.code << 16; } // Upper halfword of Rt = Im
++void psxLUI() { if (!_Rt_) return; _rRt_ = psxRegs.code << 16; } // Upper halfword of Rt = Im
+ 
+ /*********************************************************
+ * Move from HI/LO to GPR                                 *
+@@ -470,7 +470,7 @@
+ * Register branch logic                                  *
+ * Format:  OP rs, rt, offset                             *
+ *********************************************************/
+-#define RepBranchi32(op)      if(_i32(_rRs_) op _i32(_rRt_)) doBranch(_BranchTarget_);
++#define RepBranchi32(op)      if(_rRs_ op _rRt_) doBranch(_BranchTarget_);
+ 
+ void psxBEQ() {	RepBranchi32(==) }  // Branch if Rs == Rt
+ void psxBNE() {	RepBranchi32(!=) }  // Branch if Rs != Rt
+@@ -506,7 +506,7 @@
+ 
+ void psxLB() {
+ 	if (_Rt_) {
+-		_i32(_rRt_) = (char)psxMemRead8(_oB_); 
++		_rRt_ = (char)psxMemRead8(_oB_); 
+ 	} else {
+ 		psxMemRead8(_oB_); 
+ 	}
+@@ -514,7 +514,7 @@
+ 
+ void psxLBU() {
+ 	if (_Rt_) {
+-		_u32(_rRt_) = psxMemRead8(_oB_);
++		_rRt_ = psxMemRead8(_oB_);
+ 	} else {
+ 		psxMemRead8(_oB_); 
+ 	}
+@@ -522,7 +522,7 @@
+ 
+ void psxLH() {
+ 	if (_Rt_) {
+-		_i32(_rRt_) = (short)psxMemRead16(_oB_);
++		_rRt_ = (short)psxMemRead16(_oB_);
+ 	} else {
+ 		psxMemRead16(_oB_);
+ 	}
+@@ -637,8 +637,8 @@
+ * Moves between GPR and COPx                             *
+ * Format:  OP rt, fs                                     *
+ *********************************************************/
+-void psxMFC0() { if (!_Rt_) return; _i32(_rRt_) = (int)_rFs_; }
+-void psxCFC0() { if (!_Rt_) return; _i32(_rRt_) = (int)_rFs_; }
++void psxMFC0() { if (!_Rt_) return; _rRt_ = (int)_rFs_; }
++void psxCFC0() { if (!_Rt_) return; _rRt_ = (int)_rFs_; }
+ 
+ void psxTestSWInts() {
+ 	// the next code is untested, if u know please

@@ -1,0 +1,61 @@
+diff -Naur jpeg-6b-old/configure jpeg-6b-new/configure
+--- jpeg-6b-old/configure	1998-03-21 11:08:57.000000000 -0800
++++ jpeg-6b-new/configure	2008-01-16 03:44:33.000000000 -0800
+@@ -776,7 +776,7 @@
+ echo "$ac_t""$ijg_cv_have_prototypes" 1>&6
+ if test $ijg_cv_have_prototypes = yes; then
+   cat >> confdefs.h <<\EOF
+-#define HAVE_PROTOTYPES 
++#define HAVE_PROTOTYPES 1
+ EOF
+ 
+ else
+@@ -815,7 +815,7 @@
+ if eval "test \"`echo '$ac_cv_header_'$ac_safe`\" = yes"; then
+   echo "$ac_t""yes" 1>&6
+   cat >> confdefs.h <<\EOF
+-#define HAVE_STDDEF_H 
++#define HAVE_STDDEF_H 1
+ EOF
+ 
+ else
+@@ -851,7 +851,7 @@
+ if eval "test \"`echo '$ac_cv_header_'$ac_safe`\" = yes"; then
+   echo "$ac_t""yes" 1>&6
+   cat >> confdefs.h <<\EOF
+-#define HAVE_STDLIB_H 
++#define HAVE_STDLIB_H 1
+ EOF
+ 
+ else
+@@ -901,10 +901,10 @@
+ #line 902 "configure"
+ #include "confdefs.h"
+ 
+-#ifdef HAVE_STDDEF_H
++#ifdef HAVE_STDDEF_H 1
+ #include <stddef.h>
+ #endif
+-#ifdef HAVE_STDLIB_H
++#ifdef HAVE_STDLIB_H 1
+ #include <stdlib.h>
+ #endif
+ #include <stdio.h>
+@@ -1003,7 +1003,7 @@
+   rm -rf conftest*
+   echo "$ac_t""yes" 1>&6
+ cat >> confdefs.h <<\EOF
+-#define HAVE_UNSIGNED_CHAR 
++#define HAVE_UNSIGNED_CHAR 1
+ EOF
+ 
+ else
+@@ -1027,7 +1027,7 @@
+   rm -rf conftest*
+   echo "$ac_t""yes" 1>&6
+ cat >> confdefs.h <<\EOF
+-#define HAVE_UNSIGNED_SHORT 
++#define HAVE_UNSIGNED_SHORT 1
+ EOF
+ 
+ else

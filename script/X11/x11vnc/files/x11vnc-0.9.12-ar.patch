@@ -1,0 +1,12 @@
+diff -Naur x11vnc-0.9.12-old/configure.ac x11vnc-0.9.12-new/configure.ac
+--- x11vnc-0.9.12-old/configure.ac	2010-09-09 20:51:40.000000000 -0700
++++ x11vnc-0.9.12-new/configure.ac	2010-09-10 14:31:36.000000000 -0700
+@@ -15,7 +15,7 @@
+ test "x$GCC" = "xyes" && CFLAGS="$CFLAGS -Wall"
+ AC_PROG_MAKE_SET
+ AC_PROG_RANLIB
+-AC_PATH_PROG([AR], [ar], [/usr/bin/ar],
++AC_PATH_TOOL([AR], [ar], [/usr/bin/ar],
+                   [$PATH:/usr/ccs/bin])
+ 
+ # Options

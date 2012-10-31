@@ -1,0 +1,12 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xcb-util-0.3.6/configure.ac work/main.d/xcb-util-0.3.6/configure.ac
+--- tmp/xcb-util-0.3.6/configure.ac	2009-08-22 10:02:27.000000000 -0300
++++ new-xcb-util-0.3.6/configure.ac	2011-01-01 20:15:58.222411261 -0300
+@@ -63,7 +63,7 @@
+ 
+ AC_MSG_CHECKING([whether libxcb was compiled against xcb-proto >= $xcbproto_required])
+ xcbproto_version=`$PKG_CONFIG --variable=xcbproto_version xcb`
+-AX_COMPARE_VERSION([$xcbproto_version],[ge],[$xcbproto_required], xcbproto_ok="yes", xcbproto_ok="no")
++#AX_COMPARE_VERSION([$xcbproto_version],[ge],[$xcbproto_required], xcbproto_ok="yes", xcbproto_ok="no")
+ AC_MSG_RESULT([$xcbproto_ok])
+ 
+ if test $xcbproto_ok = no; then

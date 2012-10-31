@@ -1,0 +1,24 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/darkmix-2/theme.conf work/main.d/darkmix-2/theme.conf
+--- tmp/darkmix-2/theme.conf	2008-12-14 17:52:29.000000000 -0300
++++ darkmix-2/theme.conf	2009-01-03 20:36:43.000000000 -0300
+@@ -36,6 +36,7 @@
+ startmenu.options = startmenu/options.png
+ startmenu.search = startmenu/search.png
+ startmenu.themes = startmenu/themes.png
++startmenu.media_rss = media_rss/feed.png
+ startmenu.quit = startmenu/boot.png
+ 
+ notify_area.font = 220,220,220
+@@ -140,6 +141,12 @@
+ vbox.boxes_font = 255,255,255
+ vbox.background = vbox/bg.png
+ 
++media_rss.font = 255,255,255
++media_rss.header_font = 255,255,255,255
++media_rss.background = media_rss/bg.png
++media_rss.dir_download = media_rss/rss-dir-download.png
++media_rss.download = media_rss/rss-download.png
++
+ dialog.font =  255,255,255
+ dialog.background =  32,38,45,200
+ dialog.marked = 255,255,255,100

@@ -1,0 +1,1553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org - MiniMyth - Documents - minimyth.conf description</title>
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">MiniMyth from <a href="http://linpvr.org">LinPVR.org</a></div>
+        <div class="menu">
+          <span class="menuItem"><a href="../index.shtml">Home</a></span>
+          <span class="menuItem"><a href="index.shtml">MiniMyth</a></span>
+          <span class="menuItem"><a href="document.shtml">Documents</a></span>
+          <span class="menuItem">minimyth.conf</span>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">minimyth.conf description</div>
+        <div id="toc" class="section">
+          <div class="heading">Table of contents</div>
+          <dl>
+            <dt><a href="#general">General</a></dt>
+            <dt><a href="#MM_UPDATE">MiniMyth update variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_UPDATE_URL">MM_UPDATE_URL</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_DHCP">DHCP override variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_HOSTNAME">MM_HOSTNAME</a></dt>
+              <dt><a href="#MM_DOMAIN">MM_DOMAIN</a></dt>
+              <dt><a href="#MM_DNS_SERVERS">MM_DNS_SERVERS</a></dt>
+              <dt><a href="#MM_NTP_SERVERS">MM_NTP_SERVERS</a></dt>
+              <dt><a href="#MM_LOG_SERVERS">MM_LOG_SERVERS</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_TIME">Time variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_TZ">MM_TZ</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_CPUFREQ">CPU frequency scaling variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_CPUFREQ_GOVERNOR">MM_CPUFREQ_GOVERNOR</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_AUDIO">Audio configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_AUDIO_TYPE">MM_AUDIO_TYPE</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_VIDEO">Video configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_VIDEO_ASPECT_RATIO">MM_VIDEO_ASPECT_RATIO</a></dt>
+              <dt><a href="#MM_VIDEO_DEINTERLACE_ENABLED">MM_VIDEO_DEINTERLACE_ENABLED</a></dt>
+              <dt><a href="#MM_VIDEO_FONT_SCALE">MM_VIDEO_FONT_SCALE</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_X">X configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_X_ENABLED">MM_X_ENABLED</a></dt>
+              <dt><a href="#MM_X_WM_ENABLED">MM_X_VM_ENABLED</a></dt>
+              <dt><a href="#MM_X_VNC_ENABLED">MM_X_VNC_ENABLED</a></dt>
+              <dt><a href="#MM_X_SCREENSAVER_ENABLED">MM_X_SCREENSAVER_ENABLED</a></dt>
+              <dt><a href="#MM_X_OUTPUT_DVI">MM_X_OUTPUT_DVI</a></dt>
+              <dt><a href="#MM_X_OUTPUT_VGA">MM_X_OUTPUT_VGA</a></dt>
+              <dt><a href="#MM_X_OUTPUT_TV">MM_X_OUTPUT_TV</a></dt>
+              <dt><a href="#MM_X_TV_TYPE">MM_X_TV_TYPE</a></dt>
+              <dt><a href="#MM_X_TV_OUTPUT">MM_X_TV_OUTPUT</a></dt>
+              <dt><a href="#MM_X_TV_OVERSCAN">MM_X_TV_OVERSCAN</a></dt>
+              <dt><a href="#MM_X_SYNC">MM_X_SYNC</a></dt>
+              <dt><a href="#MM_X_REFRESH">MM_X_REFRESH</a></dt>
+              <dt><a href="#MM_X_MODE">MM_X_MODE</a></dt>
+              <dt><a href="#MM_X_MODELINE">MM_X_MODELINE</a></dt>
+              <dt><a href="#MM_X_RESOLUTION">MM_X_RESOLUTION</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_MYTH">Myth master backend database configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_MYTH_SERVER">MM_MYTH_SERVER</a></dt>
+              <dt><a href="#MM_MYTH_DBUSERNAME">MM_MYTH_DBUSERNAME</a></dt>
+              <dt><a href="#MM_MYTH_DBPASSWORD">MM_MYTH_DBPASSWORD</a></dt>
+              <dt><a href="#MM_MYTH_DBNAME">MM_MYTH_DBNAME</a></dt>
+              <dt><a href="#MM_MYTH_WOL_ENABLED">MM_MYTH_WOL_ENABLED</a></dt>
+              <dt><a href="#MM_MYTH_WOL_MAC">MM_MYTH_WOL_MAC</a></dt>
+              <dt><a href="#MM_MYTH_WOLSQLRECONNECTWAITTIME">MM_MYTH_WOLSQLRECONNECTWAITTIME</a></dt>
+              <dt><a href="#MM_MYTH_WOLSQLCONNECTRETRY">MM_MYTH_WOLSQLCONNECTRETRY</a></dt>
+              <dt><a href="#MM_MYTH_WOLSQLCOMMAND">MM_MYTH_WOLSQLCOMMAND</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_MYTHPLUGIN">Mmyth plugin configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_MYTHTV_OPTICAL_DISK_ENABLED">MM_MYTHTV_OPTICAL_DISK_ENABLED</a></dt>
+              <dt><a href="#MM_MYTHDVD_ENABLED">MM_MYTHDVD_ENABLED</a></dt>
+              <dt><a href="#MM_MYTHGALLERY_ENABLED">MM_MYTHGALLERY_ENABLED</a></dt>
+              <dt><a href="#MM_MYTHMUSIC_ENABLED">MM_MYTHMUSIC_ENABLED</a></dt>
+              <dt><a href="#MM_MYTHNEWS_ENABLED">MM_MYTHNEWS_ENABLED</a></dt>
+              <dt><a href="#MM_MYTHSTREAM_ENABLED">MM_MYTHSTREAM_ENABLED</a></dt>
+              <dt><a href="#MM_MYTHVIDEO_ENABLED">MM_MYTHVIDEO_ENABLED</a></dt>
+              <dt><a href="#MM_MYTHWEATHER_ENABLED">MM_MYTHWEATHER_ENABLED</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_EXTRAS">Extras directory configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_EXTRAS_URL">MM_EXTRAS_URL</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_CODECS">CODECs directory configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_CODECS_URL">MM_CODECS_URL</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_THEME">Theme configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_THEME_NAME">MM_THEME_NAME</a></dt>
+              <dt><a href="#MM_THEMEOSD_NAME">MM_THEMEOSD_NAME</a></dt>
+              <dt><a href="#MM_THEME_URL">MM_THEME_URL</a></dt>
+              <dt><a href="#MM_THEMEOSD_URL">MM_THEMEOSD_URL</a></dt>
+              <dt><a href="#MM_THEMECACHE_URL">MM_THEMECACHE_URL</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_MEDIA">Remote media directory configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_MYTHDVD_URL">MM_MYTHDVD_URL</a></dt>
+              <dt><a href="#MM_MYTHGALLERY_URL">MM_MYTHGALLERY_URL</a></dt>
+              <dt><a href="#MM_MYTHMUSIC_URL">MM_MYTHMUSIC_URL</a></dt>
+              <dt><a href="#MM_MYTHVIDEO_URL">MM_MYTHVIDEO_URL</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_LIRC">LIRC configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_LIRC_DRIVER">MM_LIRC_DRIVER</a></dt>
+              <dt><a href="#MM_LIRC_REMOTE">MM_LIRC_REMOTE</a></dt>
+              <dt><a href="#MM_LIRC_DEVICE">MM_LIRC_DEVICE</a></dt>
+              <dt><a href="#MM_LIRC_KERNEL_MODULE">MM_LIRC_KERNEL_MODULE</a></dt>
+              <dt><a href="#MM_LIRC_KERNEL_MODULE_OPTIONS">MM_LIRC_KERNEL_MODULE_OPTIONS</a></dt>
+              <dt><a href="#MM_LIRC_IREXEC_ENABLED">MM_LIRC_IREXEC_ENABLED</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_LCDPROC">LCDproc configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_LCDPROC_DEVICE">MM_LCDPROC_DEVICE</a></dt>
+            </dl></dd>
+            <dt><a href="#MM_MYTHDB">Myth frontend configuration variables</a></dt>
+            <dd><dl>
+              <dt><a href="#MM_MYTHDB_JUMPPOINT">MM_MYTHDB_JUMPPOINT</a></dt>
+              <dt><a href="#MM_MYTHDB_KEYBINDING">MM_MYTHDB_KEYBINDING</a></dt>
+              <dt><a href="#MM_MYTHDB_SETTING">MM_MYTHDB_SETTING</a></dt>
+            </dl></dd>
+          </dl>
+        </div>
+        <div id="general" class="section">
+          <div class="heading">General</div>
+          <p>
+            The MiniMyth configuration file 'minimyth.conf" is at the core of the MiniMyth configuration process.
+            The goal is for all MiniMyth configuration to be done with the MiniMyth configuration file.
+            Since this is sometimes not possible today, MiniMyth provides other configuration methods a well.
+            However, the need to use any of these other configuration methods should be considered a bug and
+            <a href="http://linpvr.org/bugs/">reported.</a>
+          </p>
+          <p>
+            Essentially, the MiniMyth configuration file variables are shell variables.
+            In fact, with the exception of the of the
+            <a href="#MM_MYTHDB">Myth frontend configuration variables ('MM_MYTHDB_*')</a>,
+            MiniMyth configuration variables are processed using the shell.
+            Therefore, all variable values should be enclosed in single quotes (')
+            to prevent the shell from interpreting the values.
+            Therefore, all MiniMyth configuration file settings should take the form:
+          </p>
+          <p>
+            {variable-name}='{variable-value}'
+          </p>
+        </div>
+        <div id="MM_UPDATE" class="section">
+          <div class="heading">MiniMyth update variables</div>
+          <p>
+            If you are using
+            <a href="document-boot.shtml#local">local boot</a>,
+            then you can use the MiniMyth command 'mm_local_update' to
+            update your MiniMyth distribution: the kernel file,
+            the root file system image, the theme file system images and
+            (optionally) extras file system image.
+          </p>
+          <p>
+            The
+            <a href="http://en.wikipedia.org/wiki/URL">Uniform Resource Locators (URLs)</a>
+            in this section must have the following form:
+          </p>
+          <p>
+            {protocol}://{server}/{path}
+          </p>
+          <p>
+            The valid protocol values are: 'http", 'tftp' and 'file'.
+          </p>
+          <p>
+            The MiniMyth update variables are:
+          </p>
+          <dl>
+            <dt id="MM_UPDATE_URL"><strong>MM_UPDATE_URL</strong></dt>
+            <dd>
+              <p>
+                The URL that points to the location of the latest MiniMyth files.
+                The default value is
+                '<a href="http://linpvr.org/minimyth/download/stable/latest/">http://linpvr.org/minimyth/download/stable/latest/</a>'.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_DHCP" class="section">
+          <div class="heading">DHCP override variables</div>
+          <p>
+            Normally, MiniMyth obtains certain network and network service configuration parameters from the
+            <a href="http://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol">Dynamic Host Configuration Protocol (DHCP)</a>
+            server.
+            However, many of the crippled DHCP servers that come with comsumer Internet gateway routers
+            However, most of the DHCP servers found in off-the-shelf home routers do not support some or all of these parameters.
+            If your DHCP server does not support certain parameters
+            (or provides incorrect values for certain parameters),
+            then you can use these variables to override the parameter values provided by the DHCP server.
+            In addition to overriding any values provided by the DHCP server,
+            these variables will override any values provided on the
+            <a href="document-boot.shtml#bootline">boot line</a>.
+          </p>
+          <p>
+            The DHCP override variables are:
+          </p>
+          <dl>
+            <dt id="MM_HOSTNAME"><strong>MM_HOSTNAME</strong></dt>
+            <dd>
+              <p>
+                The MiniMyth frontend's
+                <a href="http://en.wikipedia.org/wiki/Hostname">hostname</a>.
+                MiniMyth requires a hostname for storing/retrieving the MythTV frontend settings in/from the MythTV's database.
+                Therefore, if MiniMyth does not obtain a hostname,
+                then MiniMyth will abort its boot process and output an error.
+              </p>
+              <p>
+                The corresponding
+                <a href="document-boot.shtml#bootline">boot line</a>
+                parameter is
+                '<a href="document-boot.shtml#MM_DHCP_HOSTNAME">MM_DHCP_HOSTNAME</a>'.
+              </p>
+              <p>
+                The corresponding DHCP option is 0x0c, which is supported by
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>.
+                Therefore, if your DCHP server is
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>,
+                then you should enable the 'use-host-decl-names' option and set the 'host' and 'hardware' options in your dhcpd.conf file,
+                and not set either 'MM_HOSTNAME' or
+                '<a href="document-boot.shtml#MM_DHCP_HOSTNAME">MM_DHCP_HOSTNAME</a>'.
+              </p>
+              <p>
+                In addition to using the hostname when making MythTV database accesses,
+                MiniMyth can use the hostname when retrieving host specific configuration files.
+                For this to work for the 'minimyth.conf' and 'minimyth.script' files,
+                the hostname must be set prior to retrieving the 'minimyth.conf' file.
+                Setting parameters on the
+                <a href="document-boot.shtml#bootline">boot line</a>
+                makes them available at the beginning of the boot process.
+                Therefore, if your DHCP server does not provide the hostname,
+                then you should consider using the
+                <a href="document-boot.shtml#bootline">boot line's</a>
+                '<a href="document-boot.shtml#MM_DHCP_HOSTNAME">MM_DHCP_HOSTNAME</a>',
+                variable rather than the MiniMyth configuration file's 'MM_HOSTNAME' variable.
+              </p>
+            </dd>
+            <dt id="MM_DOMAIN"><strong>MM_DOMAINNAME</strong></dt>
+            <dd>
+              <p>
+                The MiniMyth frontend's
+                <a href="http://en.wikipedia.org/wiki/Domain_name">domain</a>.
+                The value can be a domain name or 'none'.
+                MiniMyth does not require a domain name,
+                but it can be useful when using DNS to resolve local network hostnames to IP addresses.
+              </p>
+              <p>
+                If the value is 'none', then any domain obtained through DHCP will be ignored.
+              </p>
+              <p>
+                The corresponding
+                <a href="document-boot.shtml#bootline">boot line</a>
+                parameter is
+                '<a href="document-boot.shtml#MM_DHCP_DOMAIN">MM_DHCP_DOMAIN</a>'.
+              </p>
+              <p>
+                The corresponding DHCP option is 0x0f, which is support by
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>.
+                Therefore, if your DHCP server is
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>,
+                then you should set the 'domain-name' option in your dhcpd.conf file,
+                and not set either 'MM_DOMAIN' or
+                '<a href="document-boot.shtml#MM_DHCP_DOMAIN">MM_DHCP_DOMAIN</a>'.
+              </p>
+            </dd>
+            <dt id="MM_DNS_SERVERS"><strong>MM_DNS_SERVERS</strong></dt>
+            <dd>
+              <p>
+                A space separated list of
+                <a href="http://en.wikipedia.org/wiki/Domain_name_system">Domain Name System (DNS)</a>
+                server IP addresses that the MiniMyth frontend will use to resolve DNS names.
+                MiniMyth needs a DNS server to resolve Internet host name to Internet Protocol addresses.
+                Therefore, if MiniMyth does not obtain a DNS server address,
+                then MiniMyth will abort its boot process and output an error message.
+              </p>
+              <p>
+                The corresponding
+                <a href="document-boot.shtml#bootline">boot line</a>
+                parameter is
+                '<a href="document-boot.shtml#MM_DHCP_DNS_SERVERS">MM_DHCP_DNS_SERVERS</a>'.
+              </p>
+              <p>
+                The corresponding DHCP option is 0x06, which is supported by
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>.
+                Therefore, if your DHCP server is
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>,
+                then you should set the 'domain-name-servers' option in your dhcpd.conf file,
+                and not set either 'MM_DNS_SERVERS' or
+                '<a href="document-boot.shtml#MM_DHCP_DNS_SERVERS">MM_DHCP_DNS_SERVERS</a>'.
+              </p>
+            </dd>
+            <dt id="MM_NTP_SERVERS"><strong>MM_NTP_SERVERS</strong></dt>
+            <dd>
+              <p>
+                A space separated list of
+                <a href="http://en.wikipedia.org/wiki/Network_Time_Protocol">Network Time Protocol (NTP)</a>
+                server DNS names or IP addresses that the MiniMyth frontend will use to synchronize its clock.
+                MiniMyth's clock needs to be synchronized to the MythTV backend's clock or fastforward, rewind and commercial skip will fail.
+                Therefore, if MiniMyth does not obtain an NTP server address,
+                then MiniMyth will abort its boot process and output an error message.
+              </p>
+              <p>
+                The corresponding
+                <a href="document-boot.shtml#bootline">boot line</a>
+                parameter is
+                '<a href="document-boot.shtml#MM_DHCP_NTP_SERVERS">MM_DHCP_NTP_SERVERS</a>'.
+              </p>
+              <p>
+                The corresponding DHCP option is 0x2a, which is supported by
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>.
+                Therefore, if your DHCP server is
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>,
+                then you should set the 'ntp-servers' option in your dhcpd.conf file,
+                and not set either 'MM_NTP_SERVERS' or
+                '<a href="document-boot.shtml#MM_DHCP_NTP_SERVERS">MM_DHCP_NTP_SERVERS</a>'.
+              </p>
+            </dd>
+            <dt id="MM_LOG_SERVERS"><strong>MM_LOG_SERVERS</strong></dt>
+            <dd>
+              <p>
+                A space separated list of
+                <a href="http://en.wikipedia.org/wiki/Syslog">syslog</a>
+                server DNS names or IP addresses to which MiniMyth will log.
+                The value can be a list of log servers or 'none'.
+                MiniMyth will log to the first log server in the list.
+                If MiniMyth does not obtain a log server address,
+                then MiniMyth will log locally.
+              </p>
+              <p>
+                If the value is 'none', then any log servers obtained through DHCP will be ignored.
+              </p>
+              <p>
+                The corresponding
+                <a href="document-boot.shtml#bootline">boot line</a>
+                parameter is
+                '<a href="document-boot.shtml#MM_DHCP_LOG_SERVERS">MM_DHCP_LOG_SERVERS</a>'.
+              </p>
+              <p>
+                The corresponding DHCP option is 0x07, which is supported by
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>.
+                Therefore, if your DHCP server is
+                <a href="http://www.isc.org/index.pl?/sw/bind/">ISC BIND</a>,
+                then you should set the 'log-servers' option in your dhcpd.conf file,
+                and not set either 'MM_LOG_SERVERS' or
+                '<a href="document-boot.shtml#MM_DHCP_LOG_SERVERS">MM_DHCP_LOG_SERVERS</a>'.
+              </p>
+            </dd>
+          </dl> 
+        </div>
+        <div id="MM_TIME" class="section">
+          <div class="heading">Time variables</div>
+          <p>
+            The time variables are:
+          </p>
+          <dl>
+            <dt id="MM_TZ"><strong>MM_TZ</strong></dt>
+            <dd>
+              <p>
+                The
+                <a href="http://en.wikipedia.org/wiki/Zoneinfo">zoneinfo</a>.
+                database name of your MiniMyth frontend's
+                <a href="http://en.wikipedia.org/wiki/Time_zone">time zone</a>.
+                You must provide a time zone.
+                Without the correct time zone, functions such as fast forward,
+                rewind and commercial skip will not work.
+                On Linux, you can use the command 'tzselect' to determine the correct time zone.
+              </p>
+              <p>
+                Time for a rant.
+                For reasons that defy comprehension,
+                <a href="http://www.ietf.org/html.charters/dhc-charter.html">the Dynamic Host Configuration (dhc) working group</a>
+                within
+                <a href="http://www.ietf.org/">the IETF</a>
+                has only just begun to define a functional DHCP timezone option
+                (i.e., one that can make use of the zoneinfo database).
+                Hopefully, this timezone option will be defined and implemented soon,
+                so that we can move this variable into the DHCP override section where it rightfully belongs.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_CPUFREQ" class="section">
+          <div class="heading">CPU frequency scaling variables</div>
+          <p>
+            The CPU frequency scaling variables are:
+          </p>
+          <dl>
+            <dt id="MM_CPUFREQ_GOVERNOR"><strong>MM_CPUFREQ_GOVERNOR</strong></dt>
+            <dd>
+              <p>
+                Set the CPU frequency scaling governor.
+                Valid values are 'performance', 'powersave', 'ondemand', 'conservative' and 'userspace',
+                with 'performance' being the default.
+                If 'userspace' is selected, then the 'powernowd' daemon is run to control the CPU speed.
+              </p>
+              <p>
+                At this time, this is supported for the AMD Athlon64 only.
+                VIA CPU frequency scaling support in the Linux kernel (the longhaul driver) has been disabled
+                by the kernel maintainers until stability problems are addressed.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_AUDIO" class="section">
+          <div class="heading">Audio configuration variables</div>
+          <p>
+            The audio configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_AUDIO_TYPE"><strong>MM_AUDIO_TYPE</strong></dt>
+            <dd>
+              <p>
+                Set audio type. Valid values are 'analog', 'digital' and 'digital+analog', with 'analog' being the default.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_VIDEO" class="section">
+          <div class="heading">Video configuration variables</div>
+          <p>
+            The video configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_VIDEO_ASPECT_RATIO"><strong>MM_VIDEO_ASPECT_RATIO</strong></dt>
+            <dd>
+              <p>
+                Set video aspect ratio. Valid values are '4:3' and '16:9' with '4:3' being default.
+              </p>
+            </dd>
+            <dt id="MM_VIDEO_DEINTERLACE_ENABLED"><strong>MM_VIDEO_DEINTERLACE_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable bob deinterlacing.
+                Valid values are 'yes' and 'no', with 'no' being the default.
+              </p>
+            </dd>
+            <dt id="MM_VIDEO_FONT_SCALE"><strong>MM_VIDEO_FONT_SCALE</strong></dt>
+            <dd>
+              <p>
+                Specify the font size scale factor as a percentage.
+                The value must an integer that is not less than '25' or greater than '400'.
+                The default value is '100'.
+                A smaller value results in smaller MythTV fonts, and a larger value results in larger MythTV fonts.
+              </p>
+              <p>
+                MythTV is designed for 100 dots per inch.
+                By default, MiniMyth configures X so that the vertical dots per inch is 100.
+                Decreasing or increasing 'MM_VIDEO_FONT_SCALE' will decrease or increase the dots per inch,
+                resulting in smaller or larger MythTV fonts.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_X" class="section">
+          <div class="heading">X configuration variables</div>
+          <p>
+            The X configuration variables can be divided into three groups: application, output and display.
+            The X application configuration variables configure which X applications are to be enabled.
+            The X output configuration variables configure which video outputs are to be enabled.
+            The X display configuration variables configure the parameters of the X display.
+          </p>
+          <p>
+            X needs a mode line in order to work.
+            The X display configuration variables provide three methods for specifying the mode line.
+            '<a href="#MM_X_RESOLUTION">MM_X_RESOLUTION</a>',
+            '<a href="#MM_X_MODELINE">MM_X_MODELINE</a>' and
+            '<a href="#MM_X_MODE">MM_X_MODE</a>'.
+            Since these are mutually exclusive, you must only set one of them in your MiniMyth configuration file.
+            If you do not set one of them, then MiniMyth will pick a default for
+            '<a href="#MM_X_MODE">MM_X_MODE</a>'
+            that may not be optimal but should work.
+          </p>
+          <p>
+            While the X display configuration variables allow you set the X variables related to the mode,
+            they do not allow you to set the physical display size.
+            This is because the physical display size is not relevant.
+            Unlike with a computer monitor, with a television the bigger the television the farther back you sit.
+            As a result, the television always appears to be the same size.
+            Consequently, MythTV does not care about the physical display size.
+            Instead, it is optimized for 100 dots per inch.
+            Therefore, MiniMyth calculates the physical display size so that the vertical dots per inch is 100.
+            If this results in fonts that are too small or too large, then you can adjust the font size using
+            '<a href="#MM_VIDEO_FONT_SCALE">MM_VIDEO_FONT_SCALE</a>'.
+          </p>
+          <p>
+            The X application configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_X_ENABLED"><strong>MM_X_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable the
+                <a href="http://en.wikipedia.org/wiki/X_Window_System">X Window System</a>.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+              <p>
+                MiniMyth requires the X Window System in order to run MythTV and other X application.
+                There should be no reason to use 'MM_X_ENABLED' to disable the X Window System.
+                If you are debugging MiniMyth,
+                then you should set
+                '<a href="document-boot.shtml#MM_DEBUG">MM_DEBUG</a>'
+                on the
+                <a href="document-boot.shtml#bootline">boot line</a>.
+                Setting
+                '<a href="document-boot.shtml#MM_DEBUG">MM_DEBUG</a>'
+                will disable the X Window System.
+              </p>
+              <p>
+                MiniMyth uses the
+                <a href="http://xorg.freedesktop.org/wiki/">Xorg</a>
+                X Window System.
+              </p>
+            </dd>
+            <dt id="MM_X_WM_ENABLED"><strong>MM_X_WM_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable the
+                <a href="http://en.wikipedia.org/wiki/Window_manager">X window manager</a>.
+                Valid values are 'yes' and 'no', with 'no' being the default.
+              </p>
+              <p>
+                MiniMyth does not require the X window manager to run MythTV or other X applications.
+                There should be no reason to use 'MM_X_WM_ENABLED' to enabled the X window manager.
+                However, because X applications are usually developed on systems running an X window manager,
+                they sometimes exhibit strange behavior on systems that do not.
+                For example, some X applications may have focus problems on systems that are not running an X window manager.
+              </p>
+              <p>
+                MiniMyth uses the
+                <a href="http://www.nongnu.org/ratpoison/">ratpoison</a>
+                X window manager.
+              </p>
+            </dd>
+            <dt id="MM_X_VNC_ENABLED"><strong>MM_X_VNC_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable the X
+                <a href="http://en.wikipedia.org/wiki/VNC">Virtual Network Computing (VNC)</a>
+                server.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+              <p>
+                VNC can be used to attach to either real or virtual X Window displays.
+                A real X display is an X display that is attached to a console (e.g. your television).
+                That is, the X display seen on the console and seen by the VNC client are the same X session.
+                A virtual X display is an X display that is not attached to a console.
+                That is, the X display seen on the console and seen by the VNC client are different X sessions.
+              </p>
+              <p>
+                A VNC server can enable attachment to either real or virtual X window displays but not both.
+                The reason for including a VNC server in MiniMyth is to enable keyboard entry of MythTV data
+                without requiring a keyboard be connected to the MiniMyth MythTV frontend.
+                Therefore, the MiniMyth VNC server serves the real X display and not virtual X displays.
+              </p>
+              <p>
+                MiniMyth uses the
+                <a href="http://www.karlrunge.com/x11vnc/"></a>
+                VNC server.
+              </p>
+            </dd>
+            <dt id="MM_X_SCREENSAVER_ENABLED"><strong>MM_X_SCREENSAVER_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable the X
+                <a href="http://en.wikipedia.org/wiki/Screensaver">screensaver</a>.
+                Valid values are 'yes' and 'no', with 'no' being the default.
+              </p>
+              <p>
+                If the X screensaver is enabled, then MiniMyth will blank the screen after a short period of inactivity.
+                This can be useful when MiniMyth is connected to a display that is subject to
+                <a href="http://en.wikipedia.org/wiki/Phosphor_burn-in">burn-in</a>.
+                MiniMyth does not support screensaver visualizations, because the visualization files take space and are not included.
+              </p>
+              <p>
+                MiniMyth uses the 
+                <a href="http://www.jwz.org/xscreensaver/">XScreenSaver</a>
+                screensaver.
+              </p>
+            </dd>
+          </dl>
+          <p>
+             The X output configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_X_OUTPUT_DVI"><strong>MM_X_OUTPUT_DVI</strong></dt>
+            <dd>
+              <p>
+                Specify the DVI-D output to use.
+                Valid values are 'none', 'auto' or DVI-D diplay number, with 'none' being the default.
+              </p>
+              <p>
+                If the value is 'none', then a DVD-D output will not be enabled.
+              </p>
+              <p>
+                If the value is 'auto', then a DVD-D output will be enabled and the driver will decide which DVD-D output to use.
+                Usually, the driver will pick the DVD-D output that it considers the first DVD-D output.
+              </p>
+              <p>
+                If the value is a number, then DVD-D output specified by the number will be enabled.
+                DVD-D outputs are numbered starting from '0'.
+              </p>
+            </dd>
+
+            <dt id="MM_X_OUTPUT_VGA"><strong>MM_X_OUTPUT_VGA</strong></dt>
+            <dd>
+              <p>
+                Specify the VGA (or DVI-A) output to use.
+                Valid values are 'none', 'auto' or VGA output number, with 'none' being the default.
+              </p>
+              <p>
+                If the value is 'none', then a VGA output will not be enabled.
+              </p>
+              <p>
+                If the value is 'auto', then a VGA output will be enabled and the driver will decide which VGA output to use.
+                Usually, the driver will pick the VGA output that it considers the first VGA output.
+              </p>
+              <p>
+                If the value is a number, then VGA output specified by the number will be enabled.
+                VGA outputs are numbered starting from '0'.
+              </p>
+            </dd>
+
+            <dt id="MM_X_OUTPUT_TV"><strong>MM_X_OUTPUT_TV</strong></dt>
+            <dd>
+              <p>
+                Specify the TV output to use.
+                Valid values are 'none', 'auto' or TV output number, with 'none' being the default.
+              </p>
+              <p>
+                If the value is 'none', then a TV output will not be enabled.
+              </p>
+              <p>
+                If the value is 'auto', then a TV output will be enabled and the driver will decide which TV output to use.
+                Usually, the driver will pick the TV output that it considers the first TV output.
+              </p>
+              <p>
+                If the value is a number, then TV output specified by the number will be enabled.
+                TV outputs are numbered starting from '0'.
+              </p>
+            </dd>
+          </dl>
+          <dl>
+            <dt id="MM_X_TV_TYPE"><strong>MM_X_TV_TYPE</strong></dt>
+            <dd>
+              <p>
+                Specify the type of television (if any) being used.
+                Valid values depend on the graphics hardware.
+                For NVIDIA graphics hardware, valid values are
+                'PAL-B', 'PAL-D', 'PAL-G', 'PAL-H', 'PAL-I', 'PAL-K1', 'PAL-M', 'PAL-N', 'PAL-NC',
+                'NTSC-J', 'NTSC-M',
+                'HD480i', 'HD480p', 'HD720p', 'HD1080i', 'HD1080p',
+                'HD576i' and 'HD576p', with 'NTSC-M' being the default.
+                For VIA graphics hardware, valid values are
+                'NTSC' and 'PAL', with 'NTSC' being the default.
+                For all other graphics hardware, valid values are
+                'NTSC' and 'PAL', with 'NTSC' being the default.
+              </p>
+            </dd>
+            <dt id="MM_X_TV_OUTPUT"><strong>MM_X_TV_OUTPUT</strong></dt>
+            <dd>
+              <p>
+                Specify the television output (if any) being used.
+                Valid values depend on the graphics hardware.
+                For NVIDIA graphics hardware, valid values are
+                'COMPOSITE' and 'SVIDEO', with 'COMPOSITE' being the default.
+                For VIA graphics hardware, valid values are
+                'Composite', 'S-Video', 'SC' (untested), 'RGB' (untested) 'YCbCr' (untested), with 'Composite' being the default.
+                For all other graphics hardware, valid values are
+                'Composite', with 'Composite' being the default.
+              </p>
+            </dd>
+            <dt id="MM_X_TV_OVERSCAN"><strong>MM_X_TV_OVERSCAN</strong></dt>
+            <dd>
+              <p>
+                Specify the televsion overscan factor.
+                Valid values depend on the grapics hardware.
+                For NVIDIA graphics hardware, valid values are any value between '0.0' and '1.0' inclusive',
+                with '0.0' being the default.
+                For all other graphics hardware, valid values are the value '0.0', with '0.0' being the default.
+              </p>
+            </dd>
+          </dl>
+          <p>
+            The X display configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_X_SYNC"><strong>MM_X_SYNC</strong></dt>
+            <dd>
+              <p>
+                Specify the horizontal sync rate that X will use.
+                The value can be a horizontal sync rate value, a horizontal sync rate range or 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'auto' then the horizontal sync rate will be auto-configured to
+                '20-80'.
+              </p>
+              <p>
+                If the value is a horizontal sync rate value,
+                then MiniMyth will set the horizontal sync rate to a range that is between one less than the value and one more than the value.
+                This is done to ensure that rounding errors do not cause X to declare a mode line out of range.
+              </p>
+            </dd>
+            <dt id="MM_X_REFRESH"><strong>MM_X_REFRESH</strong></dt>
+            <dd>
+              <p>
+                Specify the vertical refresh rate that X will use.
+                The value can be a vertical refresh rate value, a vertical refresh rate range or 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'auto' then the vertical refresh rate will be auto-configured based on
+                '<a href="#MM_X_TV_TYPE">MM_X_TV_TYPE</a>'.
+              </p>
+              <p>
+                If the value is a vertical refresh rate value,
+                then MiniMyth will set the vertical refresh rate to a range that is between one less than the value and one more than the value.
+                This is done to ensure that rounding errors do not cause X to declare a mode line out of range.
+              </p>
+              <p>
+                If
+                '<a href="#MM_X_RESOLUTION">MM_X_RESOLUTION</a>'
+                is set, then the value cannot be a range.
+              </p>
+            </dd>
+            <dt id="MM_X_RESOLUTION"><strong>MM_X_RESOLUTION</strong></dt>
+            <dd>
+              <p>
+                Specify the screen resolution (in pixels).
+                The screen resolution has the form 'HxV' (e.g. '1024x768'), where H and V are the horizontal and vertical resolution in pixels.
+              </p>
+              <p>
+                MiniMyth will use 'MM_X_RESOLUTION' along with
+                '<a href="#MM_X_REFRESH">MM_X_REFRESH</a>'
+                to generate the screen mode line that X will use.
+              </p>
+              <p>
+                If 'MM_X_RESOLUTION' is set, then
+                '<a href="#MM_X_MODELINE">MM_X_MODELINE</a>'
+                and
+                '<a href="#MM_X_MODE">MM_X_MODE</a>'
+                must not be set.
+              </p>
+            </dd>
+            <dt id="MM_X_MODELINE"><strong>MM_X_MODELINE</strong></dt>
+            <dd>
+              <p>
+                Specify the screen mode line that X will use.
+                The screen mode line has the form 'ModeLine&nbsp;"HxV..."&nbsp;...', where H and V are the horizontal and vertical resolution in pixels.
+                For example:
+              </p>
+              <p>
+                MM_X_MODELINE='ModeLine&nbsp;"1280x720_60.00"&nbsp;&nbsp;74.48&nbsp;&nbsp;1280&nbsp;1336&nbsp;1472&nbsp;1664&nbsp;&nbsp;720&nbsp;721&nbsp;724&nbsp;746&nbsp;&nbsp;-HSync&nbsp;+Vsync'
+              </p>
+              <p>
+                The screen mode line must have this form 'ModeLine&nbsp;"HxV..."&nbsp;...',
+                because MiniMyth needs to know the X resolution in pixels before starting X.
+                MiniMyth needs to know the X resolution in pixels before starting X,
+                because MiniMyth uses the X resolution in pixels to calculate an X display size in millimeters.
+              </p>
+              <p>
+                If 'MM_X_MODELINE' is set, then
+                '<a href="#MM_X_RESOLUTION">MM_X_RESOLUTION</a>'
+                and
+                '<a href="#MM_X_MODE">MM_X_MODE</a>'
+                must not be set.
+              </p>
+            </dd>
+            <dt id="MM_X_MODE"><strong>MM_X_MODE</strong></dt>
+            <dd>
+              <p>
+                Specify the built in screen mode that X will use.
+                The value can be the screen mode or 'auto', with 'auto' being the default.
+                The screen mode must have the form 'HxV...' (e.g. '1024x768_60.0'), where H and V are the horizontal and vertical resolution in pixels.
+              </p>
+              <p>
+                The screen mode must have this form 'HxV...',
+                because MiniMyth needs to know the X resolution in pixels before starting X.
+                MiniMyth needs to know the X resolution in pixels before starting X,
+                because MiniMyth uses the X resolution in pixels to calculate an X display size in millimeters.
+              </p>
+              <p>
+                If the value is 'auto' then the screen mode will be auto-configured based on
+                '<a href="#MM_VIDEO_ASPECT_RATIO">MM_VIDEO_ASPECT_RATIO</a>',
+                '<a href="#MM_X_OUTPUT_DVI">MM_X_OUTPUT_DVI</a>',
+                '<a href="#MM_X_OUTPUT_VGA">MM_X_OUTPUT_VGA</a>',
+                '<a href="#MM_X_OUTPUT_TV">MM_X_OUTPUT_TV</a>',
+                '<a href="#MM_X_TV_TYPE">MM_X_TV_TYPE</a>' and
+                '<a href="#MM_X_RESOLUTION">MM_X_RESOLUTION</a>'.
+              </p>
+              <p>
+                For VIA graphcis hardware, some popular modes for connecting to a standard definition televsion are
+                '720x480', '720x480Noscale', '720x480Over', '720x576', '720x570Noscale' and '720x576Over'.
+              </p>
+              <p>
+                If 'MM_X_MODE' is set, then
+                '<a href="#MM_X_RESOLUTION">MM_X_RESOLUTION</a>'
+                and
+                '<a href="#MM_X_MODELINE">MM_X_MODELINE</a>'
+                must not be set.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_MYTH" class="section">
+          <div class="heading">Myth master backend database configuration variables</div>
+          <p>
+            The Myth master backend database configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_MYTH_SERVER"><strong>MM_MYTH_SERVER</strong></dt>
+            <dd>
+              <p>
+                The DNS name or IP address of the Myth database (mysql.txt:DBHostName).
+                If not specified, it defaults to the TFTP server's IP address.
+              </p>
+            </dd>
+            <dt id="MM_MYTH_DBUSERNAME"><strong>MM_MYTH_DBUSERNAME</strong></dt>
+            <dd>
+              <p>
+                The Myth database username (mysql.txt:DBUserName).
+                If not specified, it defaults to 'mythtv'.
+              </p>
+            </dd>
+            <dt id="MM_MYTH_DBPASSWORD"><strong>MM_MYTH_DBPASSWORD</strong></dt>
+            <dd>
+              <p>
+                The Myth database password (mysql.txt:DBPassword).
+                If not specified, it defaults to 'mythtv'.
+              </p>
+            </dd>
+            <dt id="MM_MYTH_DBNAME"><strong>MM_MYTH_DBNAME</strong></dt>
+            <dd>
+              <p>
+                The Myth database name (mysql.txt:DBName).
+                If not specified, it defaults to 'mythconverg'.
+              </p>
+            </dd>
+            <dt id="MM_MYTH_WOL_ENABLED"><strong>MM_MYTH_WOL_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specifies whether or not to enable wake-on-lan.
+                Valid values are 'yes' and 'no', with 'no' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTH_WOL_MAC"><strong>MM_MYTH_WOL_MAC</strong></dt>
+            <dd>
+              <p>
+                Specifies the MAC address of the Myth master backend database.
+                The default is '00:00:00:00:00:00'.
+              </p>
+            </dd>
+            <dt id="MM_MYTH_WOLSQLRECONNECTWAITING"><strong>MM_MYTH_WOLSQLRECONNECTWAITING</strong></dt>
+            <dd>
+              <p>
+                The Myth database WOL reconnect wait time (WOLSqlReconnectWaitTime).
+                The default is '15'.
+              </p>
+            </dd>
+            <dt id="MM_MYTH_WOLSQLCONNECTRETRY"><strong>MM_MYTH_WOLSQLCONNECTRETRY</strong></dt>
+            <dd>
+              <p>
+                The Myth database WOL connection retries (WOLSqlConnectRetry).
+                The default is '20'
+              </p>
+            </dd>
+            <dt id="MM_MYTH_WOLSQLCOMMAND"><strong>MM_MYTH_WOLSQLCOMMAND</strong></dt>
+            <dd>
+              <p>
+                The default is 'wakelan&nbsp;-b&nbsp;{broadcast}&nbsp;-m&nbsp;{mac}',
+                where {broadcast} is the subnet broadcast address,
+                and {mac} is
+                '<a href="#MM_MYTH_WOL_MAC">MM_MYTH_WOL_MAC</a>'.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_MYTHPLUGIN" class="section">
+          <div class="heading">Myth plugin configuration variables</div>
+          <p>
+            The Myth plugin configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_MYTHTV_OPTICAL_DISK_ENABLED"><strong>MM_MYTHTV_OPTICAL_DISK_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythTV support for optical disks.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTHDVD_ENABLED"><strong>MM_MYTHDVD_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythDVD.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTHGALLERY_ENABLED"><strong>MM_MYTHGALLERY_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythGallery.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTHMUSIC_ENABLED"><strong>MM_MYTHMUSIC_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythMusic.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTHNEWS_ENABLED"><strong>MM_MYTHNEWS_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythNews.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTHSTREAM_ENABLED"><strong>MM_MYTHSTREAM_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythStream.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTHVIDEO_ENABLED"><strong>MM_MYTHVIDEO_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythVideo.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+            <dt id="MM_MYTHWEATHER_ENABLED"><strong>MM_MYTHWEATHER_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Specify whether or not to enable MythWeather.
+                Valid values are 'yes' and 'no', with 'yes' being the default.
+              </p>
+            </dd>
+          </dl>
+        </div>
+        <div id="MM_EXTRAS" class="section">
+          <div class="heading">Extras directory configuration variables</div>
+          <p>
+            You can extend MiniMyth by adding files under /usr/local. 
+          </p>
+          <p>
+            The
+            <a href="http://en.wikipedia.org/wiki/URL">Uniform Resource Locators (URLs)</a>
+            in this section must have the following form:
+          </p>
+          <p>
+            {protocol}://{username}:{password}@{server}/{path}?{options}
+          </p>
+          <p>
+            where {options} are additional mount options (-o).
+            For example:
+          </p>
+          <p>
+            nfs://server.home/home/public/music<br/>
+            cifs://user:pass@server.home/music?domain=home<br/>
+            conf:themecaches/G.A.N.T..1024.768.cmg<br/>
+          </p>
+          <p>
+            The valid protocol values are: 'nfs', 'cifs', 'http', 'tftp', 'conf', 'dist', 'hunt' and 'file'.
+            For 'nfs' and 'cifs' the URL points to a remote directory.
+            For 'http', 'tftp', 'conf', 'dist' and 'hunt', the URL points to a remote file.
+            For 'file', the URL point to a local directory or file.
+            A directory will be mounted at the mount point.
+            A file, which can be a squashfs image (*.sfs.), cramfs image (*.cmg) or a tarball file (*.tar.bz2)
+            will be retrieved and mounted at (for *.sfs and *.cmg files) or retrieved at expanded into (for *.tar.bz2 files) the mount point.
+            The 'conf', 'dist' and 'hunt' are special MiniMyth specific URLs.
+            A 'dist' URL causes MiniMyth to look for the file in the MiniMyth distribution directory
+            (the directory with the MiniMyth root file system squashfs image).
+            A 'conf' URL causes MiniMyth to look for the MiniMyth configuration directory.
+            A 'hunt' URL causes MiniMyth to look first in the MiniMyth distributiion directory and
+            second in the MiniMyth configuration directory.
+          </p>
+          <p>
+            The extras directory configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_EXTRAS_URL"><strong>MM_EXTRAS_URL</strong></dt>
+            <dd>
+              <p>
+                The pointer to the location of the extras directoy that will be mounted as '/usr/local'.
+                Valid values are a URL, 'none' and 'auto'.
+              </p>
+              <p>
+                If the value is 'none',
+                then nothing will be mounted as '/usr/local'.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will assume that the extras are in a squashfs image file
+                located in either MiniMyth distribution directory or the MiniMyth configuration directory and
+                having the name 'extras.sfs'.
+                That is, MiniMyth will assume MM_EXTRAS_URL='hunt:extras.sfs'.
+              </p>
+              <p>
+                MiniMyth contains a script 'mm_squashfs_extras_make' to help with creating an extras squashfs image (*.sfs).
+                Once you have all the files you want in the extras directory on your MiniMyth frontend.
+                Telnet into your MiniMyth frontend and run the script by typing 'mm_squashfs_extras_make'.
+                The script will create the extras squashfs image,
+                put the image in the root directory (/) and
+                tell you the name of the image.
+                You can then download the image from your MiniMyth frontend through the web interface
+                to the MiniMyth file system 'http://{frontend}:8080/'.
+              </p>
+            </dd>
+          </dl>
+          <p>
+            Alternatively, you can mount the extras directory by adding the appropriate commands to the 'minimyth.script' script.
+          </p>
+        </div>
+        <div id="MM_CODECS" class="section">
+          <div class="heading">CODECs directory configuration variables</div>
+          <p>
+            You can extend MiniMyth by adding files under '/usr/lib/codecs'.
+          </p>
+          <p>
+            The URLs in this section must have the form described in the
+            <a href="#MM_EXTRAS">Extras directory ...</a>
+            section.
+          </p>
+          <p>
+            The CODECs directory configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_CODECS_URL"><strong>MM_CODECS_URL</strong></dt>
+            <dd>
+              <p>
+                The pointer to the location of the CODECs directoy that will be mounted as '/usr/lib/codecs'.
+                Valid values are a URL, 'none' and 'auto'.
+              </p>
+              <p>
+                If the value is 'none',
+                then nothing will be mounted as '/usr/lib/codecs'.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will assume that the CODECs are in a squashfs image file
+                located in either MiniMyth distribution directory or the MiniMyth configuration directory and
+                having the name 'codecs.sfs'.
+                That is, MiniMyth will assume MM_CODECS_URL='hunt:codecs.sfs'.
+              </p>
+              <p>
+                MiniMyth contains a script 'mm_squashfs_codecs_make' to help with creating a CODECs squashfs image (*.sfs).
+                Telnet into your MiniMyth frontend and run the script by typing 'mm_squashfs_codecs_make'.
+                If there is no CODECs directory or the CODECs directory is empty,
+                then the script will download the
+                <a href="http://www1.mplayerhq.hu/MPlayer/releases/codecs/">essential CODECs tarball</a>
+                from the Internet,
+                create the CODECs directory and put the downloaded CODECs in the CODECs directory.
+                After that, the script will create the CODECs squashfs image,
+                put the image in the root directory (/) and tell you the name of the image.
+                You can then download the image from your MiniMyth frontend through the web interface
+                to the MiniMyth file system 'http://{frontend}:8080/'.
+              </p>
+            </dd>
+          </dl>
+          <p>
+            Alternatively, you can mount the CODECs directory by adding the appropriate commands to the 'minimyth.script' script.
+          </p>
+        </div>
+        <div id="MM_THEME" class="section">
+          <div class="heading">Theme configuration variables</div>
+          <p>
+            MythTV themes are large and numerous.
+            Rather than burden the MiniMyth root file system image with this extra size,
+            MiniMyth downloads and mounts the MythTV theme and the MythTV OSD theme that are to be used by the frontend.
+            The MiniMyth distribution contains several themes, which can be found in the 'themes/' directory.
+            Themes that end in 'osd' are MythTV OSD themes.
+            Themes that end in 'wide' are widescreen MythTV themes.
+            The remaining themes are standard MythTV themes.
+            In addition, to choosing from the included themes you can use your own MythTV theme and MythTV OSD theme.
+          </p>
+          <p>
+            MythTV scales the MythTV theme graphics to sizes that are appropriate for your display resolution.
+            If it present and up-to-date, then this cached theme is reused each time mythfrontend is starts.
+            This works well on MythTV frontend's that have non-volatile storage (e.g. a hard disk drive).
+            However, MiniMyth systems do not have non-volatile storage.
+            As a result, mythfrontend regenerates the cached theme each time that MiniMyth is rebooted.
+            In order to enable MiniMyth to have all the advantages of a cached theme
+            without regenerating the cached theme each time MiniMyth is rebooted,
+            MiniMyth can mount the themecache directory at boot time.
+          </p>
+          <p>
+            The URLs in this section must have the form described in the
+            <a href="#MM_EXTRAS">Extras directory ...</a>
+            section.
+          </p>
+          <p>
+            The theme configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_THEME_NAME"><strong>MM_THEME_NAME</strong></dt>
+            <dd>
+              <p>
+                The name of the MythTV theme to be used. You must provide a MythTV theme name.
+              </p>
+            </dd>
+            <dt id="MM_THEMEOSD_NAME"><strong>MM_THEMEOSD_NAME</strong></dt>
+            <dd>
+              <p>
+                The name of the MythTV OSD theme to be used. You must provide a MythTV OSD theme name.
+              </p>
+            </dd>
+            <dt id="MM_THEME_URL"><strong>MM_THEME_URL</strong></dt>
+            <dd>
+              <p>
+                The pointer to the location of the MythTV theme that will be mounted
+                in the MythTV themes directory ('/usr/share/mythtv/themes') as '${MM_THEME_NAME}'.
+                Valid values are a URL, 'none' and 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'none',
+                then nothing will be mounted in the MythTV themes directory as '${MM_THEME_NAME}'.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will use a 'hunt' URL to look for a squashfs image
+                named for the MythTV theme and located in the directory 'themes'.
+                That is, MiniMyth will assume MM_THEMEOSD_URL="hunt:themes/${MM_THEME_NAME}.sfs".
+              </p>
+            </dd>
+            <dt id="MM_THEMEOSD_URL"><strong>MM_THEMEOSD_URL</strong></dt>
+            <dd>
+              <p>
+                The pointer to the location of the MythTV OSD theme that will be mounted
+                in the MythTV themes directory ('/usr/share/mythtv/themes') as '${MM_THEMEOSD_NAME}'.
+                Valid values are a URL, 'none' and 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'none',
+                then nothing will be mounted in the MythTV themes directory as '${MM_THEMEOSD_NAME}'.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will use a 'hunt' URL to look for a squashfs image
+                named for the MythTV OSD theme and located in the directory 'themes'.
+                That is, MiniMyth will assume MM_THEMEOSD_URL="hunt:themes/${MM_THEMEOSD_NAME}.sfs".
+              </p>
+            </dd>
+            <dt id="MM_THEMECACHE_URL"><strong>MM_THEMECACHE_URL</strong></dt>
+            <dd>
+              <p>
+                The pointer to the location of the already generated MythTV themecache directory that will be mounted
+                as the MythtTV themecache directory ('/root/.mythtv/themecache').
+                Valid values are URL, 'none' and 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'none',
+                then nothing will be mounted as the already generated MythTV themecache directory.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will use a 'hunt' URL to look for a squashfs image file
+                named for the themecache name and located in the directory 'themecaches'.
+                That is, MiniMyth will assume MM_THEMECACHE_URL="hunt:themecaches/${MM_THEME_NAME}.{GuiWidth}.{GuiHeight}.sfs",
+                where {GuiWidth} is the MythTV GUI width and {GuiHeight} is the MythTV GUI height.
+              </p>
+              <p>
+                MiniMyth contains a script 'mm_squashfs_themecache_make' to help with
+                creating a themecache squashfs image (*.sfs).
+                Telnet into your MiniMyth frontend and run the script by typing 'mm_squashfs_themecache_make'.
+                If there is a themecache directory with exactly on cached theme,
+                then the script will create the themecache squashfs image of the themecache directory,
+                put the image in the root directory (/) and tell you the name of the image.
+                The name of the image will be "${MM_THEME_NAME}.{GuiWidth}.{GuiHeight}.sfs",
+                where {GuiWidth} is the MythTV GUI width and {GuiHeight} is the MythTV GUI height.
+                You can then download the image from your MiniMyth frontend through
+                the web interface to the MiniMyth file system 'http://{frontend}:8080/'.
+              </p>
+            </dd>
+          </dl>
+          <p>
+            Alternatively, you can mount the theme directories by adding the appropriate commands to the 'minimyth.script' script.
+          </p>
+        </div>
+        <div id="MM_MEDIA" class="section">
+          <div class="heading">Remote media directory configuration variables</div>
+          <p>
+            You can mount remote media directories by setting some variables.
+          </p>
+          <p>
+            The URLs in this section must have the form described in the
+            <a href="#MM_EXTRAS">Extras directory ...</a>
+            section.
+          </p>
+          <p>
+            The remote media configuration variables are:
+        </p>
+          <dl>
+            <dt id="MM_MYTHDVD_URL"><strong>MM_MYTHDVD_URL</strong></dt>
+            <dd>
+              <p>
+                The URL that points to the location of the directory where MythDVD's temporary DVD ripping directory be created.
+                This will be mounted at /mnt/dvd, and MythDVD's temporary DVD ripping directory will be /mnt/dvd/mythdvd/temp.
+                This directory must be read-write.
+              </p>
+            </dd>
+            <dt id="MM_MYTHGALLERY_URL"><strong>MM_MYTHGALLERY_URL</strong></dt>
+            <dd>
+              <p>
+                The URL that points to the location of the media for MythGallery.
+                This will be mounted at /mnt/gallery.
+              </p>
+            </dd>
+            <dt id="MM_MYTHMUSIC_URL"><strong>MM_MYTHMUSIC_URL</strong></dt>
+            <dd>
+              <p>
+                The URL that points to the location of the media for MythMusic.
+                This will be mounted at /mnt/music.
+                If you plan to rip CDs, then this directory must be read-write, otherwise it can be read-only.
+              </p>
+            </dd>
+            <dt id="MM_MYTHVIDEO_URL"><strong>MM_MYTHVIDEO_URL</strong></dt>
+            <dd>
+              <p>
+                The URL that points to the location of the media for MythVideo.
+                This will be mounted at /mnt/video.
+                If you plan to rip DVDs, then this directory must be read-write, otherwise it can be read-only.
+              </p>
+            </dd>
+          </dl>
+          <p>
+            Alternatively, you can mount remote directories by adding the appropriate commands to the 'minimyth.script' script.
+            If you do this, there are some things that you should know.
+          </p>
+          <p>
+            First, it is suggested that you create new mount points below '/mnt'.
+          </p>
+          <p>
+            Second, there is a shell function called 'mount_url' that you might find useful.
+            You can access this function by including the file '/etc/minimyth.d/minimyth.functions' in 'minimyth.script'.
+            This function takes two arguments:
+          </p>
+          <dl>
+            <dt>URL: required argument:</dt>
+            <dd>This argument is described above.</dd>
+            <dt>MOUNT_DIR: required argument:</dt>
+            <dd>The local directory (e.g. /mnt/music) where the URL will be mounted.</dd>
+          </dl>
+        </div>
+        <div id="MM_LIRC" class="section">
+          <div class="heading">LIRC configuration variables</div>
+          <p>
+            MiniMyth uses
+            <a href="www.lirc.org">LIRC</a>
+            to enable the control of MiniMyth applications using a remote control.
+            <a href="www.lirc.org">LIRC</a>
+            supports many remote control receivers and remote controls,
+            each of which require different configuration.
+            In addition, in the case of remote control receivers connected using serial,
+            configuration depends which serial port on your computer you use.
+          </p>
+          <p>
+            If you are using a remote control receiver that connects using USB,
+            then MiniMyth attempts to auto-detect the remote control receiver.
+            In addition, if you are using a remote control the comes bundled with a remote control receiver that connects using USB,
+            then MiniMyth attempts to auto-detect the remote control as well.
+            However, if MiniMyth is not able to auto-detect your remote control receiver or remote control,
+            then you can configure them using the LIRC configuration variables.
+          </p>
+          <p>
+            The LIRC configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_LIRC_DRIVER"><strong>MM_LIRC_DRIVER</strong></dt>
+            <dd>
+              <p>
+                The name of the lircd driver (e.g. irman).
+                Valid values are the name of the lircd driver, 'none' and 'auto', with 'auto' being the default.
+                'MM_LIRC_DRIVER' is used to determine what LIRC driver to use and to pick a built-in 'lircd.conf' file.
+              </p>
+              <p>
+                If the value is 'none,' then no lircd driver will be set and the lircd daemon will not be started.
+              </p>
+              <p>
+                If the value is 'auto', then MiniMyth will attempt to auto-configure your lircd driver.
+                If you use a remote control receiver that connects using USB,
+                then MiniMyth will attempt to determine the value for 'MM_LIRC_DRIVER'
+                using the USB vendor and product identifiers in conjuction with the '/etc/hardware.d/usb2lirc.map' file.
+                If your remote control receiver is not auto-configured and you believe that it should have been auto-configured,
+                then please file a
+                <a href="http://linpvr.org/bugs/">bug report</a>
+                that contains the remote control receiver vendor and model, the LIRC driver used and
+                the output of the command 'lsusb' with the remote control receiver connected.
+              </p>
+            </dd>
+            <dt id="MM_LIRC_REMOTE"><strong>MM_LIRC_REMOTE</strong></dt>
+            <dd>
+              <p>
+                The remote control that you are using.
+                Valid values are the remote control name, 'none' and 'auto', with 'auto' being the default.
+                'MM_LIRC_REMOTE' is used to pick built-in 'lircd.conf' and 'lircrc' files.
+                While 'lircrc' is depends on the remote control, 'lircd.conf' depends on the remote control and the remote control receiver.
+                Currently understood remote control names:
+              </p>
+              <p>
+                'fusion_remote_mce' with drivers: 'dvico'<br/>
+                'hauppauge_A415'    with drivers: 'irman'<br/>
+                'hauppauge_R808'    with drivers: 'irman' and 'serial'<br/>
+                'mceusb2'           with drivers: 'mceusb2'.
+              </p>
+              <p>
+                If MiniMyth does not have built-in LIRC configuration files
+                or you do not want to use the built-in configuration files,
+                then you can place your 'lircd.conf' and 'lircrc' files in the MiniMyth configuration directory.
+                In the 'lircrc' file, each record's 'prog' attribute must be set to the name of the program being controlled
+                (i.e. 'mythtv', 'mplayer' or 'xine') not to 'irxevent'.
+              </p>
+              <p>
+                If the value is 'none,' then no remote control will be set.
+              </p>
+              <p>
+                If the value is 'auto', then MiniMyth will attempt to auto-configure your remote control.
+                If you use a remote control that comes bundled with a remote control receiver that connects using USB,
+                then MiniMyth will attempt to determine the value for 'MM_LIRC_REMOTE'
+                using the USB vendor and product identifiers in conjuction with the '/etc/hardware.d/usb2lirc.map' file.
+                If your remote control is not auto-autoconfigured and you believe that it should have been auto-configured,
+                then please file a
+                <a href="http://linpvr.org/bugs/">bug report</a>
+                that contains the remote control / remote control receiver vendor and model, the LIRC driver used, 
+                the output of the command 'lspusb' with the remote control receiver connected and (if you have them)
+                'lircd.conf' and 'lircrc' files that work with MiniMyth.
+              </p>
+            </dd>
+            <dt id="MM_LIRC_DEVICE"><strong>MM_LIRC_DEVICE</strong></dt>
+            <dd>
+              <p>
+                The name of your lirc device (e.g. '/dev/ttyS0').
+                Valid values are the lirc device, 'none' and 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'none,' then no lirc device will be set.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will attempt to pick a reasonable default value based on the value of 'MM_LIRC_DRIVER'.
+              </p>
+            </dd>
+            <dt id="MM_LIRC_KERNEL_MODULE"><strong>MM_LIRC_KERNEL_MODULE</strong></dt>
+            <dd>
+              <p>
+                The name of any kernel module that you need to load to support your lirc device (e.g. '8250').
+                Valid values are the kernel module, 'none' and 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'none,' then no lirc device will be set.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will attempt to pick a reasonable default value based on the value of 'MM_LIRC_DRIVER'.
+              </p>
+            </dd>
+            <dt id="MM_LIRC_KERNEL_MODULE_OPTIONS"><strong>MM_LIRC_KERNEL_MODULE_OPTIONS</strong></dt>
+            <dd>
+              <p>
+                Options for the kernel module specified by 'MM_LIRC_KERNEL_MODULE'.
+                Valid values are the kernel module options, 'none' and 'auto', with 'auto' being the default.
+                For MM_LIRC_KERNEL_MODULE='lirc_serial',
+                you need to use 'MM_LIRC_KERNEL_MODULE_OPTIONS' to specify the parameters for the serial port that you are using.
+                For example:
+              </p>
+              <p>
+                COM1: MM_LIRC_KERNEL_MODULE_OPTIONS='irq=4 io=0x3f8'<br />
+                COM2: MM_LIRC_KERNEL_MODULE_OPTIONS='irq=3 io=0x2f8'
+              </p>
+              <p>
+                If these do not work or you need values for other COM ports,
+                then you may need to look at your BIOS settings to determine the correct values
+                for irq and io on your system.
+              </p>
+              <p>
+                If the value is 'none,' then no lirc device will be set.
+              </p>
+              <p>
+                If the value is 'auto',
+                then MiniMyth will attempt to pick a reasonable default value based on the value of 'MM_LIRC_DRIVER'.
+              </p>
+            </dd>
+            <dt id="MM_LIRC_IREXEC_ENABLED"><strong>MM_LIRC_IREXEC_ENABLED</strong></dt>
+            <dd>
+              <p>
+                Controls whether or not the irexec daemon runs.
+                Valid values are 'yes', 'no' and 'auto', with 'auto' being the default.
+              </p>
+              <p>
+                If the value is 'auto',
+                Then MiniMyth will enable or disable the irexec daemon depending on whether irexec is
+                used or not used in the lircrc file.
+              </p>
+            </dd>
+          </dl>
+          <p>
+            Alternatively, you can configure lirc by adding the appropriate commands to 'minimyth.script' script.
+            If you do this, when you run lircd, you need to specify
+            the driver using the '--driver' command line option and
+            the device using the '--device' command line option.
+            If the 'lirc' init script detects that lircd is already running, then it will exit immediately.
+          </p>
+        </div>
+        <div id="MM_LCDPROC" class="section">
+          <div class="heading">LCDproc configuration variables</div>
+          <p>
+            MiniMyth uses
+            <a href="http://lcdproc.omnipotent.net/">LCDproc</a>
+            to enable MiniMyth to display information on a
+            <a href="http://en.wikipedia.org/wiki/Liquid_crystal_display">Liquid Crystal Display (LCD)</a>
+            or
+            <a href="http://en.wikipedia.org/wiki/Vacuum_fluorescent_display">Vacuum Fluorescent Display (VFD)</a>,
+            which can be mounted in one of the computer case's front mount drive bays.
+            <a href="http://lcdproc.omnipotent.net/">LCDproc</a>
+            supports many LCDs and VFDs,
+            each of which require different configuration.
+          </p>
+          <p>
+            If you are using an LCD or VFD that connects using USB,
+            then MiniMyth attempts to auto-detect the LCD or VFD.
+            However, if MiniMyth is not able to auto-detect your LCD or VFD,
+            then you can configure it using the LCDproc configuration variables.
+          </p>
+          <p>
+            The LCDproc configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_LCDPROC_DEVICE"><strong>MM_LCDPROC_DEVICE</strong></dt>
+            <dd>
+              <p>
+                The name of the LCDd device.
+                Valid values are the name of the LCDd device, 'none' and 'auto', with 'auto' being the default'
+                'MM_LCDPROC_DEVICE' is used to pick a device specific built-in LCDd.conf file.
+              </p>
+              <p>
+                If there is no device specific build-in LCDd.conf file for the LCDd device,
+                then the generic LCDd.conf file is used.
+                Currently, there are no built-in 'LCDd.conf' files.
+                If your LCD or VFD does not have a built-in 'LCDd.conf' file or you do not want to use the built-in 'LCDd.conf' file,
+                then you can place your own 'LCDd.conf' file in the MiniMyth configuration directory.
+                You can find an example 'LCDd.conf' file in '/etc/lcd.d/LCDd.conf' on your MiniMyth frontend,
+                which you can download through the web interface to the MiniMyth file system 'http://{frontend}:8080/'.
+                If you do use your own 'LCDd.conf' file because none is included in MiniMyth,
+                then please consider contributing your 'LCDd.conf' file to MiniMyth using a
+                <a href="http://linpvr.org/bugs/">bug report</a>.
+              </p>
+              <p>
+                If the value is 'none,' then none will be picked and LCDd daemon will not be started.
+              </p>
+              <p>
+                If the value is 'auto', then MiniMyth will attempt to auto-configure your LCD or VFD.
+                If you use an LCD or VFD the connects using USB,
+                then MiniMyth will attempt to determine the value for 'MM_LCDPROC_DRIVER'
+                using the USB vendor and product identifiers in conjuction with the '/etc/hardware.d/usb2lcdproc.map' file.
+                If your LCD or VFD is not auto-detected and you believe that it should have been auto-detected,
+                then please file a
+                <a href="http://linpvr.org/bugs/">bug report</a>
+                that contains the LCD or VFD vendor and model, the LCDproc driver used,
+                the output of the command 'lsusb' with the LCD or VFD connected, and (if you have one)
+                an 'LCDd.conf' file that works with MiniMyth.
+              </p>
+            </dd>
+          </dl>
+          <p>
+            Alternatively, you can configure LCDproc by adding the appropiate commands to 'minimyth.script' script.
+            If the 'lcdproc' init script detects that LCDd is already running, then it will exit immediately.
+          </p>
+        </div>
+        <div id="MM_MYTHDB" class="section">
+          <div class="heading">Myth frontend configuration variables</div>
+          <p>
+            Based on settings in other sections, MiniMyth changes the Myth frontend settings in the Myth database.
+            However, if you want MiniMyth to change other Myth frontend settings in the Myth database
+            (or you want to override the changes made by MiniMyth as a result of seeting in other sections),
+            then you can use the Myth frontend configuration variables.
+          </p>
+          <p>
+            The Myth frontend configuration variables are:
+          </p>
+          <dl>
+            <dt id="MM_MYTHDB_JUMPPOINT"><strong>MM_MYTHDB_JUMPPOINT</strong></dt>
+            <dd>
+              <p>
+                Myth frontend jumppoints are stored in the 'jumppoints' table in the Myth master backend database.
+                MiniMyth can modify its jumppoints in the 'jumppoints' table.
+                The variables are set as follows:
+              </p>
+              <p>
+                MM_MYTHDB_JUMPPOINT='{destination}~{keylist}'
+              </p>
+            </dd>
+            <dt id="MM_MYTHDB_KEYBINDING"><strong>MM_MYTHDB_KEYBINDING</strong></dt>
+            <dd>
+              <p>
+                Myth frontend keybindings are stored in the 'keybindings' table in the Myth master backend database.
+                MiniMyth can modify its keybindings in the 'keybindings' table.
+                The variables are set as follows:
+              </p>
+              <p>
+                MM_MYTHDB_KEYBINDING='{context}~{action}~{keylist}'
+              </p>
+            </dd>
+            <dt id="MM_MYTHDB_SETTING"><strong>MM_MYTHDB_SETTING</strong></dt>
+            <dd>
+              <p>
+                Myth frontend settings are stored in the 'settings' table in the Myth master backend database.
+                MiniMyth can modify its settings in the 'settings' table.
+                The variables are set as follows:
+              </p>
+              <p>
+                MM_MYTHDB_SETTING='{value}~{data}'
+              </p>
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-10-23 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

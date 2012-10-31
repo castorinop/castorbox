@@ -1,0 +1,38 @@
+diff -Naur MPlayer-29463-old/libmpcodecs/vd_ffmpeg.c MPlayer-29463-new/libmpcodecs/vd_ffmpeg.c
+--- MPlayer-29463-old/libmpcodecs/vd_ffmpeg.c	2009-08-01 11:11:46.000000000 -0700
++++ MPlayer-29463-new/libmpcodecs/vd_ffmpeg.c	2009-08-01 11:21:17.000000000 -0700
+@@ -145,7 +145,12 @@
+         avcodec_flush_buffers(avctx);
+         return CONTROL_TRUE;
+     case VDCTRL_QUERY_UNSEEN_FRAMES:
+-        return avctx->has_b_frames + 10;
++    {
++        int thread_delay = 0;
++        if(avctx->active_thread_type&FF_THREAD_FRAME)
++            thread_delay = avctx->thread_count - 1;
++        return avctx->has_b_frames + thread_delay + 10;
++    }
+     }
+     return CONTROL_UNKNOWN;
+ }
+diff -Naur MPlayer-29463-old/libvo/vo_corevideo.m MPlayer-29463-new/libvo/vo_corevideo.m
+--- MPlayer-29463-old/libvo/vo_corevideo.m	2009-08-01 11:12:01.000000000 -0700
++++ MPlayer-29463-new/libvo/vo_corevideo.m	2009-08-01 11:21:17.000000000 -0700
+@@ -466,6 +466,8 @@
+ 	NSRect frame;
+ 	CVReturn error = kCVReturnSuccess;
+ 
++        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++
+ 	//config window
+ 	aspect((int *)&d_width, (int *)&d_height,A_NOZOOM);
+ 	frame = NSMakeRect(0, 0, d_width, d_height);
+@@ -508,6 +510,8 @@
+ 
+ 	if(vo_ontop)
+ 		[mpGLView ontop];
++
++        [pool release];
+ }
+ 
+ /*

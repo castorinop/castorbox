@@ -1,0 +1,366 @@
+Gar Tips
+
+Much of working with GAR is about convention and investigation.  Over
+the past year we have come up with a number of tricks and tips to help
+package maintainers figure out what it is they're doing.  Here are a
+few for your perusal:
+
+= Trace The Variables =
+
+Most of the problems with installs come when variables don't behave
+the way you'd expect. The usual problem for GAR is the installation
+directory variables. Many packages simply set things manually never
+expecting anyone to need to override them.
+
+So often you have to trace through the build process looking to see
+where the variable gets its info. The typical path (and possible
+problem points) is as follows:
+
+configure script:
+    Try reading the configure.in to see if the author put in any raw
+    shell code (instead of using standard AC_ macros). If that doesn't
+    give you the info you need, try Configure With Verbose Shell.
+
+Makefile:
+    grep through for variable assignments. Note that things set up for
+    substitution in the configure script will substitute @atsignvars@
+    with their values from the Makefile.in, so keep an eye on that.
+    Often you need to Install Override Dirs in order to change one of
+    these vars at install-time (as opposed to build-time). Be on the
+    lookout for dir variables used in Makefile.in install-foo steps
+    that don't have DESTDIR!
+
+Remember the path goes from CONFIGURE_ARGS -> configure -> Makefile.in
+-> Makefile
+
+Most often, the way to proceed once you've found the variables you
+want is to override make variables
+
+= Override Make Variables =
+
+Variables in make can be set in a number of ways.
+
+== In the Makefile ==
+
+The most common that we see is inside the Makefile itself, using the
+=, ?=, or := operators.
+
+The = operator sets the value literally, allowing for dereference-time
+expansion. Thus, if I do
+
+----8<----
+foo = bar 
+baz = $(foo) yoink 
+foo = gar 
+----8<----
+
+Then by the end, $(baz) will equal "gar yoink", because the $(foo)
+isn't expanded until the very last moment.
+
+If, on the other hand, I do:
+
+----8<----
+foo = bar 
+baz := $(foo) yoink 
+foo = gar 
+----8<----
+
+Then $(baz) will equal "bar yoink", because the := expands all vars
+immediately!
+
+The ?= operator will only set vars that have not yet been already set.
+Thus:
+
+----8<----
+foo = bar 
+foo ?= gar 
+----8<----
+
+will leave $(foo) set to "bar", while
+
+----8<----
+foo ?= gar 
+foo ?= zoink 
+----8<----
+
+will leave it set to "gar", assuming that nothing else had been
+setting foo in the past.
+
+== From the Environment ==
+
+Setting a variable from the environment will cause it to be set when
+the Makefile runs. Thus, if you set foo from the shell, and then
+exported it, the last example in the previous section would have no
+effect on foo at all!
+
+Note that to achieve the equivalent of the = in the Makefile, you must
+use single-quotes to preserve the value. Thus, to set the $(baz) var
+in the same way as it's set in the very first example, one would have
+to do:
+
+----8<----
+$ export baz='$(foo) yoink' 
+----8<----
+
+== Hard Override ==
+
+This is the magic that makes most things in GAR work. If you specify a
+variable on the make command line, it supercedes all other settings in
+the environment or in the Makefile. Thus,
+
+----8<----
+make DESTDIR=/home/nick/destination/ install 
+----8<----
+
+Will set $(DESTDIR) to that path no matter what the Makefile itself
+does to it.
+
+Actually, that's not entirely true, as the Makefile has an "override"
+directive that explicitly subverts these comand-line settings. It's
+deep magic, however, and is used in very few places!
+
+The most common override is done using INSTALL_OVERRIDE_DIRS.
+
+= INSTALL_OVERRIDE_DIRS =
+
+Some packages are either older than automake or are too complicated
+for automake to meet their needs. Of those that use autoconf,
+typically their Makefiles do not honor DESTDIR as they should. For
+these, we have INSTALL_OVERRIDE_DIRS available.
+
+To use INSTALL_OVERRIDE_DIRS, simply set it to a space-separated list
+of the path variables (with their names taken from the variable names
+in gar.conf.mk) that you wish to override. For example, the binutils
+package's Makefile ultimately says:
+
+----8<----
+prefix = / 
+exec_prefix = / 
+
+bindir = //bin 
+sbindir = //sbin 
+libexecdir = //libexec 
+datadir = //share 
+sysconfdir = //etc 
+sharedstatedir = //share 
+localstatedir = //var 
+libdir = //lib 
+includedir = /../../home/nick/zootbuild/include 
+oldincludedir = /usr/include 
+infodir = /../../home/nick/zootbuild/info 
+mandir = /../../home/nick/zootbuild/man 
+----8<----
+
+So to override this, we put the following in our package Makefile:
+
+----8<----
+INSTALL_OVERRIDE_DIRS = prefix exec_prefix bindir sbindir libexecdir
+INSTALL_OVERRIDE_DIRS += datadir sysconfdir sharedstatedir
+INSTALL_OVERRIDE_DIRS += localstatedir libdir includedir infodir
+INSTALL_OVERRIDE_DIRS += mandir 
+----8<----
+
+This allows the Makefile to build software believing that it can find
+binaries in /bin, but tells the "make install" rule to put them in
+$(DESTDIR)$(bindir). (/tmp/gar/bin on a standard GAR tree).
+
+Note that if a Makefile specifies a dir as a relative path, such as:
+
+----8<----
+bindir = $(prefix)/bin 
+----8<----
+
+Then it shouldn't be necessary to override bindir, provided that
+prefix has been overridden.
+
+How does this work? Simple, it uses make's overriding of variables on
+the command line. If we set the following:
+
+----8<----
+INSTALL_OVERRIDE_DIRS = bindir 
+----8<----
+
+Then that will run make bindir=$(DESTDIR)$(bindir) install
+
+= See How Debian Does It =
+
+Debian has packaged several thousand pieces of software, and done so
+in a way that builds on a wide variety of architectures. The way that
+Debian packages software is, at its core, remarkably similar to GAR.
+
+Before you can See How Debian Does It, you need to add the following
+lines to the /etc/apt/sources.list file (or make sure that similar
+deb-src lines exist) and run apt-get update (as root):
+
+----8<----
+deb-src http://http.us.debian.org/debian stable main contrib 
+deb-src http://non-us.debian.org/debian-non-US stable/non-US main contrib 
+----8<----
+
+Once you have done this, you can now open up a package and look
+inside. Just run (as yourself) apt-get source <packagename> and the
+source code will download. It should make a subdirectory like
+foo-2.4.2/ for you. Just cd into it and then have a look at
+debian/rules. This is actually a Makefile that has its own way of
+doing things. It should let you know what configure switches to use
+and whether or not the package supports DESTDIR, etc.
+
+Note specifically the pre-build-stamp (much like our configure step),
+build-stamp (much like our build step), and pre-binary (much like our
+install) stages. See if they override DESTDIR or some other variables.
+See what they do manually and what they do via dh_ scripts. Note the
+configure_args variables.
+
+While not always the best way, if you See How Debian Does It, you may
+learn a thing or two! 
+
+= Configure With Verbose Shell =
+
+Autoconf-made configure scripts are just shell scrips. As such, they
+have, at the beginning:
+
+----8<----
+#!/bin/sh 
+----8<----
+
+If you want the script to print out everything it does, simply change
+this to:
+
+----8<----
+#!/bin/sh -x 
+----8<----
+
+And each line of shell code will be printed out, beginning with a
+plus. Normal output (what would be printed without the -x) appears as
+it did before.
+
+Often the info you want is at the end, where it fails, but sometimes
+the amount of output from this trick can be dizzying. If you find
+yourself overwhelmed, it's often best to run a typescript. 
+
+= Run a Typescript =
+
+Often something you do (like a large build) will generate copious
+amounts of screen output, and scrollback buffers are only so large.
+For this problem, Unix has a tool known as the typescript. If you run
+the command script, it will start a new shell for you, and all output
+from this shell will not only go to your screen, but also to a file
+called typescript. Once you're done, log out of the shell and then
+peruse or transmit your typescript at your leisure.
+
+This is especially useful for large builds where lots of configuration
+info goes flying past! 
+
+= Implicit Destdir Considered Harmful =
+
+When compiling a piece of software (during the configure stage and
+build stage), one refers to common directory variables like $(bindir)
+and $(prefix). During these stages they refer to the variables
+relative to the root of the final running system.
+
+During the install stage, one needs to refer to these variables as
+well, but we need to prefix the dir where our file tree is being
+built. This means that if we're building a tree of files to be
+packaged up as a separate filesystem, we need to prepend the
+$(DESTDIR) variable on the front, as in $(DESTDIR)$(bindir) and
+$(DESTDIR)$(prefix).
+
+Now, working on the principle of least surprise, the system (for a
+time) implicitly added $(DESTDIR) to the beginning of these variables
+in four special cases:
+
+	* pre-install
+	* post-install
+	* install-none (a common quick-and-dirty install target)
+	* manifest-based installs.
+
+But, as both Seth Schoen and Andrew Scott pointed out, this creates
+special cases, which are confusing to the user.  Thus, this implicit
+munging is no more. On 5Apr2002, Nick Moffitt and Andrew Scott removed
+all of the implicit DESTDIR stuff from all the packages.
+
+Thus, in your rules pertaining to the install stage, be sure to prefix
+your standard directory variables with $(DESTDIR)!
+
+= Put Custom Rules After include =
+
+If a rule is not specified on the make command-line, the first one
+encountered will be run. Since there is an "all" target at the top of
+the included makefiles, this typically means that just running "make"
+in a package dir will peform a build. The problem comes when there is
+a rule (such as pre-configure or post-patch or install-custom etc)
+placed in the package Makefile before the include directive.
+
+Simply placing all rules /after/ the include directive will preserve
+the "default to build" behavior.
+
+In addition, using this technique will ensure that the rule you
+specified will override any wildcard matches from the gar.lib.mk 
+
+= Architecture-specific features =
+
+Many people have asked about making packages behave differently when
+building on different architectures.  For a long time these questions
+were deferred because of a freeze in the core GAR code.  Fortunately
+for multi-architecture packagers, this need not be an impediment.
+
+== GARCH-specific variable contents ==
+
+The way to set variables based on $(GARCH) is to make use of GNU
+make's lazy evaluation.  Consider the following example:
+
+----8<----
+i386_CONFIGURE_ARGS = -I/usr/i386/include/
+ppc_CONFIGURE_ARGS = -I/usr/powerpc/include/
+
+CONFIGURE_ARGS += $($(GARCH)_CONFIGURE_ARGS)
+----8<----
+
+The third line will append the contents of the variable named
+$(GARCH)_CONFIGURE_ARGS to the end of $(CONFIGURE_ARGS).  Consider the
+possibilities of using this in select cases for $(BUILD_ARGS),
+$(CFLAGS), or $(LDFLAGS).
+
+== GARCH-specific custom rules ==
+
+Many packages do not rely on the default behavior of the standard
+rules.  Fortunately, dependency names are evaluated in a lazy manner
+as well:
+
+----8<----
+CONFIGURE_SCRIPTS = custom
+
+include ../../gar.mk
+
+configure-custom: pre-configure-$(GARCH)
+	$(MAKECOOKIE)
+
+pre-configure-i386:
+	cp $(WORKSRC)/Makefile.i386 $(WORKSRC)/Makefile
+	$(MAKECOOKIE)
+
+pre-configure-ppc:
+	cp $(WORKSRC)/Makefile.macLinux $(WORKSRC)/Makefile
+	$(MAKECOOKIE)
+----8<----
+
+The example is contrived, but the technique remains useful.  
+
+== DESTIMG-based hacks ==
+
+This technique works just as well with DESTIMG as it does with GARCH.
+Thus, one could provide different switches to a package based on what
+the destination image is.  Consider:
+
+----8<----
+main_EXTRASWITCHES = --with-big-feature
+rootbin_EXTRASWITCHES = --without-big-feature
+
+CONFIGURE_ARGS += $($(DESTIMG)_EXTRASWITCHES)
+----8<----
+
+Likewise one could depend on pre-configure-$(DESTIMG) or the like and
+perform the above trick with custom pre-configure-main and
+pre-configure-rootbin rules.  The two could even be combined, making
+combinations of switches exist (say) only when building for main and
+i386.

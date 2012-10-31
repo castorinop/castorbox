@@ -1,0 +1,435 @@
+=== modified file 'Makefile'
+--- old/Makefile	2009-09-25 16:02:03 +0000
++++ new/Makefile	2010-03-12 17:47:32 +0000
+@@ -17,44 +17,13 @@
+ 	file_t.o file_monitor.o search.o replay.o busy_indicator.o \
+ 	shutdown.o touch.o resolution.o regextools.o
+ 
+-ifeq ($(INOTIFY),yes)
+-SRCS += notify.cpp
+-OBJS += notify.o
+-COMMON_LIBS += -linotifytools
+-endif
+-
+-ifeq ($(SQLITE),yes)
+-SRCS += cpp_sqlitepp.cpp libbitap.c
+-OBJS += cpp_sqlitepp.o libbitap.o
+-COMMON_LIBS += -lsqlite3
+-endif
+-
+-ifeq ($(BENCH),yes)
+-SRCS += bench.cpp
+-OBJS += bench.o
+-endif
+-
+-ifeq ($(FFMPEG_EXTERNAL), no)
+-ifeq ($(FFMPEG_THUMBNAILER), yes)
+-SUBDIRS += libs/ffmpeg
+-else
+-ifeq ($(MPEG), yes)
+-SUBDIRS += libs/ffmpeg
+-endif
+-endif
+-endif
+-EXTRA_DISTCLEAN = rm -f libavcodec-config.log && rm -f libs/ffmpeg/*.pc && rm -f libs/ffmpeg/config.*
+-
+-ifeq ($(NOTIFYAREA),yes)
+-SRCS += notify_area.cpp
+-OBJS += notify_area.o
+-endif
++OBJS = mms.o
+ 
+ CXXFLAGS += -I./plugins -I./plugins/feature/ -I./plugins/input \
+-       -I./plugins/output
++       -I./plugins/output -fPIC
+ 
+ SUBDIRS += po
+-
++SUBDIRS += libmms
+ SUBDIRS += plugins
+ 
+ # Used for clock support
+@@ -74,21 +43,12 @@
+ 
+ # plugins
+ #SRCS += plugins/plugins.cpp plugins/output/common-output.cpp plugins/input/input.cpp plugins/feature/module.cpp
+-OBJS += plugins/plugins.o plugins/output/output.o plugins/input/input-base.o plugins/feature/feature.o
+-
+-all: version.h $(PRG)
+-
+-plugins/output/output.o:
+-	@cd plugins/output && make output-base && cd ../..
+-
+-plugins/input/input-base.o:
+-	@cd plugins/input && make input-base && cd ../..
+-
+-plugins/feature/feature.o:
+-	@cd plugins/feature && make feature-base && cd ../..
+-
+-plugins/plugins.o:
+-	@cd plugins && make plugins.o && cd ..
++#OBJS += plugins/plugins.o plugins/output/output.o plugins/input/input-base.o plugins/feature/feature.o
++
++all: version.h libs-depends $(PRG)
++
++libs-depends:
++	make -C libmms
+ 
+ MMS_DEP = $(OBJS) $(COMMON_DEPS)
+ 
+@@ -96,13 +56,8 @@
+ 	$(DO_MAKE)
+ 	make mms.o
+ 	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
+-	-rdynamic --export-dynamic $(OBJS) $(COMMON_LIBS) `imlib2-config --libs`
+-	@rm -r .libs
+-
+-core: $(MMS_DEP)
+-	make mms.o
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
+-	-rdynamic --export-dynamic $(OBJS) $(COMMON_LIBS) `imlib2-config --libs`
++	-rdynamic --export-dynamic $(OBJS) $(COMMON_LIBS) `imlib2-config --libs` \
++	-lmms-core -lmms-gui -lmms-plugins -lmms-input -lmms-output -lmms-feature -Llibmms
+ 	@rm -r .libs
+ 
+ # ./configure must be run if it changed
+@@ -299,9 +254,9 @@
+ 	@echo " Uninstall completed"
+ 
+ clean:
+-	@if test -f simplefile.o ; then rm *.o ; fi
+-	@if test -f mms ; then rm mms ; fi
+-	@for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
++	if test -f mms.o ; then rm *.o ; fi
++	if test -f mms ; then rm mms ; fi
++	for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
+ 
+ distclean:
+ 	$(MAKE) clean
+
+=== modified file 'audio-library/Makefile'
+--- old/audio-library/Makefile	2008-11-28 13:53:25 +0000
++++ new/audio-library/Makefile	2010-03-12 17:34:00 +0000
+@@ -18,11 +18,11 @@
+ 
+ OBJS = audio-library.o
+ 
+-OBJS += ../plugins/plugins.o ../plugins/output/output.o ../plugins/input/input-base.o ../plugins/feature/feature.o ../plugins/feature/audio/audio_config.o
++OBJS += ../plugins/feature/audio/audio_config.o
+ 
+ SUBDIRS += ../plugins/
+ 
+-DEP_OBJS = ../*.o
++#DEP_OBJS = ../*.o
+ 
+ LIBS += `imlib2-config --libs`
+ 
+@@ -45,7 +45,10 @@
+ $(PRG): audio-library.o
+ 	@if test -f ../mms.o; then rm ../mms.o; fi
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lsqlite3 -lz -ltag
++	#/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lsqlite3 -lz -ltag
++	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
++	-rdynamic --export-dynamic $(OBJS) $(LIBS) -L/usr/lib -lsqlite3 -lz -ltag \
++	-lmms-core -lmms-gui -lmms-plugins -lmms-input -lmms-output -lmms-feature -L../libmms
+ 	@rm -r .libs
+ 
+ install: $(PRG)
+
+=== added directory 'libmms'
+=== added file 'libmms/Makefile'
+--- old/libmms/Makefile	1970-01-01 00:00:00 +0000
++++ new/libmms/Makefile	2010-03-12 15:37:21 +0000
+@@ -0,0 +1,154 @@
++MMSDIR = ../
++
++include $(MMSDIR)/config.mak
++
++include $(MMSDIR)/common.mak
++
++libs = libcore libgui libplugins libfeature liboutput libintput
++
++libcore_NAME	= libmms-core.so.1.1.1
++libgui_NAME     = libmms-gui.so.1.1.1
++libplugins_NAME = libmms-plugins.so.1.1.1
++libinput_NAME	= libmms-input.so.1.1.1
++liboutput_NAME	= libmms-output.so.1.1.1
++libfeature_NAME = libmms-feature.so.1.1.1
++
++SRCS = common.cpp config.cpp global_options.cpp option.cpp options.cpp \
++	rand.cpp simplefile.cpp startmenu.cpp theme.cpp themes.cpp \
++	updater.cpp cd.cpp print.cpp extra_menu.cpp global.cpp libfspp.cpp \
++	general.cc file_t.cc file_monitor.cc search.cpp replay.cpp \
++	busy_indicator.cpp shutdown.cpp touch.cpp resolution.cpp regextools.cpp
++
++
++libcore_OBJS = common.o config.o global_options.o option.o \
++	rand.o simplefile.o theme.o updater.o \
++	cd.o print.o global.o libfspp.o general.o \
++	file_t.o file_monitor.o replay.o  \
++	regextools.o
++
++libgui_OBJS = options.o startmenu.o themes.o \
++	extra_menu.o search.o busy_indicator.o \
++	shutdown.o touch.o resolution.o
++
++OBJS = common.o config.o global_options.o option.o options.o \
++	rand.o simplefile.o startmenu.o theme.o themes.o updater.o \
++	cd.o print.o extra_menu.o global.o libfspp.o general.o \
++	file_t.o file_monitor.o search.o replay.o busy_indicator.o \
++	shutdown.o touch.o resolution.o regextools.o
++
++ifeq ($(INOTIFY),yes)
++SRCS += notify.cpp
++libcore_OBJS += notify.o
++COMMON_LIBS += -linotifytools
++endif
++
++ifeq ($(SQLITE),yes)
++SRCS += cpp_sqlitepp.cpp libbitap.c
++libcore_OBJS += cpp_sqlitepp.o libbitap.o
++COMMON_LIBS += -lsqlite3
++endif
++
++ifeq ($(BENCH),yes)
++SRCS += bench.cpp
++libcore_OBJS += bench.o
++endif
++
++ifeq ($(FFMPEG_EXTERNAL), no)
++ifeq ($(FFMPEG_THUMBNAILER), yes)
++SUBDIRS += libs/ffmpeg
++else
++ifeq ($(MPEG), yes)
++SUBDIRS += libs/ffmpeg
++endif
++endif
++endif
++EXTRA_DISTCLEAN = rm -f libavcodec-config.log && rm -f libs/ffmpeg/*.pc && rm -f libs/ffmpeg/config.*
++
++ifeq ($(NOTIFYAREA),yes)
++SRCS += notify_area.cpp
++libgui_OBJS += notify_area.o
++endif
++
++CXXFLAGS += -I.. -I../plugins -I../plugins/feature/ -I../plugins/input \
++       -I../plugins/output -fPIC
++CFLAGS += -I.. -fPIC
++
++# Used for clock support
++COMMON_LIBS += -lrt
++
++#OBJS := $(addprefix ../,$(OBJS))
++# plugins
++#SRCS += plugins/plugins.cpp plugins/output/common-output.cpp plugins/input/input.cpp plugins/feature/module.cpp
++OBJS += plugins/plugins.o plugins/output/output.o plugins/input/input-base.o plugins/feature/feature.o
++
++
++#SUBDIRS += ../plugins
++#CXXFLAGS += -I../ -I../../ -I../../../ -I../../output/ -I../tinyxml \
++#	-I../../input/ -fPIC -shared
++#@$(foreach COOKIEFILE,$(EXTRACT_TARGETS), test -e $(COOKIEDIR)/$(COOKIEFILE) ;)
++LIBs = $(foreach TMP,$(addsuffix _NAME,$(libs)), $($(TMP)))
++
++all: prepare $(LIBs)
++	@echo DONE!
++
++show-deps:
++	@echo $(LIBs)
++
++prepare:
++	@ln -sf ../*.cpp ../*.cc ../*.c ../plugins .
++
++#$(addprefix "$$\(",$(addsuffix "_NAME\)",$(libs)))
++
++$(libcore_NAME): $(libcore_OBJS)
++	$(DO_MAKE)
++	$(CXX) $(CXXFLAGS) -shared \
++	-Wl,-soname,libmms-core.so.1.1 -o $(libcore_NAME) $(libcore_OBJS) $(COMMON_LIBS)
++	ln -sf $(libcore_NAME) libmms-core.so
++
++$(libgui_NAME): $(libgui_OBJS)
++	$(DO_MAKE)
++	$(CXX) $(CXXFLAGS) -shared \
++	-Wl,-soname,libmms-gui.so.1.1 -o $(libgui_NAME) $(libgui_OBJS) $(COMMON_LIBS)
++	ln -sf $(libgui_NAME) libmms-gui.so
++
++$(libplugins_NAME):
++	@make -C plugins SHARED="-fPIC" plugins.o
++	$(CXX) $(CXXFLAGS)  -shared \
++	-Wl,-soname,libmms-plugins.so.1.1 -o $(libplugins_NAME) plugins/plugins.o $(COMMON_LIBS)
++	ln -sf $(libplugins_NAME) libmms-plugins.so
++
++$(libinput_NAME):
++	@make -C plugins/input SHARED="-fPIC" input-base
++	$(CXX) $(CXXFLAGS) -shared \
++	-Wl,-soname,libmms-input.so.1.1 -o $(libinput_NAME) plugins/input/input-base.o $(COMMON_LIBS)
++	ln -sf $(libinput_NAME) libmms-input.so
++
++$(liboutput_NAME):
++	@make -C plugins/output SHARED="-fPIC" output-base
++	$(CXX) $(CXXFLAGS) -shared \
++	-Wl,-soname,libmms-output.so.1.1 -o $(liboutput_NAME) plugins/output/output.o $(COMMON_LIBS)
++	ln -sf $(liboutput_NAME) libmms-output.so
++
++$(libfeature_NAME):
++	@make -C plugins/feature SHARED="-fPIC" feature-base
++	$(CXX) $(CXXFLAGS) -shared \
++	-Wl,-soname,libmms-feature.so.1.1 -o $(libfeature_NAME) plugins/feature/feature.o $(COMMON_LIBS)
++	ln -sf $(libfeature_NAME) libmms-feature.so
++
++
++install:
++	@for i in $(LIBs); do $(INSTALL) $$i $(DESTDIR)$(LIBDIR)/; done
++
++clean:
++	$(DO_MAKECLEAN)
++	@if test -f common.o; then rm *.o ; fi
++	@if test -f $(libcore_NAME) ; then rm *.so* ; fi
++
++depend:
++	make -C notify-area depend
++	$(CXX) -MM $(CXXFLAGS) $(SRCS) 1> .depend
++
++# dependencies
++ifneq ($(wildcard .depend),)
++include .depend
++endif
+
+=== modified file 'movie-library/Makefile'
+--- old/movie-library/Makefile	2008-11-28 13:53:25 +0000
++++ new/movie-library/Makefile	2010-03-12 17:34:27 +0000
+@@ -62,7 +62,10 @@
+ $(PRG): movie-library.o
+ 	@if test -f ../mms.o; then rm ../mms.o; fi
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
++	#/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
++	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
++	-rdynamic --export-dynamic $(OBJS) $(LIBS) -L/usr/lib -lsqlite3 -lz -ltag \
++	-lmms-core -lmms-gui -lmms-plugins -lmms-input -lmms-output -lmms-feature -L../libmms
+ 	@rm -r .libs
+ 
+ install: $(PRG)
+
+=== modified file 'pic-library/Makefile'
+--- old/pic-library/Makefile	2008-11-28 13:53:25 +0000
++++ new/pic-library/Makefile	2010-03-12 17:35:34 +0000
+@@ -42,7 +42,10 @@
+ $(PRG): pic-library.o
+ 	@if test -f ../mms.o; then rm ../mms.o; fi
+ 	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
++	#/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) $(OBJS) $(DEP_OBJS) $(LIBS) -L/usr/lib -lz -ltag
++	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o $(PRG) \
++	-rdynamic --export-dynamic $(OBJS) $(LIBS) -L/usr/lib -lsqlite3 -lz -ltag \
++	-lmms-core -lmms-gui -lmms-plugins -lmms-input -lmms-output -lmms-feature -L../libmms
+ 	@rm -r .libs
+ 
+ install: $(PRG)
+
+=== modified file 'plugins/Makefile'
+--- old/plugins/Makefile	2008-11-28 13:53:25 +0000
++++ new/plugins/Makefile	2010-03-11 22:25:53 +0000
+@@ -13,7 +13,7 @@
+ SUBDIRS += feature output input
+ 
+ CXXFLAGS += -I../ -I./feature/ -I./feature/audio/players/ -I./input \
+-	-I./output -I../libs/libfs++/include/
++	-I./output -I../libs/libfs++/include/ $(SHARED)
+ 
+ all: $(OBJS)
+ 	$(DO_MAKE)
+
+=== modified file 'plugins/feature/Makefile'
+--- old/plugins/feature/Makefile	2009-10-07 21:52:53 +0000
++++ new/plugins/feature/Makefile	2010-03-11 22:46:53 +0000
+@@ -10,7 +10,7 @@
+ SRCS = common-feature.cpp module.cpp gsimplefile.cpp wget_wrapper.cpp playlist_parser.cpp
+ OBJS = common-feature.o module.o gsimplefile.o wget_wrapper.o playlist_parser.o
+ 
+-CXXFLAGS += -I../ -I../../  -I../input -I../output
++CXXFLAGS += -I../ -I../../  -I../input -I../output $(SHARED)
+ 
+ ifeq ($(MEDIA_RSS), yes)
+ XML_DIR += tinyxml
+@@ -101,7 +101,7 @@
+ 
+ feature-base: $(OBJS) $(DEP)
+ ifdef XML_DIR 
+-	make -C $(XML_DIR)
++	make SHARED="$(SHARED)" -C $(XML_DIR)
+ endif
+ 	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o feature.o $(OBJS) $(XML_LIB)
+ 
+=== modified file 'plugins/input/Makefile'
+--- old/plugins/input/Makefile	2008-11-28 13:53:25 +0000
++++ new/plugins/input/Makefile	2010-03-11 22:30:54 +0000
+@@ -24,7 +24,7 @@
+ SRCS = input.cpp input_device.cpp remote.cpp remote_config.cpp
+ OBJS = input.o input_device.o remote.o remote_config.o
+ 
+-CXXFLAGS += -I../ -I../../ -I../output/ -Ilirc/
++CXXFLAGS += -I../ -I../../ -I../output/ -Ilirc/ $(SHARED)
+ 
+ input-base: $(OBJS) $(DEP)
+ 	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(CXXFLAGS) -o input-base.o $(OBJS)
+
+=== modified file 'plugins/output/Makefile'
+--- old/plugins/output/Makefile	2008-11-28 13:53:25 +0000
++++ new/plugins/output/Makefile	2010-03-11 22:34:18 +0000
+@@ -15,7 +15,7 @@
+ 	pic_object.o rectangle_object.o text_object.o \
+ 	movie_object.o renderer.o render_device.o SSaverobj.o
+ 
+-CXXFLAGS += -I../ -I../../ -I../input -I../feature
++CXXFLAGS += -I../ -I../../ -I../input -I../feature $(SHARED)
+ 
+ all: output
+ 
+
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/tinyxml/Makefile work/main.d/mms-1.1.0-1788/plugins/feature/tinyxml/Makefile
+--- tmp/mms-1.1.0-1788/plugins/feature/tinyxml/Makefile	2010-03-06 12:48:58.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/tinyxml/Makefile	2010-03-12 15:16:24.000000000 -0300
+@@ -43,10 +43,10 @@
+ 
+ # Rules for compiling source files to object files
+ %.o : %.cpp
+-	${CXX} -c ${CXXFLAGS} ${INCS} $< -o $@
++	${CXX} -c ${CXXFLAGS} $(SHARED) ${INCS} $< -o $@
+ 
+ %.o : %.c
+-	${CC} -c ${CFLAGS} ${INCS} $< -o $@
++	${CC} -c ${CFLAGS} $(SHARED) ${INCS} $< -o $@
+ 
+ clean:
+ 	rm -f core ${OBJS} ${OUTPUT}
+ 
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/Makefile	2010-03-12 15:26:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/Makefile	2010-03-12 15:33:55.000000000 -0300
+@@ -45,19 +43,18 @@
+ 
+ all: $(PLUGIN_NAME) $(PRG)
+ 
+-$(PLUGIN_NAME): $(OBJS) $(PRG)
++$(PLUGIN_NAME): $(OBJS)
+ 	$(DO_MAKE)
+ 	make -C po
+ 	$(CXX) $(CXXFLAGS) \
+ 	-Wl,-nostdlib -o $(PLUGIN_NAME) $(OBJS) $(COMMON_LIBS)
+ 
+-$(PRG): thumb-helper.o
+-	@if test -f ../../../mms.o; then rm ../../../mms.o; fi
+-	$(DO_MAKE)
+-	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(PRG_CXXFLAGS) -o $(PRG) $(PRG_OBJS) $(PRG_DEP_OBJS) $(LIBS) $(COMMON_LIBS) -L/usr/lib -lz -ltag
++$(PRG): $(PRG_OBJS) $(DEP)
++	/bin/sh /usr/bin/libtool --mode=link $(LIBTOOL_OPTS) $(CXX) $(PRG_CXXFLAGS) -o $(PRG) \
++	-rdynamic --export-dynamic $(PRG_OBJS) $(COMMON_LIBS) $(LIBS) \
++	-lmms-core -lmms-gui -lmms-plugins -lmms-input -lmms-output -lmms-feature -L$(MMSDIR)/libmms
+ 	@rm -r .libs
+ 
+-
+ install:
+ 	@for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+ 	$(INSTALL) $(PLUGIN_NAME) $(DESTDIR)$(PLUGINDIR)/

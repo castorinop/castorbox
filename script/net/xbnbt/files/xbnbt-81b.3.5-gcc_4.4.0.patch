@@ -1,0 +1,146 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/atom.cpp new/atom.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/atom.cpp	2005-05-02 05:21:38.000000000 -0300
++++ new/atom.cpp	2009-05-15 22:26:46.000000000 -0300
+@@ -25,6 +25,7 @@
+ #include "atom.h"
+ #include "config.h"
+ #include "util.h"
++#include <cstdio>
+ 
+ //
+ // CAtomInt
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/atom.o and new/atom.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/base64.o and new/base64.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/bencode.cpp new/bencode.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/bencode.cpp	2005-04-30 04:14:38.000000000 -0300
++++ new/bencode.cpp	2009-05-15 22:27:30.000000000 -0300
+@@ -23,6 +23,7 @@
+ #include "atom.h"
+ #include "bencode.h"
+ #include "util.h"
++#include <cstdio>
+ 
+ string EncodeInt( const CAtomInt &x )
+ {
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/bencode.o and new/bencode.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/bnbt and new/bnbt differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/bnbt.cpp new/bnbt.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/bnbt.cpp	2005-09-25 13:53:26.000000000 -0300
++++ new/bnbt.cpp	2009-05-15 22:34:09.000000000 -0300
+@@ -36,6 +36,7 @@
+ #include "link.h"
+ #include "server.h"	  
+ #include "util.h"
++#include <cstdio>
+ 
+ #ifdef WIN32
+  #include "util_ntservice.h"
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/bnbt_mysql.o and new/bnbt_mysql.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/bnbt.o and new/bnbt.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/client.cpp new/client.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/client.cpp	2005-09-18 14:11:28.000000000 -0300
++++ new/client.cpp	2009-05-15 22:28:04.000000000 -0300
+@@ -37,6 +37,7 @@
+ #include "server.h"
+ #include "tracker.h"
+ #include "util.h"
++#include <cstdio>
+ 
+ /*
+ ===================
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/client.o and new/client.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/config.o and new/config.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/link.o and new/link.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/md5.o and new/md5.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/server.o and new/server.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/sha1.cpp new/sha1.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/sha1.cpp	2005-05-14 03:31:48.000000000 -0300
++++ new/sha1.cpp	2009-05-15 22:30:39.000000000 -0300
+@@ -18,7 +18,7 @@
+ 
+ #include "bnbt.h"
+ #include "sha1.h"
+-
++#include <cstdio>
+ 
+ CSHA1::CSHA1()
+ {
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/sha1.o and new/sha1.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/sort.o and new/sort.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/tracker_admin.cpp new/tracker_admin.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/tracker_admin.cpp	2005-09-22 16:18:50.000000000 -0300
++++ new/tracker_admin.cpp	2009-05-15 22:32:17.000000000 -0300
+@@ -27,7 +27,8 @@
+ #include "link.h"
+ #include "server.h"
+ #include "tracker.h"
+-#include "util.h"
++#include "util.h"
++#include <cstdio>
+ 
+ void CTracker :: serverResponseAdmin( struct request_t *pRequest, struct response_t *pResponse )
+ {
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_admin.o and new/tracker_admin.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_announce.o and new/tracker_announce.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_comments.o and new/tracker_comments.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/tracker.cpp new/tracker.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/tracker.cpp	2005-09-26 00:47:32.000000000 -0300
++++ new/tracker.cpp	2009-05-15 22:34:31.000000000 -0300
+@@ -40,7 +40,8 @@
+ #include "server.h"
+ #include "sort.h"
+ #include "tracker.h"
+-#include "util.h"
++#include "util.h"
++#include <cstdio>
+ 
+ #if defined ( XBNBT_GD )
+  #include <gd.h>
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_file.o and new/tracker_file.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_index.o and new/tracker_index.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_info.o and new/tracker_info.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_login.o and new/tracker_login.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker.o and new/tracker.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_scrape.o and new/tracker_scrape.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_signup.o and new/tracker_signup.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/tracker_stats.cpp new/tracker_stats.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/tracker_stats.cpp	2005-09-25 14:10:36.000000000 -0300
++++ new/tracker_stats.cpp	2009-05-15 22:30:37.000000000 -0300
+@@ -26,7 +26,8 @@
+ #include "html.h"
+ #include "sort.h"
+ #include "tracker.h"
+-#include "util.h"
++#include "util.h"
++#include <cstdio>
+ 
+ // Convert a HEX char to a DEC char, return -1 if error
+ static inline const char UTIL_HexToDec( const unsigned char &cucHex )
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_stats.o and new/tracker_stats.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_torrent.o and new/tracker_torrent.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_upload.o and new/tracker_upload.o differ
+Binary files tmp/xbnbt-81b.3.5/bnbt/src/tracker_users.o and new/tracker_users.o differ
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/xbnbt-81b.3.5/bnbt/src/util.cpp new/util.cpp
+--- tmp/xbnbt-81b.3.5/bnbt/src/util.cpp	2005-05-12 18:08:42.000000000 -0300
++++ new/util.cpp	2009-05-15 22:30:31.000000000 -0300
+@@ -35,7 +35,8 @@
+ #include "config.h"
+ #include "sha1.h"
+ #include "tracker.h"
+-#include "util.h"
++#include "util.h"
++#include <cstdio>
+ 
+ void UTIL_LogPrint( const char *format, ... )
+ {
+--- tmp/old/base64.cpp.orig	2005-09-19 17:20:34.000000000 -0300
++++ new/base64.cpp	2009-08-05 23:53:57.000000000 -0300
+@@ -127,7 +127,7 @@
+     if  (l % 4)                             // If it's not modulo 4, then it...
+         return b64isnot(0);              // ...can't be a Base64 string.
+ 
+-	b = strchr(s, pPad[0]);
++	b = (char *)strchr(s, pPad[0]);
+     if  ((b) != 0)						// Only one, two or three equal...
+     {                                       // ...'=' signs are allowed at...
+         if  ((b - s) < (l - 3))             // ...the end of the Base64 string.

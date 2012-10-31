@@ -1,0 +1,1036 @@
+MiniMyth Changelog
+
+--------------------------------------------------------------------------------
+Changes since 17 (2006.09.05):
+
+Current MythTV versions
+    MythTV 18:  version 0.18.2,   release-0-18-fixes branch svn 8525.
+    MythTV 19:  version 0.19,     release-0-19-fixes branch svn 10505.
+    MythTV SVN: version svn10992, trunk svn 10992.
+
+Fixed shell scripts bug.
+    None of the shell script variables in functions were scoped as local. It
+        is amazing that any of the shell scripts worked. In fact, the mm_local_*
+        shell scripts exhibited strange behavior as a result of this bug.
+
+--------------------------------------------------------------------------------
+Changes since 16 (2006.09.03):
+
+Current MythTV versions
+    MythTV 18:  version 0.18.2,   release-0-18-fixes branch svn 8525.
+    MythTV 19:  version 0.19,     release-0-19-fixes branch svn 10505.
+    MythTV SVN: version svn10992, trunk svn 10992.
+
+Changed MiniMyth distribution packaging
+    Separated MythTV themes into separate files.
+        Themes are loaded at boot time from the distribution's 'themes'
+            directory.
+        Which MythTV theme and MythTV OSD theme are loaded are controlled by
+            the required minimyth.conf variables MM_THEME_URL and
+            MM_THEMEOSD_URL respectively.
+    There are now two MiniMyth distribution files:
+        sfs-<version>.tar.bz2 that contains squashfs based booting image files.
+        tar-<version>.tar.bz2 that contains nfs based booting tarball files.
+    sfs-<version> expands into a directory 'sfs-<version>' which contains:
+        kernel : the Linux kernel
+        rootfs : the MiniMyth root files system squashfs image
+        themes : a directory of MythTV theme squashfs images.
+
+Improved the local boot install and update scripts
+    Renamed the install and update scripts to 'mm_local_install' and
+       'mm_local_update' respectively.
+    Added the 'mm_local_helper' file that is used by 'mm_local_install' and
+       'mm_local_update'. This file enables the installation method to change
+       between releases because this file is first downloaded from MiniMyth
+       distribution directory and then used to install the distribution.
+    Changed the default value for MM_UPDATE_URL to
+       'http://linpvr.org/minimyth/download/stable/latest/' in order to match
+       LinPVR.org's new directory structure.
+
+Modified GAR build system
+    Removed several attributes from 'minimyth.conf.mk'.
+    Moved source tarball generation to 'meta/minimyth/minimyth.mk'.
+
+Updated packages
+    Updated mythtv/mythplugins-svn.
+    Updated mythtv/myththemes-svn.
+    Updated mythtv/mythtv-svn.
+    Updated system/splashutils.
+    Updated utils/m4.
+
+--------------------------------------------------------------------------------
+Changes since 15 (2006.08.29):
+
+Current MythTV versions
+    MythTV 18:  version 0.18.2,   release-0-18-fixes branch svn 8525.
+    MythTV 19:  version 0.19,     release-0-19-fixes branch svn 10505.
+    MythTV SVN: version svn10701, trunk svn 10701.
+
+--------------------------------------------------------------------------------
+Changes since 14 (2006.08.29):
+
+Current MythTV versions
+    MythTV 18:  version 0.18.2,   release-0-18-fixes branch svn 8525.
+    MythTV 19:  version 0.19,     release-0-19-fixes branch svn 10505.
+    MythTV SVN: version svn10701, trunk svn 10701.
+
+Changed how DCHP parameter override works
+    Eliminated the 'minimyth.dhcp' file.
+    Added DHCP override variables to the 'minimyth.conf' file.
+    Added DHCP override hostname variable to the boot line.
+
+Changed binary image to include Intel and NVIDIA support
+    Modified default build to include Intel, INVIDIA, and VIA support.
+
+Improved hardware autodection
+    Moved most hardware autodetection from custom scripts to udev.
+
+Changed from CRAMFS to SQUASHFS
+    Files such as libmythtv have been getting bigger with each release of
+        MythTV. With the latest SVN versions, libmythtv is approaching the
+        cramfs 16MB file limit, even when stripped and optimized for size. To
+        make sure that this file limit does not become a problem for those
+        building custom versions of MiniMyth, the files system has been changed
+        from cramfs to squashfs.
+    The root file system (rootfs) is now a squashfs image rather than a cramfs
+        image.
+    Any minimyth.conf URL that supported cramfs images (*.cmg) now supports
+        squashfs images (*.sfs) as well.
+    The MM_EXTRAS_URL value 'default' now points to a squashfs image (*.sfs)
+        rather than a cramfs image (*.cmg).
+
+Improved local boot support.
+    Added support for booting from an IDE disk to support CF-to-IDE adapters.
+    Added 'mm_update' command to update the local boot partition with the
+        latest files from the site pointed to by MM_UPDATE_URL (which is
+        'http://linprv.org/dnload/releases/latest/' by default).
+    Removed the need for the MM_BOOT_TYPE boot line parameter.
+    Improved the 'mkusbkey' script to better support card readers.
+    Renamed the 'mkusbkey' script from 'mkusbkey' to 'mkflashboot'.
+    Modified udev scripts to mount any IDE or SCSI (for USB) disk/partition
+        with the label 'minimyth' as the directory '/minimyth'.
+    Modified the init scripts to treat '/minimyth' rather than the TFTP server 
+        as the boot directory when '/minimyth' is present.
+    The disk/partition with the 'minimyth' label must be formatted as a FAT
+        filesystem.
+
+Improved init scripts
+    Added lcdproc to start LCDproc server, and associated MM_LCDPROC_DRIVER
+        minimyth.conf variable to set the LCDproc display driver.
+    Added autodetection of USB remote control receivers and LCD/VFD displays.
+
+Cleaned up configuration
+    Made init scripts more robust by using absolute paths to binaries.
+    Moved /root/.xinitrc to /etc/X11/xinit/xinitrc.
+    Moved /root/.x11vnc to /usr/share/X11/app-defaults/x11vnc.
+    Moved /root/.xscreensaver to /usr/share/X11/app-defaults/XScreenSaver.
+
+Cleaned up web server
+    Changed http://<server>/ so that the file system is not browsable.
+    Added http://<server>:8080/ for browsing the file system.
+
+Fixed problem with the VIA VT1617a's analog power consumption
+    Applied Andrey Liakhovets's patch sent to the
+        openchrome-users@openchrome.org mailing list on 18 August 2006.
+    The bad analog power consumption results in bad sound on some setups that
+        use the VIA VT1617a, including some setups with VIA EPIA SP
+        motherboards.
+
+Added debug option to the GAR based build system
+    Controlled using the mm_DEBUG variable in minimyth.conf.mk.
+    When enabled (mm_DEBUG="yes"):
+        Packages are compiled with the '-g' option.
+        Packages are configured for debug (not all packages have updated yet).
+        Symbols are not stripped when creating the MiniMyth image.
+        Debugging software is included in the MiniMyth image, including
+            'strace', 'gdb' and 'valgrind'.
+
+Added packages
+    Added devel/valgrind.
+    Added utils/mktemp.
+    Added utils/squashfs.
+
+Updated packages
+    Updated devel/pkg-config.
+    Updated kernel/alsa-driver.
+    Updated kernel/linux.
+    Reverted kernel/nvidia (HDTV stutter issue).
+    Updated kernel/unionfs.
+    Updated kernel/vt1211.
+    Updated lib/alsa-lib.
+    Reverted mediaplayers/xine-lib (DVD audio sync issue).
+    Updated net/mount.cifs.
+    Updated system/lcdproc.
+    Updated system/udev.
+    Updated system/zoneinfo.
+    Updated utils/alsa-utils.
+    Updated utils/findutils.
+    Reverted X11/nvidia (HDTV stutter issue).
+    Updated xorg-mid/xf86-video-openchrome.
+    Updated xorg-new/xf86-video-openchrome.
+
+--------------------------------------------------------------------------------
+Changes since 13:
+
+Current MythTV versions
+    MythTV 18:  version 0.18.2,   release-0-18-fixes branch svn 8525.
+    MythTV 19:  version 0.19,     release-0-19-fixes branch svn 10505.
+    MythTV SVN: version svn10701, trunk svn 10701.
+
+Added support for new hardware
+    Added initial support for the Biostar M7NCD.
+    Added initial support for the T-Online S100.
+    Added initial support for the VIA EPIA N motherboards.
+    Added initial support for the VIA EPIA EN motherboards.
+    Added initial support for the VIA EPIA CN motherboards.
+
+Added automatic hardware detection
+    Removed default for MM_HARDWARE_MOTHERBOARD.
+    Changed init scripts to detect most hardware automatically based on the
+        output of lspci.
+    Added /etc/hardware/pci2kernel.map file for mapping PCI information to
+        kernel modules.
+    Added /etc/hardware/pci2x.map file for mapping PCI information to
+        X video driver.
+    Added /etc/hardware/x2kernel.map file for mapping X video driver to
+        required kernel modules.
+    Added /etc/hardware/motherboard.<motherboard>.conf files for manually
+        configuration hardware that is not autodetected. For most motherboards,
+        this is the sensors.
+    NOTICE: The map files are incomplete. If your motherboard is supported
+        but your audio, video or other hardware does not work, then please report
+        your motherboard and the output of 'lspci -mn' to
+        <http://linpvr.org/forum/>.
+
+Added xscreensaver
+    Added xscreensaver to black screen when Myth is inactive.
+    Added minimyth.conf variable MM_X_SCREENSAVER_ENABLED to control whether
+        or not to enable xscreensaver.
+    Added package X11/xscreensaver and supporting package utils/bc.
+
+Cleaned up LIRC
+    Moved LIRC driver dependent MM_LIRC_* variable defaults from the conf init
+        script to the /etc/lirc.d/driver.<lirc_driver>.conf files.
+
+Cleaned up kernel modules
+    Removed unused modules.
+    Made some kernel options modules that had been compiled into the kernel.
+    Added support for SCSI devices with multiple LUNs.
+
+Changed Xorg so that the build system supports 6.8.2 with old and new Openchrome drivers
+    Added xorg-mid for 6.8.2 with new Openchrome drivers.
+
+Fixed bugs:
+    Fixed bug in DHCP client script that caused minimyth.dhcp to be ignored.
+    Fixed Xine config file bug that caused poor deinterlacing in Xine when
+        XvMC is disabled and deinterlacing is enabled.
+
+Added packages
+    Added utils/bc.
+    Added X11/intel.
+    Added X11/xscreensaver.
+    Added xorg-mid/*.
+
+Updated packages
+    Updated db/mysql.
+    Updated devel/autoconf.
+    Updated devel/bison.
+    Updated devel/fakeroot.
+    Updated devel/gdb.
+    Updated devel/gettext.
+    Updated devel/make.
+    Updated disk/e2fsprogs.
+    Updated kernel/drm.
+    Updated kernel/unionfs.
+    Updated lib/alsa-lib.
+    Updated lib/libpng.
+    Updated lib/libtheora.
+    Updated lib/SDL.
+    Updated mediaplayers/mplayer.
+    Updated mediaplayers/xine-lib.
+    Updated net/mount.cifs.
+    Updated net/ntp.
+    Updated system/udev.
+    Updated utils/busybox.
+    Updated utils/m4.
+    Updated utils/procps.
+    Updated X11/x11vnc.
+    Updated xorg-mid/xf86-video-openchrome.
+    Updated xorg-new/libdrm.
+    Updated xorg-new/xf86-video-openchrome.
+
+--------------------------------------------------------------------------------
+Changes since 12:
+
+Current MythTV versions
+    MythTV 18:  version 0.18.2,   release-0-18-fixes branch svn 8525.
+    MythTV 19:  version 0.19,     release-0-19-fixes branch svn 10143.
+    MythTV SVN: version svn10177, trunk svn 10177.
+
+Added support for booting from a USB key
+    Created a script (mkusbkey) for creating a USB key that boots MiniMyth.
+    Modified init scripts to read conf files from the USB key when MiniMyth is
+        booted from the USB key and MM_BOOT_TYPE=usb is added to the boot
+        command line.
+    Added support for the conf file minimyth.dhcp when MiniMyth is booted from
+        the USB key and MM_BOOT_TYPE=usb is added to the boot command line.
+        The minimyth.dhcp file allows some parameters normally recieved from
+        the DHCP server to be read from the minimyth.dhcp file.
+    Warning it has been observed that booting VIA EPIA M and VIA EPIA MII
+        motherboards from a USB key is too slow to be useful. It is not known
+        what causes this problem, but since it does not happen on the ASUS
+        A8N-VM CSM motherboard, it is likely a problem with the VIA EPIA
+        motherboards. It is not known how to work around this problem. It is not
+        known whether or not other VIA EPIA motherboards have this problem.
+
+Changed xorg
+    Changed default xorg from 'old' to 'new'.
+
+Fixed bugs:
+    Fixed bug that caused init to fail when wake-on-lan is enabled.
+    Fixed bug in QT build configuration that caused playback of large files to
+        fail.
+    Patched MythTV to fix problem that caused higher resolution HDTV playback to
+        fail on CN400 based motherboards, but it does not appear to work.
+    Fixed problem with network service startup delay when local name cannot
+        be resolved by DNS. Now DHCP creates a local /etc/hosts file and ns is
+        configured to check the local /etc/hosts file first.
+
+Improved the robustness of the GAR based build system
+    Added explicit check for $(HOME)/.minimyth/minimyth.conf.mk.
+    Added explicit check for binaries that must be installed for the build
+        system to run correctly.
+    Reduced the probability the non build system binaries are used
+        unintentionally by the build system. Changed the binary search path 
+        environment variable (PATH) so that it only includes build system
+        directories, and created symbolic links in a build system directory
+        for the binaries that must be installed for the build system to run
+        correctly.
+    Added packages that compile native environment replacements for most of the
+        binaries that must be installed for the build system to run correctly
+        (excluding: cvs, svn and wget, because they are only used for fetching
+        source code; su, because it must be suid; getconf and ldconfig,
+        because we do not replace the native environment glibc libraries; and
+        perl, because it is large and takes time to compile).
+    Improved error handling when CVS and SVN repositories fail during fetch.
+
+Added packages
+    Added devel/build-system-bins.
+    Added devel/patch.
+    Added utils/bash.
+    Added utils/bzip2.
+    Added utils/diffutils.
+    Added utils/dmidecode.
+    Added utils/ed.
+    Added utils/file.
+    Added utils/findutils.
+    Added utils/gawk.
+    Added utils/grep.
+    Added utils/gzip.
+    Added utils/m4.
+    Added utils/pciutils.
+    Added utils/sed.
+    Added utils/tar.
+    Added utils/usbutils.
+    Added utils/which.
+
+Updated packages
+    Updated db/mysql.
+    Updated kernel/nvidia.
+    Updated lib/ffmpeg.
+    Updated myth/myth*-stable19.
+    Updated myth/myth*-svn.
+    Updated system/zoneinfo.
+    Updated X11/nvidia.
+    Updated xorg-new/xf86-video-openchrome.
+
+--------------------------------------------------------------------------------
+Changes since 0.19.0.1:
+
+Current MythTV versions
+    MythTV 18:  version 0.18.2,  release-0-18-fixes branch svn 8525.
+    MythTV 19:  version 0.19,    release-0-19-fixes branch svn 9806.
+    MythTV SVN: version svn9056, trunk svn 9056.
+
+Changed version numbering scheme
+    The build system is capable of building different veresion of Myth.
+        As a result, it makes sense to have two independent numbers: one that
+        tracks the Myth version and one that tracks the MiniMyth version.
+        Therefore, the version number is <Myth-version>-<MiniMyth-version>.
+
+Changed window manager
+    Returned to ratpoison, since the new version appears to work with the
+        newer versions of X and the Openchrome driver.
+    Removed aewm, including X11/aewm and X11/lesstif.
+
+Changed fonts
+    Made all TTF aware applications use luxi*.ttf fonts.
+    Removed all other TTF fonts.
+    Removed all misc fonts except those required by Xorg, ratposion and rxvt.
+
+Changed Xorg so that the build system supports both 6.8.2 and 7.0
+    Moved xorg/fontconfig and xorg/freetype to lib/fontconfig and
+        lib/freetype.
+    Moved xorg to xorg-new.
+    Added xorg-old for 6.8.2.
+    Added mm_XORG_VERSION to minimyth.conf.mk.
+    Added xorg/xorg that picks either xorg-old/xorg or xorg-new/xorg depending
+        on mm_XORG_VERSION, with xorg-old/xorg beging the default.
+    Made kernel/drm version depend on mm_XORG_VERSION.
+
+Removed packages
+    Removed X11/aewm.
+    Removed X11/lesstif.
+
+Moved packages
+    Moved xorg to xorg-new.
+
+Added packages
+    Added utils/regionset.
+    Added xorg/xorg.
+    Added xorg-old/libdrm.
+    Added xorg-old/libXvMCW.
+    Added xorg-old/Mesa.
+    Added xorg-old/unichrome.
+    Added xorg-old/X11.
+    Added xorg-old/xorg.
+
+Updated packages
+    Reverted db/mysql (apparently MythTV 0.18.1 has problems with MySQL 5.0).
+    Updated lib/ffmpeg.
+    Reverted lib/libpng (newer version does not compile for x86_64).
+    Updated kernel/alsa-driver.
+    Updated kernel/drm.
+    Reverted kernel/nvidia (newer version has trouble with DVD subtitles).
+    Updated myth/myth*-stable19.
+    Updated system/udev.
+    Updated system/zoneinfo.
+    Updated utils/alsa-utils.
+    Updated utils/busybox.
+    Updated utils/coreutils.
+    Reverted X11/nvidia (newer version has trouble with DVD subtitles).
+    Updated xorg/libdrm.
+    Updated xorg/xf86-video-openchrome.
+    Updated xorg/xorg-server.
+
+--------------------------------------------------------------------------------
+Changes since 0.19:
+
+Added Intel support
+    Added initial support for Intel chipset based motherboards. Currently,
+        there is untested support for the Commell LV-675 motherboard.
+    By default, Intel support is not included in the binaries. To add Intel
+        support to the binaries, set mm_CHIPSETS to 'intel via' in
+        minimyth.conf.mk.
+
+Added master backend wake-on-lan support
+    Added minimyth.conf variables MM_MYTH_WOL_ENABLED, MM_MYTH_WOL_MAC,
+        MM_MYTH_WOLSQLRECONNECTWAITTIME, MM_MYTH_WOLSQLCONNECTRETRY, and
+        MM_MYTH_WOLSQLCOMMAND for controlling wake-on-lan behavior.
+    Added package 'net/wakelan'.
+
+Updated init
+    Moved checking of DHCP provided values until after the telnet daemon
+        is started so that users can debug DCHP problems by telnetting in.
+    Changed MM_HARDWARE_* values to include both the manufacturer name and
+        part number, not just the part number. With the inclusion of Intel
+        and NVIDIA based motherboards, it was getting confusing.
+
+Moved packages
+    Moved utils/strace to devel/strace.
+
+Added packages
+    Added net/wakelan.
+    Added xorg/xdpycopy.
+
+Updated packages
+    Updated db/mysql.
+    Updated devel/glibc.
+    Updated devel/fakeroot.
+    Updated kernel/alsa-driver.
+    Updated kernel/drm.
+    Updated kernel/linux.
+    Updated kernel/unionfs.
+    Updated lib/alsa-lib.
+    Updated lib/ffmpeg.
+    Updated lib/libpng.
+    Updated lib/libtiff.
+    Updated myth/myth*-stable19.
+    Updated myth/mythstream.
+    Updated qt/qt.
+    Updated system/udev.
+    Updated utils/alsa-utils.
+    Updated utils/busybox.
+    Updated xorg/libdrm.
+    Updated xorg/xf86-video-openchrome.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.11:
+
+Added CD and DVD ripping support
+    CD ripping supports transcoding. MythMusic requires the audio encoders
+        independent of whether or not you want to include CD ripping.
+    DVD ripping does not support transcoding. MythDVD uses 'transcode' to
+        transcode the ripped DVD. 'transcode' would add an extra 2MB to the
+        image just to be able to convert the DVD to a format that cannot be
+        hardware MPEG2 decoded. Therefore, 'transcode' is not included.
+        However, if you add 'transcode' and its associated libraries, then
+        MiniMyth will use it.
+
+Updated init
+    Changed MiniMyth to search for its configuration files in
+        'conf/<hostname>' then 'conf/default', rather than 'conf/<hostname>'
+        then 'conf'.
+    Removed support for specal value 'default' from MM_CODECS_URL.
+    Removed support for specal value 'default' from MM_THEMECACHE_URL.
+    Added minimyth.conf variables MM_THEME_NAME and MM_THEME_URL for
+        setting the MythTV theme and adding the MythTV theme named
+        MM_THEME_NAME located at the URL MM_THEME_URL to the MythTV
+        theme directory.
+    Added minimyth.conf variables MM_THEMEOSD_NAME and MM_THEMEOSD_URL for
+        setting the MythTV OSD theme and adding the MythTV OSD theme named
+        MM_THEMEOSD_NAME located at the URL MM_THEMEOSD_URL to the MythTV
+        theme directory.
+    Added 'userspace' value for MM_CPUFREQ_GOVERNOR.
+    Added minimyth.conf variable MM_MYTHDVD_URL for setting the remote
+        directory where MiniMyth will create the temporary directory used by
+        MythDVD's when ripping DVDs.
+
+Updated Busybox support
+    Updated version.
+    Removed many unused utilities.
+    Added hwclock utility, replacing standalone utility.
+
+Updated Xorg support
+    Updated version.
+    Changed from monolithic version to modular version, replacing X11/X11,
+        X11/libXvMCW, X11/unichrome_dri and lib/libdrm with the packages in
+        xorg.
+    Updated X11/unichrome version and moved X11/unichrome to
+        xorg/xf86-video-openchrome.
+    Updated X11/unichrome_dri version and moved X11/unichrome_dri to xorg/Mesa.
+    Updated lib/libdrm version and moved lib/lidrm to xorg/libdrm.
+    Changed the installation location of Xorg from /usr/X11R6 to /usr.
+    NOTE: As part of the Xorg update, the installion path of many items
+        referenced in the xorg.conf file have changed. Therefore, if you have
+        a custom xorg.conf file, then you will need to update these locations.
+           /usr/X11R6               -> /usr
+           /usr/X11R6/lib/modules   -> /usr/lib/xorg/modules
+           /usr/X11R6/lib/X11/fonts -> /usr/lib/X11/fonts
+           /usr/X11R6/lib/X11/rgb   -> /usr/share/X11/rgb
+
+Moved packages
+    Moved devel/pkgconfig to devel/pkg-config.
+    Moved lib/libdrm to xorg/libdrm.
+    Moved myth/myth*-stable to myth/myth*-stable18.
+    Moved X11/fontconfig to xorg/fontconfig.
+    Moved X11/freetype to xorg/freetype.
+    Moved X11/SDL to lib/SDL.
+    Moved X11/unichrome to xorg/xf86-video-openchrome.
+    Moved X11/unichrome_dri to xorg/Mesa.
+
+Added packages
+    Added lib/ffmpeg.
+    Added lib/libmpeg2.
+    Added lib/xvidcore.
+    Added lib/syfsutils.
+    Added myth/myth*-stable19.
+    Added utils/transcode.
+
+Removed packages
+    Removed myth/myth*-knoppmyth.
+
+Updated packages
+    Updated devel/gcc.
+    Updated devel/pkg-config.
+    Updated kernel/alsa-driver.
+    Updated kernel/drm.
+    Updated kernel/linux.
+    Updated kernel/unionfs.
+    Updated lib/alsa-lib.
+    Updated lib/libdvdread.
+    Updated lib/libexif
+    Updated lib/expat.
+    Updated net/mount.cifs.
+    Updated myth/myth*-svn.
+    Updated system/powernowd.
+    Updated system/udev.
+    Updated system/zoneinfo.
+    Updated utils/alsa-utils.
+    Updated utils/busybox.
+    Updated utils/lsdvd.
+    Updated X11/aewm.
+    Updated X11/x11vnc.
+    Updated xorg.
+    Updated xorg/libdrm.
+    Updated xorg/Mesa.
+    Updated xorg/xf86-video-openchrome.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.10:
+
+Updated build system
+    Updated packages to cross compile for x86_64. This uncovered some problems
+        where gcc and glibc were not maintaining a clean separation between the
+        native and cross environments. Also, this resulted in a platform
+        independent method for determining library dependencies.
+    Added x86_64 support, currently mm_GARCH=athlon64.
+    Changed native system build to use system's architecture rather than
+        pentium-mmx.
+
+Added NVIVIA support
+    Added initial support for NVIDIA chipset based motherboards. Everything
+        should work on the ASUS A8N-VM CSM motherboard, except XvMC (which is
+        not supported by the NVIDIA driver yet) and surround sound (which is
+        disabled as a result of a hack to kernel/alsa-driver that is needed to
+        get rid of a high pitched whine). No other motherboards are supported.
+    By default, NVIDIA support is not included in the binaries. To add NVIDIA
+        support to the binaries, set mm_CHIPSETS to 'nvidia via' in
+        minimyth.conf.mk.
+
+Added hdpram
+    Added hdparm (and the corresponding disk/hdparm package) so that users
+        can adjust CD/DVD drive parameters.
+
+Updated init
+    Moved mythtv init script to the end after all init scripts other than x.
+        This allows users to override Myth database setting set by other
+        init scripts by putting the settings in the minimyth.conf file.
+    Added hardware clock setting to shutdown.
+    Added minimyth.conf attribute MM_X_DVI_ENABLED for enabling the DVI
+        output. Since the Openchrome drivers do not support DVI, it is likely
+        that this attribute will not work on VIA chipset motherboards.
+    Added MM_CPUFREQ_GOVERNOR for controlling CPU frequency scaling.
+    Fixed problem with MM_X_MODELINE not working.
+
+Removed smb/smbfs support
+    Removed smb/smbfs support. There should be no reason to be using smb/smbfs
+    rather than cifs.
+    Removed package net/samba.
+    Added package net/mount.cifs.
+
+Updated packages
+    Updated db/mysql.
+    Updated kernel/linux.
+    Updated lib/libexif.
+    Updated lib/libtiff.
+    Updated lib/libusb.
+    Updated lirc/lirc.
+    Updated myth/mythplugins-stable.
+    Updated myth/mythtv-stable.
+    Updated system/udev.
+    Updated system/zoneinfo.
+    Updated utils/strace.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.9:
+
+Updated init
+    Fixed bug that caused minimyth.script to be required.
+    Fixed bug that caused tarfile (*.tar.bz2) conf and tftp URLs to fail to be
+        downloaded and mounted by mm_url_mount.
+
+Updated packages
+    Updated db/mysql.
+    Updated kernel/linux.
+    Updated system/zoneinfo.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.8:
+
+Added awk
+    Updated package utils/busybox to include awk.
+
+Added lsdvd
+    Added package utils/lsdvd.
+
+Updated init
+    Changed graphical boot from bootsplash to gensplash. Gensplash runs in
+        userspace, eliminating the need for a kernel patch. In support of this
+        the package system/bootsplash was removed and the package
+        system/splashutils was added.
+    Enabled graphical boot provided that the kernel only logs errors to the
+        console, and the frame buffer resolution is 800x600 with a color depth
+        of 16-bits or more.
+    Patched the kernel that so by default the kernel only logs errors to the
+        console, and the frame buffer resolution is 800x600 with a color depth
+        of 32-bits.
+    Changed to the init from sysvinit rather than the init from busybox, because
+        the init from busybox leaves zombie processes. In support of this the
+        package system/sysvinit was added.
+    Changed init scripts, including
+        moving rc from /etc to /etc/rc.d,
+        moving init scripts from /etc/minimyth.d to /etc/rc.d/init.d, and
+        moving configuration files to /etc/conf and /etc/conf.d.
+    Added support for mounting a binary codecs directory for MPlayer and Xine
+        using the variable MM_CODECS_URL.
+    Added support for downloading and mounting cramfs images to *_URL
+        variables by adding the support to the mm_url_mount function.
+    Changed the default values for MM_EXTRAS_URL and MM_THEMECACHE_URL from
+        tarfiles (*.tar.bz2) to a cramfs images (*.cmg).
+
+Updated LIRC support
+    Replaced driver specific lircd daemons with one unified daemon.
+    Added reasonable defaults for MM_LIRC_DEVICE when MM_LIRC_DRIVER is set to
+        imon or streamzap.
+
+Updated mm_* commands
+    Moved all mm_* commands into /etc/rc.d/functions and made them accessable
+        at the command line using the single command mm_command.
+
+Updated MPlayer and Xine
+    Change MPlayer and Xine to look for binary codecs in the directory
+        /usr/lib/codecs rather than /usr/lib/win32, since both MPlayer
+        and Xine use /usr/lib/codecs as the default binary codecs directory.
+
+Fixed Xine so that it obeys MM_AUDIO_TYPE
+    Fixed bug in the xine configuration file.
+
+Modified Myth frontend menus
+    Removed Import menu items, because CD and DVD importing is not supported.
+
+Updated packages
+    Updated db/mysql.
+    Updated devel/gcc*.
+    Updated devel/gdb.
+    Updated devel/glibc*.
+    Updated kernel/alsa-driver.
+    Updated kernel/drm.
+    Updated kernel/linux.
+    Updated kernel/module-init-tools.
+    Updated kernel/unionfs.
+    Updated kernel/vt1211.
+    Updated lib/alsa-lib.
+    Updated lib/libdrm.
+    Updated lib/libogg.
+    Updated lib/libvorbis.
+    Updated lib/ncurses.
+    Updated lirc/lirc*.
+    Updated mediaplayers/xine-lib.
+    Updated myth/mythplugins.
+    Updated myth/mythtv.
+    Updated net/samba.
+    Updated system/udev.
+    Updated system/zoneinfo.
+    Updated utils/alsa-utils.
+    Updated utils/strace.
+    Updated X11/aewm.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.7:
+
+Updated init
+    Changed init to start logging and telnet before fetching and running
+        minimyth.conf and minimyth.script. This allows logs and remote access
+        to the MiniMyth front end as early as possible.
+    Changed syslog to get the remote log server address from DHCP rather than
+        minimyth.conf.
+    Added a check to make sure that MiniMyth can connect to the Myth database.
+    Changed init to not start a console or tty1 shell because they interfere
+        with the bootsplash screen. However, there are now shells on tty2, tty3,
+        tty4 and tty5 (and X is now on tty6).
+    Stopped disabling X when debugging is enabled. If you want to disable X,
+        then use MM_X_ENABLED=no.
+
+Updated minimyth.conf
+    Replaced MM_SOUND with MM_AUDIO_TYPE.
+    Obsoleted MM_SOUND.
+    Obsoleted MM_SYSLOG_SERVER.
+    Added MM_VIDEO_ASPECT_RATIO to set the video aspect ratio. Right now, this
+        is only used to control the aspect ratio for MPlayer. However, in the
+        future, it may be use to clean up some of the MM_X controls.
+    Added MM_VIDEO_DEINTERLACE_ENABLED to enable bob deinterlacing. This
+        controls bob deinterlacing in MythTV, Xine and MPlayer.
+
+Updated MPlayer
+    Added Chris Audley's XvMC fallback patch (version 2). This enables MPlayer
+        to fall back to a different video output and codec when the file
+        cannot be played using XvMC with MPEG2 accelaration.
+    Updated the MPlayer configuration file (/root/.mplayer/config) to enable
+        MPlayer to take advantage of the XvMC fallback patch.
+
+Added MythNews support
+    Enabled the MythNews plugin.
+    Added MM_MYTHNEWS_ENABLED to minimyth.conf.
+
+Added Theora support
+    Added Theora for philisophical reasons. There is no Theora content (yet).
+        However, like Vorbis, Theora is a completely open codec, which is
+        something that should be supported.
+    Added package lib/libtheora.
+    Enabled Theora support packages myth/mplayer and myth/xine-lib.
+
+Updated packages
+    Updated db/mysql.
+    Updated devel/bison.
+    Updated devel/libtool.
+    Updated kernel/drm.
+    Updated kernel/linux.
+    Updated kernel/unionfs.
+    Updated kernel/vt1121.
+    Updated lib/libdrm.
+    Updated lib/libtiff.
+    Updated myth/mplayer.
+    Updated qt/qt.
+    Updated system/udev.
+    Updated utils/lm_sensors.
+    Updated utils/util-linux.
+    Updated X11/SDL.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.6:
+
+Updated X support
+    Added minimyth.conf variables MM_X_DISPLAYSIZE_X and MM_X_DISPLAYSIZE_Y to
+        control the horizonatal display size and the vertical display size
+        respectively.
+
+Made root file system read/write
+    Used pivot_root to make root file system read/write.
+
+Changed X window manager
+    Changed X window manager from ratpoison to aewm, because ratpoison was
+        causing crashes with new Unichrome driver and with upcoming X11R6.9.
+    Disabled X window manager by default, because MythTV "GUI X offset" and
+        "GUI Y offset" settings do not work when the X window manager running.
+    Added packages X11/aewm and X11/lesstif.
+
+Updated Mesa support
+    Changed X11/X11 so that it no longer builds libOSMesa.
+    Added packages X11/Mesa and lib/libdrm.
+    Removed package X11/unichrome_dri because it is replaced by package X11/Mesa.
+
+Updated packages
+    Updated db/mysql.
+    Updated kernel/drm.
+    Updated kernel/linux.
+    Updated lib/libcdaudio.
+    Updated lirc/lirc.
+    Updated net/samba.
+    Updated system/udev.
+    Updated X11/unichrome.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.5:
+
+Updated minimyth.conf
+    Obsoleted minimyth.conf variable values:
+        MM_LIRC_DRIVER=mceusbnew,
+        MM_LIRC_KERNEL_MODULE=lirc_mceusbnew and
+        MM_LIRC_REMOTE=mceusbnew.
+    Obsoleted minimyth.conf variables:
+        MM_MYTHDB_SETTING_<setting>,
+        MM_NAME_SERVER,
+        MM_NO_X,
+        MM_NO_XWM,
+        MM_NO_VNC,
+        MM_TIME_SERVER,
+        MM_TV and
+        MM_X_RESOLUTION.
+    Obsoleted configuration files:
+        localtime.
+
+Updated X support
+    Added MM_X_MODELINE to specify an X modeline.
+
+Updated MiniMyth status web page
+    Added the ability to browse the filesystem.
+
+Added support for the Filesystem Hierarchy Standard (FHS) /media directory
+    Moved cdrom, dvd and usb drives mount points from /mnt/dev to /media.
+
+Added support for the Filesystem Hierarchy Standard (FHS) /srv directory
+    Moved www data directory from /etc to /srv.
+
+Added AAC support to MythMusic
+    Added package lib/faad2.
+
+Added EXIF support to MythGallery
+    Added package lib/libexif.
+
+Updated LIRC support
+    Renamed mceusbnew to mceusb2 to align with upstream LIRC.
+    Obsoleted value 'mceusbnew' for MM_LIRC_REMOTE.
+    Obsoleted value 'mceusbnew' for MM_LIRC_DRIVER.
+    Obsoleted value 'lirc_mceusbnew' for MM_LIRC_KERNEL_MODULE.
+
+Updated init scripts
+    Added a check that makes sure that DHCP has set the client's hostname.
+
+Updated package kernel/linux
+    Added back the usbserial and ftdi_sio kernel modules which had somehow been
+        dropped.
+
+Updated package system/udev
+    Removed dependency on /etc/dev.d directory.
+
+Updated packages
+    Updated db/mysql.
+    Updated kernel/drm.
+    Updated lib/zlib.
+    Updated lirc/lirc.
+    Updated myth/xine-lib.
+    Updated myth/xine-ui.
+    Updated kernel/vt1211.
+    Updated system/udev.
+    Updated X11/unichrome.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.4:
+
+Updated package myth/mythplugins
+    Removed UI option to enable/disable fast forward and rewind in MythMusic,
+        since this can be handled better by keybindings.
+
+Updated LIRC support
+    Modified lirc.script to wait for the LIRC device to appear in the device
+        file system before starting the LIRC daemon.
+    Updated the mceusbnew driver.
+
+Updated X support
+    Changed minimyth.conf variable MM_X_RESOLUTION to MM_X_MODE.
+    Added minimyth.conf variables MM_X_RESOLUTION_X, MM_X_RESOLUTION_Y and
+        MM_X_REFRESH to control the horizonatal resolution, the vertical
+        resolution and vertical refresh rate respectively. Using
+        MM_X_RESOLUTION_X and MM_X_RESOLUTION_Y rather than MM_X_MODE
+        generates a modeline rather than using a built in modeline.
+    Deprecated MM_X_RESOLUTION.
+
+Updated init
+    Replaced mm_message_display with mm_message_output.
+    Updated mm_message_output so that it writes to syslog as well.
+
+Removed package kernel/cifs
+    Replaced out-of-kernel cifs module with the kernel cifs module because the
+        2.6.12.2 kernel contains the same version.
+
+Added package kernel/vt1211
+    Converted kernel module vt1211 from a kernel patch to a separate package.
+
+Removed usbtouchkit kernel patch
+    Removed usbtouchkit kernel patch since the usbtouchkit driver is not being
+        built.
+
+Updated packages
+    Updated devel/automake.
+    Updated extras/libdvdcss.
+    Updated kernel/drm.
+    Updated kernel/linux.
+    Updated kernel/linux-libc-headers.
+    Updated myth/xine-lib - using CVS version to pick up a newer FFMpeg.
+    Updated net/samba.
+    Updated system/udev.
+    Updated system/zoneinfo.
+    Updated X11/unichrome_dri.
+    Updated X11/x11vnc.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.3:
+
+Enhanced DNS name server and NTP time server handling
+    Added ability to read DNS name server address from minimyth.conf.
+    Added ability to retrieve NTP time server address(es) via DHCP.
+    Deprecated MM_NAME_SERVER and MM_TIME_SERVER.
+
+Updated LIRC support
+    Added ability to start irexec daemon under the control of the minimyth.conf
+        variable MM_LIRC_IREXEC_ENABLED.
+    Added lircd.conf and lircrc files for the Hauppauge A415 remote control.
+    Added lircd.conf and lircrc files for the new Microsoft Media Center remote
+        control.
+    Improved minimyth.conf defaults for the mceusb and mceusbnew drivers.
+
+Updated Myth database minimyth.conf variables
+    Added support for updating the jumppoints table by using the
+        minimyth.conf variable MM_MYTHDB_JUMPPOINT.
+    Added support for updating the keybindings table by using the
+        minimyth.conf variable MM_MYTHDB_KEYBINDING.
+    Changed minimyth.conf variable MM_MYTHDB_SETTING_<setting> to
+        MM_MYTHDB_SETTING.
+    Deprecated the MM_MYTHDB_SETTING_<setting>.
+
+Cleaned up X initialization
+    Changed minimyth.conf variables MM_NO_X, MM_NO_XWM, MM_NO_VNC and MM_TV to
+        MM_X_ENABLED, MM_X_WM_ENABLED, MM_X_VNC and MM_X_TV_TYPE respectively.
+    Added minimyth.conf variables MM_X_VGA_ENABLED, MM_X_TV_ENABLED,
+        MM_X_TV_OUTPUT and MM_X_RESOLUTION.
+    Deprecated MM_NO_X, MM_NO_XWM, MM_NO_VNC and MM_TV.
+
+Cleaned up time zone initialization
+    Added package system/zoneinfo.
+    Replaced the localtime configuration file with the minimyth.conf variable
+        MM_TZ.
+    Deprecated the localtime configuration file.
+
+Added minimyth.conf and minimyth.script file error handling
+    Updated the core.script to check for the existence of minimyth.conf and
+        minimyth.script files.
+
+Added package kernel/cifs
+    Updated cifs kernel module to a version that is newer than the version in
+        the kernel.
+
+Updated packages
+    Updated devel/gettext.
+    Updated devel/libtool.
+    Updated devel/pkgconfig.
+    Updated disk/e2fsprogs.
+    Updated kernel/linux.
+    Updated lib/libvorbis.
+    Updated lib/libtiff.
+    Updated lib/zlib.
+    Updated mediaplayers/xine-lib.
+    Updated net/samba.
+    Updated X11/freetype.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.2:
+
+Updated init scripts
+    Added error messages when required configuration is missing.
+
+Added package lirc/lirc.mceusbnew
+    Added support to LIRC for the new MCE remotes. Called the driver mceusbnew
+    so that it would not clash with the existing MCE remote driver.
+
+Updated package kernel/linux
+    Added the usbserial and ftdi_sio kernel modules in order to support the
+        CFontz USB LCD display.
+
+Updated package myth/mythplugins
+    Added UI option to enable/disable fast forward and rewind in MythMusic.
+
+Updated package X11/unichrome
+    Updated the Unichrome (VIA CLE266) driver.
+    Updated the Unichrome Pro (VIA CN400) driver.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1.1:
+
+Updated package X11/unichrome
+    Updated the Unichrome (VIA CLE266) driver.
+    Updated the Unichrome Pro (VIA CN400) driver. The Unichrome Pro driver now
+        supports non hard coded modelines.
+
+Updated package net/samba
+    Updated the CIFS client.
+    Updated the SMB client.
+
+--------------------------------------------------------------------------------
+Changes since 0.18.1:
+
+Added package myth/mythstream
+    Added MythStream to MiniMyth. Because MiniMyth does not have perl, perl
+        dependent MythStream features are not available.
+
+Updated package X11/unichrome
+    Updated the VIA VT1623 support.
+    Updated the Unichrome (VIA CLE266) driver.
+    Updated the Unichrome Pro (VIA CN400) driver.
+
+Updated package myth/xine-lib
+    Update the Xine libraries.
+
+Updated many other packages
+
+--------------------------------------------------------------------------------

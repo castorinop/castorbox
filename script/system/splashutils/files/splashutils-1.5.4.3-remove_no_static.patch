@@ -1,0 +1,24 @@
+diff -Naur splashutils-1.5.4.3-old/src/Makefile.am splashutils-1.5.4.3-new/src/Makefile.am
+--- splashutils-1.5.4.3-old/src/Makefile.am	2008-11-14 22:26:33.000000000 -0800
++++ splashutils-1.5.4.3-new/src/Makefile.am	2008-11-14 22:27:13.000000000 -0800
+@@ -188,7 +188,7 @@
+ fbsplashctl_SOURCES         = $(fbsplashd_SOURCES) $(splash_util_SOURCES) fbsplashctl.c
+ fbsplashctl_CFLAGS          = $(AM_CFLAGS) $(PTHREAD_STATIC_CFLAGS) $(RT_CFLAGS) $(libfbsplashrender_la_CFLAGS) -DUNIFIED_BUILD
+ fbsplashctl_CPPFLAGS        = $(fbsplashd_CPPFLAGS) $(splash_util_CPPFLAGS)
+-fbsplashctl_LDFLAGS         = $(AM_LDFLAGS) -all-static
++fbsplashctl_LDFLAGS         = $(AM_LDFLAGS)
+ fbsplashctl_LDADD           = libfbsplashrender.la libfbsplash.la $(PTHREAD_STATIC_LIBS) $(RT_LIBS) $(GPM_LIBS)
+ 
+ if CONFIG_FBCON_DECOR
+diff -Naur splashutils-1.5.4.3-old/src/Makefile.in splashutils-1.5.4.3-new/src/Makefile.in
+--- splashutils-1.5.4.3-old/src/Makefile.in	2008-11-14 22:26:16.000000000 -0800
++++ splashutils-1.5.4.3-new/src/Makefile.in	2008-11-14 22:27:13.000000000 -0800
+@@ -462,7 +462,7 @@
+ fbsplashctl_CFLAGS = $(AM_CFLAGS) $(PTHREAD_STATIC_CFLAGS) $(RT_CFLAGS) $(libfbsplashrender_la_CFLAGS) -DUNIFIED_BUILD
+ fbsplashctl_CPPFLAGS = $(fbsplashd_CPPFLAGS) $(splash_util_CPPFLAGS) \
+ 	$(am__append_11)
+-fbsplashctl_LDFLAGS = $(AM_LDFLAGS) -all-static
++fbsplashctl_LDFLAGS = $(AM_LDFLAGS)
+ fbsplashctl_LDADD = libfbsplashrender.la libfbsplash.la $(PTHREAD_STATIC_LIBS) $(RT_LIBS) $(GPM_LIBS)
+ fbcondecor_helper_SOURCES = kernel.c libfbsplash.c libfbsplashrender.c \
+ 	fbcon_decor.c common.c parse.c list.c render.c image.c \

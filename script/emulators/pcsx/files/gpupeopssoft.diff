@@ -1,0 +1,64 @@
+--- src/cfg.c
++++ src/cfg.c
+@@ -72,6 +72,7 @@
+ //
+ //*************************************************************************//
+ 
++#include <gtk/gtk.h>
+ #include "stdafx.h"
+ 
+ #ifdef _WINDOWS
+@@ -1299,7 +1300,6 @@
+ 
+ #define _IN_CFG
+ 
+-#include <gtk/gtk.h>
+ #undef FALSE
+ #undef TRUE
+ 
+--- src/makes/mk.x11
++++ src/makes/mk.x11
+@@ -4,7 +4,7 @@
+ 
+ XF86VM = TRUE
+ XF86DGA2 = FALSE
+-CPU = i386
++#CPU = i386
+ 
+ CC = gcc
+ LD = gcc
+@@ -17,7 +17,7 @@
+ LIBS +=  `gtk-config --libs`
+ 
+ ifeq ($(XF86VM), TRUE)
+-        OBJECTS+= /usr/X11R6/lib/libXxf86vm.a
++        LIBS+= -lXxf86vm
+         CFLAGS+= -DUSE_XF86VM
+ endif
+ ifeq ($(XF86DGA2), TRUE)
+--- src/makes/plg.mk
++++ src/makes/plg.mk
+@@ -4,7 +4,7 @@
+ 
+ PLUGIN = libgpuPeops$(VERSION).so
+ PLUGINTYPE = libgpu.so
+-CFLAGS = -g -Wall -fPIC -O4 -fomit-frame-pointer -ffast-math $(INCLUDE)
++CFLAGS = -g -Wall -fPIC $(RPM_OPT_FLAGS) -fomit-frame-pointer -ffast-math $(INCLUDE)
+ #CFLAGS = -g -Wall -fPIC -O3 -mpentium -fomit-frame-pointer -ffast-math $(INCLUDE)
+ INCLUDE = -I/usr/local/include
+ OBJECTS = gpu.o cfg.o draw.o fps.o key.o menu.o prim.o soft.o
+--- src/stdafx.h
++++ src/stdafx.h
+@@ -56,8 +56,10 @@
+ #include <stdlib.h> 
+ #include <string.h>
+ #include <sys/time.h> 
+-#include <GL/gl.h>  
+-#include <GL/glx.h>  
++//#include <GL/gl.h>  
++//#include <GL/glx.h>  
++#include <X11/Xlib.h>
++#include <X11/Xutil.h>
+ #include <math.h> 
+ #include <X11/cursorfont.h> 
+ 

@@ -1,0 +1,23 @@
+diff --speed-large-files --minimal -Nru tmp/hal-0.5.9.1/hald/linux/probing/linux_dvd_rw_utils.c work/main.d/hal-0.5.9.1/hald/linux/probing/linux_dvd_rw_utils.c
+--- tmp/hal-0.5.9.1/hald/linux/probing/linux_dvd_rw_utils.c~	2007-04-03 13:38:50.000000000 -0300
++++ hal-0.5.9.1/hald/linux/probing/linux_dvd_rw_utils.c	2008-02-06 15:18:30.000000000 -0200
+@@ -149,8 +149,8 @@
+ 		errno = EIO;
+ 		ret = -1;
+ 		if (cmd->sg_io.masked_status & CHECK_CONDITION) {
+-			CREAM_ON_ERRNO (cmd->sg_io.sbp);
+-			ret = ERRCODE (cmd->sg_io.sbp);
++			CREAM_ON_ERRNO (((unsigned char *)cmd->sg_io.sbp));
++			ret = ERRCODE (((unsigned char *)cmd->sg_io.sbp));
+ 			if (ret == 0)
+ 				ret = -1;
+ 		}
+@@ -172,7 +172,7 @@
+ 		cmd->sg_io.mx_sb_len = sizeof (cmd->_sense);
+ 		cmd->sg_io.cmdp = cmd->cgc.cmd;
+ 		cmd->sg_io.sbp = cmd->_sense.u;
+-		cmd->sg_io.flags = SG_FLAG_LUN_INHIBIT | SG_FLAG_DIRECT_IO;
++		cmd->sg_io.flags = SG_FLAG_UNUSED_LUN_INHIBIT | SG_FLAG_DIRECT_IO;
+ 	}
+ 	cmd->sg_io.cmd_len = i + 1;
+ 	cmd->cgc.cmd[i] = arg;

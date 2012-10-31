@@ -1,0 +1,12 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/SDL_mixer-1.2.11/configure work/main.d/SDL_mixer-1.2.11/configure
+--- tmp/SDL_mixer-1.2.11/configure	2009-11-12 03:44:13.000000000 -0300
++++ new-SDL_mixer-1.2.11/configure	2011-07-29 12:37:00.058389907 -0300
+@@ -13523,7 +13523,7 @@
+         LIBS="-lFLAC"
+         { $as_echo "$as_me:$LINENO: checking for libflac so-name version >= $libflac_ver" >&5
+ $as_echo_n "checking for libflac so-name version >= $libflac_ver... " >&6; }
+-        if test "$cross_compiling" = yes; then
++        if test "$cross_compiling" = ignore_yes; then
+   { { $as_echo "$as_me:$LINENO: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ { { $as_echo "$as_me:$LINENO: error: cannot run test program while cross compiling

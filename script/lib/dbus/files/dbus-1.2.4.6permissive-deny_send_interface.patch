@@ -1,0 +1,56 @@
+commit f3b53fdb320cdda157c59dbd751219505c85d63e
+Author: Colin Walters <walters@verbum.org>
+Date:   Wed Dec 17 18:43:08 2008 -0500
+
+    Bug 18961: Skip bare <deny send_interface=""/> for not (method_call|signal)
+    
+    Bare <deny send_interface=""/> rules have a far larger impact than
+    one would think.  It's really always wrong to use them without also
+    using send_destination.
+
+diff --git a/bus/policy.c b/bus/policy.c
+index ef31800..22ee2ab 100644
+--- a/bus/policy.c
++++ b/bus/policy.c
+@@ -945,13 +945,39 @@ bus_client_policy_check_can_send (BusClientPolicy *policy,
+       
+       if (rule->d.send.interface != NULL)
+         {
++          int msg_type;
++          dbus_bool_t no_interface;
++
++          /* http://bugs.freedesktop.org/show_bug.cgi?id=18961
++           * Many services (at one point) shipped with rules of the form
++           * <deny send_interface="org.foo.Bar"/>.  These rules apply to
++           * messages even for totally unrelated services, which
++           * is clearly not what is intended.  There are two major things
++           * broken:
++           * 
++           * * Method calls sent with no interface (as happens with dynamic language bindings)
++           * * Reply and error messages, which always have no interface
++           * 
++           * These config files *should*
++           * be using send_destination, but as an interim workaround we
++           * make these rules apply only to method calls or signals.  This
++           * avoids the second problem, while still preserving security.
++           */
++          msg_type = dbus_message_get_type (message);
++          if (!rule->allow && rule->d.send.destination == NULL)
++            {
++              if (!(msg_type == DBUS_MESSAGE_TYPE_METHOD_CALL || msg_type == DBUS_MESSAGE_TYPE_SIGNAL))
++                {
++                  _dbus_verbose ("  (policy) skipping bare deny+send_interface rule for not (method_call or signal)\n");
++                  continue;
++                }
++            }
++          
+           /* The interface is optional in messages. For allow rules, if the message
+            * has no interface we want to skip the rule (and thus not allow);
+            * for deny rules, if the message has no interface we want to use the
+            * rule (and thus deny).
+            */
+-          dbus_bool_t no_interface;
+-
+           no_interface = dbus_message_get_interface (message) == NULL;
+           
+           if ((no_interface && rule->allow) ||

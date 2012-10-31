@@ -1,0 +1,279 @@
+=== modified file 'common.cpp'
+--- common.cpp	2008-07-09 16:02:12 +0000
++++ common.cpp	2008-07-22 18:53:48 +0000
+@@ -612,6 +612,62 @@
+    return inp;
+ }
+ 
++string string_format::ConvertHTMLToAnsi(const char *strHTML)
++{
++  int i=0;
++
++  int iAnsiPos=0;
++  char *szAnsi = new char[strlen(strHTML)*2];
++
++  while (i < int(strlen(strHTML)))
++    {
++      char kar=strHTML[i];
++      if (kar=='&')
++	{
++	  if (strHTML[i+1]=='#')
++	    {
++	      int ipos=0;
++	      i+=2;
++	      char szDigit[12];
++	      while ( ipos < 12 && strHTML[i] && isdigit(strHTML[i]))
++		{
++		  szDigit[ipos]=strHTML[i];
++		  szDigit[ipos+1]=0;
++		  ipos++;
++		  i++;
++		}
++	      szAnsi[iAnsiPos++] = static_cast<char>(atoi(szDigit));
++	      i++;
++	    }
++	  else
++	    {
++	      i++;
++	      int ipos=0;
++	      char szKey[12];
++	      while (strHTML[i] && strHTML[i] != ';' && ipos < 12)
++		{
++		  szKey[ipos]=tolower(static_cast<unsigned char>(strHTML[i]));
++		  szKey[ipos+1]=0;
++		  ipos++;
++		  i++;
++		}
++	      i++;
++	      if (strcmp(szKey,"amp")==0) szAnsi[iAnsiPos++] ='&';
++	      if (strcmp(szKey,"nbsp")==0) szAnsi[iAnsiPos++] =' ';
++	    }
++	}
++      else
++	{
++	  szAnsi[iAnsiPos++] =kar;
++	  i++;
++	}
++    }
++  szAnsi[iAnsiPos++]=0;
++  string strAnsi = szAnsi;
++  delete [] szAnsi;;
++  return strAnsi;
++}
++
+ const int round_to_int(double number)
+ {
+   return int(number + 0.5);
+
+=== modified file 'common.hpp'
+--- common.hpp	2008-06-28 16:37:33 +0000
++++ common.hpp	2008-07-22 18:36:39 +0000
+@@ -91,6 +91,9 @@
+   // convert a string in local format to UTF-8
+   std::string convert(const std::string& in, bool mp3_locale = false);
+ 
++  // convert a string in local format to UTF-8
++  std::string ConvertHTMLToAnsi(const char* strHTML);
++
+   std::string str_printf(const char *fmt, ...);
+ 
+   //wrap a line of text  and returns a vector of strings, each one being a line whose size
+
+=== modified file 'plugins/feature/movie/imdb.cpp'
+--- plugins/feature/movie/imdb.cpp	2008-04-14 21:47:03 +0000
++++ plugins/feature/movie/imdb.cpp	2008-07-22 18:50:18 +0000
+@@ -64,8 +64,7 @@
+ 	  char *pEnd = strstr(pMovieTitle,"\"");
+ 	  if (pEnd) *pEnd=0;
+ 
+-	  ConvertHTMLToAnsi(pMovieTitle, url.m_strTitle);
+-	  url.m_strTitle = string_format::convert(url.m_strTitle);
++	  url.m_strTitle = string_format::convert(string_format::ConvertHTMLToAnsi(pMovieTitle));
+ 	  url.m_strURL   = strURL;
+ 	  movielist.push_back(url);
+ 
+@@ -144,9 +143,7 @@
+ 		      pendAHREF = pendYear;
+ 		    }
+ 
+-		  ConvertHTMLToAnsi(szTitle, url.m_strTitle);
+-
+-		  url.m_strTitle = string_format::convert(url.m_strTitle);
++		  url.m_strTitle = string_format::convert(string_format::ConvertHTMLToAnsi(szTitle));
+ 
+ 		  snprintf(szURL, 1024, "http://us.imdb.com/%s", &pAHREF[1]);
+ 		  url.m_strURL=szURL;
+@@ -337,7 +334,7 @@
+ 		*pEnd = 0;
+ 	      }
+ 
+-	      ConvertHTMLToAnsi(pStart, role);
++	      role = string_format::convert(string_format::ConvertHTMLToAnsi(pStart));
+ 
+ 	      if (pEnd < pEnd2)
+ 		pEnd = pEnd2;
+@@ -362,7 +359,7 @@
+       pTagLine += strlen("Tagline:</h5>");
+       char *pEnd = strstr(pTagLine,"<");
+       if (pEnd) *pEnd=0;
+-      ConvertHTMLToAnsi(pTagLine, movieDetails.m_strTagLine);
++      movieDetails.m_strTagLine = string_format::ConvertHTMLToAnsi(pTagLine);
+       remove_newlines(movieDetails.m_strTagLine);
+     }
+ 
+@@ -371,7 +368,7 @@
+       pRuntime += strlen("Runtime:</h5>");
+       char *pEnd = strstr(pRuntime,"<");
+       if (pEnd) *pEnd=0;
+-      ConvertHTMLToAnsi(pRuntime,movieDetails.m_strRuntime);
++      movieDetails.m_strRuntime = string_format::ConvertHTMLToAnsi(pRuntime);
+     }
+   if (!pPlotOutline)
+     {
+@@ -380,7 +377,7 @@
+ 	  pPlotSummary += strlen("Plot Summary:</b>");
+ 	  char *pEnd = strstr(pPlotSummary,"<");
+ 	  if (pEnd) *pEnd=0;
+-	  ConvertHTMLToAnsi(pPlotSummary,movieDetails.m_strPlotOutline);
++	  movieDetails.m_strPlotOutline = string_format::ConvertHTMLToAnsi(pPlotSummary);
+ 	  remove_links(movieDetails.m_strPlotOutline);
+ 	}
+     }
+@@ -389,7 +386,7 @@
+       pPlotOutline += strlen("Plot Outline:</h5>");
+       char *pEnd = strstr(pPlotOutline,"</div");
+       if (pEnd) *pEnd=0;
+-      ConvertHTMLToAnsi(pPlotOutline,movieDetails.m_strPlotOutline);
++      movieDetails.m_strPlotOutline = string_format::ConvertHTMLToAnsi(pPlotOutline);
+       remove_links(movieDetails.m_strPlotOutline);
+       movieDetails.m_strPlot=movieDetails.m_strPlotOutline;
+     }
+@@ -449,7 +446,7 @@
+ 		    }
+ 		  strPlot[iPlot] = '\0';
+ 
+-		  ConvertHTMLToAnsi(strPlot, movieDetails.m_strPlot);
++		  movieDetails.m_strPlot = string_format::ConvertHTMLToAnsi(strPlot);
+ 
+ 		  delete [] strPlot;
+ 		}
+@@ -545,7 +542,7 @@
+   pSep++;
+ 
+   //strTitle=pSep;
+-  ConvertHTMLToAnsi(pSep,strTitle);
++  strTitle = string_format::ConvertHTMLToAnsi(pSep);
+ 
+   delete [] szAHRef;
+ }
+@@ -644,8 +641,7 @@
+     //   char* pEnd = strstr(pMovieTitle, "</b>");
+     //   if (pEnd) *pEnd = 0;
+ 
+-    //   ConvertHTMLToAnsi(pMovieTitle, url.m_strTitle);
+-    //   url.m_strTitle = string_format::convert(url.m_strTitle);
++    //   url.m_strTitle = string_format::convert(string_format::ConvertHTMLToAnsi(pMovieTitle);
+     //   url.m_strURL   = strURL;
+     //   movielist.push_back(url);
+ 
+@@ -727,9 +723,7 @@
+             strcat(szTitle, pYear);
+             // pendAHREF = pendYear;
+           }
+-          ConvertHTMLToAnsi(szTitle, url.m_strTitle);
+-
+-          url.m_strTitle = url.m_strTitle;
++          url.m_strTitle = string_format::ConvertHTMLToAnsi(szTitle);
+ 
+           snprintf(szURL, 1024, "http://www.ofdb.de/%s", &pAHREF[0]);
+ 
+@@ -848,7 +842,7 @@
+ 	*pEnd = 0;
+     }
+ 
+-    ConvertHTMLToAnsi(pPlotOutline, movieDetails.m_strPlotOutline);
++    movieDetails.m_strPlotOutline = string_format::ConvertHTMLToAnsi(pPlotOutline);
+     remove_links(movieDetails.m_strPlotOutline);
+     movieDetails.m_strPlot = movieDetails.m_strPlotOutline;
+     if (*pEnd != 0)
+@@ -905,7 +899,7 @@
+           }
+           strPlot[iPlot] = '\0';
+ 
+-          ConvertHTMLToAnsi(strPlot, movieDetails.m_strPlot);
++          movieDetails.m_strPlot = string_format::ConvertHTMLToAnsi(strPlot);
+ 
+           delete [] strPlot;
+         }
+@@ -1063,58 +1057,3 @@
+ 
+   strURL = imdb_url + name;
+ }
+-
+-void CIMDB::ConvertHTMLToAnsi(const char *strHTML, string &strAnsi)
+-{
+-  int i=0;
+-
+-  int iAnsiPos=0;
+-  char *szAnsi = new char[strlen(strHTML)*2];
+-
+-  while (i < int(strlen(strHTML)))
+-    {
+-      char kar=strHTML[i];
+-      if (kar=='&')
+-	{
+-	  if (strHTML[i+1]=='#')
+-	    {
+-	      int ipos=0;
+-	      i+=2;
+-	      char szDigit[12];
+-	      while ( ipos < 12 && strHTML[i] && isdigit(strHTML[i]))
+-		{
+-		  szDigit[ipos]=strHTML[i];
+-		  szDigit[ipos+1]=0;
+-		  ipos++;
+-		  i++;
+-		}
+-	      szAnsi[iAnsiPos++] = static_cast<char>(atoi(szDigit));
+-	      i++;
+-	    }
+-	  else
+-	    {
+-	      i++;
+-	      int ipos=0;
+-	      char szKey[12];
+-	      while (strHTML[i] && strHTML[i] != ';' && ipos < 12)
+-		{
+-		  szKey[ipos]=tolower(static_cast<unsigned char>(strHTML[i]));
+-		  szKey[ipos+1]=0;
+-		  ipos++;
+-		  i++;
+-		}
+-	      i++;
+-	      if (strcmp(szKey,"amp")==0) szAnsi[iAnsiPos++] ='&';
+-	      if (strcmp(szKey,"nbsp")==0) szAnsi[iAnsiPos++] =' ';
+-	    }
+-	}
+-      else
+-	{
+-	  szAnsi[iAnsiPos++] =kar;
+-	  i++;
+-	}
+-    }
+-  szAnsi[iAnsiPos++]=0;
+-  strAnsi=szAnsi;
+-  delete [] szAnsi;;
+-}
+
+=== modified file 'plugins/feature/movie/imdb.hpp'
+--- plugins/feature/movie/imdb.hpp	2007-09-01 23:37:15 +0000
++++ plugins/feature/movie/imdb.hpp	2008-07-22 18:39:37 +0000
+@@ -44,7 +44,6 @@
+   void remove_links(std::string& url_text);
+   void ParseAHREF(const char* ahref, std::string& strURL, std::string& strTitle);
+   void ParseGenres(const char* ahref, std::string& strURL, std::string& strTitle);
+-  void ConvertHTMLToAnsi(const char* strHTML, std::string& strAnsi);
+   bool Get(const std::string& url, std::string& content);
+ };
+ 
+

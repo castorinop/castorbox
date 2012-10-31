@@ -1,0 +1,152 @@
+diff -Nru openssh-3.4p1/Makefile.in openssh-3.4p1.readline/Makefile.in
+--- openssh-3.4p1/Makefile.in	Wed Jun 26 01:45:42 2002
++++ openssh-3.4p1.readline/Makefile.in	Mon Jul  1 04:14:05 2002
+@@ -42,6 +42,7 @@
+ CFLAGS=@CFLAGS@
+ CPPFLAGS=-I. -I$(srcdir) @CPPFLAGS@ $(PATHS) @DEFS@
+ LIBS=@LIBS@
++SFTPLIB=@SFTPLIB@
+ LIBPAM=@LIBPAM@
+ LIBWRAP=@LIBWRAP@
+ AR=@AR@
+@@ -138,7 +139,7 @@
+ 	$(LD) -o $@ sftp-server.o sftp-common.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) 
+ 
+ sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-int.o sftp-common.o sftp-glob.o
+-	$(LD) -o $@ sftp.o sftp-client.o sftp-common.o sftp-int.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
++	$(LD) -o $@ sftp.o sftp-client.o sftp-common.o sftp-int.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(SFTPLIB)
+ 
+ ssh-rand-helper${EXEEXT}: $(LIBCOMPAT) libssh.a ssh-rand-helper.o
+ 	$(LD) -o $@ ssh-rand-helper.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+diff -Nru openssh-3.4p1/configure.ac openssh-3.4p1.readline/configure.ac
+--- openssh-3.4p1/configure.ac	Wed Jun 26 00:35:16 2002
++++ openssh-3.4p1.readline/configure.ac	Mon Jul  1 04:13:58 2002
+@@ -23,6 +23,8 @@
+ AC_PATH_PROG(TEST_MINUS_S_SH, sh)
+ AC_PATH_PROG(SH, sh)
+ 
++SFTPLIB=""
++
+ # System features
+ AC_SYS_LARGEFILE
+ 
+@@ -477,6 +479,51 @@
+ 	]
+ )
+ 
++# Check for readline support
++READLINE="no"
++AC_ARG_WITH(readline,
++	[  --with-readline         Enable redline support],
++	[
++		if test "x$withval" == "xyes" ; then
++			AC_CHECK_HEADERS(readline/readline.h readline/history.h,
++				AC_DEFINE(HAS_READLINE, 1, [If defined sftp uses readline library for user input.]),
++				[AC_MSG_RESULT(no)
++				 AC_MSG_ERROR([** Cannot locate readline include files])
++				])
++
++			SFTPLIB="-lreadline"
++			AC_CHECK_LIB(ncurses, tputs, SFTPLIB="-lncurses $SFTPLIB" ,
++				[AC_CHECK_LIB(curses, tputs, SFTPLIB="-lcurses $SFTPLIB" ,
++					[AC_CHECK_LIB(termcap, tputs, SFTPLIB="-ltermcap $SFTPLIB")
++					])
++				])
++
++			PRESERVE_LIBS="$LIBS"
++			LIBS="$LIBS $SFTPLIB"
++			AC_MSG_CHECKING([for readline support])
++			AC_TRY_RUN(
++				[  
++#include <stdio.h>
++#include <readline/readline.h>
++#include <readline/history.h>
++int main() { add_history(rl_library_version); return 0; }
++				],
++                                [AC_MSG_RESULT(yes)
++				READLINE="yes"
++				],
++                                [
++                                        AC_MSG_RESULT(no)
++					AC_MSG_ERROR([** Failed to compile small readline program])
++				])
++			LIBS="$PRESERVE_LIBS"
++		else
++			READLINE="no"
++		fi
++	]
++)
++
++AC_SUBST(SFTPLIB)
++
+ # Check whether user wants S/Key support
+ SKEY_MSG="no" 
+ AC_ARG_WITH(skey,
+@@ -2398,6 +2445,7 @@
+ echo "          sshd superuser user PATH: $J"
+ fi
+ echo "                    Manpage format: $MANTYPE"
++echo "                  readline support: $READLINE"
+ echo "                       PAM support: ${PAM_MSG}"
+ echo "                KerberosIV support: $KRB4_MSG"
+ echo "                 KerberosV support: $KRB5_MSG"
+@@ -2423,6 +2471,7 @@
+ echo "Preprocessor flags: ${CPPFLAGS}"
+ echo "      Linker flags: ${LDFLAGS}"
+ echo "         Libraries: ${LIBWRAP} ${LIBPAM} ${LIBS}"
++echo "    sftp libraries: ${SFTPLIB} ${LIBS}"
+ 
+ echo ""
+ 
+diff -Nru openssh-3.4p1/sftp-int.c openssh-3.4p1.readline/sftp-int.c
+--- openssh-3.4p1/sftp-int.c	Sun Jun 23 23:27:19 2002
++++ openssh-3.4p1.readline/sftp-int.c	Mon Jul  1 04:14:20 2002
+@@ -39,6 +39,11 @@
+ #include "sftp-client.h"
+ #include "sftp-int.h"
+ 
++#ifdef HAS_READLINE
++#include <readline/readline.h>
++#include <readline/history.h>
++#endif
++
+ /* File to read commands from */
+ extern FILE *infile;
+ 
+@@ -902,15 +907,26 @@
+ 
+ 	for (;;) {
+ 		char *cp;
+-
+-		printf("sftp> ");
+-
+-		/* XXX: use libedit */
+-		if (fgets(cmd, sizeof(cmd), infile) == NULL) {
+-			printf("\n");
+-			break;
+-		} else if (infile != stdin) /* Bluff typing */
+-			printf("%s", cmd);
++#ifdef HAS_READLINE	      
++		char *rl;
++		if (infile == stdin) {
++		  rl=readline("sftp> ");
++		  if (rl && *rl) add_history(rl);
++		  strncpy(cmd,rl,sizeof(cmd)-1);
++		  cmd[sizeof(cmd)-1]=0;
++		} else {
++#endif
++		  printf("sftp> ");
++		  
++		  /* XXX: use libedit */
++		  if (fgets(cmd, sizeof(cmd), infile) == NULL) {
++		    printf("\n");
++		    break;
++		  } else if (infile != stdin) /* Bluff typing */
++		    printf("%s", cmd);
++#ifdef HAS_READLINE
++		};
++#endif
+ 
+ 		cp = strrchr(cmd, '\n');
+ 		if (cp)
+

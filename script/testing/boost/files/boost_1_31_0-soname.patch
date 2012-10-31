@@ -1,0 +1,22 @@
+--- boost_1_31_0/tools/build/v1/gcc-tools.jam.soname	2003-03-30 13:05:43.000000000 +0200
++++ boost_1_31_0/tools/build/v1/gcc-tools.jam	2003-03-30 13:12:08.000000000 +0200
+@@ -326,6 +326,8 @@ flags gcc FINDLIBS <find-library> ;
+ flags gcc DLLVERSION <dllversion> ;
+ DLLVERSION = $(DLLVERSION[1]) ;
+ DLLVERSION ?= $(BOOST_VERSION) ;
++DLLVERSION_EXT ?= "$(DLLVERSION)" ;
++DLLVERSION_TAG ?= "$(DLLVERSION)" ;
+ 
+ flags gcc TARGET_TYPE <target-type> ;
+ 
+@@ -346,8 +348,8 @@ rule Link-action
+     # do we use sonames or not?
+     if $(DLLVERSION) && $(TARGET_TYPE) in $(SHARED_TYPES) && ( $(OS) = LINUX || $(OS) = OPENBSD ) && ! $(NO_GNU_LN)
+     {
+-        OUTTAG on $(<) = ".$(DLLVERSION)" ;
+-        SOTAG on $(<) = ".$(DLLVERSION)" ;
++        OUTTAG on $(<) = ".$(DLLVERSION_EXT)" ;
++        SOTAG on $(<) = ".$(DLLVERSION_TAG)" ;
+         ACTION_1 on $(<) = "" ;
+     }
+     else

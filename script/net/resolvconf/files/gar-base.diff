@@ -1,0 +1,75 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/resolvconf-1.42/bin/list-records work/main.d/resolvconf-1.42/bin/list-records
+--- tmp/resolvconf-1.42/bin/list-records	2008-06-05 05:50:40.000000000 -0300
++++ work/main.d/resolvconf-1.42/bin/list-records	2009-07-16 11:14:58.000000000 -0300
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # Need bash because we use nullglob, extglob
+ #
+ # list-records
+@@ -36,7 +36,7 @@
+ 		/^$/d
+ 		' /etc/resolvconf/interface-order)"
+ fi
+-shopt -s nullglob extglob
++#DISABLED shopt -s nullglob extglob
+ # Pathname expansion occurs on the following line resulting, in general,
+ # in multiple instances of filenames; duplicates must be removed.
+ uniquify $PATTERNS
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/resolvconf-1.42/bin/resolvconf work/main.d/resolvconf-1.42/bin/resolvconf
+--- tmp/resolvconf-1.42/bin/resolvconf	2008-06-05 05:50:40.000000000 -0300
++++ work/main.d/resolvconf-1.42/bin/resolvconf	2009-07-16 11:07:45.000000000 -0300
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # Need bash because of use of ${FOO/bar}
+ #
+ # Licensed under the GNU GPL.  See /usr/share/doc/resolvconf/copyright.
+@@ -12,7 +12,7 @@
+ 
+ echo_usage() { echo "Usage: resolvconf (-u|-d IFACE|-a IFACE)" ; }
+ 
+-PATH=/sbin:/bin
++PATH=/sbin:/bin:/usr/bin
+ MYNAME="${0##*/}"
+ # Note that /etc/resolvconf/run may be a symlink
+ RUN_DIR=/etc/resolvconf/run
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/resolvconf-1.42/debian/config work/main.d/resolvconf-1.42/debian/config
+--- tmp/resolvconf-1.42/debian/config	2008-06-05 05:50:40.000000000 -0300
++++ work/main.d/resolvconf-1.42/debian/config	2009-07-16 11:07:44.000000000 -0300
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # Bash required because /usr/share/debconf/confmodule uses "local" (#252094)
+ 
+ set -e
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/resolvconf-1.42/debian/postrm work/main.d/resolvconf-1.42/debian/postrm
+--- tmp/resolvconf-1.42/debian/postrm	2008-06-05 05:50:40.000000000 -0300
++++ work/main.d/resolvconf-1.42/debian/postrm	2009-07-16 11:07:44.000000000 -0300
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # Bash required because /usr/share/debconf/confmodule uses "local" (#252094)
+ 
+ set -e
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/resolvconf-1.42/etc/resolvconf/update.d/bind work/main.d/resolvconf-1.42/etc/resolvconf/update.d/bind
+--- tmp/resolvconf-1.42/etc/resolvconf/update.d/bind	2008-06-05 05:50:40.000000000 -0300
++++ work/main.d/resolvconf-1.42/etc/resolvconf/update.d/bind	2009-07-16 11:07:44.000000000 -0300
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # Need bash because we use ${foo//bar/baz}
+ #
+ # Script to update the named options file
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/resolvconf-1.42/etc/resolvconf/update.d/libc work/main.d/resolvconf-1.42/etc/resolvconf/update.d/libc
+--- tmp/resolvconf-1.42/etc/resolvconf/update.d/libc	2008-06-05 05:50:40.000000000 -0300
++++ work/main.d/resolvconf-1.42/etc/resolvconf/update.d/libc	2009-07-16 11:07:45.000000000 -0300
+@@ -12,7 +12,7 @@
+ # Written by Thomas Hood <jdthood@yahoo.co.uk>
+ 
+ set -e
+-PATH=/sbin:/bin
++PATH=/sbin:/bin:/usr/bin
+ 
+ [ -x /lib/resolvconf/list-records ] || exit 1
+ 

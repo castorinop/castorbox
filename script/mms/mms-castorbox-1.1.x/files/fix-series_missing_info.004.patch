@@ -1,0 +1,72 @@
+=== modified file 'plugins/feature/movie/series_db.cpp'
+--- old/plugins/feature/movie/series_db.cpp	2010-02-23 17:18:14 +0000
++++ new/plugins/feature/movie/series_db.cpp	2010-04-17 17:55:45 +0000
+@@ -725,5 +730,48 @@
+     timestamp = tvdb.getLastUpdate();
+   }
+   setServerTime("tvdb", timestamp);
+-}
+-
++
++  //Search Missing Info
++  findMissingInfo();
++}
++
++void SerieDB::findMissingInfo()
++{
++  Serie updSerie;
++  Episode updEp;
++
++  std::string query = " SELECT Episode.id_serie, Series.name, Series.seriesid, season, episode, count(Files.id_episode) as missing "
++	"FROM Episode "
++	"JOIN Files ON Episode.id_episode = Files.id_episode "
++	"JOIN Series ON Episode.id_serie = Series.id_serie "
++	"WHERE Episode.seasonid is NULL GROUP BY Episode.id_serie";
++
++  db_mutex.enterMutex();
++  SQLQuery *q = db.query("Episode", query.c_str());
++  db_mutex.leaveMutex();
++
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       std::cout << "SerieDB::findMissingInfo(): starting: " << row["name"] << " ..." << std::endl;
++       if (conv::atoi(row["seriesid"]) > 1) {
++         if (conv::atoi(row["missing"]) == 1) { // fetch episode only
++	   updEp = tvdb.getEpisode(conv::atoi(row["seriesid"]),conv::atoi(row["season"]),conv::atoi(row["episode"]));
++	   updEp.id_serie = conv::atoi(row["id_serie"]);
++	   store(updEp);
++	 } else { // fetch serie 
++	   updSerie = tvdb.getSerie(conv::atoi(row["seriesid"]));
++	   if (updSerie.seriesid == 0) {
++	     std::cout << "SerieDB::findMissingInfo(): can't get seriesid, serie " << row["name"] << " trying update by name..." << std::endl;
++	     updSerie = tvdb.getSerie(row["name"]);
++	   }
++	   updSerie.id = conv::atoi(row["id_serie"]);
++	   store(updSerie);
++	   tvdb.getBanner(updSerie, serie_dir);
++	   tvdb.getFanart(updSerie, serie_dir);
++         }
++       } else std::cout << "SerieDB::findMissingInfo(): can't get seriesid, serie " << row["name"] << "can't indexed." << std::endl;
++    }
++    delete q;
++  }
++}
+
+=== modified file 'plugins/feature/movie/series_db.hpp'
+--- old/plugins/feature/movie/series_db.hpp	2010-02-23 17:18:14 +0000
++++ new/plugins/feature/movie/series_db.hpp	2010-04-17 13:47:15 +0000
+@@ -57,11 +57,13 @@
+   int getServerTime(const std::string name);
+   bool setServerTime(const std::string name, const int& timestamp);
+   void getUpdates();
++  void findMissingInfo();
+ 
+   void setViewed(const int& id_episode, bool flag = true);
+ 
+ 
+ 
++
+ public:
+ 
+   SQLDatabase* get_db() { return &db; }

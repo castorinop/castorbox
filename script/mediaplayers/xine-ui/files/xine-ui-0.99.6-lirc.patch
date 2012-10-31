@@ -1,0 +1,34 @@
+diff -Naur xine-ui-0.99.6-old/m4/_xine.m4 xine-ui-0.99.6-new/m4/_xine.m4
+--- xine-ui-0.99.6-old/m4/_xine.m4	2009-12-18 15:14:27.000000000 -0800
++++ xine-ui-0.99.6-new/m4/_xine.m4	2010-05-04 09:58:20.000000000 -0700
+@@ -31,28 +31,16 @@
+   found_lirc=no
+   if test x"$enable_lirc" = xyes; then
+     have_lirc=yes
+-    PKG_CHECK_MODULES(LIRC, liblircclient0, [found_lirc=yes], [])
+-    if test "$LIRC_CFLAGS" != ''; then
+-      LIRC_INCLUDE="$LIRC_CFLAGS"
+-    else
+      AC_REQUIRE_CPP
+      AC_CHECK_LIB(lirc_client,lirc_init,
+            [AC_CHECK_HEADER(lirc/lirc_client.h, true, have_lirc=no)], have_lirc=no)
+      if test "$have_lirc" = "yes"; then
+ 
+-        if test x"$LIRC_PREFIX" != "x"; then
+-           lirc_libprefix="$LIRC_PREFIX/lib"
+-  	   LIRC_INCLUDE="-I$LIRC_PREFIX/include"
+-        fi
+-        for llirc in $lirc_libprefix /lib /usr/lib /usr/local/lib; do
+-          AC_CHECK_FILE(["$llirc/liblirc_client.a"],
+-            [LIRC_LIBS="$llirc/liblirc_client.a"
+-             found_lirc=yes],,)
+-        done
++        [LIRC_LIBS="-llirc_client"]
++        AC_DEFINE([HAVE_LIRC],,[Define this if you have LIRC (liblirc_client) installed])
+      else
+          AC_MSG_RESULT([*** LIRC client support not available, LIRC support will be disabled ***]);
+      fi
+-    fi
+   fi
+      if test "$found_lirc" = yes; then
+ 	AC_DEFINE([HAVE_LIRC],,[Define this if you have LIRC (liblirc_client) installed])

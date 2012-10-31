@@ -1,0 +1,1284 @@
+diff -Naur Mesa-7.8.2-old/bin/mklib Mesa-7.8.2-new/bin/mklib
+--- Mesa-7.8.2-old/bin/mklib	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/bin/mklib	2010-06-21 14:28:31.000000000 -0700
+@@ -49,8 +49,8 @@
+                     /*) ;;
+                     *)  FILE="$ORIG_DIR/$FILE" ;;
+                 esac
+-                MEMBERS=`ar t $FILE`
+-                ar x $FILE
++                MEMBERS=`${AR:-'ar'} t $FILE`
++                ${AR:-'ar'} x $FILE
+                 for MEMBER in $MEMBERS ; do
+                     NEWFILES="$NEWFILES $DIR/$MEMBER"
+                 done
+@@ -87,11 +87,11 @@
+     rm -f ${LIBNAME}
+ 
+     # make static lib
+-    ar ${OPTS} ${LIBNAME} ${OBJECTS}
++    ${AR:-'ar'} ${OPTS} ${LIBNAME} ${OBJECTS}
+ 
+     # run ranlib
+     if [ ${RANLIB} = 1 ] ; then
+-        ranlib ${LIBNAME}
++        @GAR_RANLIB@ ${LIBNAME}
+     fi
+ 
+     echo ${LIBNAME}
+@@ -313,9 +313,9 @@
+ 	if [ "x$LINK" = "x" ] ; then
+ 	    # -linker was not specified so set default link command now
+             if [ $CPLUSPLUS = 1 ] ; then
+-                LINK=g++
++                LINK="${CXX:-'g++'}"
+             else
+-                LINK=gcc
++                LINK="${CC:-'gcc'}"
+             fi
+ 	fi
+ 
+@@ -437,24 +437,24 @@
+ 		# -linker was not specified, choose default linker now
+ 		if [ $CPLUSPLUS = 1 ] ; then
+ 		    # determine linker and options for C++ code
+-		    if [ `which c++` ] ; then
+-			# use Sun c++
+-			LINK="c++"
+-		    elif [ `type g++` ] ; then
+-			# use g++
+-			LINK="g++"
++		    if [ `which ${CXX:-'c++'}` ] ; then
++			# use Sun ${CXX:-'c++'}
++			LINK="${CXX:-'c++'}"
++		    elif [ `type ${CXX:-'g++'}` ] ; then
++			# use ${CXX:-'g++'}
++			LINK="${CXX:-'g++'}"
+ 		    else
+ 			echo "mklib: warning: can't find C++ compiler, trying CC."
+-			LINK="CC"
++			LINK="${CC:-'CC'}"
+ 		    fi
+ 		else
+ 		    # use native Sun linker for C code
+-		    LINK="ld"
++		    LINK="${LD:-'ld'}"
+ 		fi
+ 	    fi
+ 
+ 	    # linker options
+-	    if [ ${LINK} = "ld" -o ${LINK} = "cc" -o ${LINK} = "CC" ] ; then
++	    if [ ${LINK} = "${LD:-'ld'}" -o ${LINK} = "${CC:-'cc'}" -o ${LINK} = "${CC:-'CC'}" ] ; then
+ 		# SunOS tools, -G to make shared libs
+ 		OPTS="-G"
+ 	    else
+@@ -528,9 +528,9 @@
+ 	if [ "x$LINK" = "x" ] ; then
+ 	    # -linker was not specified so set default link command now
+             if [ $CPLUSPLUS = 1 ] ; then
+-                LINK=g++
++                LINK=${CXX:-'g++'}
+             else
+-                LINK=gcc
++                LINK=${CC:-'gcc'}
+             fi
+ 	fi
+ 
+@@ -580,7 +580,7 @@
+ 	    LIBNAME="lib${LIBNAME}.so.${MAJOR}.${MINOR}"
+ 	    echo "mklib: Making NetBSD PIC shared library: " ${LIBNAME}
+ 	    rm -f ${LIBNAME}
+-	    ld -x -Bshareable -Bforcearchive -o ${LIBNAME} ${OBJECTS}
++	    ${LD:-'ld'} -x -Bshareable -Bforcearchive -o ${LIBNAME} ${OBJECTS}
+ 	    FINAL_LIBS=${LIBNAME}
+ 	fi
+ 	;;
+@@ -616,9 +616,9 @@
+             fi
+ 
+ 	    if [ $CPLUSPLUS = 1 ] ; then
+-		LINK="CC"
++		LINK="${CC:-'CC'}"
+ 	    else
+-		LINK="ld"
++		LINK="${LD:-'ld'}"
+ 	    fi
+ 
+ 	    echo "mklib: Making IRIX " ${ABI} " shared library: " ${LIBNAME}
+@@ -631,7 +631,7 @@
+ 	LIBNAME="lib${LIBNAME}.a"
+ 	echo "mklib: Making linux-cygwin library: " ${LIBNAME}
+ 	rm -f ${LIBNAME}
+-	gnuwin32ar ruv ${LIBNAME} ${OBJECTS}
++	${AR:-'gnuwin32ar'} ruv ${LIBNAME} ${OBJECTS}
+ 	FINAL_LIBS=${LIBNAME}
+ 	;;
+ 
+@@ -648,7 +648,7 @@
+ 	    RUNLIB="lib${LIBNAME}.${MAJOR}"
+ 	    DEVLIB="lib${LIBNAME}.sl"
+ 	    echo "mklib: Making HP-UX shared library: " ${RUNLIB} ${DEVLIB}
+-	    ld -b -o ${RUNLIB} +b ${RUNLIB} ${OBJECTS} ${DEPS}
++	    ${LD:-'ld'} -b -o ${RUNLIB} +b ${RUNLIB} ${OBJECTS} ${DEPS}
+ 	    ln -s ${RUNLIB} ${DEVLIB}
+ 	    FINAL_LIBS="${RUNLIB} ${DEVLIB}"
+ 	fi
+@@ -675,7 +675,7 @@
+ 	    LIBNAME="lib${LIBNAME}.a"  # shared objects are still stored in the .a libraries
+ 	    OPTS="-bE:${EXPFILE} -bM:SRE -bnoentry ${Q64}"
+ 	    rm -f ${EXPFILE} ${OFILE}
+-	    NM="/bin/nm -eC ${X64}"
++	    NM="${NM:-'/bin/nm'} -eC ${X64}"
+ 	    echo "#! /usr/lib/${LIBNAME}" > ${EXPFILE}
+ 	    ${NM} ${OBJECTS} | awk '{
+ 	    if ((($2 == "T") || ($2 == "D") || ($2 == "B")) \
+@@ -699,10 +699,10 @@
+             # On AIX a shared library is linked differently when
+             # you want to dlopen the file
+ 	    if [ $DLOPEN = "1" ] ; then
+-		cc -G ${OPTS} ${LDFLAGS} -o ${LIBNAME} ${OBJECTS} ${DEPS}
++		${CC:-'cc'} -G ${OPTS} ${LDFLAGS} -o ${LIBNAME} ${OBJECTS} ${DEPS}
+ 	    else
+-		cc ${OPTS} ${LDFLAGS} -o ${OFILE} ${OBJECTS} ${DEPS}
+-		ar ${X64} -r ${LIBNAME} ${OFILE}
++		${CC:-'cc'} ${OPTS} ${LDFLAGS} -o ${OFILE} ${OBJECTS} ${DEPS}
++		${AR:='ar'} ${X64} -r ${LIBNAME} ${OFILE}
+ 	    fi
+ 
+             FINAL_LIBS="${LIBNAME}"
+@@ -727,9 +727,9 @@
+ 	    echo "mklib: Making OSF/1 shared library: " ${LIBNAME}
+ 	    if [ "x$LINK" = "x" ] ; then
+ 		if [ $CPLUSPLUS = 1 ] ; then
+-		    LINK=cxx
++		    LINK=${CXX:-'cxx'}
+ 		else
+-		    LINK=cc
++		    LINK=${CC:-'cc'}
+ 		fi
+ 	    fi
+ 	    rm -f ${LIBNAME}.${VERSION}
+@@ -798,9 +798,9 @@
+ 
+ 	    # determine linker
+ 	    if [ $CPLUSPLUS = 1 ] ; then
+-		LINK="g++"
++		LINK="${CXX:-'g++'}"
+ 	    else
+-		LINK="cc"
++		LINK="${CC:-'cc'}"
+ 	    fi
+ 
+             echo "mklib: Making Darwin shared library: " ${LIBNAME}
+@@ -826,7 +826,7 @@
+         else
+ 	    LIBNAME="lib${LIBNAME}.so"
+ 	    echo "mklib: Making BeOS shared library: " ${LIBNAME}
+-	    gcc -nostart -Xlinker "-soname=${LIBNAME}" -L/Be/develop/lib/x86 -lbe ${DEPS} ${OBJECTS} -o "${LIBNAME}"
++	    ${GCC:-'gcc'} -nostart -Xlinker "-soname=${LIBNAME}" -L/Be/develop/lib/x86 -lbe ${DEPS} ${OBJECTS} -o "${LIBNAME}"
+ 	    mimeset -f "${LIBNAME}"
+ 	    # XXX remove the Mesa3D stuff here since mklib isn't mesa-specific.
+ 	    setversion "${LIBNAME}" -app ${MAJOR} ${MINOR} ${PATCH} -short "Powered by Mesa3D!" -long "Powered by Mesa3D!"
+@@ -844,7 +844,7 @@
+     'MorphOS')
+ 	LIBNAME="lib${LIBNAME}.a"
+ 	echo "mklib: Making MorphOS library: " ${LIBNAME}
+-	ppc-morphos-ar rc ${LIBNAME} ${OBJECTS}
++	${AR:-'ppc-morphos-ar'} rc ${LIBNAME} ${OBJECTS}
+ 	FINAL_LIBS="${LIBNAME}"
+ 	;;
+ 
+@@ -856,7 +856,7 @@
+ 
+         if [ $STATIC = 1 ] ; then
+             echo "mklib: Making Intel ICC static library: " ${LIBNAME}.a
+-            LINK="ar"
++            LINK="${AR:-'ar'}"
+             OPTS="-ruv"
+             if [ "${ALTOPTS}" ] ; then
+                 OPTS=${ALTOPTS}
+@@ -878,9 +878,9 @@
+             echo "mklib: Making Intel ICC shared library: " ${LIBNAME}.so.${VERSION}
+ 
+             if [ $CPLUSPLUS = 1 ] ; then
+-                LINK="icpc"
++                LINK="${CC:-'icpc'}"
+             else
+-                LINK="icc"
++                LINK="${CC:-'icc'}"
+             fi
+             # rm any old libs
+             rm -f ${LIBNAME}.so.${VERSION}
+@@ -908,7 +908,7 @@
+ 	    # remove old lib
+ 	    rm -f ${LIBNAME}
+ 	    # make the lib
+-	    gcc -shared -Wl,-G ${OBJECTS} ${DEPS} -o ${LIBNAME}
++	    ${CC:-'gcc'} -shared -Wl,-G ${OBJECTS} ${DEPS} -o ${LIBNAME}
+ 	    # NOTE: the application linking with this library must specify
+ 	    # the -Wl,-brtl flags to gcc
+ 	    FINAL_LIBS=${LIBNAME}
+@@ -964,9 +964,9 @@
+             echo "mklib: Making" $ARCH "shared library: " ${CYGNAME}-${MAJOR}.dll
+ 
+             if [ $CPLUSPLUS = 1 ] ; then
+-                LINK="g++"
++                LINK="${CXX:-'g++'}"
+             else
+-                LINK="gcc"
++                LINK="${GCC:-'gcc'}"
+             fi
+ 
+             # rm any old libs
+@@ -1002,7 +1002,7 @@
+ 	else
+ 	    LIBNAME="lib${LIBNAME}.so"  # prefix with "lib", suffix with ".so"
+ 	    echo "mklib: Making shared library for example arch: " ${LIBNAME}
+-	    ld -o ${LIBNAME} ${OBJECTS} ${DEPS}
++	    ${LD:-'ld'} -o ${LIBNAME} ${OBJECTS} ${DEPS}
+ 	    FINAL_LIBS="${LIBNAME}"
+ 	fi
+ 	;;
+diff -Naur Mesa-7.8.2-old/configs/darwin Mesa-7.8.2-new/configs/darwin
+--- Mesa-7.8.2-old/configs/darwin	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/darwin	2010-06-21 14:28:31.000000000 -0700
+@@ -4,8 +4,6 @@
+ 
+ CONFIG_NAME = darwin
+ 
+-INSTALL_DIR = /usr/X11
+-
+ X11_DIR = $(INSTALL_DIR)
+ 
+ # Compiler and flags
+@@ -26,9 +24,9 @@
+ ARCH_FLAGS += $(RC_CFLAGS)
+ 
+ CFLAGS =  -ggdb3 -Os -Wall -Wmissing-prototypes -std=c99 -ffast-math -fno-strict-aliasing \
+-	-I$(INSTALL_DIR)/include -I$(X11_DIR)/include $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(ASM_FLAGS) $(DEFINES)
++	$(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(ASM_FLAGS) $(DEFINES)
+ CXXFLAGS =  -ggdb3 -Os -Wall -fno-strict-aliasing \
+-	-I$(INSTALL_DIR)/include -I$(X11_DIR)/include $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(ASM_FLAGS) $(DEFINES)
++	$(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(ASM_FLAGS) $(DEFINES)
+ 
+ # Library names (actual file names)
+ GL_LIB_NAME = libGL.dylib
+@@ -44,12 +42,12 @@
+ GLW_LIB_GLOB = libGLw.*dylib
+ OSMESA_LIB_GLOB = libOSMesa.*dylib
+ 
+-GL_LIB_DEPS = -L$(INSTALL_DIR)/$(LIB_DIR) -L$(X11_DIR)/$(LIB_DIR) -lX11 -lXext -lm -lpthread
++GL_LIB_DEPS = -lX11 -lXext -lm -lpthread
+ OSMESA_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB)
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB)
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB)  -L$(INSTALL_DIR)/$(LIB_DIR) -L$(X11_DIR)/$(LIB_DIR) -lX11 -lXmu -lXi -lXext
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L$(INSTALL_DIR)/$(LIB_DIR) -L$(X11_DIR)/$(LIB_DIR) -lX11 -lXt
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L$(INSTALL_DIR)/$(LIB_DIR) -L$(X11_DIR)/$(LIB_DIR) -lX11 -lXmu -lXt -lXi -lm
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB)  -lX11 -lXmu -lXi -lXext
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lX11 -lXt
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lm
+ 
+ # omit glw lib for now:
+ SRC_DIRS = glsl glx/apple mesa gallium glu glut/glx glew
+diff -Naur Mesa-7.8.2-old/configs/default Mesa-7.8.2-new/configs/default
+--- Mesa-7.8.2-old/configs/default	2010-06-21 14:26:17.000000000 -0700
++++ Mesa-7.8.2-new/configs/default	2010-06-21 14:28:31.000000000 -0700
+@@ -82,7 +82,7 @@
+ # GLw widget sources (Append "GLwMDrawA.c" here and add -lXm to GLW_LIB_DEPS in
+ # order to build the Motif widget too)
+ GLW_SOURCES = GLwDrawA.c
+-MOTIF_CFLAGS = -I/usr/include/Motif1.2
++MOTIF_CFLAGS = -I@GAR_DESTDIR@GAR_includedir@/Motif1.2
+ 
+ 
+ # Directories to build
+@@ -123,13 +123,13 @@
+ X11_LIBS = -lX11
+ 
+ # Installation directories (for make install)
+-INSTALL_DIR = /usr/local
+-INSTALL_LIB_DIR = $(INSTALL_DIR)/$(LIB_DIR)
+-INSTALL_INC_DIR = $(INSTALL_DIR)/include
+-DRI_DRIVER_INSTALL_DIR = $(INSTALL_LIB_DIR)/dri
++INSTALL_DIR = @GAR_DESTDIR@@GAR_prefix@
++INSTALL_LIB_DIR = @GAR_DESTDIR@@GAR_libdir@
++INSTALL_INC_DIR = @GAR_DESTDIR@@GAR_includedir@
++DRI_DRIVER_INSTALL_DIR = @GAR_DESTDIR@@GAR_libdir@/xorg/modules/dri
+ 
+ # Where libGL will look for DRI hardware drivers
+-DRI_DRIVER_SEARCH_DIR = $(DRI_DRIVER_INSTALL_DIR)
++DRI_DRIVER_SEARCH_DIR = @GAR_libdir@/xorg/modules/dri
+ 
+ # EGL driver install directory
+ EGL_DRIVER_INSTALL_DIR = $(INSTALL_LIB_DIR)/egl
+diff -Naur Mesa-7.8.2-old/configs/freebsd Mesa-7.8.2-new/configs/freebsd
+--- Mesa-7.8.2-old/configs/freebsd	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/freebsd	2010-06-21 14:28:31.000000000 -0700
+@@ -15,7 +15,7 @@
+ DEFINES = -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_BSD_SOURCE -DUSE_XSHM \
+ 	-DHZ=100
+ 
+-X11_INCLUDES = -I/usr/local/include
++X11_INCLUDES =
+ 
+ CFLAGS += $(WARN_FLAGS) $(OPT_FLAGS) $(PIC_FLAGS) $(DEFINES) $(X11_INCLUDES) -ffast-math -pedantic
+ 
+@@ -27,5 +27,5 @@
+ CFLAGS += -fno-strict-aliasing
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-EXTRA_LIB_PATH = -L/usr/local/lib
++EXTRA_LIB_PATH =
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) $(EXTRA_LIB_PATH) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lXext -lXmu -lXi -lX11 -lm
+diff -Naur Mesa-7.8.2-old/configs/freebsd-dri Mesa-7.8.2-new/configs/freebsd-dri
+--- Mesa-7.8.2-old/configs/freebsd-dri	2010-06-21 14:26:17.000000000 -0700
++++ Mesa-7.8.2-new/configs/freebsd-dri	2010-06-21 14:28:31.000000000 -0700
+@@ -11,8 +11,8 @@
+ WARN_FLAGS = -Wall
+ OPT_FLAGS = -O -g
+ 
+-EXPAT_INCLUDES = -I/usr/local/include
+-X11_INCLUDES = -I/usr/local/include
++EXPAT_INCLUDES =
++X11_INCLUDES =
+ DEFINES = -DPTHREADS -DUSE_EXTERNAL_DXTN_LIB=1 -DIN_DRI_DRIVER \
+ 	-DGLX_DIRECT_RENDERING -DGLX_INDIRECT_RENDERING \
+ 	-DHAVE_ALIAS
+@@ -32,12 +32,12 @@
+ # Library/program dependencies
+ LIBDRM_CFLAGS = `$(PKG_CONFIG) --cflags libdrm`
+ LIBDRM_LIB = `$(PKG_CONFIG) --libs libdrm`
+-DRI_LIB_DEPS = -L/usr/local/lib -lm -pthread -lexpat $(LIBDRM_LIB)
+-GL_LIB_DEPS = -L/usr/local/lib -lX11 -lXext -lXxf86vm -lXdamage -lXfixes \
++DRI_LIB_DEPS = -lm -pthread -lexpat $(LIBDRM_LIB)
++GL_LIB_DEPS = -lX11 -lXext -lXxf86vm -lXdamage -lXfixes \
+ 	-lm -pthread $(LIBDRM_LIB)
+ 
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/local/lib -lGLU -lGL -lX11 -lXmu -lXt -lXi -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/local/lib -lGL -lXt -lX11
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lGLU -lGL -lX11 -lXmu -lXt -lXi -lm
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lGL -lXt -lX11
+ 
+ 
+ # Directories
+diff -Naur Mesa-7.8.2-old/configs/hpux10 Mesa-7.8.2-new/configs/hpux10
+--- Mesa-7.8.2-old/configs/hpux10	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux10	2010-06-21 14:28:31.000000000 -0700
+@@ -8,7 +8,7 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = -O +DAportable +z -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM
++CFLAGS = -O +DAportable +z -Ae -D_HPUX_SOURCE -DUSE_XSHM
+ CXXFLAGS = -O +DAportable +Z -Ae -D_HPUX_SOURCE
+ 
+-APP_LIB_DEPS = -$(TOP)/$(LIB_DIR) -L/usr/lib/X11R6 -L/usr/contrib/X11R6/lib -lXext -lXmu -lXi -lX11 -lm
++APP_LIB_DEPS = -$(TOP)/$(LIB_DIR) -lXext -lXmu -lXi -lX11 -lm
+diff -Naur Mesa-7.8.2-old/configs/hpux10-gcc Mesa-7.8.2-new/configs/hpux10-gcc
+--- Mesa-7.8.2-old/configs/hpux10-gcc	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux10-gcc	2010-06-21 14:28:31.000000000 -0700
+@@ -8,7 +8,7 @@
+ CC = gcc
+ CXX = g++
+ 
+-CFLAGS = -ansi -O3 -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include  -DUSE_XSHM
++CFLAGS = -ansi -O3 -D_HPUX_SOURCE -DUSE_XSHM
+ CXXFLAGS = -ansi -O3 -D_HPUX_SOURCE
+ GLUT_CFLAGS = -fexceptions
+ 
+@@ -16,5 +16,5 @@
+ CFLAGS += -fno-strict-aliasing
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/lib/X11R6 -L/usr/contrib/X11R6/lib -lXext -lXmu -lXi -lX11 -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lXext -lXmu -lXi -lX11 -lm
+ 
+diff -Naur Mesa-7.8.2-old/configs/hpux10-static Mesa-7.8.2-new/configs/hpux10-static
+--- Mesa-7.8.2-old/configs/hpux10-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux10-static	2010-06-21 14:28:31.000000000 -0700
+@@ -8,7 +8,7 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = -O +DAportable +z -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM
++CFLAGS = -O +DAportable +z -Ae -D_HPUX_SOURCE -DUSE_XSHM
+ CXXFLAGS = -O +DAportable +Z -Ae -D_HPUX_SOURCE
+ 
+ MKLIB_OPTIONS = -static
+@@ -26,5 +26,5 @@
+ GLU_LIB_DEPS = 
+ GLUT_LIB_DEPS = 
+ GLW_LIB_DEPS = 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXext -lXmu -lXt -lXi -lpthread -lm -lstdc++
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/lib/X11R6 -L/usr/contrib/X11R6/lib -lXext -lXmu -lXi -lX11 -lm -lstdc++
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXext -lXmu -lXt -lXi -lpthread -lm -lstdc++
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lXext -lXmu -lXi -lX11 -lm -lstdc++
+diff -Naur Mesa-7.8.2-old/configs/hpux11-32 Mesa-7.8.2-new/configs/hpux11-32
+--- Mesa-7.8.2-old/configs/hpux11-32	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux11-32	2010-06-21 14:28:31.000000000 -0700
+@@ -8,9 +8,9 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = +z -Ae -O +Onolimit -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM -DPTHREADS
++CFLAGS = +z -Ae -O +Onolimit -D_HPUX_SOURCE -DUSE_XSHM -DPTHREADS
+ 
+-CXXFLAGS = +z -Ae -O +Onolimit -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DPTHREADS
++CXXFLAGS = +z -Ae -O +Onolimit -D_HPUX_SOURCE -DPTHREADS
+ 
+ MKLIB_OPTIONS =
+ 
+@@ -24,7 +24,7 @@
+ 
+ # Library/program dependencies
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB)
+-GL_LIB_DEPS = -L/usr/lib/X11R6/ -L/usr/contrib/X11R6/lib/ -lXext -lXt -lXi -lX11 -lm -lpthread
++GL_LIB_DEPS = -lXext -lXt -lXi -lX11 -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm -lCsup -lcl
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) $(GL_LIB_DEPS)
+ GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) $(GL_LIB_DEPS)
+diff -Naur Mesa-7.8.2-old/configs/hpux11-32-static Mesa-7.8.2-new/configs/hpux11-32-static
+--- Mesa-7.8.2-old/configs/hpux11-32-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux11-32-static	2010-06-21 14:28:31.000000000 -0700
+@@ -8,9 +8,9 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM -DPTHREADS
++CFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE -DUSE_XSHM -DPTHREADS
+ 
+-CXXFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DPTHREADS
++CXXFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE -DPTHREADS
+ 
+ MKLIB_OPTIONS = -static
+ 
+@@ -23,5 +23,5 @@
+ OSMESA_LIB_NAME = libOSMesa.a
+ 
+ # Library/program dependencies
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/lib/X11R6/ -L/usr/contrib/X11R6/lib/ -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread -lCsup -lcl
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread -lCsup -lcl
+ 
+diff -Naur Mesa-7.8.2-old/configs/hpux11-32-static-nothreads Mesa-7.8.2-new/configs/hpux11-32-static-nothreads
+--- Mesa-7.8.2-old/configs/hpux11-32-static-nothreads	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux11-32-static-nothreads	2010-06-21 14:28:31.000000000 -0700
+@@ -8,9 +8,9 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM
++CFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE -DUSE_XSHM
+ 
+-CXXFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include
++CXXFLAGS = -O +DA2.0 -Ae -D_HPUX_SOURCE
+ 
+ MKLIB_OPTIONS = -static
+ 
+@@ -23,4 +23,4 @@
+ OSMESA_LIB_NAME = libOSMesa.a
+ 
+ # Library/program dependencies
+-APP_LIB_DEPS = -L/usr/lib/X11R6 -L/usr/contrib/X11R6/lib -lXext -lXmu -lXi -lX11 -lm
++APP_LIB_DEPS = -lXext -lXmu -lXi -lX11 -lm
+diff -Naur Mesa-7.8.2-old/configs/hpux11-64 Mesa-7.8.2-new/configs/hpux11-64
+--- Mesa-7.8.2-old/configs/hpux11-64	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux11-64	2010-06-21 14:28:31.000000000 -0700
+@@ -8,9 +8,9 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = +z -Ae +DD64 -O +Onolimit -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM -DPTHREADS
++CFLAGS = +z -Ae +DD64 -O +Onolimit -D_HPUX_SOURCE -DUSE_XSHM -DPTHREADS
+ 
+-CXXFLAGS = +z -Ae +DD64 -O +Onolimit -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DPTHREADS
++CXXFLAGS = +z -Ae +DD64 -O +Onolimit -D_HPUX_SOURCE -DPTHREADS
+ 
+ MKLIB_OPTIONS =
+ 
+@@ -25,7 +25,7 @@
+ 
+ # Library/program dependencies
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB)
+-GL_LIB_DEPS = -L/usr/lib/X11R6/pa20_64 -L/usr/contrib/X11R6/lib/pa20_64 -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread
++GL_LIB_DEPS = -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm -lCsup -lcl
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) $(GL_LIB_DEPS)
+ GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) $(GL_LIB_DEPS)
+diff -Naur Mesa-7.8.2-old/configs/hpux11-64-static Mesa-7.8.2-new/configs/hpux11-64-static
+--- Mesa-7.8.2-old/configs/hpux11-64-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux11-64-static	2010-06-21 14:28:31.000000000 -0700
+@@ -8,9 +8,9 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = -O +DA2.0W -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM -DPTHREADS
++CFLAGS = -O +DA2.0W -Ae -D_HPUX_SOURCE -DUSE_XSHM -DPTHREADS
+ 
+-CXXFLAGS = -O +DA2.0W -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DPTHREADS
++CXXFLAGS = -O +DA2.0W -Ae -D_HPUX_SOURCE -DPTHREADS
+ 
+ MKLIB_OPTIONS = -static
+ 
+@@ -24,4 +24,4 @@
+ OSMESA_LIB_NAME = libOSMesa.a
+ 
+ # Library/program dependencies
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/lib/X11R6/pa20_64 -L/usr/contrib/X11R6/lib/pa20_64 -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread -lCsup -lcl
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread -lCsup -lcl
+diff -Naur Mesa-7.8.2-old/configs/hpux11-ia64 Mesa-7.8.2-new/configs/hpux11-ia64
+--- Mesa-7.8.2-old/configs/hpux11-ia64	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux11-ia64	2010-06-21 14:28:31.000000000 -0700
+@@ -8,9 +8,9 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = +z -Ae +DD64 -O +DSmckinley -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM -DPTHREADS
++CFLAGS = +z -Ae +DD64 -O +DSmckinley -D_HPUX_SOURCE -DUSE_XSHM -DPTHREADS
+ 
+-CXXFLAGS = +z -Ae +DD64 -O +DSmckinley -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DPTHREADS
++CXXFLAGS = +z -Ae +DD64 -O +DSmckinley -D_HPUX_SOURCE -DPTHREADS
+ 
+ MKLIB_OPTIONS =
+ 
+@@ -24,7 +24,7 @@
+ OSMESA_LIB_NAME = libOSMesa.so
+ 
+ # Library/program dependencies
+-GL_LIB_DEPS = -L/usr/lib/X11R6/ -L/usr/contrib/X11R6/lib/ -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread
++GL_LIB_DEPS = -lXext -lXmu -lXt -lXi -lX11 -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm -lCsup -lcl
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) $(GL_LIB_DEPS)
+ GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) $(GL_LIB_DEPS)
+diff -Naur Mesa-7.8.2-old/configs/hpux11-ia64-static Mesa-7.8.2-new/configs/hpux11-ia64-static
+--- Mesa-7.8.2-old/configs/hpux11-ia64-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux11-ia64-static	2010-06-21 14:28:31.000000000 -0700
+@@ -8,9 +8,9 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = -O +DD64 -Ae -D_HPUX_SOURCE +DSmckinley -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM -DPTHREADS
++CFLAGS = -O +DD64 -Ae -D_HPUX_SOURCE +DSmckinley -DUSE_XSHM -DPTHREADS
+ 
+-CXXFLAGS = -O +DD64 -Ae -D_HPUX_SOURCE +DSmckinley -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DPTHREADS
++CXXFLAGS = -O +DD64 -Ae -D_HPUX_SOURCE +DSmckinley -DPTHREADS
+ 
+ MKLIB_OPTIONS = -static
+ 
+@@ -24,4 +24,4 @@
+ OSMESA_LIB_NAME = libOSMesa.a
+ 
+ # Library/program dependencies
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/lib/X11R6 -L/usr/contrib/X11R6/lib -lXext -lXmu -lXi -lXt -lX11 -lpthread -lm -lCsup -lcl
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lXext -lXmu -lXi -lXt -lX11 -lpthread -lm -lCsup -lcl
+diff -Naur Mesa-7.8.2-old/configs/hpux9 Mesa-7.8.2-new/configs/hpux9
+--- Mesa-7.8.2-old/configs/hpux9	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux9	2010-06-21 14:28:31.000000000 -0700
+@@ -9,8 +9,8 @@
+ # XXX fix this
+ CXX = c++
+ 
+-CFLAGS = +z -O +Olibcalls +ESlit -Ae +Onolimit -D_HPUX_SOURCE -I/usr/include/X11R5 -DUSE_XSHM
+-CXXFLAGS = +z -O +Olibcalls +ESlit -Ae +Onolimit -D_HPUX_SOURCE -I/usr/include/X11R5
++CFLAGS = +z -O +Olibcalls +ESlit -Ae +Onolimit -D_HPUX_SOURCE -DUSE_XSHM
++CXXFLAGS = +z -O +Olibcalls +ESlit -Ae +Onolimit -D_HPUX_SOURCE
+ 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/lib/X11R5 -s -Wl,+s,-B,nonfatal,-B,immediate -lXext -lXmu -lXi -lX11 -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -s -Wl,+s,-B,nonfatal,-B,immediate -lXext -lXmu -lXi -lX11 -lm
+ 
+diff -Naur Mesa-7.8.2-old/configs/hpux9-gcc Mesa-7.8.2-new/configs/hpux9-gcc
+--- Mesa-7.8.2-old/configs/hpux9-gcc	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/hpux9-gcc	2010-06-21 14:28:31.000000000 -0700
+@@ -8,7 +8,7 @@
+ CC = cc
+ CXX = aCC
+ 
+-CFLAGS = -O +DAportable +z -Ae -D_HPUX_SOURCE -I/usr/include/X11R6 -I/usr/contrib/X11R6/include -DUSE_XSHM
++CFLAGS = -O +DAportable +z -Ae -D_HPUX_SOURCE -DUSE_XSHM
+ CXXFLAGS = -O +DAportable +Z -Ae -D_HPUX_SOURCE
+ 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/lib/X11R6 -L/usr/contrib/X11R6/lib -lXext -lXmu -lXi -lX11 -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lXext -lXmu -lXi -lX11 -lm
+diff -Naur Mesa-7.8.2-old/configs/linux Mesa-7.8.2-new/configs/linux
+--- Mesa-7.8.2-old/configs/linux	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux	2010-06-21 14:28:31.000000000 -0700
+@@ -20,7 +20,7 @@
+ 	-D_BSD_SOURCE -D_GNU_SOURCE \
+ 	-DPTHREADS -DUSE_XSHM -DHAVE_POSIX_MEMALIGN
+ 
+-X11_INCLUDES = -I/usr/X11R6/include
++X11_INCLUDES =
+ 
+ CFLAGS = -Wall -Wmissing-prototypes -Wdeclaration-after-statement \
+ 	-Wpointer-arith $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) \
+@@ -35,4 +35,4 @@
+ 
+ GLUT_CFLAGS = -fexceptions
+ 
+-EXTRA_LIB_PATH = -L/usr/X11R6/lib
++EXTRA_LIB_PATH =
+diff -Naur Mesa-7.8.2-old/configs/linux-alpha Mesa-7.8.2-new/configs/linux-alpha
+--- Mesa-7.8.2-old/configs/linux-alpha	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-alpha	2010-06-21 14:28:31.000000000 -0700
+@@ -15,8 +15,8 @@
+ CFLAGS += -fno-strict-aliasing
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-GL_LIB_DEPS = -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXmu -lXt -lXi -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L/usr/X11R6/lib -lXt -lX11
++GL_LIB_DEPS = -lX11 -lXext -lm -lpthread
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lm
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lXt -lX11
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
+ 
+diff -Naur Mesa-7.8.2-old/configs/linux-alpha-static Mesa-7.8.2-new/configs/linux-alpha-static
+--- Mesa-7.8.2-old/configs/linux-alpha-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-alpha-static	2010-06-21 14:28:31.000000000 -0700
+@@ -25,7 +25,7 @@
+ OSMESA_LIB_NAME = libOSMesa.a
+ 
+ 
+-GL_LIB_DEPS = -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXmu -lXt -lXi -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L/usr/X11R6/lib -lXt -lX11
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm -L/usr/X11R6/lib -lX11 -lm
++GL_LIB_DEPS = -lX11 -lXext -lm -lpthread
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lm
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lXt -lX11
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm -lX11 -lm
+diff -Naur Mesa-7.8.2-old/configs/linux-dri Mesa-7.8.2-new/configs/linux-dri
+--- Mesa-7.8.2-old/configs/linux-dri	2010-06-21 14:26:17.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-dri	2010-06-21 14:28:31.000000000 -0700
+@@ -9,7 +9,7 @@
+ CC = gcc
+ CXX = g++
+ 
+-#MKDEP = /usr/X11R6/bin/makedepend
++#MKDEP = makedepend
+ #MKDEP = gcc -M
+ #MKDEP_OPTIONS = -MF depend
+ 
+@@ -25,7 +25,7 @@
+ 	-DGLX_DIRECT_RENDERING -DGLX_INDIRECT_RENDERING \
+ 	-DHAVE_ALIAS -DHAVE_POSIX_MEMALIGN
+ 
+-X11_INCLUDES = -I/usr/X11R6/include
++X11_INCLUDES =
+ 
+ CFLAGS = -Wall -Wmissing-prototypes -std=c99 -ffast-math \
+ 	$(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES) $(ASM_FLAGS)
+@@ -41,7 +41,7 @@
+ MESA_ASM_SOURCES = 
+ 
+ # Library/program dependencies
+-EXTRA_LIB_PATH=-L/usr/X11R6/lib
++EXTRA_LIB_PATH=
+ 
+ LIBDRM_CFLAGS = `$(PKG_CONFIG) --cflags libdrm`
+ LIBDRM_LIB = `$(PKG_CONFIG) --libs libdrm`
+diff -Naur Mesa-7.8.2-old/configs/linux-dri-x86-64 Mesa-7.8.2-new/configs/linux-dri-x86-64
+--- Mesa-7.8.2-old/configs/linux-dri-x86-64	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-dri-x86-64	2010-06-21 14:28:31.000000000 -0700
+@@ -14,7 +14,7 @@
+ LIB_DIR = lib64
+ 
+ # Library/program dependencies
+-EXTRA_LIB_PATH=-L/usr/X11R6/lib64
++EXTRA_LIB_PATH=
+ 
+ # sis is missing because it has not been converted to use
+ # the new interface.  i810 are missing because there is no x86-64
+diff -Naur Mesa-7.8.2-old/configs/linux-dri-xcb Mesa-7.8.2-new/configs/linux-dri-xcb
+--- Mesa-7.8.2-old/configs/linux-dri-xcb	2010-06-21 14:26:17.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-dri-xcb	2010-06-21 14:28:31.000000000 -0700
+@@ -9,7 +9,7 @@
+ CC = gcc
+ CXX = g++
+ 
+-#MKDEP = /usr/X11R6/bin/makedepend
++#MKDEP = makedepend
+ #MKDEP = gcc -M
+ #MKDEP_OPTIONS = -MF depend
+ 
+diff -Naur Mesa-7.8.2-old/configs/linux-egl Mesa-7.8.2-new/configs/linux-egl
+--- Mesa-7.8.2-old/configs/linux-egl	2010-06-21 14:26:17.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-egl	2010-06-21 14:28:31.000000000 -0700
+@@ -25,7 +25,7 @@
+ 	-DGLX_DIRECT_RENDERING -DGLX_INDIRECT_RENDERING \
+ 	-DHAVE_ALIAS -DHAVE_POSIX_MEMALIGN
+ 
+-X11_INCLUDES = -I/usr/X11R6/include
++X11_INCLUDES =
+ 
+ CFLAGS = -Wall -Wmissing-prototypes -std=c99 -ffast-math \
+ 	$(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES) $(ASM_FLAGS)
+@@ -36,7 +36,7 @@
+ MESA_ASM_SOURCES = 
+ 
+ # Library/program dependencies
+-EXTRA_LIB_PATH=-L/usr/X11R6/lib
++EXTRA_LIB_PATH=
+ 
+ LIBDRM_CFLAGS = `$(PKG_CONFIG) --cflags libdrm`
+ LIBDRM_LIB = `$(PKG_CONFIG) --libs libdrm`
+diff -Naur Mesa-7.8.2-old/configs/linux-ia64-icc Mesa-7.8.2-new/configs/linux-ia64-icc
+--- Mesa-7.8.2-old/configs/linux-ia64-icc	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-ia64-icc	2010-06-21 14:28:31.000000000 -0700
+@@ -7,14 +7,14 @@
+ # Compiler and flags
+ CC = icc
+ CXX = icpc
+-CFLAGS = -O3 -ansi -KPIC -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -I/usr/X11R6/include
+-CXXFLAGS = -O3 -ansi -KPIC -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -I/usr/X11R6/include
++CFLAGS = -O3 -ansi -KPIC -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS
++CXXFLAGS = -O3 -ansi -KPIC -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS
+ GLUT_CFLAGS = -fexceptions
+ MKLIB_OPTIONS = -arch icc-istatic
+ 
+-GL_LIB_DEPS = -L/usr/X11R6/lib -lX11 -lXext -lpthread
++GL_LIB_DEPS = -lX11 -lXext -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) 
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXmu -lXt -lXi
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi
+ GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) $(GL_LIB_DEPS)
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB)
+ 
+diff -Naur Mesa-7.8.2-old/configs/linux-ia64-icc-static Mesa-7.8.2-new/configs/linux-ia64-icc-static
+--- Mesa-7.8.2-old/configs/linux-ia64-icc-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-ia64-icc-static	2010-06-21 14:28:31.000000000 -0700
+@@ -7,8 +7,8 @@
+ # Compiler and flags
+ CC = icc
+ CXX = icpc
+-CFLAGS = -O3 -ansi -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -I/usr/X11R6/include
+-CXXFLAGS = -O3 -ansi -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -I/usr/X11R6/include
++CFLAGS = -O3 -ansi -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS
++CXXFLAGS = -O3 -ansi -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS
+ GLUT_CFLAGS = -fexceptions
+ MKLIB_OPTIONS = -static -arch icc-istatic
+ 
+@@ -23,5 +23,5 @@
+ GLU_LIB_DEPS =
+ GLUT_LIB_DEPS =
+ GLW_LIB_DEPS =
+-APP_LIB_DEPS = -i-static -cxxlib-icc -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXmu -lXt -lXi -lpthread -lm -lcxa -lunwind
++APP_LIB_DEPS = -i-static -cxxlib-icc -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lpthread -lm -lcxa -lunwind
+ 
+diff -Naur Mesa-7.8.2-old/configs/linux-icc Mesa-7.8.2-new/configs/linux-icc
+--- Mesa-7.8.2-old/configs/linux-icc	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-icc	2010-06-21 14:28:31.000000000 -0700
+@@ -7,13 +7,13 @@
+ # Compiler and flags
+ CC = icc
+ CXX = g++
+-CFLAGS = -O3 -tpp6 -axK -KPIC -D_GCC_LIMITS_H_ -D__GNUC__ -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DUSE_X86_ASM -DUSE_MMX_ASM -DUSE_3DNOW_ASM -DUSE_SSE_ASM -DPTHREADS -I/usr/X11R6/include
++CFLAGS = -O3 -tpp6 -axK -KPIC -D_GCC_LIMITS_H_ -D__GNUC__ -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DUSE_X86_ASM -DUSE_MMX_ASM -DUSE_3DNOW_ASM -DUSE_SSE_ASM -DPTHREADS
+ CXXFLAGS = -O3
+ GLUT_CFLAGS = -fexceptions
+ MKLIB_OPTIONS = -arch icc
+ 
+-GL_LIB_DEPS = -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXmu -lXt -lXi -lm
++GL_LIB_DEPS = -lX11 -lXext -lm -lpthread
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lm
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
+ 
+ MESA_ASM_SOURCES = $(X86_SOURCES)
+diff -Naur Mesa-7.8.2-old/configs/linux-icc-static Mesa-7.8.2-new/configs/linux-icc-static
+--- Mesa-7.8.2-old/configs/linux-icc-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-icc-static	2010-06-21 14:28:31.000000000 -0700
+@@ -7,7 +7,7 @@
+ # Compiler and flags
+ CC = icc
+ CXX = icpc
+-CFLAGS = -O3 -tpp6 -axK -D_GCC_LIMITS_H_ -D__GNUC__ -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DUSE_X86_ASM -DUSE_MMX_ASM -DUSE_3DNOW_ASM -DUSE_SSE_ASM -DPTHREADS -I/usr/X11R6/include
++CFLAGS = -O3 -tpp6 -axK -D_GCC_LIMITS_H_ -D__GNUC__ -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DUSE_X86_ASM -DUSE_MMX_ASM -DUSE_3DNOW_ASM -DUSE_SSE_ASM -DPTHREADS
+ CXXFLAGS = -O3 -tpp6 -axK -DPTHREADS
+ GLUT_CFLAGS = -fexceptions
+ MKLIB_OPTIONS = -static -arch icc
+@@ -21,7 +21,7 @@
+ 
+ GL_LIB_DEPS =
+ GLUT_LIB_DEPS =
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXmu -lXt -lXi -lm -lpthread -lcxa -lunwind
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lm -lpthread -lcxa -lunwind
+ 
+ MESA_ASM_SOURCES = $(X86_SOURCES)
+ GLAPI_ASM_SOURCES = $(X86_API)
+diff -Naur Mesa-7.8.2-old/configs/linux-indirect Mesa-7.8.2-new/configs/linux-indirect
+--- Mesa-7.8.2-old/configs/linux-indirect	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-indirect	2010-06-21 14:28:31.000000000 -0700
+@@ -10,7 +10,7 @@
+ CC = gcc
+ CXX = g++
+ 
+-#MKDEP = /usr/X11R6/bin/makedepend
++#MKDEP = makedepend
+ #MKDEP = gcc -M
+ #MKDEP_OPTIONS = -MF depend
+ 
+@@ -26,7 +26,7 @@
+ 	-DGLX_INDIRECT_RENDERING \
+ 	-DPTHREADS -DHAVE_ALIAS -DHAVE_POSIX_MEMALIGN
+ 
+-X11_INCLUDES = -I/usr/X11R6/include
++X11_INCLUDES =
+ 
+ CFLAGS   = $(WARN_FLAGS) $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES) \
+ 	$(ASM_FLAGS) -std=c99 -ffast-math 
+@@ -40,7 +40,7 @@
+ MESA_ASM_SOURCES = 
+ 
+ # Library/program dependencies
+-EXTRA_LIB_PATH=-L/usr/X11R6/lib
++EXTRA_LIB_PATH=
+ 
+ DRI_LIB_DEPS  = $(EXTRA_LIB_PATH) -lm -lpthread -lexpat -ldl
+ GL_LIB_DEPS   = $(EXTRA_LIB_PATH) -lX11 -lXext -lXxf86vm -lm -lpthread -ldl
+diff -Naur Mesa-7.8.2-old/configs/linux-osmesa16 Mesa-7.8.2-new/configs/linux-osmesa16
+--- Mesa-7.8.2-old/configs/linux-osmesa16	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-osmesa16	2010-06-21 14:28:31.000000000 -0700
+@@ -7,7 +7,7 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -O3 -ansi -pedantic -fPIC -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -I/usr/X11R6/include -DCHAN_BITS=16 -DDEFAULT_SOFTWARE_DEPTH_BITS=31
++CFLAGS = -O3 -ansi -pedantic -fPIC -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -DCHAN_BITS=16 -DDEFAULT_SOFTWARE_DEPTH_BITS=31
+ CXXFLAGS = -O3 -ansi -pedantic -fPIC -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE
+ 
+ # Work around aliasing bugs - developers should comment this out
+diff -Naur Mesa-7.8.2-old/configs/linux-osmesa16-static Mesa-7.8.2-new/configs/linux-osmesa16-static
+--- Mesa-7.8.2-old/configs/linux-osmesa16-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-osmesa16-static	2010-06-21 14:28:31.000000000 -0700
+@@ -7,7 +7,7 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -O3 -ansi -pedantic -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -I/usr/X11R6/include -DCHAN_BITS=16 -DDEFAULT_SOFTWARE_DEPTH_BITS=31
++CFLAGS = -O3 -ansi -pedantic -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -DCHAN_BITS=16 -DDEFAULT_SOFTWARE_DEPTH_BITS=31
+ CXXFLAGS = -O3 -ansi -pedantic -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE
+ MKLIB_OPTIONS = -static
+ PIC_FLAGS =
+diff -Naur Mesa-7.8.2-old/configs/linux-osmesa32 Mesa-7.8.2-new/configs/linux-osmesa32
+--- Mesa-7.8.2-old/configs/linux-osmesa32	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-osmesa32	2010-06-21 14:28:31.000000000 -0700
+@@ -7,7 +7,7 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -O3 -ansi -pedantic -fPIC -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -I/usr/X11R6/include -DCHAN_BITS=32 -DDEFAULT_SOFTWARE_DEPTH_BITS=31
++CFLAGS = -O3 -ansi -pedantic -fPIC -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE -DUSE_XSHM -DPTHREADS -DCHAN_BITS=32 -DDEFAULT_SOFTWARE_DEPTH_BITS=31
+ CXXFLAGS = -O3 -ansi -pedantic -fPIC -ffast-math -D_POSIX_SOURCE -D_POSIX_C_SOURCE=199309L -D_SVID_SOURCE -D_BSD_SOURCE
+ 
+ # Work around aliasing bugs - developers should comment this out
+diff -Naur Mesa-7.8.2-old/configs/linux-static Mesa-7.8.2-new/configs/linux-static
+--- Mesa-7.8.2-old/configs/linux-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-static	2010-06-21 14:28:31.000000000 -0700
+@@ -23,4 +23,4 @@
+ 
+ # Need to specify all libraries we may need
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) \
+-	-l$(GL_LIB) -lm -L/usr/X11R6/lib/ -lX11 -lXext -lXmu -lXi -lpthread
++	-l$(GL_LIB) -lm -lX11 -lXext -lXmu -lXi -lpthread
+diff -Naur Mesa-7.8.2-old/configs/linux-x86-64 Mesa-7.8.2-new/configs/linux-x86-64
+--- Mesa-7.8.2-old/configs/linux-x86-64	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/linux-x86-64	2010-06-21 14:28:31.000000000 -0700
+@@ -11,4 +11,4 @@
+ ASM_FLAGS = -DUSE_X86_64_ASM
+ 
+ LIB_DIR = lib64
+-EXTRA_LIB_PATH = -L/usr/X11R6/lib64
++EXTRA_LIB_PATH =
+diff -Naur Mesa-7.8.2-old/configs/netbsd Mesa-7.8.2-new/configs/netbsd
+--- Mesa-7.8.2-old/configs/netbsd	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/netbsd	2010-06-21 14:28:31.000000000 -0700
+@@ -7,10 +7,10 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -O2 -fPIC -DUSE_XSHM -I/usr/X11R6/include -DHZ=100
++CFLAGS = -O2 -fPIC -DUSE_XSHM -DHZ=100
+ CXXFLAGS = -O2 -fPIC
+ GLUT_CFLAGS = -fexceptions
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/X11R6/lib -lXext -lXmu -lXi -lX11 -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lXext -lXmu -lXi -lX11 -lm
+ 
+ # Work around aliasing bugs - developers should comment this out
+ CFLAGS += -fno-strict-aliasing
+diff -Naur Mesa-7.8.2-old/configs/openbsd Mesa-7.8.2-new/configs/openbsd
+--- Mesa-7.8.2-old/configs/openbsd	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/openbsd	2010-06-21 14:28:31.000000000 -0700
+@@ -7,16 +7,16 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -O2 -fPIC -I/usr/X11R6/include -DUSE_XSHM -DHZ=100
+-CXXFLAGS = -O2 -fPIC -I/usr/X11R6/include -DHZ=100
++CFLAGS = -O2 -fPIC -DUSE_XSHM -DHZ=100
++CXXFLAGS = -O2 -fPIC -DHZ=100
+ 
+ # Work around aliasing bugs - developers should comment this out
+ CFLAGS += -fno-strict-aliasing
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-GL_LIB_DEPS = -L/usr/X11R6/lib -lX11 -lXext -lm
++GL_LIB_DEPS = -lX11 -lXext -lm
+ OSMESA_LIB_DEPS = -lm
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB)
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXext -lXmu -lXt -lXi -lm
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/X11R6/lib -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXext -lXmu -lXt -lXi -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
+ 
+diff -Naur Mesa-7.8.2-old/configs/solaris-x86 Mesa-7.8.2-new/configs/solaris-x86
+--- Mesa-7.8.2-old/configs/solaris-x86	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/solaris-x86	2010-06-21 14:28:31.000000000 -0700
+@@ -6,10 +6,10 @@
+ 
+ # Compiler and flags
+ CC = cc
+-CFLAGS = -Xa -xO3 -xpentium -KPIC -I/usr/openwin/include -DUSE_XSHM
++CFLAGS = -Xa -xO3 -xpentium -KPIC -DUSE_XSHM
+ MKLIB_OPTIONS = -static
+ 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lXext -lXmu -lXi -lm -lglut -lGLU -lGL
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lX11 -lXext -lXmu -lXi -lm -lglut -lGLU -lGL
+ 
+ GL_LIB_NAME = libGL.a
+ GLU_LIB_NAME = libGLU.a
+diff -Naur Mesa-7.8.2-old/configs/solaris-x86-gcc Mesa-7.8.2-new/configs/solaris-x86-gcc
+--- Mesa-7.8.2-old/configs/solaris-x86-gcc	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/solaris-x86-gcc	2010-06-21 14:28:31.000000000 -0700
+@@ -7,7 +7,7 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -O3 -march=i486 -fPIC -I/usr/openwin/include -DUSE_XSHM
++CFLAGS = -O3 -march=i486 -fPIC -DUSE_XSHM
+ CXXFLAGS = -O3 -march=i486 -fPIC
+ GLUT_CFLAGS = -fexceptions
+ 
+@@ -15,7 +15,7 @@
+ CFLAGS += -fno-strict-aliasing
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-GL_LIB_DEPS = -L/usr/openwin/lib -lX11 -lXext -lm -lpthread
++GL_LIB_DEPS = -lX11 -lXext -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/openwin/lib -lX11 -lXmu -lXt -lXi -lm
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/openwin/lib -R/usr/openwin/lib -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm -lX11 -lXext -lXi -lXmu
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm -lX11 -lXext -lXi -lXmu
+diff -Naur Mesa-7.8.2-old/configs/solaris-x86-gcc-static Mesa-7.8.2-new/configs/solaris-x86-gcc-static
+--- Mesa-7.8.2-old/configs/solaris-x86-gcc-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/solaris-x86-gcc-static	2010-06-21 14:28:31.000000000 -0700
+@@ -7,7 +7,7 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -O3 -march=i486 -fPIC -I/usr/openwin/include -DUSE_XSHM
++CFLAGS = -O3 -march=i486 -fPIC -DUSE_XSHM
+ CXXFLAGS = -O3 -march=i486 -fPIC
+ GLUT_CFLAGS = -fexceptions
+ MKLIB_OPTIONS = -static
+@@ -16,10 +16,10 @@
+ CFLAGS += -fno-strict-aliasing
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-GL_LIB_DEPS = -L/usr/openwin/lib -lX11 -lXext -lm -lpthread
++GL_LIB_DEPS = -lX11 -lXext -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm
+-GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/openwin/lib -lX11 -lXmu -lXt -lXi -lm
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/openwin/lib -R/usr/openwin/lib -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm -lX11 -lXext -lXi -lXmu
++GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXmu -lXt -lXi -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm -lX11 -lXext -lXi -lXmu
+ 
+ GL_LIB_NAME = libGL.a
+ GLU_LIB_NAME = libGLU.a
+diff -Naur Mesa-7.8.2-old/configs/sunos4 Mesa-7.8.2-new/configs/sunos4
+--- Mesa-7.8.2-old/configs/sunos4	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos4	2010-06-21 14:28:31.000000000 -0700
+@@ -6,7 +6,7 @@
+ 
+ # Compiler and flags
+ CC = acc
+-CFLAGS = -Kpic -O -I/usr/include/X11R5 -DUSE_XSHM -DSUNOS4
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/lib/X11R5 -lX11 -lXext -lXmu -lXi -lm
++CFLAGS = -Kpic -O -DUSE_XSHM -DSUNOS4
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lX11 -lXext -lXmu -lXi -lm
+ 
+ 
+diff -Naur Mesa-7.8.2-old/configs/sunos4-gcc Mesa-7.8.2-new/configs/sunos4-gcc
+--- Mesa-7.8.2-old/configs/sunos4-gcc	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos4-gcc	2010-06-21 14:28:31.000000000 -0700
+@@ -7,13 +7,13 @@
+ # Compiler and flags
+ CC = gcc
+ CXX = g++
+-CFLAGS = -fPIC -O3 -I/usr/openwin/include -I/usr/include/X11R5 -I/usr/include/X11R5 -DUSE_XSHM -DSUNOS4
+-CXXFLAGS = -fPIC -O3 -I/usr/openwin/include -DSUNOS4
++CFLAGS = -fPIC -O3 -DUSE_XSHM -DSUNOS4
++CXXFLAGS = -fPIC -O3 -DSUNOS4
+ GLUT_CFLAGS = -fexceptions -DSOLARIS_2_4_BUG
+ 
+ # Work around aliasing bugs - developers should comment this out
+ CFLAGS += -fno-strict-aliasing
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -L/usr/openwin/lib -lX11 -lXext -lXmu -lXi -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lX11 -lXext -lXmu -lXi -lm
+ 
+diff -Naur Mesa-7.8.2-old/configs/sunos4-static Mesa-7.8.2-new/configs/sunos4-static
+--- Mesa-7.8.2-old/configs/sunos4-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos4-static	2010-06-21 14:28:31.000000000 -0700
+@@ -22,4 +22,4 @@
+ GLU_LIB_DEPS = 
+ GLUT_LIB_DEPS = 
+ GLW_LIB_DEPS = 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/X11R6/lib -lX11 -lXext -lXmu -lXt -lXi -lpthread -lm
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lX11 -lXext -lXmu -lXt -lXi -lpthread -lm
+diff -Naur Mesa-7.8.2-old/configs/sunos5 Mesa-7.8.2-new/configs/sunos5
+--- Mesa-7.8.2-old/configs/sunos5	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5	2010-06-21 14:28:31.000000000 -0700
+@@ -7,12 +7,12 @@
+ # Compiler and flags
+ CC = cc
+ CXX = c++
+-CFLAGS = -KPIC -Xa -O -I/usr/openwin/include -I/usr/dt/include -DUSE_XSHM
+-CXXFLAGS = -KPIC -Xa -O -I/usr/openwin/include -I/usr/dt/include
++CFLAGS = -KPIC -Xa -O -DUSE_XSHM
++CXXFLAGS = -KPIC -Xa -O
+ GLUT_CFLAGS = -DSOLARIS_2_4_BUG
+ 
+-GL_LIB_DEPS = -L/usr/openwin/lib -L/usr/dt/lib -lX11 -lXext -lXmu -lXi -lm
++GL_LIB_DEPS = -lX11 -lXext -lXmu -lXi -lm
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L/usr/openwin/lib -lXt -lX11
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lXt -lX11
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lCrun -lX11 -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
+diff -Naur Mesa-7.8.2-old/configs/sunos5-gcc Mesa-7.8.2-new/configs/sunos5-gcc
+--- Mesa-7.8.2-old/configs/sunos5-gcc	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5-gcc	2010-06-21 14:28:31.000000000 -0700
+@@ -21,10 +21,9 @@
+ ASM_FLAGS = -DUSE_SPARC_ASM
+ 
+ CFLAGS   = $(WARN_FLAGS) $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES) \
+-	$(ASM_FLAGS) -std=c99 -ffast-math -I/usr/openwin/include
++	$(ASM_FLAGS) -std=c99 -ffast-math
+ 
+-CXXFLAGS = $(WARN_FLAGS) $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES) \
+-	-I/usr/openwin/include
++CXXFLAGS = $(WARN_FLAGS) $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES)
+ 
+ GLUT_CFLAGS = -fexceptions -DSOLARIS_2_4_BUG
+ 
+@@ -33,7 +32,7 @@
+ CXXFLAGS += -fno-strict-aliasing
+ 
+ # Library/program dependencies
+-EXTRA_LIB_PATH=-L/usr/openwin/lib
++EXTRA_LIB_PATH=
+ 
+ GL_LIB_DEPS = $(EXTRA_LIB_PATH) -lX11 -lXext -lXmu -lXi -lm
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lm
+diff -Naur Mesa-7.8.2-old/configs/sunos5-smp Mesa-7.8.2-new/configs/sunos5-smp
+--- Mesa-7.8.2-old/configs/sunos5-smp	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5-smp	2010-06-21 14:28:31.000000000 -0700
+@@ -7,13 +7,13 @@
+ # Compiler and flags
+ CC = cc
+ CXX = c++
+-CFLAGS = -KPIC -Xa -native -fast -xO5 -xlibmil -xsafe=mem -xdepend -I/usr/openwin/include -I/usr/dt/include -DUSE_XSHM -DSOLARIS_2_4_BUG
+-CXXFLAGS = -KPIC -Xa -native -fast -xO5 -xlibmil -xsafe=mem -xdepend -I/usr/openwin/include -I/usr/dt/include
++CFLAGS = -KPIC -Xa -native -fast -xO5 -xlibmil -xsafe=mem -xdepend -DUSE_XSHM -DSOLARIS_2_4_BUG
++CXXFLAGS = -KPIC -Xa -native -fast -xO5 -xlibmil -xsafe=mem -xdepend
+ GLUT_CFLAGS = -DSOLARIS_2_4_BUG
+ 
+-GL_LIB_DEPS = -L/usr/openwin/lib -lX11 -lXext -lXmu -lXi -lm
++GL_LIB_DEPS = -lX11 -lXext -lXmu -lXi -lm
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L/usr/openwin/lib -lXt -lX11
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lXt -lX11
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lX11 -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm -lCrun
+ 
+diff -Naur Mesa-7.8.2-old/configs/sunos5-v8 Mesa-7.8.2-new/configs/sunos5-v8
+--- Mesa-7.8.2-old/configs/sunos5-v8	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5-v8	2010-06-21 14:28:31.000000000 -0700
+@@ -7,12 +7,12 @@
+ # Compiler and flags
+ CC = cc
+ CXX = CC
+-CFLAGS = -xarch=v8 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DUSE_XSHM -DPTHREADS
+-CXXFLAGS = -xarch=v8 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DPTHREADS
++CFLAGS = -xarch=v8 -KPIC -O -DUSE_XSHM -DPTHREADS
++CXXFLAGS = -xarch=v8 -KPIC -O -DPTHREADS
+ GLUT_CFLAGS = -DSOLARIS_2_4_BUG
+ 
+-GL_LIB_DEPS = -L/usr/openwin/lib -L/usr/dt/lib -lX11 -lXext -lXmu -lXi -lm -lpthread
++GL_LIB_DEPS = -lX11 -lXext -lXmu -lXi -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm -lCstd -lCrun
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L/usr/openwin/lib -lXt -lX11
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lXt -lX11
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lX11 -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
+diff -Naur Mesa-7.8.2-old/configs/sunos5-v8-static Mesa-7.8.2-new/configs/sunos5-v8-static
+--- Mesa-7.8.2-old/configs/sunos5-v8-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5-v8-static	2010-06-21 14:28:31.000000000 -0700
+@@ -9,8 +9,8 @@
+ # Compiler and flags
+ CC = cc
+ CXX = CC
+-CFLAGS = -xarch=v8 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DUSE_XSHM -DPTHREADS
+-CXXFLAGS = -xarch=v8 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DPTHREADS
++CFLAGS = -xarch=v8 -KPIC -O -DUSE_XSHM -DPTHREADS
++CXXFLAGS = -xarch=v8 -KPIC -O -DPTHREADS
+ GLUT_CFLAGS = -DSOLARIS_2_4_BUG
+ 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/openwin/lib -lXt -lX11 -lXext -lXmu -lXi -lpthread -lm -lCstd -lCrun
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lXt -lX11 -lXext -lXmu -lXi -lpthread -lm -lCstd -lCrun
+diff -Naur Mesa-7.8.2-old/configs/sunos5-v9 Mesa-7.8.2-new/configs/sunos5-v9
+--- Mesa-7.8.2-old/configs/sunos5-v9	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5-v9	2010-06-21 14:28:31.000000000 -0700
+@@ -11,13 +11,13 @@
+ # Compiler and flags
+ CC = cc
+ CXX = CC
+-CFLAGS = -xarch=v9 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DUSE_XSHM -DPTHREADS
+-CXXFLAGS = -xarch=v9 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DPTHREADS
++CFLAGS = -xarch=v9 -KPIC -O -DUSE_XSHM -DPTHREADS
++CXXFLAGS = -xarch=v9 -KPIC -O -DPTHREADS
+ GLUT_CFLAGS = -DSOLARIS_2_4_BUG
+ 
+-GL_LIB_DEPS = -L/usr/openwin/lib -L/usr/dt/lib -lX11 -lXext -lXmu -lXi -lm -lpthread
++GL_LIB_DEPS = -lX11 -lXext -lXmu -lXi -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm -lCstd -lCrun
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L/usr/openwin/lib -lXt -lX11
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lXt -lX11
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lX11 -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
+ 
+diff -Naur Mesa-7.8.2-old/configs/sunos5-v9-cc-g++ Mesa-7.8.2-new/configs/sunos5-v9-cc-g++
+--- Mesa-7.8.2-old/configs/sunos5-v9-cc-g++	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5-v9-cc-g++	2010-06-21 14:28:31.000000000 -0700
+@@ -18,18 +18,17 @@
+ CXX_ARCH_FLAGS = -m64
+ 
+ 
+-CXXFLAGS = $(CXX_WARN_FLAGS) $(CXX_OPT_FLAGS) $(CXX_PIC_FLAGS) $(CXX_ARCH_FLAGS) $(DEFINES) \
+-        -I/usr/openwin/include
++CXXFLAGS = $(CXX_WARN_FLAGS) $(CXX_OPT_FLAGS) $(CXX_PIC_FLAGS) $(CXX_ARCH_FLAGS) $(DEFINES)
+ 
+ # Work around aliasing bugs - developers should comment this out
+ CXXFLAGS += -fno-strict-aliasing
+ 
+-CFLAGS = -xarch=v9 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DUSE_XSHM -DPTHREADS
+-#CXXFLAGS = -xarch=v9 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DPTHREADS
++CFLAGS = -xarch=v9 -KPIC -O -DUSE_XSHM -DPTHREADS
++#CXXFLAGS = -xarch=v9 -KPIC -O -DPTHREADS
+ GLUT_CFLAGS = -DSOLARIS_2_4_BUG
+ 
+-GL_LIB_DEPS = -L/usr/openwin/lib -L/usr/dt/lib -lX11 -lXext -lXmu -lXi -lm -lpthread
++GL_LIB_DEPS = -lX11 -lXext -lXmu -lXi -lm -lpthread
+ GLU_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lm -lCstd -lCrun
+ GLUT_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) -lm
+-GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -L/usr/openwin/lib -lXt -lX11
++GLW_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) -lXt -lX11
+ APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -lX11 -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lm
+diff -Naur Mesa-7.8.2-old/configs/sunos5-v9-static Mesa-7.8.2-new/configs/sunos5-v9-static
+--- Mesa-7.8.2-old/configs/sunos5-v9-static	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/configs/sunos5-v9-static	2010-06-21 14:28:31.000000000 -0700
+@@ -11,8 +11,8 @@
+ # Compiler and flags
+ CC = cc
+ CXX = CC
+-CFLAGS = -xarch=v9 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DUSE_XSHM -DPTHREADS
+-CXXFLAGS = -xarch=v9 -KPIC -O -I/usr/openwin/include -I/usr/dt/include -DPTHREADS
++CFLAGS = -xarch=v9 -KPIC -O -DUSE_XSHM -DPTHREADS
++CXXFLAGS = -xarch=v9 -KPIC -O -DPTHREADS
+ GLUT_CFLAGS = -DSOLARIS_2_4_BUG
+ 
+-APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -L/usr/openwin/lib -lXt -lX11 -lXext -lXmu -lXi -lpthread -lm -lCstd -lCrun
++APP_LIB_DEPS = -L$(TOP)/$(LIB_DIR) -l$(GLUT_LIB) -l$(GLU_LIB) -l$(GL_LIB) -lXt -lX11 -lXext -lXmu -lXi -lpthread -lm -lCstd -lCrun
+diff -Naur Mesa-7.8.2-old/docs/README.LYNXOS Mesa-7.8.2-new/docs/README.LYNXOS
+--- Mesa-7.8.2-old/docs/README.LYNXOS	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/docs/README.LYNXOS	2010-06-21 14:28:31.000000000 -0700
+@@ -35,12 +35,11 @@
+ 
+ FILES = your_app.x
+ 
+-SPECIAL_INCLUDES = -I/usr/include/GL
++SPECIAL_INCLUDES =
+ 
+ SPECIAL_CFLAGS = -g  -ansi -pedantic -funroll-loops -ffast-math -DSHM
+ 
+-SPECIAL_LIBS = -lglut -lGLU -lGL -lm -L/usr/X11/lib -lXext -lXmu -lXi \
+--lX11 -lbsd -g
++SPECIAL_LIBS = -lglut -lGLU -lGL -lm -lXext -lXmu -lXi -lX11 -lbsd -g
+ 
+ STANDARD_OFILES = $(FILES:.x=.o)
+ 
+diff -Naur Mesa-7.8.2-old/docs/README.QUAKE Mesa-7.8.2-new/docs/README.QUAKE
+--- Mesa-7.8.2-old/docs/README.QUAKE	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/docs/README.QUAKE	2010-06-21 14:28:31.000000000 -0700
+@@ -60,7 +60,7 @@
+ > /usr/lib for programs linked against glibc.
+ > 
+ > Anyway I changed line 41 of mklib.glide to
+->     GLIDELIBS="-L/usr/local/glide/lib -lglide2x -L/usr/i486-linux-libc5/lib"
++>     GLIDELIBS="-lglide2x"
+ > 
+ > And I started quake2 up with a script like this
+ > #!/bin/csh
+@@ -123,12 +123,11 @@
+ Mesa-3.0/mklib.glide file, from:
+ 
+ 
+-    GLIDELIBS="-L/usr/local/glide/lib -lglide2x
+--L/usr/i486-linux-libc5/lib -lm"
++    GLIDELIBS="-lglide2x -lm"
+ 
+ to:
+ 
+-    GLIDELIBS="-L/usr/i486-linux-libc5/lib -lglide2x"
++    GLIDELIBS="-lglide2x"
+ 
+ and to make two symbolic links:
+ 
+diff -Naur Mesa-7.8.2-old/progs/util/sampleMakefile Mesa-7.8.2-new/progs/util/sampleMakefile
+--- Mesa-7.8.2-old/progs/util/sampleMakefile	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/progs/util/sampleMakefile	2010-06-21 14:28:31.000000000 -0700
+@@ -18,7 +18,7 @@
+ 
+ INCDIRS = -I. -I../include
+ 
+-LIBDIRS = -L../lib -L/usr/X11/lib
++LIBDIRS = -L../lib
+ 
+ LIBS = -lglut -lMesaGLU -lMesaGL -lX11 -lXext -lXmu -lXt -lXi -lSM -lICE -lm
+ 
+diff -Naur Mesa-7.8.2-old/src/egl/drivers/dri/Makefile Mesa-7.8.2-new/src/egl/drivers/dri/Makefile
+--- Mesa-7.8.2-old/src/egl/drivers/dri/Makefile	2010-06-21 14:26:17.000000000 -0700
++++ Mesa-7.8.2-new/src/egl/drivers/dri/Makefile	2010-06-21 14:28:31.000000000 -0700
+@@ -7,7 +7,6 @@
+ ### Include directories
+ INCLUDE_DIRS = \
+ 	-I. \
+-	-I/usr/include \
+ 	`$(PKG_CONFIG) --cflags-only-I libdrm`
+ 	-I$(TOP)/include \
+ 	-I$(TOP)/include/GL/internal \
+diff -Naur Mesa-7.8.2-old/src/gallium/winsys/drm/i965/xlib/Makefile Mesa-7.8.2-new/src/gallium/winsys/drm/i965/xlib/Makefile
+--- Mesa-7.8.2-old/src/gallium/winsys/drm/i965/xlib/Makefile	2010-06-21 14:26:02.000000000 -0700
++++ Mesa-7.8.2-new/src/gallium/winsys/drm/i965/xlib/Makefile	2010-06-21 14:28:31.000000000 -0700
+@@ -22,8 +22,7 @@
+ 	-I$(TOP)/src/gallium/drivers/i965 \
+ 	-I$(TOP)/src/gallium/drivers/i965/include \
+ 	-I$(TOP)/src/gallium/state_trackers/glx/xlib \
+-	-I$(TOP)/src/gallium/auxiliary \
+-	-I/usr/include/drm
++	-I$(TOP)/src/gallium/auxiliary
+ 
+ XLIB_WINSYS_SOURCES = \
+ 	xlib_i965.c \

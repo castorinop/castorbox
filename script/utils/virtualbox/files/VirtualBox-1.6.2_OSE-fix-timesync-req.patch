@@ -1,0 +1,13 @@
+diff -p -up VirtualBox-1.6.2/src/VBox/Additions/linux/installer/vboxadd-timesync.sh.fix-timesync-req VirtualBox-1.6.2/src/VBox/Additions/linux/installer/vboxadd-timesync.sh
+--- VirtualBox-1.6.2/src/VBox/Additions/linux/installer/vboxadd-timesync.sh.fix-timesync-req	2008-05-26 14:08:10.000000000 +0200
++++ VirtualBox-1.6.2/src/VBox/Additions/linux/installer/vboxadd-timesync.sh	2008-06-16 18:20:17.000000000 +0200
+@@ -23,8 +23,7 @@
+ #
+ ### BEGIN INIT INFO
+ # Provides:       vboxadd-timesync
+-# Required-Start: vboxadd
+-# Required-Stop:  vboxadd
++# Should-Start: dkms
+ # Default-Start:  2 3 4 5
+ # Default-Stop:   0 1 6
+ # Description:    VirtualBox Additions timesync

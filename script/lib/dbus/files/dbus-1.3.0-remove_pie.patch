@@ -1,0 +1,42 @@
+diff -Naur dbus-1.3.0-old/bus/Makefile.am dbus-1.3.0-new/bus/Makefile.am
+--- dbus-1.3.0-old/bus/Makefile.am	2008-04-04 09:32:04.000000000 -0700
++++ dbus-1.3.0-new/bus/Makefile.am	2009-07-30 09:00:18.000000000 -0700
+@@ -1,7 +1,7 @@
+ 
+ configdir=$(sysconfdir)/dbus-1
+ 
+-INCLUDES=-I$(top_srcdir) $(DBUS_BUS_CFLAGS) @PIE_CFLAGS@		\
++INCLUDES=-I$(top_srcdir) $(DBUS_BUS_CFLAGS)             		\
+ 	-DDBUS_SYSTEM_CONFIG_FILE=\""$(configdir)/system.conf"\"	\
+ 	-DDAEMON_NAME=\"dbus-daemon\"  -DDBUS_COMPILATION
+ 
+@@ -81,7 +81,7 @@
+ 	$(DBUS_BUS_LIBS)				\
+ 	$(top_builddir)/dbus/libdbus-convenience.la
+ 
+-dbus_daemon_LDFLAGS=@R_DYNAMIC_LDFLAG@ @SECTION_LDFLAGS@ @PIE_LDFLAGS@
++dbus_daemon_LDFLAGS=@R_DYNAMIC_LDFLAG@ @SECTION_LDFLAGS@
+ 
+ LAUNCH_HELPER_SOURCES=				\
+ 	$(XML_SOURCES)				\
+diff -Naur dbus-1.3.0-old/bus/Makefile.in dbus-1.3.0-new/bus/Makefile.in
+--- dbus-1.3.0-old/bus/Makefile.in	2009-07-25 04:17:55.000000000 -0700
++++ dbus-1.3.0-new/bus/Makefile.in	2009-07-30 09:00:18.000000000 -0700
+@@ -436,7 +436,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ configdir = $(sysconfdir)/dbus-1
+-INCLUDES = -I$(top_srcdir) $(DBUS_BUS_CFLAGS) @PIE_CFLAGS@		\
++INCLUDES = -I$(top_srcdir) $(DBUS_BUS_CFLAGS)             		\
+ 	-DDBUS_SYSTEM_CONFIG_FILE=\""$(configdir)/system.conf"\"	\
+ 	-DDAEMON_NAME=\"dbus-daemon\"  -DDBUS_COMPILATION
+ 
+@@ -500,7 +500,7 @@
+ 	$(DBUS_BUS_LIBS)				\
+ 	$(top_builddir)/dbus/libdbus-convenience.la
+ 
+-dbus_daemon_LDFLAGS = @R_DYNAMIC_LDFLAG@ @SECTION_LDFLAGS@ @PIE_LDFLAGS@
++dbus_daemon_LDFLAGS = @R_DYNAMIC_LDFLAG@ @SECTION_LDFLAGS@
+ LAUNCH_HELPER_SOURCES = \
+ 	$(XML_SOURCES)				\
+ 	config-parser-common.c			\

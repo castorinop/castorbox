@@ -1,0 +1,35 @@
+#!/bin/bash
+
+case "$1" in
+        configure)
+                invoke-rc.d acpid restart>/dev/null
+                ;;
+        *)
+                ;;
+esac
+
+#fix up old packages.
+if [ -L /etc/rc2.d/S20acpi-support ]; then
+# we're probably using defaults, so let's blow us away.
+        update-rc.d -f acpi-support remove
+fi
+
+if [ ! -L /etc/rc1.d/K20acpi-support -a -L /etc/rc2.d/S99acpi-support ]; then
+        update-rc.d -f acpi-support remove
+fi
+
+# Remove shutdown and reboot links; this init script does not need them.
+if dpkg --compare-versions "$2" lt "0.86"; then
+	rm -f /etc/rc0.d/K20acpi-support /etc/rc6.d/K20acpi-support
+fi
+
+if dpkg --compare-versions "$2" lt 0.47; then
+    if [ -f /var/lib/acpi-support/powerstate ]; then
+	chmod 644 /var/lib/acpi-support/powerstate;
+    fi
+    if [ -f /var/lib/acpi-support/lidstate ]; then
+	chmod 644 /var/lib/acpi-support/lidstate;
+    fi
+fi
+
+#DEBHELPER#

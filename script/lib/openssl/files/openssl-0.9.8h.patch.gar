@@ -1,0 +1,106 @@
+diff -Naur openssl-0.9.8h-old/Configure openssl-0.9.8h-new/Configure
+--- openssl-0.9.8h-old/Configure	2008-05-01 16:11:30.000000000 -0700
++++ openssl-0.9.8h-new/Configure	2008-05-28 19:39:59.000000000 -0700
+@@ -322,7 +322,7 @@
+ "linux-ppc",	"gcc:-DB_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL::linux_ppc32.o::::::::::dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ #### IA-32 targets...
+ "linux-ia32-icc",	"icc:-DL_ENDIAN -DTERMIO -O2 -no_cpprt::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-KPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+-"linux-elf",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"linux-elf",	"@GAR_CC@:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall @GAR_CFLAGS@::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:@GAR_LDFLAGS@ -fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ "linux-aout",	"gcc:-DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i486 -Wall::(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_out_asm}",
+ ####
+ "linux-generic64","gcc:-DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+@@ -330,7 +330,7 @@
+ "linux-ia64",	"gcc:-DL_ENDIAN -DTERMIO -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ "linux-ia64-ecc","ecc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ "linux-ia64-icc","icc:-DL_ENDIAN -DTERMIO -O2 -Wall -no_cpprt::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK:${ia64_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+-"linux-x86_64",	"gcc:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"linux-x86_64",	"@GAR_CC@:-m64 -DL_ENDIAN -DTERMIO -O3 -Wall -DMD32_REG_T=int @GAR_CFLAGS@::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:linux-shared:@GAR_LDFLAGS@ -fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ #### SPARC Linux setups
+ # Ray Miller <ray.miller@computing-services.oxford.ac.uk> has patiently
+ # assisted with debugging of following two configs.
+@@ -1358,7 +1358,7 @@
+ 	s/^OPTIONS=.*$/OPTIONS=$options/;
+ 	s/^CONFIGURE_ARGS=.*$/CONFIGURE_ARGS=$argvstring/;
+ 	s/^CC=.*$/CC= $cc/;
+-	s/^MAKEDEPPROG=.*$/MAKEDEPPROG= $cc/ if $cc eq "gcc";
++	s/^MAKEDEPPROG=.*$/MAKEDEPPROG= $cc/ if $cc eq "@GAR_CC@";
+ 	s/^CFLAG=.*$/CFLAG= $cflags/;
+ 	s/^DEPFLAG=.*$/DEPFLAG= $depflags/;
+ 	s/^PEX_LIBS=.*$/PEX_LIBS= $prelflags/;
+diff -Naur openssl-0.9.8h-old/Makefile openssl-0.9.8h-new/Makefile
+--- openssl-0.9.8h-old/Makefile	2008-05-28 01:48:27.000000000 -0700
++++ openssl-0.9.8h-new/Makefile	2008-05-28 19:41:53.000000000 -0700
+@@ -59,19 +59,19 @@
+ # equal 4.
+ # PKCS1_CHECK - pkcs1 tests.
+ 
+-CC= cc
++CC= @GAR_CC@
+ CFLAG= -O
+ DEPFLAG= -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_CMS -DOPENSSL_NO_GMP -DOPENSSL_NO_MDC2 -DOPENSSL_NO_RC5 -DOPENSSL_NO_RFC3779 -DOPENSSL_NO_SEED -DOPENSSL_NO_TLSEXT 
+ PEX_LIBS= 
+ EX_LIBS= 
+ EXE_EXT= 
+ ARFLAGS= 
++AR=@GAR_AR@ $(ARFLAGS) r
++RANLIB= @GAR_RANLIB@
++PERL= perl
+ AR=ar $(ARFLAGS) r
+-RANLIB= /usr/bin/ranlib
+-PERL= /usr/bin/perl
+-TAR= tar
+ TARFLAGS= --no-recursion
+-MAKEDEPPROG=makedepend
++MAKEDEPPROG=@GAR_CC@
+ 
+ # We let the C compiler driver to take care of .s files. This is done in
+ # order to be excused from maintaining a separate set of architecture
+diff -Naur openssl-0.9.8h-old/Makefile.org openssl-0.9.8h-new/Makefile.org
+--- openssl-0.9.8h-old/Makefile.org	2008-04-03 16:03:39.000000000 -0700
++++ openssl-0.9.8h-new/Makefile.org	2008-05-28 19:39:59.000000000 -0700
+@@ -57,19 +57,19 @@
+ # equal 4.
+ # PKCS1_CHECK - pkcs1 tests.
+ 
+-CC= cc
++CC= @GAR_CC@
+ CFLAG= -O
+ DEPFLAG= 
+ PEX_LIBS= 
+ EX_LIBS= 
+ EXE_EXT= 
+ ARFLAGS=
+-AR=ar $(ARFLAGS) r
+-RANLIB= ranlib
++AR=@GAR_AR@ $(ARFLAGS) r
++RANLIB= @GAR_RANLIB@
+ PERL= perl
+ TAR= tar
+ TARFLAGS= --no-recursion
+-MAKEDEPPROG=makedepend
++MAKEDEPPROG=@GAR_CC@
+ 
+ # We let the C compiler driver to take care of .s files. This is done in
+ # order to be excused from maintaining a separate set of architecture
+diff -Naur openssl-0.9.8h-old/util/domd openssl-0.9.8h-new/util/domd
+--- openssl-0.9.8h-old/util/domd	2005-03-30 06:44:50.000000000 -0800
++++ openssl-0.9.8h-new/util/domd	2008-05-28 19:39:59.000000000 -0700
+@@ -14,7 +14,7 @@
+ cp Makefile Makefile.save
+ # fake the presence of Kerberos
+ touch $TOP/krb5.h
+-if [ "$MAKEDEPEND" = "gcc" ]; then
++if [ "$MAKEDEPEND" = "@GAR_CC@" ]; then
+     args=""
+     while [ $# -gt 0 ]; do
+ 	if [ "$1" != "--" ]; then args="$args $1"; fi
+@@ -22,7 +22,7 @@
+     done
+     sed -e '/^# DO NOT DELETE.*/,$d' < Makefile > Makefile.tmp
+     echo '# DO NOT DELETE THIS LINE -- make depend depends on it.' >> Makefile.tmp
+-    gcc -D OPENSSL_DOING_MAKEDEPEND -M $args >> Makefile.tmp
++    @GAR_CC@ -D OPENSSL_DOING_MAKEDEPEND -M $args >> Makefile.tmp
+     ${PERL} $TOP/util/clean-depend.pl < Makefile.tmp > Makefile.new
+     rm -f Makefile.tmp
+ else

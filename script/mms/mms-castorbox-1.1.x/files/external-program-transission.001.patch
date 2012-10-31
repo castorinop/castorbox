@@ -1,0 +1,37 @@
+=== modified file 'plugins/feature/common-feature.cpp'
+--- old/plugins/feature/common-feature.cpp	2008-12-25 17:13:30 +0000
++++ new/plugins/feature/common-feature.cpp	2009-04-11 17:15:47 +0000
+@@ -77,12 +77,32 @@
+ 
+   Render *render = S_Render::get_instance();
+ 
++  render->device->animation_section_begin(true);
++  int curlayer = render->device->get_current_layer();
++  render->device->switch_to_layer(curlayer+1);
++  render->device->reset_layout_attribs_nowait();
++  render->device->set_layout_alpha(0.0, curlayer+1);
++  render->device->animation_fade(0,1,50,curlayer+1);
++  render->device->animation_fade(1,0,50,curlayer);
++  render->device->animation_section_end();
++
++  render->prepare_new_image();  
++  render->current.add(new RObj(0, 0, conf->p_h_res(), conf->p_v_res(), 0, 0, 0, 255, 2));
++  render->draw_and_release("exclusive external program");
++
+   render->device->unlock();
+ 
+   bool status = external_program(command);
+ 
+   render->device->lock();
+ 
++  render->device->animation_section_begin();
++  render->device->switch_to_layer(curlayer);
++  render->device->reset_layout_attribs_nowait();
++  render->device->animation_fade(0,1,80,curlayer);
++  render->device->animation_fade(1,0,40,curlayer+1);
++  render->device->animation_section_end();
++
+   release_exclusive_access();
+   S_SSaverobj::get_instance()->ResetCounter();
+ 
+

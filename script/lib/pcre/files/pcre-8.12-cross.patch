@@ -1,0 +1,12 @@
+diff -Naur pcre-8.12-old/Makefile.in pcre-8.12-new/Makefile.in
+--- pcre-8.12-old/Makefile.in	2011-01-15 13:14:57.000000000 -0800
++++ pcre-8.12-new/Makefile.in	2011-01-15 13:15:36.000000000 -0800
+@@ -1552,7 +1552,7 @@
+ 	cp -p pcre.h $@
+ 
+ @WITH_REBUILD_CHARTABLES_TRUE@pcre_chartables.c: dftables$(EXEEXT)
+-@WITH_REBUILD_CHARTABLES_TRUE@	./dftables$(EXEEXT) $@
++@WITH_REBUILD_CHARTABLES_TRUE@	pcre-dftables$(EXEEXT) $@
+ 
+ @WITH_REBUILD_CHARTABLES_FALSE@pcre_chartables.c: $(srcdir)/pcre_chartables.c.dist
+ @WITH_REBUILD_CHARTABLES_FALSE@	rm -f $@

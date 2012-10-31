@@ -1,0 +1,109 @@
+From f0c14bb462c7f852407a779b6c520020565646f0 Mon Sep 17 00:00:00 2001
+From: Simon Munton <simon-hal@munton.demon.co.uk>
+Date: Sun, 24 May 2009 18:01:51 +0200
+Subject: [PATCH 1/3] fixed segfault in hal-storage-mount
+
+Fixed segfault in hal-storage-mount and don't lose fstype in
+probe-volume.
+---
+ hald/linux/probing/probe-volume.c |    2 +-
+ tools/hal-storage-mount.c         |    3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/hald/linux/probing/probe-volume.c b/hald/linux/probing/probe-volume.c
+index 882de88..13c775a 100644
+--- a/hald/linux/probing/probe-volume.c
++++ b/hald/linux/probing/probe-volume.c
+@@ -97,7 +97,7 @@ set_blkid_values (LibHalChangeSet *cs, blkid_probe pr)
+ 
+ 	if (blkid_probe_lookup_value(pr, "TYPE", &type, NULL))
+ 		type = "";
+-	if (libhal_changeset_set_property_string (cs, "volume.fstype", type))
++	if (!libhal_changeset_set_property_string (cs, "volume.fstype", type))
+ 		libhal_changeset_set_property_string (cs, "volume.fstype", "");
+ 	HAL_DEBUG(("volume.fstype = '%s'", type));
+ 
+diff --git a/tools/hal-storage-mount.c b/tools/hal-storage-mount.c
+index e48b4b9..78e0160 100644
+--- a/tools/hal-storage-mount.c
++++ b/tools/hal-storage-mount.c
+@@ -786,7 +786,8 @@ handle_mount (LibHalContext *hal_ctx,
+ 		/* don't consider uid= on vfat, iso9660, hfs and udf change-uid for the purpose of policy
+ 		 * (since these doesn't contain uid/gid bits) 
+ 		 */
+-		if (strcmp (libhal_volume_get_fstype (volume), "vfat") != 0 &&
++		if (libhal_volume_get_fstype (volume) != NULL &&
++		    strcmp (libhal_volume_get_fstype (volume), "vfat") != 0 &&
+ 		    strcmp (libhal_volume_get_fstype (volume), "ntfs") != 0 &&
+ 		    strcmp (libhal_volume_get_fstype (volume), "ntfs-3g") != 0 &&
+ 		    strcmp (libhal_volume_get_fstype (volume), "iso9660") != 0 &&
+-- 
+1.6.2.4
+
+
+From 6dfe7f06bcb5c9a362321fdb8bcad5c45f165f7b Mon Sep 17 00:00:00 2001
+From: Kay Sievers <kay.sievers@vrfy.org>
+Date: Sun, 24 May 2009 18:18:10 +0200
+Subject: [PATCH 2/3] probe-volume: remove needless check for empty fstype
+
+---
+ hald/linux/probing/probe-volume.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/hald/linux/probing/probe-volume.c b/hald/linux/probing/probe-volume.c
+index 13c775a..02c7d53 100644
+--- a/hald/linux/probing/probe-volume.c
++++ b/hald/linux/probing/probe-volume.c
+@@ -97,8 +97,7 @@ set_blkid_values (LibHalChangeSet *cs, blkid_probe pr)
+ 
+ 	if (blkid_probe_lookup_value(pr, "TYPE", &type, NULL))
+ 		type = "";
+-	if (!libhal_changeset_set_property_string (cs, "volume.fstype", type))
+-		libhal_changeset_set_property_string (cs, "volume.fstype", "");
++	libhal_changeset_set_property_string (cs, "volume.fstype", type);
+ 	HAL_DEBUG(("volume.fstype = '%s'", type));
+ 
+ 	if (blkid_probe_lookup_value(pr, "VERSION", &type_version, NULL))
+-- 
+1.6.2.4
+
+
+From b7b37ece4a9072e2137fc7e9b61906accb670d43 Mon Sep 17 00:00:00 2001
+From: Danny Kukawka <danny.kukawka@web.de>
+Date: Sun, 24 May 2009 18:19:36 +0200
+Subject: [PATCH 3/3] cleaned up hal-storage-mount code
+
+Cleaned up hal-storage-mount code. Don't call libhal_volume_get_fstype()
+again and again for each possible fstype, reuse result of first call.
+---
+ tools/hal-storage-mount.c |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/tools/hal-storage-mount.c b/tools/hal-storage-mount.c
+index 78e0160..9471706 100644
+--- a/tools/hal-storage-mount.c
++++ b/tools/hal-storage-mount.c
+@@ -786,13 +786,13 @@ handle_mount (LibHalContext *hal_ctx,
+ 		/* don't consider uid= on vfat, iso9660, hfs and udf change-uid for the purpose of policy
+ 		 * (since these doesn't contain uid/gid bits) 
+ 		 */
+-		if (libhal_volume_get_fstype (volume) != NULL &&
+-		    strcmp (libhal_volume_get_fstype (volume), "vfat") != 0 &&
+-		    strcmp (libhal_volume_get_fstype (volume), "ntfs") != 0 &&
+-		    strcmp (libhal_volume_get_fstype (volume), "ntfs-3g") != 0 &&
+-		    strcmp (libhal_volume_get_fstype (volume), "iso9660") != 0 &&
+-		    strcmp (libhal_volume_get_fstype (volume), "hfs") != 0 &&
+-		    strcmp (libhal_volume_get_fstype (volume), "udf") != 0) {
++		const char *v_fstype;
++
++		v_fstype = libhal_volume_get_fstype (volume);
++		if (v_fstype != NULL && 
++		    strcmp (v_fstype, "vfat") != 0 && strcmp (v_fstype, "ntfs") != 0 &&
++		    strcmp (v_fstype, "ntfs-3g") != 0 && strcmp (v_fstype, "iso9660") != 0 && 
++		    strcmp (v_fstype, "hfs") != 0 && strcmp (v_fstype, "udf") != 0) {
+ 			pol_change_uid = wants_to_change_uid;
+ 		}
+ 	}
+-- 
+1.6.2.4
+

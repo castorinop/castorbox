@@ -1,0 +1,217 @@
+=== modified file 'plugins/feature/movie/movie_config_parameters'
+--- old/plugins/feature/movie/movie_config_parameters	2009-10-06 16:13:51 +0000
++++ new/plugins/feature/movie/movie_config_parameters	2010-05-23 01:05:33 +0000
+@@ -16,5 +16,6 @@
+ PARAMETER_BOOL("playback_in_mms",         playback_in_mms,           false)
+ PARAMETER_NUM("thumbnail_accur", thumbnail_accur, 3)
+ PARAMETER_PAIR("filetypes_m",      filetypes_m)
++PARAMETER_PAIR("filetypes_d",      filetypes_d)
+ PARAMETER_NUM("thumbnail_noblanks", thumbnail_noblanks, 0)
+ #include "config_pre_post.hpp"
+
+=== modified file 'plugins/feature/movie/series.cpp'
+--- old/plugins/feature/movie/series.cpp	2010-03-02 13:53:21 +0000
++++ new/plugins/feature/movie/series.cpp	2010-07-09 14:54:45 +0000
+@@ -1328,8 +1319,10 @@
+ 
+     // check if a xml file is created */
+     if ((type == NotifyUpdate::WRITE_CLOSE_FILE || type == NotifyUpdate::MOVE)) {
+-	if (check_type(file, movie_conf->p_filetypes_m()) != emptyMyPair)
+- 	  insert_file_into_db(path);
++	if (!(check_type(path, movie_conf->p_filetypes_m()) == emptyMyPair)) 
++		insert_file_into_db(path);
++	else if (!(check_type(path, movie_conf->p_filetypes_d()) == emptyMyPair))
++		imdb_filexml(path, path);
+     }
+ 
+ /*    bool reparsed_current_dir = false;
+
+=== modified file 'plugins/feature/movie/series_db.cpp'
+--- old/plugins/feature/movie/series_db.cpp	2010-02-23 17:18:14 +0000
++++ new/plugins/feature/movie/series_db.cpp	2010-07-24 01:43:06 +0000
+@@ -168,7 +168,8 @@
+ 
+   db_mutex.enterMutex();
+ 
+-  string query = "SELECT * FROM Episode JOIN Files ON Episode.id_episode = Files.id_episode WHERE id_serie = '" + conv::itos(id_serie) + "' AND present = 1"
++  string query = "SELECT * FROM Episode JOIN Files ON Episode.id_episode = Files.id_episode "
++	"WHERE id_serie IN (SELECT id_serie FROM Series WHERE imdbid = (SELECT imdbid FROM Series WHERE id_serie = '" + conv::itos(id_serie) + "') OR id_serie = '" + conv::itos(id_serie) + "') AND present = 1"
+ 	 + (filter.size() > 0 ? " AND " + filter : "")
+ 	 + " ORDER BY season,episode;";
+   //std::cout << "getEpisodes " << query << std::endl;
+@@ -228,8 +229,8 @@
+   vector<Serie> names;
+ 
+   db_mutex.enterMutex();
+-
+-  string query = "SELECT Series.id_serie, Series.name, COUNT(Series.id_serie) as episodes, COUNT(Series.id_serie) as episodes, COUNT(case when Episode.viewed = '0' then 1 end) as unviewed FROM Episode JOIN Series ON Episode.id_serie = Series.id_serie JOIN Files ON Episode.id_episode = Files.id_episode WHERE Files.present = 1 GROUP By Series.id_serie ORDER BY Series.name";
++  string query = " SELECT Series.id_serie, Series.name, COUNT(Series.id_serie) as episodes, COUNT(Series.id_serie) as episodes, COUNT(case when Episode.viewed = '0' then 1 end) as unviewed, (CASE imdbid is null WHEN 1 THEN ('noid'||Series.id_serie) ELSE imdbid END) AS imdb FROM Episode JOIN Series ON Episode.id_serie = Series.id_serie JOIN Files ON Episode.id_episode = Files.id_episode WHERE Files.present = 1  GROUP By imdb ORDER BY Series.name";
++ /* string query = "SELECT Series.id_serie, Series.name, COUNT(Series.id_serie) as episodes, COUNT(Series.id_serie) as episodes, COUNT(case when Episode.viewed = '0' then 1 end) as unviewed FROM Episode JOIN Series ON Episode.id_serie = Series.id_serie JOIN Files ON Episode.id_episode = Files.id_episode WHERE Files.present = 1 GROUP By Series.id_serie ORDER BY Series.name"; */
+   SQLQuery *q = db.query("Episode", query.c_str());
+   if (q) {
+     for (int i = 0; i < q->numberOfTuples(); ++i) {
+@@ -423,10 +425,13 @@
+ 	
+ //   char *query_sql;
+    int id = idSerie(se.name);
++   //std::cout << "SerieDB::store(" << se.name << ") = " << id << std::endl;
+    if (id > 0) {
+    db_mutex.enterMutex();
+-   char *query_sql = sqlite3_mprintf("UPDATE Series SET seriesid = '%q', actors = '%q', airdate = '%q', airtime = '%q', genre = '%q', overview = '%q', status = '%q', lastupdated = '%q' WHERE id_serie = '%q'",
++   char *query_sql = sqlite3_mprintf("UPDATE Series SET name = '%q', seriesid = '%q', imdbid='%q', actors = '%q', airdate = '%q', airtime = '%q', genre = '%q', overview = '%q', status = '%q', lastupdated = '%q' WHERE id_serie = '%q'",
++		se.name.c_str(), 
+ 		conv::itos(se.seriesid).c_str(), 
++		se.imdbid.c_str(), 
+ 		se.actors.c_str(), 
+ 		se.airdate.c_str(), 
+ 		se.airtime.c_str(), 
+@@ -434,13 +439,18 @@
+ 		se.overview.c_str(), 
+ 		se.status.c_str(),
+ 		se.lastupdated.c_str(),
+-		conv::itos(se.id).c_str()); 
++		conv::itos(id).c_str()); 
+ 
+   db.execute(query_sql);
+-  //std::cout << "SQL " << query_sql << std::endl;
++  std::cout << "SQL " << query_sql << std::endl;
+   sqlite3_free(query_sql);
+   db_mutex.leaveMutex();
+   }
++
++  foreach (Episode ep, se.episodes_info) {
++    ep.id_serie = se.id;
++    store(ep);
++  }
+   return true;
+ };
+ 
+@@ -545,20 +555,24 @@
+ 		Serie tvdbs = tvdb.getSerie(ep.serie);
+ 		tvdbs.id = sl.id;
+ 		tvdbs.name = sl.name; // keep the original title
+-		
+ 		if (tvdbs.seriesid > 0) {
+-			//std::cout << "needs " << tvdbs.name << ", " << tvdbs.banner << ", " << tvdbs.fanart << std::endl;
+ 			store(tvdbs);
+-			tvdb.getBanner(tvdbs, serie_dir);
+-			tvdb.getFanart(tvdbs, serie_dir);
+-		
+-			//std::cout << "store " << tvdbs.episodes_info.size() << "episodes " << std::endl;
+-			foreach (Episode &ep, tvdbs.episodes_info) {
+-				ep.id_serie = sl.id;
+-				//std::cout << "store " << ep.title << std::endl;
+-				store(ep);
+-				tvdb.getCover(ep, serie_dir);
+-			}
++			fetch_info_imgs(tvdbs);
++		}
++	}
++}
++
++void SerieDB::fetch_info_imgs(const Serie& tvdbs, bool force)
++{
++	if (tvdbs.seriesid > 0) {
++		//std::cout << "needs " << tvdbs.name << ", " << tvdbs.banner << ", " << tvdbs.fanart << std::endl;
++		//store(tvdbs);
++		tvdb.getBanner(tvdbs, serie_dir, force);
++		tvdb.getFanart(tvdbs, serie_dir, force);
++	
++		//std::cout << "store " << tvdbs.episodes_info.size() << "episodes " << std::endl;
++		foreach (const Episode &ep, tvdbs.episodes_info) {
++			tvdb.getCover(ep, serie_dir, force);
+ 		}
+ 	}
+ }
+@@ -727,3 +741,74 @@
+   setServerTime("tvdb", timestamp);
+ }
+ 
++void SerieDB::imdb_filexml(const std::string& dir, const std::string& path) 
++{
++  TiXmlDocument doc( path.c_str() );
++  TiXmlElement* root_element;
++  TiXmlElement* element = NULL;
++  TiXmlText* text = NULL;
++
++  bool loadOkay = doc.LoadFile( TIXML_ENCODING_UTF8 );
++  if (!loadOkay) {
++  std::cout << "parse xml: DEBUG: Failed to load file" << path  << std::endl;
++    return;
++  }
++
++  root_element = doc.RootElement();
++  if (root_element == 0) 
++  {
++    std::cout << "parse xml: DEBUG: Failed to load rootElement" << path  << std::endl;
++    return;
++  }
++
++  TiXmlHandle myhandle(&doc);
++  int id;
++  string buff, query;
++
++  // Try get title and id from imdbXML 
++  if ((text = myhandle.FirstChild("imdbXML").FirstChild("imdbID").FirstChild().Text()) != NULL)  {
++	id = conv::atoi(text->Value()); 
++        if ((text = myhandle.FirstChild("imdbXML").FirstChild("title").FirstChild().Text()) != NULL) {
++		buff = string_format::ConvertHTMLToAnsi(text->Value());
++
++		std::cout << "SerieDB::parseXML: finded with id = " << conv::itos(id) << std::endl;
++
++		char buffer [512];
++		snprintf(buffer, 512, "%07d", id);
++
++		query = " SELECT id_serie "
++			"FROM Series "
++			"WHERE imdbid = '" + string(buffer) + "'";
++       		std::cout << "SerieDB::parseXML: query " << query << std::endl;
++
++		db_mutex.enterMutex();
++		SQLQuery *q = db.query("Episode", query.c_str());
++		db_mutex.leaveMutex();
++
++        	if (q && q->numberOfTuples() == 0 ) {
++        		std::cout << "SerieDB::parseXML: need fetch from Helper..." << std::endl;
++		        Serie s = tvdb.getSerieByIMDB(id);
++			s.name = buff; // FORCE IMDB title;
++        		std::cout << "SerieDB::parseXML: serie: " << s.name << std::endl;
++        		store(s);
++			S_BackgroundUpdater::get_instance()->run_once(boost::bind(&SerieDB::fetch_info_imgs, this, s, true));
++       		} else {
++			// override database serie name with imdbXML
++			query = " UPDATE Series SET name='" + buff +"' WHERE imdbid = '" + string(buffer) + "'";
++	       		//std::cout << "SerieDB::parseXML: query test: " << query << std::endl;
++			db_mutex.enterMutex();
++			SQLQuery *q1 = db.query("Episode", query.c_str());
++			db_mutex.leaveMutex();
++			delete q1;
++
++		}
++		delete q;
++
++
++
++     	} else 
++		std::cout << "SerieDB::parseXML: missing imdbXML title" << std::endl;
++  } else 
++	std::cout << "SerieDB::parseXML: missing imdbXML id" << std::endl;
++
++}
+
+=== modified file 'plugins/feature/movie/series_db.hpp'
+--- old/plugins/feature/movie/series_db.hpp	2010-02-23 17:18:14 +0000
++++ new/plugins/feature/movie/series_db.hpp	2010-05-23 04:03:50 +0000
+@@ -69,9 +71,10 @@
+   // physical means that it exists on the hd
+   SerieDB(const std::string& filename, bool physical);
+ 
++  void fetch_info_imgs(const Serie& sl, bool force = false);
+   void fetch_info(const Episode& ep);
+ 
+-  void imdb_filexml(const std::string& dir, const std::string& path) {}
++  void imdb_filexml(const std::string& dir, const std::string& path);
+   ~SerieDB();
+ };
+ 
+

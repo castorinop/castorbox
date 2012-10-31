@@ -1,0 +1,46 @@
+#!/usr/bin/make -f
+
+clean:
+	make clean
+	dh_testdir
+	dh_clean
+
+build:
+	make
+
+install:
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	for file in lib/*; do\
+		install -m 644 "$$file" debian/acpi-support/usr/share/acpi-support/;\
+	done
+	for file in events/*; do\
+		install -m 644 $$file debian/acpi-support/etc/acpi/events/;\
+	done
+	for file in *.sh; do\
+		install -m 755 $$file debian/acpi-support/etc/acpi/;\
+	done
+	install -m 644 acpi-support debian/acpi-support/etc/default/;
+	install -m 755 acpi_fakekey debian/acpi-support/usr/bin/acpi_fakekey
+	install -m 644 key-constants debian/acpi-support/usr/share/acpi-support/
+
+binary-indep:
+
+binary-arch: install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installchangelogs
+	dh_installman
+	dh_installinit -n -- start 99 2 3 4 5 . stop 20 1 .
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-arch binary-indep

@@ -1,0 +1,23 @@
+GARNAME ?= noname
+GARVERSION ?= $(mm_VERSION)
+CATEGORIES ?= meta
+DISTFILES ?= $(DISTNAME).tar.bz2
+
+DESCRIPTION =
+define BLURB
+endef
+
+MINIMYTHIMG = main
+
+DESTIMG = $(MINIMYTHIMG)
+
+DEPENDS = meta/core
+
+CONFIGURE_SCRIPTS = custom
+BUILD_SCRIPTS     = $(WORKSRC)/Makefile
+INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
+
+BUILD_ARGS = mm_NAME=$(GARNAME) 
+INSTALL_ARGS = mm_NAME=$(GARNAME)
+
+GAR_EXTRA_CONF += meta/castorbox/version.mk

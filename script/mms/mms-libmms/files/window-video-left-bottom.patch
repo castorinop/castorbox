@@ -1,0 +1,13 @@
+=== modified file 'plugins/output/sdl/sdlout.cpp'
+--- old/plugins/output/sdl/sdlout.cpp	2008-07-06 15:51:28 +0000
++++ new/plugins/output/sdl/sdlout.cpp	2008-07-19 02:27:21 +0000
+@@ -102,7 +102,7 @@
+     }
+   }
+ 
+-  window_id = XCreateSimpleWindow(display, parent, width-width/6, height-height/6, width/6, height/6, 0, 0, 0);
++  window_id = XCreateSimpleWindow(display, parent, 0, height-height/2.5, width/2.5, height/2.5, 0, 0, 0);
+   XUnmapWindow(display, window_id);
+ 
+   fs_window_id = XCreateSimpleWindow(display, parent, 0, 0, width, height, 0, 0, 0);
+

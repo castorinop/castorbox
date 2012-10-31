@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+max=1440
+
+cur=$(sed -n -e 's/^[[:space:]]*session.gc_maxlifetime[[:space:]]*=[[:space:]]*\([0-9]\+\).*$/\1/p' /etc/php.d/*_session.ini 2>/dev/null || true);
+[ -z "$cur" ] && cur=0
+[ "$cur" -gt "$max" ] && max=$cur
+
+echo $(($max/60))
+
+exit 0

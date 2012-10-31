@@ -1,0 +1,9 @@
+diff -Naur make-3.81-old/tests/test_driver.pl make-3.81-new/tests/test_driver.pl
+--- make-3.81-old/tests/test_driver.pl	2006-03-09 18:20:45.000000000 -0800
++++ make-3.81-new/tests/test_driver.pl	2008-02-21 12:02:29.000000000 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ # -*-perl-*-
+ #
+ # Modification history:

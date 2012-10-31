@@ -1,0 +1,16 @@
+diff -Naur linux-3.0-old/include/linux/posix_types.h linux-3.0-new/include/linux/posix_types.h
+--- linux-3.0-old/include/linux/posix_types.h	2011-07-22 08:44:46.000000000 -0700
++++ linux-3.0-new/include/linux/posix_types.h	2011-07-22 08:45:33.000000000 -0700
+@@ -28,10 +28,10 @@
+ #define __FDSET_LONGS	(__FD_SETSIZE/__NFDBITS)
+ 
+ #undef __FDELT
+-#define	__FDELT(d)	((d) / __NFDBITS)
++#define	__FDELT(d)	(((unsigned long)d) / __NFDBITS)
+ 
+ #undef __FDMASK
+-#define	__FDMASK(d)	(1UL << ((d) % __NFDBITS))
++#define	__FDMASK(d)	(1UL << (((unsigned long)d) % __NFDBITS))
+ 
+ typedef struct {
+ 	unsigned long fds_bits [__FDSET_LONGS];

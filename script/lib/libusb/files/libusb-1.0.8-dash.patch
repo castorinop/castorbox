@@ -1,0 +1,14 @@
+diff -Naur libusb-1.0.8-old/configure.ac libusb-1.0.8-new/configure.ac
+--- libusb-1.0.8-old/configure.ac	2010-05-04 15:01:36.000000000 -0700
++++ libusb-1.0.8-new/configure.ac	2010-08-27 09:34:08.000000000 -0700
+@@ -34,8 +34,8 @@
+ 	AC_MSG_ERROR([unsupported operating system])
+ esac
+ 
+-AM_CONDITIONAL([OS_LINUX], [test "x$backend" == "xlinux"])
+-AM_CONDITIONAL([OS_DARWIN], [test "x$backend" == "xdarwin"])
++AM_CONDITIONAL([OS_LINUX], [test "x$backend" = "xlinux"])
++AM_CONDITIONAL([OS_DARWIN], [test "x$backend" = "xdarwin"])
+ 
+ # Library versioning
+ lt_major="0"

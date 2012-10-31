@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org - MiniMyth - Documents - FAQ</title>
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">MiniMyth from <a href="http://linpvr.org">LinPVR.org</a></div>
+        <div class="menu">
+          <span class="menuItemFirst"><a href="../index.shtml">Home</a></span>
+          <span class="menuItem"     ><a href="index.shtml">MiniMyth</a></span>
+          <span class="menuItem"     ><a href="document.shtml">Documents</a></span>
+          <span class="menuItem"     >FAQ</span>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">FAQ</div>
+        <div id="toc" class="section">
+          <div class="heading">Table of contents</div>
+          <dl>
+            <dt><a href="#minimyth">What is MiniMyth?</a></dt>
+            <dt><a href="#download">Where can I download MiniMyth?</a></dt>
+            <dt><a href="#memory">How much memory does MiniMyth require?</a></dt>
+            <dt><a href="#dvd">Why can I play some DVDs but not other DVDs?</a></dt>
+            <dt><a href="#plugin-crippled">Why is my favorite Myth plugin crippled in MiniMyth?</a></dt>
+            <dt><a href="#plugin-missing">Why is my favorite Myth plugin missing from MiniMyth?</a></dt>
+            <dt><a href="#ssh">Why is SSH not included in MiniMyth?</a></dt>
+            <dt><a href="#sensor">Why are my temperature and fan sensors missing or wrong?</a></dt>
+            <dt><a href="#MM_DEBUG">Why doesn't MM_DEBUG work?</a></dt>
+            <dt><a href="#build">How can I build MiniMyth from source?</a></dt>
+            <dt><a href="#hardware">What is your hardware configuration?</a></dt>
+            <dt><a href="#bug">How do I report a bug or request a feature?</a></dt>
+          </dl>
+        </div>
+        <div id="minimyth" class="section">
+          <div class="heading">What is MiniMyth?</div>
+          <p>
+            The answer to this question can be found on the
+            <a href=".">MiniMyth home page</a>.
+          </p>
+        </div>
+        <div id="download" class="section">
+          <div class="heading">Where can I download MiniMyth?</div>
+          <p>
+            The answer to this question can be found on the
+            <a href="download.shtml">MiniMyth download page</a>.
+          </p>
+        </div>
+        <div id="memory" class="section">
+          <div class="heading">How much memory does MiniMyth require?</div>
+          <p>
+            The answer to this quesiton can be found in the
+            <a href="document-hardware.shtml#memory">memory section</a>
+            of the <a href="document-hardware.shtml">MiniMyth hardware requirements page</a>.
+          </p>
+        </div>
+        <div id="dvd" class="section">
+          <div class="heading">Why can I play some DVDs but not other DVDs?</div>
+          <p>
+            There are two possible reasons.
+          </p>
+          <p>
+            The first reason is that some DVDs are encrypted using CSS.
+            In order to play these DVDs, you need libdvdcss.so.2.
+            Because of legal issues surrounding other software that allows Linux users to play their legally purchased DVDs,
+            libdvdcss.so.2 is not included in the binary MiniMyth distribution.
+            Although libdvdcss.so.2 is very different from this other software, legal concerns still exist.
+            Because, libdvdcss.so.2 only depends on Linux and glibc,
+            you should be able to use any libdvdcss.so.2 that has been compiled for i386, i486 or i586.
+          </p>
+          <p>
+            Once you have a copy of libdvdcss.so.2,
+            you can add it to your MiniMyth frontend at boot by including it in your extras file system
+            (see the
+            <a href="document-minimyth_conf.shtml#MM_EXTRAS_URL">MM_EXTRAS_URL</a>
+            variable in the MiniMyth configuration file).
+            If you compile MiniMyth yourself,
+            then the extras file system image that the build system creates contains libdvdcss.so.2.
+          </p>
+          <p>
+            The second reason is that some DVD drives require their region code to be set.
+            You can use the 'regionset' utility that is included in MiniMyth to set the region code for your DVD drive.
+            For information on how to use 'regionset', see the
+            <a href="http://linvdr.org/download/regionset/README">regionset readme</a>.
+          </p>
+        </div>
+        <div id="plugin-crippled" class="section">
+          <div class="heading">Why is my favorite Myth plugin crippled it MiniMyth?</div>
+          <p>
+            Some functionality of Myth plugins included in MiniMyth is missing due to the nature of MiniMyth.
+          </p>
+          <p>
+            MiniMyth is a small distribution.
+            To keep MiniMyth a small distribution, certain large packages such as Perl are not included in MiniMyth.
+            As a result, Myth plugin functionality that depends on these packages does not work.
+          </p>
+          <p>
+            As of version 0.17_2, MythStream includes parsers that do not depend on Perl.
+            Therefore, if you want parser support in MythStream,
+            then upgrade to a version of MiniMyth that includes at least MythStream 0.17_2.
+          </p>
+          <p>
+            Time for a rant.
+            I like Perl.
+            I use it for many things.
+            However, why would someone make Myth plugin functionality depend on Perl?
+            After spending the effort to write most of the Myth plugin in C/C++,
+            they make some small part of the Myth plugin depend on Perl.
+            Since the functions provided by Perl (e.g. regular expression parsing, XML document parsing, HTTP protocol support)
+            are available in small shared libraries,
+            there is no reason to make a small Myth plugin
+            depend on the large Perl and Perl modules.
+          </p>
+        </div>
+        <div id="plugin-missing" class="section">
+          <div class="heading">Why is my favorite Myth plugin missing from MiniMyth?</div>
+          <p>
+            There are two reasons that some Myth plugins are not included in MiniMyth:
+            the plugin has not been requested, and
+            the plugin depends on software that is not included.
+          </p>
+          <p>
+            The following plugins have not been included because they depend on software not included in MiniMyth:
+          </p>
+          <ul>
+            <li>MythArchive is not included because it depends on Python.</li>
+            <li>MythBrowser is not included because it depends on KDE.</li>
+            <li>MythGame is not included because it depends on xmame.</li>
+          </ul>
+        </div>
+        <div id="ssh" class="section">
+          <div class="heading">Why is SSH not included in MiniMyth?</div>
+          <p>
+            MiniMyth is not secure.
+            It has no passwords.
+            It runs almost everything as root.
+          </p>
+          <p>
+            Making MiniMyth secure is difficult and unnecessary.
+            It is difficult because it downloads its configuration files from a TFTP server, which is not secure by design.
+            As a result, authentication and authorization would need to be handled by a remote server using a protocol such as LDAP,
+            which is not typical in most people's home networks.
+            It is unnecessary because the Myth protocol is not secure.
+            As a result, an attacker can use the Myth protocol to do the same damage that can be done by compromising MiniMyth.
+          </p>
+          <p>
+            Since MiniMyth is not secure, there is little reason to use a secure protocol for communication with a MiniMyth frontend.
+            Therefore, including SSH would increase the size and configuration complexity of MiniMyth without increasing the security.
+            As a result, SSH is not included.
+          </p>
+        </div>
+        <div id="sensor" class="section">
+          <div class="heading">Why are my temperature and fan sensors missing or wrong?</div>
+          <p>
+            You may notice that you get no output from your temperature and fan sensors.
+          </p>
+          <p>
+            The reason for this is that the sensor chip's kernel module is not loading.
+            Unfortunately there is no simple detection method for sensor chips.
+            In order to "auto-detect" the sensor chip, MiniMyth goes through a two step process.
+            First, MiniMyth attempts to detect the motherboard vendor and product.
+            Second, MiniMyth maps the motherboard vendor and product to hardware kernel modules that are not auto-detected,
+            including the sensor chip's kernel module.
+            It is likely that this is not working for your motherboard, because MiniMyth does not have the necessary information.
+            If you
+            <a href="http://linpvr.org/bugs/">file a bug report</a>
+            that contains the motherboard vendor and product, the output of the command 'dmidecode&nbsp;-t&nbsp;baseboard'
+            and (if you know it) the sensor chip kernel module,
+            then we can add the necessary information to MiniMyth.
+          </p>
+          <p>
+            You may notice that either a sensor reports a temperature that is very wrong
+            or a label next to a temperature or fan sensor is wrong.
+          </p>
+          <p>
+            The reason for very wrong temperature readings on VIA EPIA motherboards is
+            either the specific temperature sensors are not used by the motherboard
+            or there is something wrong with the vt1211 sensors driver.
+            I do not know which it is.
+            However, it is safe to assume that the motherboard is not at a temperature that is below freezing.
+          </p>
+          <p>
+            The reason for the wrong labels is that the motherboard vendor did not wire the sensors as suggested by the sensor chip vendor.
+            As a result, while the values are correct, they are attributed to the wrong temperature or fan sensors on the motherboard.
+            At some point, we may add motherboard specific sensors configuration files to address this problem.
+          </p>
+        </div>
+        <div id="MM_DEBUG" class="section">
+          <div class="heading">Why doesn't MM_DEBUG work?</div>
+          <p>
+            People tend to have one of two problems when trying to enable debugging.
+          </p>
+          <p>
+            First, they set MM_DEBUG in the wrong place.
+            As mentioned in the
+            <a href="document-boot.shtml#bootline">boot instructions' boot line parameters</a>
+            section, MM_DEBUG="yes" must be set on the boot line.
+            If it is set in the MiniMyth configuration file, then it will not work correctly.
+          </p>
+          <p>
+            Second, they quote the MM_DEBUG variable value incorrectly.
+            As mentioned in the
+            <a href="document-boot.shtml#bootline">boot instructions' boot line parameters</a>
+            section, unlike MiniMyth variable values in the MiniMyth configuration file which should be single quoted ('),
+            MiniMyth variable values on the boot line must be either unquoted or double quoted (").
+            Single quoted variable values such as MM_DEBUG='yes' will not work correctly.
+          </p>
+        </div>
+        <div id="build" class="section">
+          <div class="heading">How can I build MiniMyth from source?</div>
+          <p>
+            The answer to this question can be found on the
+            <a href="document-build.shtml">MiniMyth build system instructions page</a>.
+          </p>
+        </div>
+        <div id="hardware" class="section">
+          <div class="heading">What is your hardware configuration?</div>
+          <p>
+            I (Pablo) have three MiniMyth systems.
+          </p>
+          <ul>
+            <li id="hardware-via_epia_m">
+              VIA EPIA M System
+              <ul>
+                <li>
+                  <strong>Case:</strong>
+                  One
+                  <a href="http://206.14.132.88/products/Travla/c158/C158-90W.html">Casetronic Travla C158-90W Mini-ITX Case</a>
+                </li>
+                <li>
+                  <strong>Motherboard:</strong>
+                  One
+                  <a href="http://www.logicsupply.com/product_info.php/cPath/78_76/products_id/30">VIA ME6000 Motherboard</a>
+                </li>
+                <li>
+                  <strong>CF-to-IDE Adapter:</strong>
+                  One
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16822998002">SYBA CF-to-IDE Adapter</a>
+                </li>
+                <li>
+                  <strong>CF Card:</strong>
+                  One
+                  <a href="http://www.newegg.com/product/product.asp?item=N82E16820160013">Kingston 512MB CF Card</a>
+                </li>
+                <li>
+                  <strong>Memory:</strong>
+                  One
+                  512MB ...
+                </li>
+                <li>
+                  <strong>DVD Drive:</strong>
+                  One
+                  Slimline ...
+                </li>
+                <li>
+                  <strong>Remote Control:</strong>
+                  One
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16880100851">Microsoft A9O-00007 WinXP Media Center Infrared Remote Control</a>
+                </li>
+              </ul>
+            </li>
+            <li id="hardware-via_epia_sp">
+              VIA EPIA SP System
+              <ul>
+                <li>
+                  <strong>Case:</strong>
+                  One
+                  <a href="http://206.14.132.88/products/Travla/c137/C137-90.html">Casetronic Travla C137-90W Mini-ITX Case</a>
+                </li>
+                <li>
+                  <strong>Motherboard:</strong>
+                  One
+                  <a href="http://www.logicsupply.com/product_info.php/cPath/78_76/products_id/306">VIA SP8000E Motherboard</a>
+                </li>
+                <li>
+                  <strong>Memory:</strong>
+                  One
+                  512MB ...
+                </li>
+                <li>
+                  <strong>DVD Drive:</strong>
+                  One
+                  Slimline ...
+                </li>
+                <li>
+                  <strong>Remote Control:</strong>
+                  One
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16880100851">Microsoft A9O-00007 WinXP Media Center Infrared Remote Control</a>
+                </li>
+              </ul>
+            </li>
+            <li id="hardware-asus_a8n_vm_csm">
+              ASUS A8N VM CSM
+              <ul>
+                <li>
+                  <strong>Case:</strong>
+                  One
+                  <a href="http://www.newegg.com/product/product.asp?item=N82E16811129014">Antec NSK2400 MicroATX Case</a>
+                </li>
+                <li>
+                  <strong>Motherboard:</strong>
+                  One
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16813131570">ASUS A8N-VM CSM MicroATX Motherboard</a>
+                </li>
+                <li><strong>CPU:</strong>
+                  One
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16819103535">AMD Athlon 64 3200+ (Venice core) CPU</a>
+                </li>
+                <li>
+                  <strong>CPU Cooler:</strong>
+                  One
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16835118112">ZALMAN CNPS7000B-ALCU CPU Cooler</a>
+                </li>
+                <li>
+                  <strong>Memory:</strong>
+                  Two
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16820146532">Crucial Technology 512MB 184-Pin DDR SDRAM Unbuffered DDR 400 (PC 3200) System Memory</a>
+                </li>
+                <li>
+                  <strong>DVD Drive:</strong>
+                  One
+                  <a href="http://www.newegg.com/product/product.asp?item=N82E16827135062">ASUS DRW1608P2SSILVER DVD-RW Drive</a>
+                </li>
+                <li>
+                  <strong>SPDIF Module:</strong>
+                  One
+                  <a href="http://www.excaliberpc.com/ASUS_Motherboard_Accessories_SPDIF/SPDIF_OUT_COA_OPT/partinfo-id-551265.html">ASUS SPDIF Module</a>
+                </li>
+                <li>
+                  <strong>Remote Control:</strong>
+                  One
+                  <a href="http://www.newegg.com/Product/Product.asp?Item=N82E16880100851">Microsoft A9O-00007 WinXP Media Center Infrared Remote Control</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            The VIA ME6000 system and the ASUS A8N VM CSM system are used almost daily.
+            When I upgrade the television to which the VIA ME6000 system connects,
+            I will need to upgrade the VIA ME6000 system to a system that suppports 1080i HDTV and DVI-D.
+          </p>
+          <p>
+            I do not use the VIA SP8000E system because it is on loan to a friend.
+            However, since it cannot play 1080i HDTV and does not have a DVI-D output,
+            it is unlikely that I will be using it in the future.
+          </p>
+        </div>
+        <div id="bug" class="section">
+          <div class="heading">How do I report a bug or request a feature?</div>
+          <p>
+            The best way to report a bug or request a feature is to submit it to the
+            <a href="http://linpvr.org/bugs/">bug tracking system</a>.
+          </p>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-10-13 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

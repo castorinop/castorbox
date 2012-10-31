@@ -1,0 +1,12 @@
+diff -Naur libbluray-c32862b77dea4eac592f41368157889d77710b22-old/configure.ac libbluray-c32862b77dea4eac592f41368157889d77710b22-new/configure.ac
+--- libbluray-c32862b77dea4eac592f41368157889d77710b22-old/configure.ac	2010-10-26 13:09:19.000000000 -0700
++++ libbluray-c32862b77dea4eac592f41368157889d77710b22-new/configure.ac	2010-10-26 13:09:47.000000000 -0700
+@@ -33,7 +33,7 @@
+ using_normal_linking="Using libaacs and libbdplus via normal linking."
+ 
+ # configure options
+-AC_ARG_ENABLE([dlopen-crypto-libs],
++AC_ARG_WITH([dlopen-crypto-libs],
+   [AS_HELP_STRING([--with-dlopen-crypto-libs],
+   [use libaacs and libbdplus via dlopen (default is auto)])],
+   [use_dlopen_crypto_libs=$withval],

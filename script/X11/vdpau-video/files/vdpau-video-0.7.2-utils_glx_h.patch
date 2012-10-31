@@ -1,0 +1,14 @@
+diff -Naur vdpau-video-0.7.2-old/src/utils_glx.h vdpau-video-0.7.2-new/src/utils_glx.h
+--- vdpau-video-0.7.2-old/src/utils_glx.h	2010-10-08 00:09:53.000000000 -0700
++++ vdpau-video-0.7.2-new/src/utils_glx.h	2010-11-01 06:44:56.000000000 -0700
+@@ -31,8 +31,8 @@
+ typedef GLintptr GLvdpauSurfaceNV;
+ typedef void (*PFNGLVDPAUINITNVPROC)(const GLvoid *vdpDevice, const GLvoid *getProcAddress);
+ typedef void (*PFNGLVDPAUFININVPROC)(void);
+-typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTERVIDEOSURFACENVPROC)(const GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
+-typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTEROUTPUTSURFACENVPROC)(const GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
++typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTERVIDEOSURFACENVPROC)(GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
++typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTEROUTPUTSURFACENVPROC)(GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
+ typedef GLboolean (*PFNGLVDPAUISSURFACEPROC)(GLvdpauSurfaceNV surface);
+ typedef void (*PFNGLVDPAUUNREGISTERSURFACENVPROC)(GLvdpauSurfaceNV surface);
+ typedef void (*PFNGLVDPAUGETSURFACEIVPROC)(GLvdpauSurfaceNV surface, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values);

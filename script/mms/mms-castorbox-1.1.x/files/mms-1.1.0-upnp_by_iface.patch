@@ -1,0 +1,132 @@
+diff --speed-large-files --minimal -Nru tmp/mms-1.1.0-1105/plugins/feature/upnp/cRenderer.cpp work/main.d/mms-1.1.0-1105/plugins/feature/upnp/cRenderer.cpp
+--- tmp/mms-1.1.0-1105/plugins/feature/upnp/cRenderer.cpp	2007-09-06 13:51:45.000000000 -0300
++++ mms-1.1.0-1105/plugins/feature/upnp/cRenderer.cpp	2007-09-13 15:57:11.000000000 -0300
+@@ -22,6 +22,7 @@
+ #include <fstream>
+ 
+ #include "cRenderer.hpp"
++#include "tool.hpp"
+ 
+ #include "common.hpp"
+ #include "plugins.hpp"
+@@ -53,7 +55,8 @@
+ 
+   friendlyName = strdup(upnp_conf->p_friendly_name().c_str());
+ 
+-  ip_addr = upnp_conf->p_ip();
++  interface = upnp_conf->p_interface();
++  ip_addr = interfaceToIP(interface);   
+ 
+   string udn_str = get_uuid();
+ 
+diff --speed-large-files --minimal -Nru tmp/mms-1.1.0-1105/plugins/feature/upnp/cRenderer.hpp work/main.d/mms-1.1.0-1105/plugins/feature/upnp/cRenderer.hpp
+--- tmp/mms-1.1.0-1105/plugins/feature/upnp/cRenderer.hpp	2007-09-06 13:51:45.000000000 -0300
++++ mms-1.1.0-1105/plugins/feature/upnp/cRenderer.hpp	2007-09-13 15:57:12.000000000 -0300
+@@ -75,6 +75,7 @@
+   std::string web_root;
+   char *friendlyName;
+   char xmlIcon[100];
++  std::string interface;
+   std::string ip_addr;
+ 	
+   int last_check;
+diff --speed-large-files --minimal -Nru tmp/mms-1.1.0-1105/plugins/feature/upnp/tool.cpp work/main.d/mms-1.1.0-1105/plugins/feature/upnp/tool.cpp
+--- tmp/mms-1.1.0-1105/plugins/feature/upnp/tool.cpp	1969-12-31 21:00:00.000000000 -0300
++++ mms-1.1.0-1105/plugins/feature/upnp/tool.cpp	2007-09-13 15:57:12.000000000 -0300
+@@ -0,0 +1,66 @@
++
++#include "tool.hpp"
++#include <stdio.h>
++#include <stdarg.h>
++#include <arpa/inet.h>
++#include <linux/sockios.h>
++#include <net/if.h>
++#include <netinet/in.h>
++#include <sys/ioctl.h>
++#include <sys/socket.h>
++
++#include <string>
++#include <iostream>
++
++std::string interfaceToIP(std::string interface)
++{
++    struct if_nameindex *iflist = NULL;
++    struct if_nameindex *iflist_free = NULL;
++    struct ifreq if_request;
++    struct sockaddr_in local_address;
++    int local_socket;
++
++    if (!interface.size())
++            return NULL;
++
++    local_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
++    if (local_socket < 0)
++    {
++        std::cerr << "Could not create local socket" << std::endl;
++        return NULL;
++    }
++
++    iflist = iflist_free = if_nameindex();
++    if (iflist == NULL)
++    {
++        std::cerr << "Could not get interface list" << std::endl;
++        close(local_socket);
++        return NULL;
++    }
++
++    while (iflist->if_index || iflist->if_name)
++    {
++        if (interface == iflist->if_name)
++        {
++            strncpy(if_request.ifr_name, iflist->if_name, IF_NAMESIZE);
++            if (ioctl(local_socket, SIOCGIFADDR, &if_request) != 0)
++            {
++                std::cerr << "Could not determine interface address" << std::endl;
++                close(local_socket);
++                if_freenameindex(iflist_free);
++                return NULL;
++            }
++
++            memcpy(&local_address, &if_request.ifr_addr, sizeof(if_request.ifr_addr));
++            std::string ip = std::string(inet_ntoa(local_address.sin_addr));
++            if_freenameindex(iflist_free);
++            close(local_socket);
++            return ip;
++        }
++        iflist++;
++    }
++
++    close(local_socket);
++    if_freenameindex(iflist_free);
++    return NULL;
++}
+diff --speed-large-files --minimal -Nru tmp/mms-1.1.0-1105/plugins/feature/upnp/tool.hpp work/main.d/mms-1.1.0-1105/plugins/feature/upnp/tool.hpp
+--- tmp/mms-1.1.0-1105/plugins/feature/upnp/tool.hpp	1969-12-31 21:00:00.000000000 -0300
++++ mms-1.1.0-1105/plugins/feature/upnp/tool.hpp	2007-09-13 15:57:12.000000000 -0300
+@@ -0,0 +1,10 @@
++#ifndef __TOOL_HPP__
++#define __TOOL_HPP__
++
++
++#include <iostream>
++#include <string>
++
++std::string interfaceToIP(std::string interface);
++
++#endif
+diff --speed-large-files --minimal -Nru tmp/mms-1.1.0-1105/plugins/feature/upnp/upnp_config_parameters work/main.d/mms-1.1.0-1105/plugins/feature/upnp/upnp_config_parameters
+--- tmp/mms-1.1.0-1105/plugins/feature/upnp/upnp_config_parameters	2007-09-06 13:51:45.000000000 -0300
++++ mms-1.1.0-1105/plugins/feature/upnp/upnp_config_parameters	2007-09-13 15:57:12.000000000 -0300
+@@ -5,9 +5,9 @@
+ #define S_PARAMETER_CLASS S_UpnpConfig
+ #define STRING_PARAMETER_CLASS "UpnpConfig"
+ 
+-#define MMS_CONFIG_VERSION "2"
++#define MMS_CONFIG_VERSION "3"
+ 
+-PARAMETER_STR("ip",    ip,    "192.168.0.1")
++PARAMETER_STR("interface",    interface,    "eth0")
+ PARAMETER_STR("friendly_name",    friendly_name,    "MMS")
+ 
+ #include "config_pre_post.hpp"
+

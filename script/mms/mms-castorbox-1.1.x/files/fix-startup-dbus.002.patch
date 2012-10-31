@@ -1,0 +1,46 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1792/plugins/feature/dbus/dbus.cpp work/main.d/mms-1.1.0-1792/plugins/feature/dbus/dbus.cpp
+--- tmp/mms-1.1.0-1792/plugins/feature/dbus/dbus.cpp	2010-07-24 00:09:06.000000000 -0300
++++ new-mms-1.1.0-1792/plugins/feature/dbus/dbus.cpp	2010-07-28 10:54:52.000000000 -0300
+@@ -3,12 +3,19 @@
+ #include <dbus-cxx.h>
+ #include <iostream>
+ 
+-MMS_Dbus::MMS_Dbus()
+-{}
+ 
+ void MMS_Dbus::startup_updater() 
+ {
++  connected = false;
++  S_BackgroundUpdater::get_instance()->run_once(boost::bind(&MMS_Dbus::connect, this));
++}
+ 
++void MMS_Dbus::connect() 
++{
++
++  if (connected)
++	return;
++  
+   DBus::init();
+   DBus::Connection::pointer conn = dispatcher.create_connection(DBus::BUS_SYSTEM);
+ 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1792/plugins/feature/dbus/dbus.hpp work/main.d/mms-1.1.0-1792/plugins/feature/dbus/dbus.hpp
+--- tmp/mms-1.1.0-1792/plugins/feature/dbus/dbus.hpp	2010-07-24 00:09:06.000000000 -0300
++++ new-mms-1.1.0-1792/plugins/feature/dbus/dbus.hpp	2010-07-28 10:54:25.000000000 -0300
+@@ -17,6 +17,8 @@
+ {
+ private:
+ 
++  bool connected;
++
+   DBus::Dispatcher dispatcher;
+   DBus::HandlerResult print( DBus::SignalMessage::const_pointer );
+ 
+@@ -33,6 +35,7 @@
+   }
+ 
+   void startup_updater();
++  void connect();
+ 
+   std::string mainloop()
+   {
+

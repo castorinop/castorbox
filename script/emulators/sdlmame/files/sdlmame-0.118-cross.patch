@@ -1,0 +1,31 @@
+diff -Naur sdlmame0118-old/makefile sdlmame0118-new/makefile
+--- sdlmame0118-old/makefile	2007-08-06 20:22:18.000000000 -0700
++++ sdlmame0118-new/makefile	2007-08-06 20:23:04.000000000 -0700
+@@ -547,12 +547,12 @@
+ 
+ $(OBJ)/%.lh: $(SRC)/%.lay $(FILE2STR)
+ 	@echo Converting $<...
+-	@$(FILE2STR) $< $@ layout_$(basename $(notdir $<))
++	@sdlmame-file2str  $< $@ layout_$(basename $(notdir $<))
+ 
+ $(OBJ)/%.fh: $(SRC)/%.png $(PNG2BDC) $(FILE2STR)
+ 	@echo Converting $<...
+-	@$(PNG2BDC) $< $(OBJ)/temp.bdc
+-	@$(FILE2STR) $(OBJ)/temp.bdc $@ font_$(basename $(notdir $<)) UINT8
++	@sdlmame-png2bdc $< $(OBJ)/temp.bdc
++	@sdlmame-file2str $(OBJ)/temp.bdc $@ font_$(basename $(notdir $<)) UINT8
+ 
+ $(OBJ)/%.a:
+ 	@echo Archiving $@...
+diff -Naur sdlmame0118-old/src/emu/cpu/cpu.mak sdlmame0118-new/src/emu/cpu/cpu.mak
+--- sdlmame0118-old/src/emu/cpu/cpu.mak	2007-08-06 20:20:31.000000000 -0700
++++ sdlmame0118-new/src/emu/cpu/cpu.mak	2007-08-06 20:24:31.000000000 -0700
+@@ -996,7 +996,7 @@
+ # rule to generate the C files
+ $(CPUOBJ)/m68000/m68kops.c: $(CPUOBJ)/m68000/m68kmake$(EXE) $(CPUSRC)/m68000/m68k_in.c
+ 	@echo Generating M68K source files...
+-	$(CPUOBJ)/m68000/m68kmake$(EXE) $(CPUOBJ)/m68000 $(CPUSRC)/m68000/m68k_in.c
++	sdlmame-m68kmake $(CPUOBJ)/m68000 $(CPUSRC)/m68000/m68k_in.c
+ 
+ # rule to build the generator
+ $(CPUOBJ)/m68000/m68kmake$(EXE): $(CPUOBJ)/m68000/m68kmake.o $(LIBOCORE)

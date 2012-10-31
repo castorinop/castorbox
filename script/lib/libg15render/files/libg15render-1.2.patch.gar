@@ -1,0 +1,24 @@
+diff -Naur libg15render-1.2-old/configure libg15render-1.2-new/configure
+--- libg15render-1.2-old/configure	2006-11-19 02:41:53.000000000 -0800
++++ libg15render-1.2-new/configure	2008-07-15 19:36:45.000000000 -0700
+@@ -19902,7 +19902,7 @@
+ #define TTF_SUPPORT 1
+ _ACEOF
+ 
+-		CFLAGS="$CFLAGS `freetype-config --cflags`"
++		CFLAGS="$CFLAGS `@GAR_DESTDIR@@GAR_bindir@/freetype-config --cflags`"
+ 		FTLIB="-lfreetype"
+ 		ttf_support="yes"
+ 	else
+diff -Naur libg15render-1.2-old/configure.in libg15render-1.2-new/configure.in
+--- libg15render-1.2-old/configure.in	2006-11-15 20:08:24.000000000 -0800
++++ libg15render-1.2-new/configure.in	2008-07-15 19:36:27.000000000 -0700
+@@ -17,7 +17,7 @@
+ AC_ARG_ENABLE(ttf, [  --enable-ttf		enable FreeType2 support],
+ 	if [[[ "$enableval" = "yes" ]]]; then
+ 		AC_DEFINE(TTF_SUPPORT, [1], [Define to 1 to enable FreeType2 support])
+-		CFLAGS="$CFLAGS `freetype-config --cflags`"
++		CFLAGS="$CFLAGS `@GAR_DESTDIR@@GAR_bindir@/freetype-config --cflags`"
+ 		FTLIB="-lfreetype"
+ 		ttf_support="yes"
+ 	else

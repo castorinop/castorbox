@@ -1,0 +1,14 @@
+################################################################################
+# minimyth.script
+#
+# The optional MiniMyth configuration script.
+#
+# For information on this file, see either
+# <http://linpvr.org/minimyth/document.shtml>
+# or
+# <http://{frontend}/minimyth/document.shtml>,
+# where '{frontend}' is the IPv4 address or hostname of your MiniMyth frontend.
+################################################################################
+
+# Include the MiniMyth configuration variables and functions.
+. /etc/rc.d/functions

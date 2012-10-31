@@ -1,0 +1,64 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/nspr-4.7.4/mozilla/nsprpub/config/nspr-config-vars.in new-nspr-4.7.4/mozilla/nsprpub/config/nspr-config-vars.in
+--- tmp/nspr-4.7.4/mozilla/nsprpub/config/nspr-config-vars.in	1969-12-31 21:00:00.000000000 -0300
++++ new-nspr-4.7.4/mozilla/nsprpub/config/nspr-config-vars.in	2009-04-20 18:11:49.000000000 -0300
+@@ -0,0 +1,2 @@
++ldflags=@LDFLAGS@
++os_libs=@OS_LIBS@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/nspr-4.7.4/mozilla/nsprpub/config/nspr.pc.in new-nspr-4.7.4/mozilla/nsprpub/config/nspr.pc.in
+--- tmp/nspr-4.7.4/mozilla/nsprpub/config/nspr.pc.in	1969-12-31 21:00:00.000000000 -0300
++++ new-nspr-4.7.4/mozilla/nsprpub/config/nspr.pc.in	2009-04-20 18:11:49.000000000 -0300
+@@ -0,0 +1,10 @@
++prefix=%prefix%
++exec_prefix=%exec_prefix%
++libdir=%libdir%
++includedir=%includedir%
++
++Name: NSPR
++Description: The Netscape Portable Runtime
++Version: %NSPR_VERSION%
++Libs: %FULL_NSPR_LIBS%
++Cflags: %FULL_NSPR_CFLAGS%
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/nspr-4.7.4/mozilla/nsprpub/configure new-nspr-4.7.4/mozilla/nsprpub/configure
+--- tmp/nspr-4.7.4/mozilla/nsprpub/configure	2008-12-04 21:46:50.000000000 -0300
++++ new-nspr-4.7.4/mozilla/nsprpub/configure	2009-04-20 18:11:42.000000000 -0300
+@@ -5915,6 +5915,8 @@
+ config/nsprincl.mk
+ config/nsprincl.sh
+ config/nspr-config
++config/nspr-config-pc
++config/nspr-config-vars
+ lib/Makefile 
+ lib/ds/Makefile 
+ lib/libc/Makefile 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/nspr-4.7.4/mozilla/nsprpub/configure.in new-nspr-4.7.4/mozilla/nsprpub/configure.in
+--- tmp/nspr-4.7.4/mozilla/nsprpub/configure.in	2008-12-04 21:46:50.000000000 -0300
++++ new-nspr-4.7.4/mozilla/nsprpub/configure.in	2009-04-20 18:11:39.000000000 -0300
+@@ -2815,6 +2815,8 @@
+ config/nsprincl.mk
+ config/nsprincl.sh
+ config/nspr-config
++config/nspr-config-pc
++config/nspr-config-vars
+ lib/Makefile 
+ lib/ds/Makefile 
+ lib/libc/Makefile 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/nspr-config-vars.in new-nspr-config-vars.in
+--- tmp/nspr-config-vars.in	1969-12-31 21:00:00.000000000 -0300
++++ new-nspr-config-vars.in	2009-04-20 18:11:49.000000000 -0300
+@@ -0,0 +1,2 @@
++ldflags=@LDFLAGS@
++os_libs=@OS_LIBS@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/nspr.pc.in new-nspr.pc.in
+--- tmp/nspr.pc.in	1969-12-31 21:00:00.000000000 -0300
++++ new/nspr.pc.in	2009-04-20 18:11:49.000000000 -0300
+@@ -0,0 +1,10 @@
++prefix=%prefix%
++exec_prefix=%exec_prefix%
++libdir=%libdir%
++includedir=%includedir%
++
++Name: NSPR
++Description: The Netscape Portable Runtime
++Version: %NSPR_VERSION%
++Libs: %FULL_NSPR_LIBS%
++Cflags: %FULL_NSPR_CFLAGS%

@@ -1,0 +1,54 @@
+diff --speed-large-files --minimal -Nru tmp/Python-2.2.2/Makefile.pre.in work/main.d/Python-2.2.2/Makefile.pre.in
+--- old/Makefile.pre.in	Fri Aug 23 09:05:49 2002
++++ new/Makefile.pre.in	Wed Apr 16 22:07:15 2003
+@@ -55,7 +55,7 @@
+ # Compiler options
+ OPT=		@OPT@
+ DEFS=		@DEFS@
+-CFLAGS=		$(OPT)
++CFLAGS+=	$(OPT)
+ CPPFLAGS=	-I. -I$(srcdir)/Include $(DEFS)
+ LDFLAGS=	@LDFLAGS@
+ LDLAST=		@LDLAST@
+@@ -582,7 +582,7 @@
+ PLATDIR=	plat-$(MACHDEP)
+ MACHDEPS=	$(PLATDIR)
+ XMLLIBSUBDIRS=  xml xml/dom xml/parsers xml/sax
+-LIBSUBDIRS=	lib-old lib-tk site-packages test test/output test/data \
++LIBSUBDIRS=	lib-old lib-tk site-packages \
+ 		encodings email compiler hotshot \
+ 		distutils distutils/command $(XMLLIBSUBDIRS) curses $(MACHDEPS)
+ libinstall:	$(BUILDPYTHON) $(srcdir)/Lib/$(PLATDIR)
+diff --speed-large-files --minimal -Nru tmp/Python-2.2.2/Modules/Setup.dist work/main.d/Python-2.2.2/Modules/Setup.dist
+--- old/Modules/Setup.dist	Thu Aug  8 12:52:42 2002
++++ new/Modules/Setup.dist	Wed Apr 16 22:08:51 2003
+@@ -140,7 +140,7 @@
+ # it, depending on your system -- see the GNU readline instructions.
+ # It's okay for this to be a shared library, too.
+ 
+-#readline readline.c -lreadline -ltermcap
++readline readline.c -lreadline -ltermcap
+ 
+ 
+ # Modules that should always be present (non UNIX dependent):
+@@ -346,9 +346,9 @@
+ #
+ # First, look at Setup.config; configure may have set this for you.
+ 
+-#_curses _cursesmodule.c -lcurses -ltermcap
++_curses _cursesmodule.c -lcurses -ltermcap
+ # Wrapper for the panel library that's part of ncurses and SYSV curses.
+-#_curses_panel _curses_panel.c -lpanel -lncurses 
++_curses_panel _curses_panel.c -lpanel -lncurses 
+ 
+ 
+ # Generic (SunOS / SVR4) dynamic loading module.
+@@ -435,7 +435,7 @@
+ # Andrew Kuchling's zlib module.
+ # This require zlib 1.1.3 (or later).
+ # See http://www.cdrom.com/pub/infozip/zlib/
+-#zlib zlibmodule.c -I$(prefix)/include -L$(exec_prefix)/lib -lz
++zlib zlibmodule.c -I$(prefix)/include -L$(exec_prefix)/lib -lz
+ 
+ # Interface to the Expat XML parser
+ #

@@ -1,0 +1,21 @@
+diff -Naur libpng-1.2.38-old/scripts/libpng-config.in libpng-1.2.38-new/scripts/libpng-config.in
+--- libpng-1.2.38-old/scripts/libpng-config.in	2009-07-16 03:58:33.000000000 -0700
++++ libpng-1.2.38-new/scripts/libpng-config.in	2009-07-16 23:46:50.000000000 -0700
+@@ -12,14 +12,15 @@
+ # Modeled after libxml-config.
+ 
+ version="@PNGLIB_VERSION@"
++DESTDIR=@GAR_DESTDIR@
+ prefix="@prefix@"
+ exec_prefix="@exec_prefix@"
+ libdir="@libdir@"
+ includedir="@includedir@/libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
+ libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@"
+ all_libs="-lpng@PNGLIB_MAJOR@@PNGLIB_MINOR@ @LIBS@"
+-I_opts="-I${includedir}"
+-L_opts="-L${libdir}"
++I_opts="-I$DESTDIR${includedir}"
++L_opts="-L$DESTDIR${libdir}"
+ R_opts=""
+ cppflags=""
+ ccopts="@LIBPNG_NO_MMX@"

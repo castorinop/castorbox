@@ -1,0 +1,24 @@
+--- kiki/src/main/KikiController.cpp~	2005-11-10 22:26:35.000000000 +0100
++++ kiki/src/main/KikiController.cpp	2007-02-02 15:00:58.000000000 +0100
+@@ -54,6 +54,8 @@ KikiController::KikiController () : KEve
+     kiki_home = "./";
+     quit_key = "META_q";
+     gamma = 1;
++#elif defined(KIKI_HOME)
++    kiki_home = KIKI_HOME;
+ #else
+     char * kiki_home_env = getenv("KIKI_HOME");
+     if (kiki_home_env)
+--- kiki/linux/Makefile~	2007-02-02 19:09:38.000000000 +0100
++++ kiki/linux/Makefile	2007-02-02 19:10:37.000000000 +0100
+@@ -46,7 +46,9 @@ KIKI_INCLUDES = -I ../SWIG $(KODILIBINC)
+ 	-I $(KIKISRC)/base -I $(KIKISRC)/bots -I $(KIKISRC)/gui -I $(KIKISRC)/items \
+ 	-I $(KIKISRC)/main -I $(KIKISRC)/sound -I $(KIKISRC)/world \
+ 
+-INCLUDES = $(KIKI_INCLUDES) $(X11_INCLUDES) $(PYTHON_INCLUDES)
++KIKI_DATADIR = -DKIKI_HOME='"$(KIKI_HOME)/"'
++
++INCLUDES = $(KIKI_INCLUDES) $(KIKI_DATADIR) $(X11_INCLUDES) $(PYTHON_INCLUDES)
+ 
+ CXXFLAGS = $(INCLUDES) $(SDLCFLAGS) $(OPTFLAGS)
+ 

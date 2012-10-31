@@ -1,0 +1,237 @@
+diff -Naur sdlmess0110-old/makefile sdlmess0110-new/makefile
+--- sdlmess0110-old/makefile	2006-11-16 10:24:54.000000000 -0800
++++ sdlmess0110-new/makefile	2006-12-16 06:41:09.000000000 -0800
+@@ -71,7 +71,7 @@
+ # ATHLON = 1
+ # I686 = 1
+ # P4 = 1
+-PM = 1
++# PM = 1
+ # AMD64 = 1
+ # G4 = 1
+ # G5 = 1
+@@ -137,11 +137,13 @@
+ EXE = 
+ 
+ # compiler, linker and utilities
+-AR = @ar
+-CC = @gcc
+-LD = gcc
+-MD = -mkdir
+-RM = @rm -f
++AR ?= ar
++CC ?= gcc
++LD = $(CC)
++MD = mkdir -p
++RM = rm -f
++CC_FOR_BUILD ?= $(CC)
++LD_FOR_BUILD = $(CC_FOR_BUILD)
+ 
+ WINDOWS_PROGRAM = -mwindows
+ CONSOLE_PROGRAM = -mconsole
+@@ -157,9 +159,9 @@
+ endif
+ 
+ # by default, compile for Pentium target
+-NAME = $(PREFIX)$(TARGET)
++NAME = $(PREFIX)$(TARGET)cli
+ GUINAME = $(TARGET)gui
+-ARCH = -march=pentium
++ARCH =
+ 
+ # architecture-specific builds get extra options
+ ifdef ATHLON
+@@ -434,7 +436,7 @@
+ 
+ # cli target
+ $(EMULATORCLI):	$(OBJS) $(COREOBJS) $(OSOBJS) $(CPULIB) $(SOUNDLIB) $(DRVLIBS)
+-	$(CC) $(CDEFS) $(CFLAGS) -c src/version.c -o $(OBJ)/version.o
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -c src/version.c -o $(OBJ)/version.o
+ 	@echo Linking $@...
+ 	$(LD) $(LDFLAGS) $(LIBS) $(CONSOLE_PROGRAM) $^ -o $@
+ 
+@@ -444,8 +446,13 @@
+ 
+ file2str$(EXE): $(OBJ)/file2str.o $(OSDBGOBJS) $(ZLIB)
+ 	@echo Linking $@...
+-	$(LD) $(LDFLAGS) $^ $(ZLIB) $(LIBS) -o $@
++	$(LD_FOR_BUILD) $^ -o $@
++
++$(OBJ)/file2str.o: src/file2str.c
++	@echo Compiling $<...
++	$(CC_FOR_BUILD) $(CDEFS) $(CFLAGSOSDEPEND) $(CFLAGS_FOR_BUILD) -c $< -o $@
+ 
++$(OBJ)/%.pp: src/%.c
+ romcmp$(EXE): $(OBJ)/romcmp.o $(OBJ)/unzip.o $(ZLIB) $(OSDBGOBJS)
+ 	@echo Linking $@...
+ 	$(LD) $(LDFLAGS) $^ $(ZLIB) $(LIBS) -o $@
+@@ -504,19 +511,19 @@
+ 
+ $(OBJ)/$(MAMEOS)/%.o: src/$(MAMEOS)/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGSOSDEPEND) -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGSOSDEPEND) $(CFLAGS_FOR_TARGET) -c $< -o $@
+ 
+ $(OBJ)/%.o: src/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -c $< -o $@
+ 
+ $(OBJ)/%.pp: src/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -E $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -E $< -o $@
+ 
+ $(OBJ)/%.s: src/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -S $< -o $@
+ 
+ $(OBJ)/%.lh: src/%.lay file2str$(EXE)
+ 	@echo Converting $<...
+@@ -524,19 +531,19 @@
+ 
+ $(OBJ)/mess/%.o: mess/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -c $< -o $@
+ 
+ $(OBJ)/mess/%.pp: mess/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -E $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -E $< -o $@
+ 
+ $(OBJ)/mess/%.S: mess/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -S $< -o $@
+ 
+ $(OBJ)/%.o: src/%.m
+ 	@echo Objective-C compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -c $< -o $@
+ 
+ $(OBJ)/mess/%.lh: mess/%.lay file2str$(EXE)
+ 	@echo Converting $<...
+diff -Naur sdlmess0110-old/src/cpu/cpu.mak sdlmess0110-new/src/cpu/cpu.mak
+--- sdlmess0110-old/src/cpu/cpu.mak	2006-10-26 04:44:16.000000000 -0700
++++ sdlmess0110-new/src/cpu/cpu.mak	2006-12-16 06:48:34.000000000 -0800
+@@ -701,12 +701,12 @@
+ # when we compile source files we need to include generated files from the OBJ directory
+ $(OBJ)/cpu/m68000/%.o: src/cpu/m68000/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -I$(OBJ)/cpu/m68000 -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) -I$(OBJ)/cpu/m68000 $(CFLAGS_FOR_TARGET) -c $< -o $@
+ 
+ # when we compile generated files we need to include stuff from the src directory
+ $(OBJ)/cpu/m68000/%.o: $(OBJ)/cpu/m68000/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -Isrc/cpu/m68000 -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) -Isrc/cpu/m68000 $(CFLAGS_FOR_TARGET) -c $< -o $@
+ 
+ # rule to generate the C files
+ $(OBJ)/cpu/m68000/m68kops.c: $(OBJ)/cpu/m68000/m68kmake$(EXE) m68k_in.c
+@@ -716,8 +716,13 @@
+ # rule to build the generator
+ $(OBJ)/cpu/m68000/m68kmake$(EXE): $(OBJ)/cpu/m68000/m68kmake.o $(OSDBGOBJS)
+ 	@echo Linking $@...
+-	$(LD) $(LDFLAGS) $(OSDBGLDFLAGS) $^ $(LIBS) -o $@
++	$(LD_FOR_BUILD) $^ -o $@
+ 
++$(OBJ)/cpu/m68000/m68kmake.o: src/cpu/m68000/m68kmake.c
++	@echo Compiling $<...
++	$(CC_FOR_BUILD) $(CDEFS) $(CFLAGS) -I$(OBJ)/cpu/m68000 $(CFLAGS_FOR_BUILD) -c $< -o $@
++
++# when we compile generated files we need to include stuff from the src directory
+ # rule to ensure we build the header before building the core CPU file
+ $(OBJ)/cpu/m68000/m68kcpu.o: $(OBJ)/cpu/m68000/m68kops.c
+ 
+diff -Naur sdlmess0110-old/src/sdl/sdl.mak sdlmess0110-new/src/sdl/sdl.mak
+--- sdlmess0110-old/src/sdl/sdl.mak	2006-11-16 06:13:39.000000000 -0800
++++ sdlmess0110-new/src/sdl/sdl.mak	2006-12-16 06:02:17.000000000 -0800
+@@ -33,7 +33,7 @@
+ OSOBJS += $(OBJ)/sdl/debugwin.o $(OBJ)/sdl/dview.o $(OBJ)/sdl/debug-sup.o $(OBJ)/sdl/debug-intf.o
+ endif
+ 
+-LIBS += `sdl-config --libs` -lGL -lXinerama
++LIBS += `@GAR_DESTDIR@@GAR_bindir@/sdl-config --libs` -lGL -lXinerama
+ 
+ # the new debugger relies on GTK+ in addition to the base SDLMAME needs
+ ifdef DEBUG
+@@ -49,7 +49,7 @@
+ OSOBJS += $(OBJ)/sdl/debugwin.o $(OBJ)/sdl/dview.o $(OBJ)/sdl/debug-sup.o $(OBJ)/sdl/debug-intf.o
+ endif
+ 
+-LIBS += `sdl11-config --libs` -lGL -lXinerama
++LIBS += `@GAR_DESTDIR@@GAR_bindir@/sdl11-config --libs` -lGL -lXinerama
+ 
+ # the new debugger relies on GTK+ in addition to the base SDLMAME needs
+ ifdef DEBUG
+diff -Naur sdlmess0110-old/src/ui/ui.mak sdlmess0110-new/src/ui/ui.mak
+--- sdlmess0110-old/src/ui/ui.mak	2006-05-13 12:19:12.000000000 -0700
++++ sdlmess0110-new/src/ui/ui.mak	2006-12-16 06:34:50.000000000 -0800
+@@ -8,12 +8,12 @@
+ # remove pedantic
+ $(OBJ)/ui/%.o: src/windowsui/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -c $< -o $@
+ 
+ # remove pedantic
+ $(OBJ)/mess/windowsui/%.o: mess/windowsui/%.c
+ 	@echo Compiling $<...
+-	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
++	$(CC) $(CDEFS) $(CFLAGS) $(CFLAGS_FOR_TARGET) -c $< -o $@
+ endif
+ 
+ OBJDIRS += $(OBJ)/ui
+diff -Naur sdlmess0110-old/src/zlib/Makefile sdlmess0110-new/src/zlib/Makefile
+--- sdlmess0110-old/src/zlib/Makefile	2005-08-14 14:24:10.000000000 -0700
++++ sdlmess0110-new/src/zlib/Makefile	2006-12-16 06:42:08.000000000 -0800
+@@ -84,10 +84,10 @@
+ 	ln -s $@ $(SHAREDLIBM)
+ 
+ example$(EXE): example.o $(LIBS)
+-	$(CC) $(CFLAGS) -o $@ example.o $(LDFLAGS)
++	$(CC) $(CFLAGS) $(CFLAGS_FOR_TARGET) -o $@ example.o $(LDFLAGS)
+ 
+ minigzip$(EXE): minigzip.o $(LIBS)
+-	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS)
++	$(CC) $(CFLAGS) $(CFLAGS_FOR_TARGET) -o $@ minigzip.o $(LDFLAGS)
+ 
+ install: $(LIBS)
+ 	-@if [ ! -d $(exec_prefix) ]; then mkdir -p $(exec_prefix); fi
+@@ -134,7 +134,7 @@
+ 	etags *.[ch]
+ 
+ depend:
+-	makedepend -- $(CFLAGS) -- *.[ch]
++	makedepend -- $(CFLAGS) $(CFLAGS_FOR_TARGET) -- *.[ch]
+ 
+ # DO NOT DELETE THIS LINE -- make depend depends on it.
+ 
+diff -Naur sdlmess0110-old/src/zlib/Makefile.in sdlmess0110-new/src/zlib/Makefile.in
+--- sdlmess0110-old/src/zlib/Makefile.in	2005-08-14 14:24:10.000000000 -0700
++++ sdlmess0110-new/src/zlib/Makefile.in	2006-12-16 06:42:33.000000000 -0800
+@@ -84,10 +84,10 @@
+ 	ln -s $@ $(SHAREDLIBM)
+ 
+ example$(EXE): example.o $(LIBS)
+-	$(CC) $(CFLAGS) -o $@ example.o $(LDFLAGS)
++	$(CC) $(CFLAGS) $(CFLAGS_FOR_TARGET) -o $@ example.o $(LDFLAGS)
+ 
+ minigzip$(EXE): minigzip.o $(LIBS)
+-	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS)
++	$(CC) $(CFLAGS) $(CFLAGS_FOR_TARGET) -o $@ minigzip.o $(LDFLAGS)
+ 
+ install: $(LIBS)
+ 	-@if [ ! -d $(exec_prefix) ]; then mkdir -p $(exec_prefix); fi
+@@ -134,7 +134,7 @@
+ 	etags *.[ch]
+ 
+ depend:
+-	makedepend -- $(CFLAGS) -- *.[ch]
++	makedepend -- $(CFLAGS) $(CFLAGS_FOR_TARGET) -- *.[ch]
+ 
+ # DO NOT DELETE THIS LINE -- make depend depends on it.
+ 

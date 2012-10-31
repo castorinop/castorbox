@@ -1,0 +1,50 @@
+diff -Naur fceu-old/configure.ac fceu-new/configure.ac
+--- fceu-old/configure.ac	2004-08-17 15:29:13.000000000 -0700
++++ fceu-new/configure.ac	2006-12-16 22:07:54.000000000 -0800
+@@ -61,9 +61,9 @@
+ AC_DEFINE([PSS_STYLE],[1])
+ AC_DEFINE([NETWORK],[1])
+ 
+-AC_CHECK_HEADER([sys/soundcard.h],
+-        AM_CONDITIONAL(USE_SEXYAL, true)
+-	AC_DEFINE([USE_SEXYAL]),[])
++dnl AC_CHECK_HEADER([sys/soundcard.h],
++dnl        AM_CONDITIONAL(USE_SEXYAL, true)
++dnl	AC_DEFINE([USE_SEXYAL]),[])
+ fi
+ 
+ dnl if expr x"$target" : 'x.*darwin' > /dev/null; then
+diff -Naur fceu-old/src/drivers/pc/dface.h fceu-new/src/drivers/pc/dface.h
+--- fceu-old/src/drivers/pc/dface.h	2004-08-17 15:10:49.000000000 -0700
++++ fceu-new/src/drivers/pc/dface.h	2006-12-16 22:09:37.000000000 -0800
+@@ -17,7 +17,7 @@
+ 
+ int InitSound(FCEUGI *gi);
+ void WriteSound(int32 *Buffer, int Count);
+-int KillSound(void);
++void KillSound(void);
+ uint32 GetMaxSound(void);
+ uint32 GetWriteSound(void);
+ 
+diff -Naur fceu-old/src/drivers/pc/sdl-sound.c fceu-new/src/drivers/pc/sdl-sound.c
+--- fceu-old/src/drivers/pc/sdl-sound.c	2004-05-08 19:59:20.000000000 -0700
++++ fceu-new/src/drivers/pc/sdl-sound.c	2006-12-16 22:09:09.000000000 -0800
+@@ -108,7 +108,7 @@
+ 
+ }
+ 
+-int KillSound(void)
++void KillSound(void)
+ {
+  FCEUI_Sound(0);
+  if(Output)
+@@ -116,9 +116,7 @@
+  if(Interface)
+   Interface->Destroy(Interface);
+  Interface=0;
+- if(!Output) return(0);
+  Output=0;
+- return(1);
+ }
+ 
+ #elif USE_JACKACK	/* Use JACK Audio Connection Kit */

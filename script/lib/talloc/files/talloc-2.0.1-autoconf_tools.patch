@@ -1,0 +1,73 @@
+diff -Naur talloc-2.0.1-old/configure.ac talloc-2.0.1-new/configure.ac
+--- talloc-2.0.1-old/configure.ac	2009-10-28 16:14:19.000000000 -0700
++++ talloc-2.0.1-new/configure.ac	2010-10-30 17:22:15.000000000 -0700
+@@ -24,6 +24,9 @@
+ 	[${TALLOC_VERSION_RELEASE}],
+ 	[talloc release version])
+ 
++AC_PROG_RANLIB
++AC_CHECK_TOOL(AR, ar, false)
++
+ AC_LIBREPLACE_ALL_CHECKS
+ 
+ AC_LD_PICFLAG
+diff -Naur talloc-2.0.1-old/libreplace/configure.ac talloc-2.0.1-new/libreplace/configure.ac
+--- talloc-2.0.1-old/libreplace/configure.ac	2009-06-29 07:50:44.000000000 -0700
++++ talloc-2.0.1-new/libreplace/configure.ac	2010-10-30 17:22:29.000000000 -0700
+@@ -3,6 +3,9 @@
+ AC_CONFIG_SRCDIR([replace.c])
+ AC_CONFIG_HEADER(config.h)
+ 
++AC_PROG_RANLIB
++AC_CHECK_TOOL(AR, ar, false)
++
+ CFLAGS="$CFLAGS -I$srcdir"
+ 
+ AC_LIBREPLACE_ALL_CHECKS
+diff -Naur talloc-2.0.1-old/libreplace/Makefile.in talloc-2.0.1-new/libreplace/Makefile.in
+--- talloc-2.0.1-old/libreplace/Makefile.in	2009-06-29 07:50:44.000000000 -0700
++++ talloc-2.0.1-new/libreplace/Makefile.in	2010-10-30 17:22:47.000000000 -0700
+@@ -1,6 +1,8 @@
+ #!gmake
+ #
+ CC = @CC@
++RANLIB = @RANLIB@
++AR = @AR@
+ prefix = @prefix@
+ exec_prefix = @exec_prefix@
+ bindir = @bindir@
+@@ -40,7 +42,7 @@
+ 	${INSTALLCMD} -m 644 libreplace.a $(sharedbuilddir)/lib
+ 
+ libreplace.a: $(OBJS)
+-	ar -rcsv $@ $(OBJS)
++	$(AR) -rcsv $@ $(OBJS)
+ 
+ test: all
+ 	./testsuite
+diff -Naur talloc-2.0.1-old/Makefile.in talloc-2.0.1-new/Makefile.in
+--- talloc-2.0.1-old/Makefile.in	2009-10-11 06:42:24.000000000 -0700
++++ talloc-2.0.1-new/Makefile.in	2010-10-30 17:22:55.000000000 -0700
+@@ -13,6 +13,8 @@
+ XSLTPROC = @XSLTPROC@
+ INSTALLCMD = @INSTALL@
+ CC = @CC@
++RANLIB = @RANLIB@
++AR = @AR@
+ CFLAGS = @CFLAGS@ -DHAVE_CONFIG_H= -I. -I@srcdir@
+ EXTRA_TARGETS = @DOC_TARGET@
+ PICFLAG = @PICFLAG@
+diff -Naur talloc-2.0.1-old/talloc.mk talloc-2.0.1-new/talloc.mk
+--- talloc-2.0.1-old/talloc.mk	2009-10-11 06:42:24.000000000 -0700
++++ talloc-2.0.1-new/talloc.mk	2010-10-30 17:21:36.000000000 -0700
+@@ -10,8 +10,8 @@
+ 	$(CC) $(CFLAGS) -o testsuite testsuite.o testsuite_main.o $(LIBOBJ) $(LIBS)
+ 
+ $(TALLOC_STLIB): $(LIBOBJ)
+-	ar -rv $@ $(LIBOBJ)
+-	@-ranlib $@
++	$(AR) -rv $@ $(LIBOBJ)
++	@-$(RANLIB) $@
+ 
+ install:: all 
+ 	${INSTALLCMD} -d $(DESTDIR)$(libdir)

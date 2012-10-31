@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org - MiniMyth - Documents</title>
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">MiniMyth from <a href="http://linpvr.org">LinPVR.org</a></div>
+        <div class="menu">
+          <span class="menuItemFirst"><a href="../index.shtml">Projects</a></span>
+          <span class="menuItem"     ><a href="index.shtml">MiniMyth</a></span>
+          <span class="menuItem"     >Documents</span>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">Documents</div>
+        <div class="section">
+          <p>
+             Hopefully, this documentation contains enough information to enable you to download, build, install, configure and run MiniMyth.
+             However, if you have any questions that are not answered here, then head over to the
+             <a href="http://linpvr.org/forum/">forum</a>.
+          </p>
+          <ul>
+            <li><a href="document-history.shtml">MiniMyth History</a></li>
+            <li><a href="document-faq.shtml">MiniMyth FAQ</a></li>
+          </ul>
+          <ul>
+            <li><a href="document-hardware.shtml">MiniMyth Hardware Requirements</a></li>
+            <li><a href="document-boot.shtml">MiniMyth Boot Instructions</a></li>
+            <li>
+              <a href="document-configure.shtml">MiniMyth Configuration Instructions</a>
+              <ul>
+                <li><a href="document-minimyth_conf.shtml">minimyth.conf description</a></li>
+                <li><a href="conf/minimyth.conf" type="text/plain">minimyth.conf example file</a></li>
+                <li><a href="conf/minimyth.script" type="text/plain">minimyth.script example file</a></li>
+              </ul>
+            </li>
+            <li><a href="document-build.shtml">MiniMyth Build System Instructions</a></li>
+          </ul>
+          <ul>
+            <li><a href="document-changelog.txt">MiniMyth changelog</a></li>
+            <li><a href="document-todo.txt">MiniMyth todo list</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-10-09 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

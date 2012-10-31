@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org - MiniMyth - Documents - Build System Instructions</title>
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+      @import "../css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">MiniMyth from <a href="http://linpvr.org">LinPVR.org</a></div>
+        <div class="menu">
+          <span class="menuItemFirst"><a href="../index.shtml">Home</a></span>
+          <span class="menuItem"     ><a href="index.shtml">MiniMyth</a></span>
+          <span class="menuItem"     ><a href="document.shtml">Documents</a></span>
+          <span class="menuItem"     >Build</span>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">Build System Instructions</div>
+        <div id="toc" class="section">
+          <div class="heading">Table of contents</div>
+          <dl>
+            <dt><a href="#general">General</a></dt>
+            <dt><a href="#prerequisite">Prerequisites</a></dt>
+            <dt><a href="#download">Retrieving the build system from the download directory</a></dt>
+            <dt><a href="#vcs">Retrieving the build system from the version control system</a></dt>
+            <dt><a href="#build">Build instructions</a></dt>
+          </dl>
+        </div>
+        <div id="general" class="section">
+          <div class="heading">General</div>
+          <p>
+            The MiniMyth build system is called GAR MiniMyth.
+            It uses a somewhat modified version of the
+            <a href="http://www.lnx-bbc.org/faq-GAR.html">GAR build system</a>
+            to build MiniMyth.
+            Building MiniMyth from source is not for the faint of heart.
+            It takes a long time to build and may fail to build on some systems.
+          </p>
+          <p>
+            The build system has three stages:
+          </p>
+          <ol>
+            <li>build the native environment,</li>
+            <li>build the cross environment and</li>
+            <li>build MiniMyth.</li>
+          </ol>
+          <p>
+            While most packages needed for MiniMyth only build their cross versions,
+            some of the packages needed for MiniMyth such as MySQL, QT and Xorg
+            need to build their native versions in order to build their cross versions.
+          </p>
+          <p>
+            This long, multi-stage, build process exists to ensure independence from the local system on which MiniMyth is being built.
+            We do not want MiniMyth binaries to link to or depend on local system libraries.
+            We do not want differences in local system environments to result in differences in the MiniMyth builds.
+          </p>
+          <p>
+            Unforunately, the price for this local system independence is time and disk space.
+            For me, on a 2.4GHz Pentium 4 machine, a complete build takes approximately 6 hours and 7GB of disk space.
+          </p>
+          <p>
+            However, if you wish to build MiniMyth from source,
+            then you can either build any version in the
+            <a href="download.shtml">MiniMyth download directory</a>
+            or any version found in the version control system.
+            If you wish to build a version found in the MiniMyth download directory,
+            then you will want to follow the instructions for
+            <a href="#download">retrieving the build system from the download directory</a>.
+            If you wish to build a version found in the version control system,
+            then you will want to follow the instructions for
+            <a href="#vcs">retrieving the build system from the version control system</a>.
+          </p>
+        </div>
+        <div id="prerequisite" class="section">
+          <div class="heading">Prerequisites</div>
+          <p>
+            The build system assumes that you are building on either an i386 or an x86_64 architecture computer that is running Linux,
+            although we have not tested it on an x86_64 architecture computer.
+            In addition, the build system assumes that you have a basic set of binaries and libraries installed, including:
+          </p>
+          <ul>
+            <li>binutils,</li>
+            <li>bison,</li>
+            <li>bzip2,</li>
+            <li>coreutils,</li>
+            <li>cvs,</li>
+            <li>diffutils,</li>
+            <li>findutils,</li>
+            <li>flex,</li>
+            <li>gawk,</li>
+            <li>gcc,</li>
+            <li>git,</li>
+            <li>glibc (including static libraries),</li>
+            <li>grep,</li>
+            <li>gzip,</li>
+            <li>util-linux,</li>
+            <li>make,</li>
+            <li>patch,</li>
+            <li>perl,</li>
+            <li>sed,</li>
+            <li>subversion (also known as svn),</li>
+            <li>tar and</li>
+            <li>wget.</li>
+          </ul>
+          <p>
+            The build system does its best to check for the presense of any needed binaries at the beginning of the build process.
+          </p>
+          <p>
+            In order to ensure independence from the local system on which MiniMyth is being built,
+            the build system only uses these binaries and libraries for the early part of the native environment build stage.
+            During the native environment build statge,
+            the MiniMyth build system builds its own versions of these binaries and libraries
+            (with the exception of cvs, glibc, perl and subversion).
+          </p>
+        </div>
+        <div id="download" class="section">
+          <div class="heading">Retrieving the build system from the download directory</div>
+          <p>
+            Retrieving the MiniMyth build system from the MiniMyth download directory is easy:
+          </p>
+          <ol>
+            <li>
+              Download the files that are necessary for building MiniMyth from source.
+              These files can be found in the 'gar-minimyth-{version}.tar.bz2' file in a MiniMyth distribution download directory.
+              The location of the MiniMyth distribution download directories can be found in the
+              <a href="download.shtml">MiniMyth download instructions</a>.
+            </li>
+            <li>
+              Extract the 'gar-minimyth-{version}.tar.bz2' file
+              by running the command 'tar&nbsp;-jxf&nbsp;gar-minimyth-{version}.tar.bz2.
+              This should create the directory 'gar-minimyth-{version}',
+              which is the root of the MiniMyth build system.
+            </li>
+          </ol>
+        </div>
+        <div id="vcs" class="section">
+          <div class="heading">Retrieving the build system from the version control system</div>
+          <p>
+            MiniMyth uses LinPVR.org's Perforce version control system.
+          </p>
+          <p>
+            To use
+            <a href="http://www.perforce.com/">Perforce</a>,
+            you will need the Perforce client utility ('p4'),
+            which can be downloaded from the
+            <a href="http://www.perforce.com/perforce/loadprog.html">Perforce downloads</a>
+            page.
+            Download the client utility appropriate for your Linux system,
+            save it to a directory that is in your path (e.g. '/usr/local/bin') and
+            make sure that it is executable (i.e. run 'chmod&nbsp;+x' on the client utility file).
+          </p>
+          <p>
+            Once you have the Perforce client utility, you need to set up your environment for Perforce.
+            The following Perforce environement variables are either necessary or useful:
+          </p>
+          <dl>
+            <dt><strong>P4PORT</strong></dt>
+            <dd>
+              The Perforce server.
+              The Perforce server must be set to 'perforce.linpvr.org:1666'.
+            </dd>
+            <dt><strong>P4USER</strong></dt>
+            <dd>
+              The Perforce user name.
+              The perforce user name must be set to 'anonymous'.
+            </dd>
+            <dt><strong>P4CLIENT</strong></dt>
+            <dd>
+              The Perforce client name.
+              You can make up any Perforce client name you want.
+              However, it needs to be different from all other Perforce client names used by P4USER='anonymous'.
+              Therefore, your
+              <a href="http://linpvr.org/forum/">forum</a>
+              handle is a good choice for the Perforce client name.
+            </dd>
+            <dt><strong>P4ROOT</strong></dt>
+            <dd>
+              The Perforce root, or local directory where Perforce will store the files downloaded from Perforce.
+              By default, the MiniMyth build system assumes that this directory is '${HOME}/p4root'
+              (although this can be overridden in '${HOME}/.minimyth/minimyth.conf.mk').
+              Therefore, '${HOME}/p4root' is a good choice for the Perforce root.
+              If the directory does not exist, then you need to create it.
+            </dd>
+            <dt><strong>P4EDITOR</strong></dt>
+            <dd>
+              The Perforce editor.
+              The default value is 'vi'.
+              Perforce honors the 'EDITOR' envornment variable as well.
+            </dd>
+          </dl>
+          <p>
+            Once you have set up your Perforce environment and created the Perforce root directory,
+            create the Perforce client by running the command 'p4&nbsp;client'.
+          </p>
+          <p>
+            Once you have created the Perforce client, you can sychronize with the Perforce server by running the command 'p4&nbsp;sync'.
+          </p>
+          <p>
+            A complete list of Perforce commands can be found
+            <a href="http://www.perforce.com/perforce/doc.061/manuals/cmdref/">here</a>.
+            You can also run the command 'p4&nbsp;help' to get help with Perforce commands.
+          </p>
+        </div>
+        <div id="build" class="section">
+          <div class="heading">Build instructions</div>
+          <p>
+            If your local system meets the
+            <a href="#prerequisite">prerequisites</a>,
+            and you have otained a copy of the MiniMyth build system by either
+            <a href="#download">downloading it from the download directory</a> or
+            <a href="#vcs">checking it out from the version control system</a>,
+            then you are ready to build MiniMyth.
+          </p>
+          <p>
+            You can build MiniMyth by following these steps:
+          </p>
+          <ol>
+            <li>
+              Configure the build system with your settings in your '$(HOME)/.minimyth/minimyth.conf.mk' file.
+              These settings override the default settings in the build system's '{build-root}/script/minimyth.conf.mk' file,
+              where '{build-root}' is the root directory of the MiniMyth build system.
+              Be sure to set 'mm_HOME' to the root directory of the MiniMyth build system.
+              The build system does its best to check for stale, incorrect or missing settings,
+              but it cannot catch everything.
+              Therefore, be sure that your '${HOME}/.minimyth/minimyth.conf.mk' file is
+              up-to-date and contains correct values for settings that you need or want to override.
+            </li>
+            <li>
+              Clean the entire build system by running the command
+              'cd&nbsp;{build-root}&nbsp;;&nbsp;make&nbsp;clean'.
+            </li>
+            <li>
+              Download the distribution source files by running the following command
+              'cd&nbsp;${build-root}&nbsp;;&nbsp;make&nbsp;garchive'.
+              Because some source tarballs are large and some download servers are slow,
+              this can take awhile.
+            </li>
+            <li>
+              Build MiniMyth by running the following command
+              'cd&nbsp;${build-root}/script/meta/minimyth&nbsp;;&nbsp;make&nbsp;build'.
+              This is the step that take a long time.
+            </li>
+            <li>
+              Install MiniMyth by running the following command
+              'cd&nbsp;${build-root}/script/meta/minimyth&nbsp;;&nbsp;make&nbsp;install'.
+            </li>
+          </ol>
+          <p>
+            While care is taken to make sure the the build system is free of bugs,
+            assuming that it is free of bugs would be foolish.
+            If a bug in the build system caused the build system to install files in the wrong location,
+            then your local system could be crippled.
+            Therefore, the build system performs checks to reduce the chance that it will damage the system.
+          </p>
+          <p>
+            First, the build system checks whether or not you are the root user (any user with UID='0' or GID='0').
+            If you are the root user, then the build system prints an error message and exits.
+            Everything, with the exception of parts of 'make&nbsp;install', can be done as a user with very limited access rights.
+          </p>
+          <p>
+            Second, the build system checks whether or not you have write access to typical system directories.
+            If you have write access to any of these directories, then the build system prints an error message and exits.
+          </p>
+          <p>
+            However, 'make&nbsp;install' needs to perform the following operations as root:
+          </p>
+          <ul>
+            <li>copy files to the TFTP directory, when mm_INSTALL_RAM_ROOT='yes',</li>
+            <li>copy files to the TFTP and NFS directories, when mm_INSTALL_NFS_ROOT='yes' and</li>
+            <li>copy files to the TFTP directory, when mm_INSTALL_LATEST='yes'.</li>
+          </ul>
+          <p>
+            As a result, 'make&nbsp;install' may prompt you for the root password,
+            depending on your settings in '${HOME}/.minimyth/minimyth.conf.mk'.
+          </p>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-09-30 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

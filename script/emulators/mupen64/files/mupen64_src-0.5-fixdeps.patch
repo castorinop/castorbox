@@ -1,0 +1,12 @@
+diff --speed-large-files --minimal -Nru tmp/mupen64_src-0.5/main/main.c work/main.d/mupen64_src-0.5/main/main.c
+--- mupen64_src-0.5/main/main.c	2005-08-26 16:52:11.000000000 -0300
++++ mupen64_src-0.5/main/main.c	2007-03-06 23:39:07.000000000 -0300
+@@ -48,6 +48,8 @@
+ #include "plugin.h"
+ #include "savestates.h"
+ 
++#include <dirent.h>
++
+ #define NOGUI_VERSION
+ #include "gui_gtk/config.h"
+ #include "../config.h"

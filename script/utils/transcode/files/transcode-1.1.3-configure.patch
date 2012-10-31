@@ -1,0 +1,15 @@
+diff -Naur transcode-1.1.3-old/configure.in transcode-1.1.3-new/configure.in
+--- transcode-1.1.3-old/configure.in	2009-07-18 04:56:04.000000000 -0700
++++ transcode-1.1.3-new/configure.in	2009-07-18 11:15:23.000000000 -0700
+@@ -871,8 +871,9 @@
+     [lame_version="`./conftest$ac_exeext`"],
+     [AC_MSG_RESULT([failed])
+      TC_PKG_ERROR(lame, lame.h, yes, lame, [http://www.mp3dev.org/],
+-      [cannot compile and run a test program])],,
+-    [AC_MSG_RESULT([cross compiling; assumed OK...])])
++      [cannot compile and run a test program])],
++    [echo $ac_n "cross compiling; assumed OK... $ac_c"
++    lame_version=398])
+   CFLAGS="$ac_save_CFLAGS"
+   LIBS="$ac_save_LIBS"
+ 

@@ -1,0 +1,36 @@
+diff --speed-large-files --minimal -Nru tmp/cxfe/Makefile.in work/main.d/cxfe/Makefile.in
+--- old/Makefile.in	2004-11-15 16:48:36.000000000 -0300
++++ new/Makefile.in	2007-02-04 17:31:45.000000000 -0300
+@@ -11,11 +11,12 @@
+ libdir = $(prefix)/lib/gnudl
+ mandir = $(prefix)/man/man1
+ 
++
+ CC = @CC@ -Wall
+ CPPFLAGS = @CPPFLAGS@
+-CFLAGS = $(CPPFLAGS) @CFLAGS@ `xine-config --cflags`
++CFLAGS = $(CPPFLAGS) @CFLAGS@ `$(DESTDIR)$(bindir)/xine-config --cflags`
+ LIBS = @LIBS@
+-LDFLAGS = `xine-config --libs` -L/usr/X11R6/lib -lXext@LDFLAGS@ @LIBS@ -lX11 
++LDFLAGS = `$(DESTDIR)$(bindir)/xine-config --libs` -L$(DESDTDIR)/usr/X11R6/lib -lXext@LDFLAGS@ @LIBS@ -lX11 
+ INSTALL = @INSTALL@
+ 
+ #CC=gcc -Wall -g -O2
+@@ -32,11 +33,11 @@
+ 	rm cxfe.o cxfe termio/*.o post.o
+ 
+ install:
+-	cp cxfe $(bindir)/cxfe
+-	chmod 755 $(bindir)/cxfe
+-	if test ! -d $(prefix)/share/cxfe ; then mkdir -p $(prefix)/share/cxfe ; fi
+-	cp lircrc-example $(prefix)/share/cxfe/lircrc
++	cp cxfe $(DESTDIR)$(bindir)/cxfe
++	chmod 755 $(DESTDIR)$(bindir)/cxfe
++	if test ! -d $(DESTDIR)$(prefix)/share/cxfe ; then mkdir -p $(DESTDIR)$(prefix)/share/cxfe ; fi
++	cp lircrc-example $(DESTDIR)$(prefix)/share/cxfe/lircrc
+ 
+ uninstall:
+-	rm -f $(bindir)/cxfe
+-	rm -Rf $(prefix)/share/cxfe
++	rm -f $(DESTDIR)$(bindir)/cxfe
++	rm -Rf $(DESTDIR)$(prefix)/share/cxfe

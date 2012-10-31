@@ -1,0 +1,6 @@
+# /etc/acpi/events/asus-touchpad
+# This is called when the user presses the touchpad button and calls
+# /etc/acpi/asus-touchpad.sh for further processing.
+
+event=hotkey (ATKD|HOTK) (0000006[ab]|00000037)
+action=/etc/acpi/asus-touchpad.sh

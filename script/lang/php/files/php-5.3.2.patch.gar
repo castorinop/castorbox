@@ -1,0 +1,61 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.3.1/configure.in work/main.d/php-5.3.1/configure.in
+--- tmp/php-5.3.1/configure.in  2009-11-18 16:43:33.000000000 -0300
++++ new-php-5.3.1/configure.in  2009-12-05 00:09:51.000000000 -0300
+@@ -393,7 +391,7 @@
+ PHP_CHECK_FUNC(yp_get_default_domain, nsl)
+
+ PHP_CHECK_FUNC(dlopen, dl)
+-if test "$ac_cv_func_dlopen" = "yes"; then
++if test "$ac_cv_func_dlopen" = "yes" -o "$ac_cv_lib_dl_dlopen" = "yes"; then
+   AC_DEFINE(HAVE_LIBDL, 1, [ ])
+ fi
+ AC_CHECK_LIB(m, sin)
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.3.1/ext/iconv/config.m4 work/main.d/php-5.3.1/ext/iconv/config.m4
+--- tmp/php-5.3.1/ext/iconv/config.m4   2007-12-04 08:27:25.000000000 -0300
++++ new-php-5.3.1/ext/iconv/config.m4   2009-12-04 21:09:01.000000000 -0300
+@@ -15,7 +15,7 @@
+
+   if test "$iconv_avail" != "no"; then
+     if test -z "$ICONV_DIR"; then
+-      for i in /usr/local /usr; do
++      for i in $PHP_ICONV /usr/local /usr; do
+         if test -f "$i/include/iconv.h" || test -f "$i/include/giconv.h"; then
+           PHP_ICONV_PREFIX="$i"
+           break
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.3.1/acinclude.m4 work/main.d/php-5.3.1/acinclude.m4
+--- tmp/php-5.3.1/acinclude.m4  2009-08-11 20:45:35.000000000 -0300
++++ new-php-5.3.1/acinclude.m4  2009-12-04 20:54:12.000000000 -0300
+@@ -2430,7 +2430,7 @@
+   dnl
+   dnl Check libc first if no path is provided in --with-iconv
+   dnl
+-  if test "$PHP_ICONV" = "yes"; then
++  if test "$PHP_ICONV" != "no"; then
+     AC_CHECK_FUNC(iconv, [
+       found_iconv=yes
+     ],[
+@@ -2501,8 +2501,8 @@
+ AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
+ [
+   for i in $PHP_LIBXML_DIR /usr/local /usr; do
+-    if test -x "$i/bin/xml2-config"; then
+-      ac_cv_php_xml2_config_path="$i/bin/xml2-config"
++    if test -x "$i/bin-config/xml2-config"; then
++      ac_cv_php_xml2_config_path="$i/bin-config/xml2-config"
+       break
+     fi
+   done
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/php-5.2.8/aclocal.m4 work/main.d/php-5.2.8/aclocal.m4
+--- tmp/php-5.2.8/aclocal.m4	2008-12-07 16:31:10.000000000 -0300
++++ new-php-5.2.8/aclocal.m4	2009-10-22 14:08:47.000000000 -0300
+@@ -2501,8 +2501,8 @@
+ AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
+ [
+   for i in $PHP_LIBXML_DIR /usr/local /usr; do
+-    if test -x "$i/bin/xml2-config"; then
+-      ac_cv_php_xml2_config_path="$i/bin/xml2-config"
++    if test -x "$i/bin-config/xml2-config"; then
++      ac_cv_php_xml2_config_path="$i/bin-config/xml2-config"
+       break
+     fi
+   done

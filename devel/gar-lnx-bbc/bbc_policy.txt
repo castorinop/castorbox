@@ -1,0 +1,264 @@
+                      LNX-BBC Policy Document v. 0.9.1
+
+This policy is an extrapolation of guidelines which BBC developers
+have kept in mind or explicitly formulated concerning previous BBC
+development. This document also includes maxims which are considered
+to describe significant technical features of the BBC. These are the
+decisions that have been made thus far, but developers should feel
+more than free to experiment with other design ideas, with the
+understanding that there will probably be a good deal of review toward
+getting those changes committed. These policies can be altered, but
+discussion beforehand is advised. In a nutshell, our design goals are:
+to be compact, featureful and user-friendly, in that order.
+
+= 1. Boot-Time Versus Run-Time =
+
+1.1. BBC software is divided into two worlds. One world is called the
+boot image. The other is called the run-time world or the user-space
+world. At any given time, except for 5 to 10 critical lines in 'init',
+the running system is in one world or the other. That is, either the
+system is in the process of booting, or it is available to the user.
+In technical terms, the distinction is whether the root filesystem is
+an initrd or the final singularity filesystem. In the boot world, a
+temporary sort of init script called "linuxrc" is running, while in
+the run-time world init is running.
+
+1.2. The two worlds use different binaries and different libraries.
+They are not binary compatible and it is not allowed (except in the
+case of init) for a program from one world to invoke or rely upon a
+program from the other world. This division allows the system to boot
+in a predictable way and then to provide the use of an arbitrary
+collection of software in the run-time world.
+
+1.3. All software in the boot image must run correctly assuming only
+the availability of the libraries which are to be found in the boot
+image. It is not generally permissible to add any new libraries to the
+boot image; doing so constitutes a major design change. The normal way
+to add software to the boot image is to compile it into the busybox
+package, to write it as a bourne-compatible shell script, to write it
+and compile it from C using uClibc, or to write it in assembly.
+Attempting to build standard packages for the boot image is frowned
+upon.
+
+1.4. The responsibility of the software in the boot image is to locate
+and mount the CDROM and perform any other necessary tasks to allow the
+software in the run-time world to become usable. The boot image may
+optionally perform other tasks as well, whether additional to or as an
+alternative to these tasks. For example, one version of the boot image
+allowed the user to choose to run a Debian installer instead of
+booting the system normally.
+
+1.5. Currently, the boot image uses a single busybox compilation that
+is statically linked to uClibc.  No other libraries or ELF binaries
+exist on the system.  The boot image's job is to run the linuxrc
+shell script, which will prepare the singularity to be mounted.  When
+linuxrc exits (which it may safely do), the Linux kernel will then
+mount the singularity on / and use this new filesystem to find init.
+Those familiar with pre-2.0 LNX-BBCs will notice that the role of the
+boot world has been diminished somewhat by this practice.  Users
+wishing to customize the boot sequence are encouraged to focus on the
+singularity's copy of init, modifying the boot image only when
+necessary.
+
+= 2. Software Requirements And Compatibility Issues =
+
+2.1. Programs in the run-time world may assume that they are running
+with root privileges.
+
+2.2. A serial console should be supported as far as possible and never
+required.
+
+2.3. A framebuffer should be supported as far as possible but never
+required. If the BBC includes X11 support, it should include an
+Xserver which can display on a framebuffer device.
+
+2.4. Some items on the CDROM are not Linux software. Examples include
+the syslinux bootloader and the Linux kernel itself, as well as MSDOS
+software such as loadlin.exe and rawrite2.exe.
+
+2.5. The BBC must never include Gnome.
+
+2.6. The BBC must never include KDE.
+
+2.7. The BBC must never include more than one window manager.
+
+2.8. The BBC should not include man pages.
+
+2.9. The use of UNIX98 ptys is preferred over other pty schemes.
+
+2.10. All software in either the boot-time or the run-time world must
+run correctly under any standard Linux 2.2 kernel. For BBC 2.0, all
+software must run correctly under any standard Linux 2.4 kernel unless
+the incompatibility is due to a bug in 2.4 which has subsequently been
+fixed, or unless the incompatibility can otherwise be blamed on the
+kernel itself.
+
+= 3. Run-Time Library Issues =
+
+3.1. It is the responsibility of the boot image to make available,
+after boot time, any libraries which are required by programs
+available in the run-time world. These libraries, by policy, always
+exist in /lib and physically reside on the CDROM. 
+
+3.2. All dynamic libraries which are to be linked at run-time by the
+dynamic linker must be placed in /lib even if this is contrary to
+usual distribution practice or to library documentation (not to
+mention the Linux Standard Base). Dynamic libraries which are linked
+by running programs themselves, for example using the dlopen(3)
+function, may be placed wherever such programs expect to find them,
+provided that no more than one copy of a particular dynamic library
+should physically exist on the CDROM. If two programs use the same
+library, the BBC should include one copy of this library in .so form.
+Neither program should be statically linked against the library, nor
+should more than one version of a particular library exist on the BBC.
+There are two exceptions: if a library is not generally available in
+.so form, it may be used in its customary static form; and if two
+programs require incompatible versions of a particular library, both
+versions may be included.  Static libraries must never appear as .a
+files on the CDROM.
+
+3.3. A list of libraries available to run-time programs should be
+maintained. Any programs found in the run-time system must at most
+require these dynamic libraries. Adding a new library is permissable,
+but should be discussed beforehand to ensure that this library is
+really necessary and appropriate.
+
+3.4. If only one program on the BBC requires a particular library, and
+there are no plans to add another program requiring that library,
+static linking of the library is preferred if possible. A developer
+deliberately performing a static link should advise other developers
+so that if this library is required by additional software in the
+future, the dynamic version will be used at that time.
+
+3.5. All software which uses X11 must use or implement functionality
+analogous to libX11 and must correctly implement X11R6 protocol
+features to the extent that it uses them. All software should be
+compatible with both XFree86 version 3 and XFree86 version 4 except
+for software deliberately designed for use with a specific XFree86
+version. In addition, X11 software should interoperate properly with
+another X11 server if one is substituted for XFree86. After BBC 1.618,
+all software which uses X11 must be compatible with XFree86 version 4.
+
+3.6. In BBC 2.0, all software in the run-time world which uses dynamic
+libraries must use glibc 2.2 and may not use or require an earlier
+glibc version. In addition, all software in the run-time world should,
+if applicable, include LFS support.
+
+= 4. Directories, Filesystems, And File Creation =
+
+4.1. Programs in the run-time may assume that the directories /etc,
+/var, /tmp, /home, and subdirectories of any of these are writable.
+All of these directories will be symlinks to subdirectories of a tmpfs
+volume, so programs written or configured by BBC maintainers should
+not represent to the user that storage of files in these locations
+will be permanent, nor should such programs normally create any file
+over 1M unless specifically asked by the user. This does not mean that
+programs must request interactive confirmation before creating large
+files, but that their default behavior should not surprise the user by
+abruptly consuming large quantities of RAM via the tmpfs.
+
+4.2. All other directories should be assumed to be non-writable. The
+user may mount filesystems under /mnt and programs may assist in this
+process.  These filesystems may be mounted read-only or read-write.
+
+4.3. Unless symbolic links are created in the boot image, or special
+provision is made in the init script, all files added to the CDROM
+will appear under / on the run-time system; and programs must
+expect files to appear in these locations. It is permissable to create
+symbolic links to allow a program to read files from another location.
+
+4.4. In BBC 2.0, programs must be compatible with devfs. The use of
+device nodes in the filesystem will be deprecated except in unusual
+circumstances where a program has a sound technical reason for
+incompatibility with devfs or where a future version which includes
+proper devfs compatibility is being awaited from an upstream
+developer.
+
+4.5. Programs may assume the availability of a /proc filesystem on
+/proc, a /devfs filesystem on /dev, and a /dev/pts-like filesystem on
+/dev/pts.
+
+4.6. We haven't figured out which file locking scheme is preferred,
+but we encourage programs to be aware of potential conflicts with
+other software.  The BBC should be considered a single-user system,
+although it may provide network services including remote login. We
+can normally assume that only one individual is using a given BBC
+system interactively at a particular time.
+
+= 5. Disk Space Utilization And Restrictions =
+
+5.1. A standard BBC, as a whole, must be 50M or less, in order to fit
+on a business card CDROM, CDR, or CDRW.
+
+5.2. It is an absolute requirement that the entire contents of the
+boot image, when gzipped, must, together with the kernel image, the
+syslinux bootloader, and the syslinux configuration, fit within a FAT
+filesystem with a total size of exactly 1.44M. Therefore, the great
+majority of the boot image must consist of empty space, which
+compresses well.
+
+5.3. Because of the overall size constraint on the BBC, there are
+several subsidiary constraints which propagate to other parts of the
+system. To satisfy these, it is important to conserve space wherever
+possible and to assure that no part of the system grows unreasonably
+large. Software included on the BBC should be chosen judiciously and
+compression should be used wherever possible. Techniques to reduce
+space requirements of any part of the system should constantly be
+investigated.
+
+5.4. The BBC project will focus on 50M business card CDs, but will
+pursue technical cooperation with and provide support to developers
+inside or outside the project who would like to use the BBC as a
+framework for other rescue, demo, or application CDs.
+
+= 6. Restriction Against Automated Modification Of Native Systems =
+
+6.1. The BBC must never, unless requested by the user, do anything
+which could possibly alter the contents of any hard drive, floppy
+drive, other permanent storage, or non-volatile or CMOS RAM. A BBC
+merely booted on a system should never alter that system in any
+permanent way. For example, a filesystem driver which performs any
+disk write operation when mounting a filesystem read/write, may not be
+used to mount a filesystem read/write without a user request, because
+this would alter a disk.
+
+6.2. There is no restriction on the operations that commands may
+perform in response to a user request. However, no program should be
+included if that program would perform a potentially dangerous action
+in a circumstance which would not be anticipated by an experienced
+user of that program. This means both that programs which contain
+known serious flaws that could result in damage to a system should not
+be included (unless modified to provide an explicit warning before
+they are used), and that programs must not be modified in ways which
+will confuse users and lead them to make errors in the use of the BBC.
+
+= 7. Copyrights And Licenses =
+
+7.1. All software included in a standard BBC must provide to its users
+the four freedoms identified by Richard Stallman in his definition of
+free software <http://www.gnu.org/philosophy/free-sw.html>. In
+addition, we will accept software that requires that distribution be
+contingent upon inclusion within a larger work. Software patent claims
+will not in themselves be considered to make any piece of software
+unfree. However, we will seek alternatives to patented software
+wherever possible, and will identify patent claims of which we are
+aware to make it easier for BBC distributors who are interested in
+reducing their legal liability to remove such software.
+
+7.2. Developers who add particular software to the LNX-BBC system must
+provide a copy of the source code, if any, for such software, along
+with any changes, to the BBC maintainers. The BBC maintainers will be
+responsible for providing this source code to the public.
+
+7.3. Nonstandard BBC releases are permitted and encouraged, and are
+requested but not required to comply with this policy as well as to
+participate in technical cooperation with the LNX-BBC maintainers.
+Those who make nonstandard releases are required to comply with
+license terms for the BBC as a whole (compilation copyright) as well
+as for individual software packages they choose to include. By design,
+the standard BBC is meant to allow derived works to be sold or given
+away by any party for any purpose.  The GNU GPL will require that,
+unless the BBC physically contains source code for GPL-covered
+packages, a physical distribution of a BBC bear or be accompanied by a
+written notice of source code availability.
+

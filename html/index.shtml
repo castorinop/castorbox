@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <meta name="author" content="Paul Bender" />
+    <meta name="copyright" content="2006 Paul Bender &amp; LinPVR.org" />
+    <meta name="keywords" content="LinPVR,MiniMyth,Linux,PVR,Linux,MythTV,diskless,Mini-ITX,EPIA" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LinPVR.org</title>
+    <style type="text/css" title="main-styles">
+      @import "css/linpvr.css";
+    </style>
+  <!--#if expr="" -->
+    <style type="text/css" title="main-styles">
+        @import "css/linpvr-sidebar-hide.css";
+    </style>
+  <!--#endif -->
+  <!--#if expr="" -->
+    <script type="text/javascript" src="script/clientSideInclude.js">
+    </script>
+    <script type="text/javascript">
+    <!-- 
+      function clientSideIncludes() {
+        clientSideInclude('minimyth.include.overview', 'minimyth/include/overview.html');
+      }
+      window.onload = clientSideIncludes;
+    // -->
+    </script>
+  <!--#endif -->
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div class="heading">LinPVR.org</div>
+        <div class="menu">
+          <span class="menuItemFirst">Home</span>
+          <span class="menuItem"     ><a href="minimyth/index.shtml">MiniMyth</a></span>
+          <span class="menuItem"     ><a href="http://linpvr.org/forum/">Forum</a></span>
+          <span class="menuItem"     ><a href="http://linpvr.org/bugs/">Bug Tracker</a></span>
+        </div>
+        <div class="note">
+          <a href="http://linpvr.org/old/">Old Site</a>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="heading">Projects</div>
+        <div class="section">
+          <div class="heading"><a href="minimyth/index.shtml">MiniMyth</a></div>
+          <!--#if expr="" -->
+            <span id="minimyth.include.overview"></span>
+            <noscript>
+              <p>
+                You are seeing this because your web browser is not allowing the use of JavaScript.
+                The information that you are missing are
+                the names and version numbers of the major software packages included in this release of MiniMyth.
+              </p>
+            </noscript>
+          <!--#else -->
+            <!--#include file="minimyth/include/overview.html" -->
+          <!--#endif -->
+          <p>
+            You can find out more about MiniMyth
+            <a href="minimyth/index.shtml">here</a>.
+          </p>
+        </div>
+      </div>
+      <div class="footer">
+        <hr />
+        Last Updated: 2006-10-07 &lt;<a href="mailto:info at linpvr.org">webmaster at linpvr.org</a>&gt;
+      </div>
+    </div>
+    <div class="side">
+      <!--#include file="include/sidebar.html" -->
+    </div>
+  </body>
+</html>

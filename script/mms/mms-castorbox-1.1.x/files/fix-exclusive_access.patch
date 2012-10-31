@@ -1,0 +1,26 @@
+=== modified file 'plugins/feature/common-feature.cpp'
+--- old/plugins/feature/common-feature.cpp	2008-12-25 17:13:30 +0000
++++ new/plugins/feature/common-feature.cpp	2009-06-04 18:49:24 +0000
+@@ -35,16 +35,15 @@
+ 
+ void run::aquire_exclusive_access()
+ {
++  S_InputMaster::get_instance()->suspend();
++#ifdef use_notify_area
++  S_NotifyArea::get_instance()->disable();
++#endif
++  aquire_exclusive_plugin_access();
++
+   S_ScreenUpdater::get_instance()->deactivate();
+   S_BackgroundUpdater::get_instance()->deactivate();
+ 
+-#ifdef use_notify_area
+-  S_NotifyArea::get_instance()->disable();
+-#endif
+-
+-  S_InputMaster::get_instance()->suspend();
+-
+-  aquire_exclusive_plugin_access();
+ }
+ 
+ void run::release_exclusive_plugin_access()

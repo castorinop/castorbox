@@ -1,0 +1,14 @@
+--- old/ext/filter/config.m4	2006-12-06 00:51:30.000000000 +0100
++++ new/ext/filter/config.m4.oden	2007-06-20 12:26:17.000000000 +0200
+@@ -10,10 +10,7 @@
+ if test "$PHP_FILTER" != "no"; then
+ 
+   dnl Check if configure is the PHP core configure
+-  if test -n "$PHP_VERSION"; then
+-    dnl This extension can not be build as shared when in PHP core
+-    ext_shared=no
+-  else
++  if test -z "$PHP_VERSION"; then
+     dnl This is PECL build, check if bundled PCRE library is used
+     old_CPPFLAGS=$CPPFLAGS
+     CPPFLAGS=$INCLUDES

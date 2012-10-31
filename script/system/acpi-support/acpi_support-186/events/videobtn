@@ -1,0 +1,3 @@
+# /etc/acpi/events/videobtn
+event=video.* 00000080
+action=/etc/acpi/videobtn.sh

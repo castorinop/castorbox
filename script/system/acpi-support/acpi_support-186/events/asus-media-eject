@@ -1,0 +1,6 @@
+# /etc/acpi/events/asus-media-eject
+# This is called when the user presses the eject media button and calls
+# /etc/acpi/media.sh for further processing.
+
+event=hotkey (ATKD|HOTK) 0000004c
+action=/etc/acpi/ejectbtn.sh

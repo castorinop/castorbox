@@ -1,0 +1,11 @@
+--- old/ext/dba/config.m4	2007-05-21 13:38:53.000000000 +0200
++++ new/ext/dba/config.m4.oden	2007-06-01 10:33:10.000000000 +0200
+@@ -186,6 +186,8 @@
+ #endif
+           ],[
+             THIS_LIBS=$LIB
++            LDFLAGS=$old_LDFLAGS
++            LIBS=$old_LIBS
+             lib_found=1
+           ])
+         ])

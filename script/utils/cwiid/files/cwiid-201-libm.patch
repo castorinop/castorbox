@@ -1,0 +1,22 @@
+diff -Naur cwiid-201-old/wminput/plugins/ir_ptr/Makefile.in cwiid-201-new/wminput/plugins/ir_ptr/Makefile.in
+--- cwiid-201-old/wminput/plugins/ir_ptr/Makefile.in	2009-07-17 09:10:26.000000000 -0700
++++ cwiid-201-new/wminput/plugins/ir_ptr/Makefile.in	2009-07-17 09:11:06.000000000 -0700
+@@ -5,6 +5,7 @@
+ PLUGIN_NAME = ir_ptr
+ SOURCES = ir_ptr.c
+ CFLAGS += -I@top_builddir@/wminput -I@top_builddir@/libcwiid
++LDLIBS += -lm
+ INST_DIR = $(CWIID_PLUGINS_DIR)
+ 
+ include $(COMMON)/include/plugin.mak
+diff -Naur cwiid-201-old/wminput/plugins/led/Makefile.in cwiid-201-new/wminput/plugins/led/Makefile.in
+--- cwiid-201-old/wminput/plugins/led/Makefile.in	2009-07-17 09:10:27.000000000 -0700
++++ cwiid-201-new/wminput/plugins/led/Makefile.in	2009-07-17 09:11:06.000000000 -0700
+@@ -5,6 +5,7 @@
+ PLUGIN_NAME = led
+ SOURCES = led.c
+ CFLAGS += -I@top_builddir@/wminput -I@top_builddir@/libcwiid
++LDLIBS += -lm
+ INST_DIR = $(CWIID_PLUGINS_DIR)
+ 
+ include $(COMMON)/include/plugin.mak

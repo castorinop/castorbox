@@ -1,0 +1,67 @@
+diff -Naur php-5.3.0/build/build2.mk php-5.3.0.oden/build/build2.mk
+--- php-5.3.0/build/build2.mk	2007-01-01 20:32:10.000000000 +0100
++++ php-5.3.0.oden/build/build2.mk	2009-07-01 13:37:41.000000000 +0200
+@@ -31,6 +31,7 @@
+ 
+ PHP_AUTOCONF ?= 'autoconf'
+ PHP_AUTOHEADER ?= 'autoheader'
++PHP_ACLOCAL ?= 'aclocal-1.7'
+ 
+ SUPPRESS_WARNINGS ?= 2>&1 | (egrep -v '(AC_TRY_RUN called without default to allow cross compiling|AC_PROG_CXXCPP was called before AC_PROG_CXX|defined in acinclude.m4 but never used|AC_PROG_LEX invoked multiple times|AC_DECL_YYTEXT is expanded from...|the top level)'||true)
+ 
+diff -Naur php-5.3.0/scripts/phpize.in php-5.3.0.oden/scripts/phpize.in
+--- php-5.3.0/scripts/phpize.in	2009-06-24 09:42:33.000000000 +0200
++++ php-5.3.0.oden/scripts/phpize.in	2009-07-01 13:37:41.000000000 +0200
+@@ -8,9 +8,11 @@
+ builddir="`pwd`"
+ SED="@SED@"
+ 
++export WANT_AUTOCONF_2_5="1"
++
+ FILES_BUILD="mkdep.awk scan_makefile_in.awk shtool libtool.m4"
+ FILES="acinclude.m4 Makefile.global config.sub config.guess ltmain.sh run-tests*.php"
+-CLEAN_FILES="$FILES *.o *.lo *.la .deps .libs/ build/ include/ modules/ install-sh \
++CLEAN_FILES="$FILES *.so *.o *.lo* *.la .deps .libs/ build/ include/ modules/ install-sh \
+ 	mkinstalldirs missing config.nice config.sub config.guess configure configure.in \
+ 	aclocal.m4 config.h config.h.in conftest* ltmain.sh libtool config.cache autom4te.cache/ \
+ 	config.log config.status Makefile Makefile.fragments Makefile.objects confdefs.h \
+@@ -120,6 +122,7 @@
+ {
+   test -z "$PHP_AUTOCONF" && PHP_AUTOCONF=autoconf
+   test -z "$PHP_AUTOHEADER" && PHP_AUTOHEADER=autoheader
++  test -z "$PHP_ACLOCAL" && PHP_ACLOCAL=aclocal-1.7
+   
+   if test ! -x "$PHP_AUTOCONF" && test ! -x "`$php_shtool path $PHP_AUTOCONF`"; then
+     cat <<EOF
+@@ -137,6 +140,14 @@
+ EOF
+     exit 1
+   fi
++  if ! test -x "`$php_shtool path $PHP_ACLOCAL`"; then
++    cat <<EOF
++Cannot find aclocal. Please check your autoconf installation and the \$PHP_ACLOCAL 
++environment variable is set correctly and then rerun this script. 
++
++EOF
++    exit 1
++  fi
+ }
+ 
+ phpize_copy_files()
+@@ -150,13 +161,13 @@
+ 
+ phpize_replace_prefix()
+ {
+-  $SED \
+-  -e "s#@prefix@#$prefix#" \
+-  < "$phpdir/phpize.m4" > configure.in
++  cp $phpdir/phpize.m4 configure.in
+ }
+ 
+ phpize_autotools()
+ {
++  libtoolize --copy --force || exit 1
++  $PHP_ACLOCAL    || exit 1
+   $PHP_AUTOCONF   || exit 1
+   $PHP_AUTOHEADER || exit 1
+ }

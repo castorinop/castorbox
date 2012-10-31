@@ -1,0 +1,21 @@
+diff -Naur xf86-video-savage-2.3.2-old/configure.ac xf86-video-savage-2.3.2-new/configure.ac
+--- xf86-video-savage-2.3.2-old/configure.ac	2010-12-05 01:08:52.000000000 -0800
++++ xf86-video-savage-2.3.2-new/configure.ac	2010-12-05 11:41:06.000000000 -0800
+@@ -43,6 +43,7 @@
+ # Initialize libtool
+ AC_DISABLE_STATIC
+ AC_PROG_LIBTOOL
++PKG_PROG_PKG_CONFIG
+ 
+ AH_TOP([#include "xorg-server.h"])
+ 
+@@ -70,7 +71,8 @@
+                   HAVE_XEXTPROTO_71="yes"; AC_DEFINE(HAVE_XEXTPROTO_71, 1, [xextproto 7.1 available]),
+                   HAVE_XEXTPROTO_71="no")
+ AM_CONDITIONAL(HAVE_XEXTPROTO_71, [ test "$HAVE_XEXTPROTO_71" = "yes" ])
+-sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
++m4_pattern_allow([^PKG_CONFIG_SYSROOT_DIR$])
++sdkdir="$PKG_CONFIG_SYSROOT_DIR`$PKG_CONFIG --variable=sdkdir xorg-server`"
+ 
+ # Checks for libraries.
+ 

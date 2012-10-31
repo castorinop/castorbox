@@ -1,0 +1,418 @@
+=== modified file 'plugins/feature/movie/series.cpp'
+--- old/plugins/feature/movie/series.cpp	2010-11-02 00:13:33 +0000
++++ new/plugins/feature/movie/series.cpp	2010-11-02 01:14:03 +0000
+@@ -25,7 +25,7 @@
+ using std::list;
+ 
+ Series::Series()
+-  : SerieDB("seriehd.db", true), scanning(false), in_series(true), update_needed(true),
++  : SerieDB("seriehd.db", true), scanning(false), view_new_episodes(false), in_series(true), update_needed(true),
+ 				 pos_serie(0), pos_season(0), pos_episode(0)
+ {
+ /*  if (!recurse_mkdir(conf->p_var_data_dir(),"movies", &imdb_dir))
+@@ -78,8 +78,10 @@
+   playmovie(e);
+   if (vector_lookup(episode, pos_episode).viewed == 0 && filesystem::getFileSize(filename) > 0) {
+     setViewed(vector_lookup(episode, pos_episode).id); // update DB
+-    episode[pos_episode].viewed = 1; // update vector episode
+-    series[pos_serie].unviewed -= 1; // update Vector series
++	if (!view_new_episodes) {
++	    episode[pos_episode].viewed = 1; // update vector episode
++    	series[pos_serie].unviewed -= 1; // update Vector series
++	}
+   }
+ }
+ 
+@@ -247,7 +249,7 @@
+ {
+   ExtraMenu em;
+ 
+-  if (in_series) {
++  if (in_series && !view_new_episodes) {
+     em.add_item(ExtraMenuItem(dgettext("mms-movie", "Enter serie"), input_master->find_shortcut("action"),
+ 			      boost::bind(&Series::enter_serie, this)));
+   
+@@ -339,15 +341,15 @@
+ 
+ void Series::prev()
+ {
+-  int size = (in_series ? series.size() : episode.size());
+-  int pos = (in_series ? pos_serie : pos_episode);
++  int size = (in_series && !view_new_episodes ? series.size() : episode.size());
++  int pos = (in_series && !view_new_episodes ? pos_serie : pos_episode);
+ 
+   if (pos != 0)
+     --pos;
+   else
+     pos = size -1;
+ 
+-  if (in_series) { 
++  if (in_series && !view_new_episodes) { 
+ 	pos_serie = pos; 
+ 	pos_episode = 0; 
+   } else 
+@@ -356,15 +358,15 @@
+ 
+ void Series::next()
+ {
+-  int size = (in_series ? series.size() : episode.size());
+-  int pos = (in_series ? pos_serie : pos_episode);
++  int size = (in_series && !view_new_episodes ? series.size() : episode.size());
++  int pos = (in_series && !view_new_episodes ? pos_serie : pos_episode);
+ 
+   if (pos != size -1)
+     ++pos;
+   else
+     pos = 0;
+ 
+-  if (in_series) { 
++  if (in_series && !view_new_episodes) { 
+ 	pos_serie = pos; 
+ 	pos_episode = 0; 
+   } else 
+@@ -373,6 +375,34 @@
+ 
+ void Series::left()
+ {
++  if (in_series) {
++	if (view_new_episodes) {
++	view_new_episodes = false;
++
++  int curlayer = render->device->get_current_layer();
++  render->device->animation_section_begin();
++  render->device->switch_to_layer(curlayer);
++  render->device->reset_layout_attribs_nowait();
++  render->device->set_layout_alpha(0.0, curlayer+1);
++  render->device->animation_fade(0,1,40,curlayer);
++  render->device->animation_fade(1,0,80,curlayer+1);
++  render->device->animation_section_end();
++
++
++//  int curlayer = render->device->get_current_layer();
++//  std::cout << "left: curlayer = " << (curlayer ) << std::endl;
++//  render->device->animation_section_begin();
++//  render->device->switch_to_layer(curlayer-1);
++//  render->device->reset_layout_attribs_nowait();
++//  render->device->animation_move(0, 0, conf->p_h_res(), 0,  60, curlayer);
++//  render->device->animation_move(-conf->p_h_res(), 0, 0, 0, 60, curlayer-1);
++//  render->device->animation_fade(1,0,100,curlayer);
++//  render->device->animation_fade(0,1,100,curlayer-1);
++
++  }
++	return;
++  }
++
+   if (pos_season != 0)
+     --pos_season;
+   else
+@@ -383,6 +413,41 @@
+ 
+ void Series::right()
+ {
++  if (in_series) {
++	if (!view_new_episodes) {
++	view_new_episodes = true;
++	episode = getUnviewEpisodes();
++
++  int curlayer = render->device->get_current_layer();
++  render->device->animation_section_begin(true);
++  render->device->switch_to_layer(curlayer);
++  render->device->reset_layout_attribs_nowait();
++  render->device->set_layout_alpha(0.0, curlayer+1);
++  render->device->animation_fade(0,1,80,curlayer);
++  render->device->animation_fade(1,0,40,curlayer+1);
++  render->device->animation_section_end();
++
++
++//  render->device->animation_section_begin(true);
++//  int curlayer = render->device->get_current_layer();
++//  render->device->switch_to_layer(curlayer+1);
++//  render->device->reset_layout_attribs_nowait();
++//  std::cout << "right: newLayer = " << (curlayer + 1) << std::endl;
++
++//  render->device->set_layout_alpha(0.0, curlayer+1);
++//  render->device->animation_move(conf->p_h_res(), 0, 0, 0, 60, curlayer+1);
++//  render->device->animation_move(0, 0, -conf->p_h_res(), 0, 60, curlayer);
++//  render->device->animation_fade(0,1,100,curlayer+1);
++//  render->device->animation_fade(1,0,100,curlayer);
++
++//  render->device->set_layout_alpha(0.0, curlayer+1);
++//  render->device->animation_fade(0,1,80,curlayer);
++//  render->device->animation_fade(1,0,40,curlayer+1);
++  render->device->animation_section_end();
++  }
++  return;
++  }
++
+   if (pos_season != seasons.size() -1)
+     ++pos_season;
+   else
+@@ -395,7 +460,7 @@
+ {
+ 
+   int jump = conf->p_jump();
+-  int size = (in_series ? series.size() : episode.size());
++  int size = (in_series && !view_new_episodes ? series.size() : episode.size());
+   int pos = (in_series ? pos_serie : pos_episode);
+ 
+   if (size > jump) {
+@@ -408,7 +473,7 @@
+       pos = diff;
+   }
+ 
+-  if (in_series) 
++  if (in_series && !view_new_episodes) 
+     pos_serie = pos; 
+   else 
+     pos_episode = pos;
+@@ -418,8 +483,8 @@
+ void Series::page_down()
+ {
+   int jump = conf->p_jump();
+-  int size = (in_series ? series.size() : episode.size());
+-  int pos = (in_series ? pos_serie : pos_episode);
++  int size = (in_series && !view_new_episodes ? series.size() : episode.size());
++  int pos = (in_series && !view_new_episodes ? pos_serie : pos_episode);
+ 
+   if (size > jump) {
+     if (pos > (size - jump) && pos != (size - 1))
+@@ -428,7 +493,7 @@
+       pos = (pos + jump) % size;
+   }
+ 
+-  if (in_series) 
++  if (in_series && !view_new_episodes) 
+     pos_serie = pos; 
+   else 
+     pos_episode = pos;
+@@ -438,7 +503,7 @@
+ void Series::toggle_viewed()
+ {
+   
+-  if (in_series) {
++  if (in_series && !view_new_episodes) {
+   } else {
+     bool stat = vector_lookup(episode, pos_episode).viewed;
+     setViewed(vector_lookup(episode, pos_episode).id, !stat);
+@@ -581,7 +646,9 @@
+       }*/
+ 
+       if (update_needed) {
+-	if (in_series)
++	if (view_new_episodes)
++  	  print(episode);
++	else if (in_series)
+   	  print(series);
+ 	else 
+ 	  print(episode);
+@@ -647,7 +714,7 @@
+ 	}
+       else if (input.command == "action")
+ 	{
+-	  if (in_series)
++	  if (in_series && !view_new_episodes)
+ 	     enter_serie();
+ 	  else
+ 	     action_play();
+@@ -667,7 +734,7 @@
+ 	}
+       else if(input.command == "back")
+       {
+-         if(in_series)
++        if(in_series)
+             exit();
+          else
+             leave_serie();
+@@ -682,6 +749,9 @@
+       update_needed = !global->check_commands(input);
+     }
+ 
++ // int lastlayer = (view_new_episodes ? 2 : 1);
++
++//  std::cout << "main: newLayer = " << (curlayer + lastlayer) << std::endl;
+   render->device->animation_section_begin();
+   render->device->switch_to_layer(curlayer);
+   render->device->reset_layout_attribs_nowait();
+@@ -796,7 +866,9 @@
+ {
+   render->prepare_new_image();
+ 
+-  string fanart = fanart_path(vector_lookup(series, pos_serie).name);
++  string fanart;
++  if (!view_new_episodes)
++	fanart = fanart_path(vector_lookup(series, pos_serie).name);
+ 
+   if (file_exists(fanart)) {
+       render->create_scaled_image_wrapper_crop_upscaled(fanart, conf->p_h_res(), conf->p_v_res());
+@@ -811,7 +883,8 @@
+ 
+   if (themes->show_header) {
+ 
+-    string header = string(dgettext("mms-movie", "Series")) + " - " + vector_lookup(series, pos_serie).name;
++    string header = string(dgettext("mms-movie", "Series")) + " - " 
++		+ (view_new_episodes ? string(dgettext("mms-movie", "New Episodes")) : vector_lookup(series, pos_serie).name);
+ 
+     if (folders.size() > 1) {
+       string top_folder = folders.top().first.front();
+@@ -885,17 +958,19 @@
+ 
+     string sw = search_str;
+ 
+-    string s = dgettext("mms-movie", "Season: ");
+-    int x_size = string_format::calculate_string_width(s, list_font);
+-    string_format::format_to_size(sw, list_font, max_x-x_size, true);
+-
+-    int search_text_height = string_format::calculate_string_size(s + sw, search_font).second;
+-
+-    render->current.add(new TObj(s + sw, list_font, 60,
+-				 y + (season_size - list_font_height)/2,
+-				 themes->movie_font1, themes->movie_font2, themes->movie_font3, 3));
+-
+-    print_season_range(seasons, vector_lookup(seasons, pos_season), pos_season, 30, x_size - 5);
++	if (!view_new_episodes) {
++		string s = dgettext("mms-movie", "Season: ");
++		int x_size = string_format::calculate_string_width(s, list_font);
++		string_format::format_to_size(sw, list_font, max_x-x_size, true);
++
++		int search_text_height = string_format::calculate_string_size(s + sw, search_font).second;
++
++		render->current.add(new TObj(s + sw, list_font, 60,
++					 y + (season_size - list_font_height)/2,
++					 themes->movie_font1, themes->movie_font2, themes->movie_font3, 3));
++
++		print_season_range(seasons, vector_lookup(seasons, pos_season), pos_season, 30, x_size - 5);
++	}
+ 
+   }
+ 
+@@ -916,7 +991,7 @@
+     else
+       pos << "";
+   else
+-    pos << pos_serie + 1 << "/" << cur_files.size();
++    pos << pos_episode + 1 << "/" << cur_files.size();
+ 
+   int x = string_format::calculate_string_width(pos.str(), position_font);
+ 
+@@ -924,16 +999,17 @@
+ 			       themes->movie_font1, themes->movie_font2,
+ 			       themes->movie_font3, 3));
+ 
+-  render->draw_and_release("serie");
++  render->draw_and_release("episodes");
+ }
+ 
+ // print a video element
+ void Series::print_episode_element(const Episode& r, const Episode& position, int y)
+ {
+-  string name = r.title;
++  string name = (view_new_episodes ?  r.serie : r.title);
+   if (name == "NULL") name = "";
+ 
+-  string ep = string_format::double_zero(r.season) + "x" + string_format::double_zero(r.episode);
++  string ep = string_format::double_zero(r.season) + "x" + string_format::double_zero(r.episode)
++		 + (view_new_episodes ?   " - " + r.title  : "");
+ /*  if (r.type != "file")
+     name += "/"; */
+ 
+@@ -980,6 +1056,7 @@
+ 			       themes->movie_font3, 3));*/
+ }
+ 
++
+ void Series::print_serie_element(const Serie& r, const Serie& position, int y)
+ {
+   string name = r.name;
+
+=== modified file 'plugins/feature/movie/series.hpp'
+--- old/plugins/feature/movie/series.hpp	2010-11-02 00:13:33 +0000
++++ new/plugins/feature/movie/series.hpp	2010-11-02 01:14:06 +0000
+@@ -33,6 +33,8 @@
+ 
+   std::vector<std::pair<std::string, int> > gen_search_list(const std::string& search_word);
+ 
++  bool view_new_episodes;
++
+   bool scanning;
+   /* for dir_contains_known_files() */
+   std::string ext_mask;
+@@ -72,6 +74,7 @@
+ 
+   std::vector<Serie> series;
+   std::vector<Episode> episode;
++  std::vector<Episode> new_episodes;
+   std::vector<Season> seasons;
+ 
+   std::string list_font_small;
+
+=== modified file 'plugins/feature/movie/series_db.cpp'
+--- old/plugins/feature/movie/series_db.cpp	2010-11-02 00:13:33 +0000
++++ new/plugins/feature/movie/series_db.cpp	2010-11-02 01:14:04 +0000
+@@ -415,6 +415,54 @@
+ 
+ }
+ 
++vector<Episode> SerieDB::getUnviewEpisodes()
++{
++  vector<Episode> names;
++
++  db_mutex.enterMutex();
++
++  /* string query = "SELECT * FROM Episode JOIN Files ON Episode.id_episode = Files.id_episode WHERE id_serie = '" + conv::itos(id_serie) + "' AND present = 1"
++	+ " ORDER BY season,episode;"; */
++
++string query = " SELECT Episode.*, Files.*, Series.id_serie, Series.name as serie"
++		" FROM Episode "
++			"JOIN Series ON Episode.id_serie = Series.id_serie "
++			"LEFT JOIN SerieDesc ON Series.seriesid = SerieDesc.seriesid "
++			"JOIN Files ON Episode.id_episode = Files.id_episode "
++		"WHERE Files.present = 1 AND Episode.viewed = 0"; 
++
++//	string query = "SELECT * FROM Episode JOIN Files ON Episode.id_episode = Files.id_episode "
++//		" JOIN Series ON Episode.id_serie ON Series.id_serie"
++//		"WHERE viewed = 0
++//			"AND present = 1"
++//	 	+ (filter.size() > 0 ? " AND " + filter : "")
++//		 + " ORDER BY ,season,episode;";
++  std::cout << "getEpisodes " << query << std::endl;
++
++  SQLQuery *q = db.query("Episode", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       Episode ns = Episode();
++       ns.id = conv::atoi(row["id_episode"]);
++       ns.season = conv::atoi(row["season"]);
++       ns.episode = conv::atoi(row["episode"]);
++       ns.viewed = conv::atoi(row["viewed"]) == 1 ? true : false;
++       ns.name = row["name"];
++       ns.serie = row["serie"];
++       ns.title = row["title"];
++       ns.filename = row["filename"];
++       names.push_back(ns);
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return names;
++
++}
++
+ vector<Season> SerieDB::getSeasons(int& id_serie) 
+ {
+   vector<Season> seasons;
+
+=== modified file 'plugins/feature/movie/series_db.hpp'
+--- old/plugins/feature/movie/series_db.hpp	2010-11-02 00:13:33 +0000
++++ new/plugins/feature/movie/series_db.hpp	2010-11-02 01:14:04 +0000
+@@ -51,6 +51,7 @@
+   int idEpisode(const int& idSerie, const int& season, const int& episode);
+ 
+   std::vector<Episode> getEpisodes(int& id_serie, std::string season_filter = NULL);
++  std::vector<Episode> getUnviewEpisodes();
+   std::vector<Season> getSeasons(int& id_serie);
+   std::vector<Serie> getSeries();
+ 
+

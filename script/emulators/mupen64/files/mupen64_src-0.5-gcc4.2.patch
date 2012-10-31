@@ -1,0 +1,23 @@
+diff --speed-large-files --minimal -Nru tmp/mupen64_src-0.5/glN64/glATI.h work/main.d/mupen64_src-0.5/glN64/glATI.h
+--- mupen64_src-0.5/glN64/glATI.h	2005-08-26 16:52:17.000000000 -0300
++++ mupen64_src-0.5/glN64/glATI.h	2007-08-03 15:48:46.000000000 -0300
+@@ -864,8 +864,8 @@
+ typedef GLuint (APIENTRY *PFNGLGENFRAGMENTSHADERSATIPROC)(GLuint range);
+ typedef GLvoid (APIENTRY *PFNGLBINDFRAGMENTSHADERATIPROC)(GLuint id);
+ typedef GLvoid (APIENTRY *PFNGLDELETEFRAGMENTSHADERATIPROC)(GLuint id);
+-typedef GLvoid (APIENTRY *PFNGLBEGINFRAGMENTSHADERATIPROC)(GLvoid);
+-typedef GLvoid (APIENTRY *PFNGLENDFRAGMENTSHADERATIPROC)(GLvoid);
++typedef GLvoid (APIENTRY *PFNGLBEGINFRAGMENTSHADERATIPROC)(void);
++typedef GLvoid (APIENTRY *PFNGLENDFRAGMENTSHADERATIPROC)(void);
+ typedef GLvoid (APIENTRY *PFNGLPASSTEXCOORDATIPROC)(GLuint dst, GLuint coord, GLenum swizzle);
+ typedef GLvoid (APIENTRY *PFNGLSAMPLEMAPATIPROC)(GLuint dst, GLuint interp, GLenum swizzle);
+ typedef GLvoid (APIENTRY *PFNGLCOLORFRAGMENTOP1ATIPROC)(GLenum op, GLuint dst, GLuint dstMask,
+@@ -2194,7 +2194,7 @@
+ typedef GLvoid    (APIENTRY * PFNGLDELETEOCCLUSIONQUERIESNVPROC) (GLsizei n, const GLuint *ids);
+ typedef GLboolean (APIENTRY * PFNGLISOCCLUSIONQUERYNVPROC) (GLuint id);
+ typedef GLvoid    (APIENTRY * PFNGLBEGINOCCLUSIONQUERYNVPROC) (GLuint id);
+-typedef GLvoid    (APIENTRY * PFNGLENDOCCLUSIONQUERYNVPROC) (GLvoid);
++typedef GLvoid    (APIENTRY * PFNGLENDOCCLUSIONQUERYNVPROC) (void);
+ typedef GLvoid    (APIENTRY * PFNGLGETOCCLUSIONQUERYIVNVPROC) (GLuint id, GLenum pname, GLint *params);
+ typedef GLvoid    (APIENTRY * PFNGLGETOCCLUSIONQUERYUIVNVPROC) (GLuint id, GLenum pname, GLuint *params);
+ 

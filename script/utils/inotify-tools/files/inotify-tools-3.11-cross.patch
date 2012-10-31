@@ -1,0 +1,37 @@
+diff --speed-large-files --minimal -Nru tmp/inotify-tools-3.11/configure.ac work/main.d/inotify-tools-3.11/configure.ac
+--- inotify-tools-3.11/configure.ac	2007-09-16 05:16:17.000000000 -0300
++++ inotify-tools-3.11/configure.ac	2007-12-04 09:03:09.000000000 -0300
+@@ -44,15 +44,27 @@
+ # Checks for header files.
+ AC_CHECK_HEADERS([sys/inotify.h])
+ AC_LANG(C)
+-AC_MSG_CHECKING([whether sys/inotify.h actually works])
+-AC_RUN_IFELSE(
++AC_CACHE_CHECK([whether sys/inotify.h actually works],[ac_cv_header_sys_inotify_h_works],[
++ AC_RUN_IFELSE(
+   AC_LANG_PROGRAM([[#include <sys/inotify.h>]],
+                   [[return (-1 == inotify_init());]]
+-  ),
+-  [AC_MSG_RESULT([yup]); AC_DEFINE([SYS_INOTIFY_H_EXISTS_AND_WORKS],[1],[sys/inotify.h exists and works correctly])],
+-  [AC_MSG_RESULT([nope, using own inotify headers])]
+-)
++  ),[
++      ac_cv_header_sys_inotify_h_works=no
++      AC_MSG_RESULT(no)
++  ],[
++      ac_cv_header_sys_inotify_h_works=yes
++      AC_MSG_RESULT(yes)
++  ],[
++      AC_MSG_ERROR(cross-compiling: please set 'ac_cv_header_sys_inotify_h_works')
++ ])
++])
+ 
++if test "x$ac_cv_header_sys_inotify_h_works" = "xyes" ; then
++	AC_MSG_RESULT([yup]); 
++	AC_DEFINE([SYS_INOTIFY_H_EXISTS_AND_WORKS],[1],[sys/inotify.h exists and works correctly])
++else
++	AC_MSG_RESULT([nope, using own inotify headers])
++fi
+ 
+ 
+ # Checks for typedefs, structures, and compiler characteristics.

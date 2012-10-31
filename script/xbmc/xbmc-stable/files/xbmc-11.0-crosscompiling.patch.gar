@@ -1,0 +1,49 @@
+--- tmp/xbmc-10.1/configure.in  2011-03-05 00:33:37.000000000 -0300
++++ new-xbmc-10.1/configure.in  2011-07-24 00:28:39.710790294 -0300
+@@ -1217,8 +1217,8 @@
+   final_message="$final_message\n  MID Support:\tNo"
+ fi
+
+-if test -d "/usr/include/lzo"; then
+-  INCLUDES="$INCLUDES -I/usr/include/lzo"
++if test -d "@GAR_DESTDIR@@GAR_includedir@/lzo"; then
++  INCLUDES="$INCLUDES -I@GAR_DESTDIR@@GAR_includedir@/lzo"
+ else
+   INCLUDES="$INCLUDES"
+ fi
+
+--- old-xbmc-10.1/addons/skin.confluence/media/Makefile.orig	2011-07-24 11:00:46.685430723 -0300
++++ new-xbmc-10.1/addons/skin.confluence/media/Makefile	2011-07-24 11:01:25.806117171 -0300
+@@ -336,7 +336,7 @@
+ .PHONY: force
+ 
+ $(TARGET): $(XBMCTEX) $(IMAGES)
+-	$(XBMCTEX) -input . -output $(TARGET)
++	LD_LIBRARY_PATH=$(DESTDIR)$(libdir):$(LD_LIBRARY_PATH) $(XBMCTEX) -input . -output $(TARGET)
+ 
+ $(XBMCTEX): force
+ 	$(MAKE) -C ../../../tools/TexturePacker
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-10.1/xbmc/screensavers/rsxs-0.9/src/common.cc work/main.d/xbmc-10.1/xbmc/screensavers/rsxs-0.9/src/common.cc
+--- tmp/xbmc-10.1/xbmc/screensavers/rsxs-0.9/src/common.cc      2011-03-05 00:33:37.000000000 -0300
++++ new-xbmc-10.1/xbmc/screensavers/rsxs-0.9/src/common.cc      2011-07-24 12:16:23.687091364 -0300
+@@ -20,6 +20,11 @@
+  * This is a Linux port of the Really Slick Screensavers,
+  * Copyright (C) 2002 Terence M. Welsh, available from www.reallyslick.com
+  */
++
++#include <cstring>
++#include <cstdlib>
++#include <ctime>
++
+ #include <common.hh>
+
+ #if HAVE_SYS_TYPES_H
+@@ -47,7 +52,6 @@
+ #include <X11/Xmu/StdCmap.h>  /* for XmuLookupStandardColormap */
+ #endif
+ #include <vroot.hh>
+-#include <ctime>
+
+ #define MAX_DELAY 10000
+ #define MIN_DELAY  1000
+

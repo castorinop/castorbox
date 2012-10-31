@@ -1,0 +1,8 @@
+b232aef26f23fe33ea8305d276637086  download/lirc-0.9.0.tar.bz2
+f1bb41cd992605ebce202710834840fb  download/lirc-0.9.0-lirc_xbox.patch
+85c95d59386e3b6abb37b747b294de31  download/lirc-0.9.0-disable_lirc_i2c.patch
+dd1c2109ba4cb1083d59435d44c81afb  download/lirc-0.9.0-remove_smp_lock_h.patch
+25a677b725891b8db1e70ca7a2bdeec0  download/lirc-0.9.0-bit_le_fix.patch
+67e3835dc2bbd2a81ef93545a42aaef8  download/lirc-0.9.0-kfifo_fix.patch
+9b72c02ba1d3e456ac22f9a0f72a2f51  download/lirc-0.9.0-uinput_key_fix.patch
+ada6e78c84d39755575f160591134913  download/lirc-0.9.0-input_map.patch.gar

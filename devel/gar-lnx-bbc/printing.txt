@@ -1,0 +1,43 @@
+Printing your own BBCs
+
+== Professional duplication, in quantity ==
+
+Most versions of the Linuxcare Bootable Business Card have used
+<http://www.shapecd.com/ ShapeCD> for duplication services.
+
+The LNX-BBC project uses <http://www.mediatec-inc.com/contact.html
+Wing Shing Optical Disc Company, Ltd.>, of Hong Kong -- U.S. office
+(800)400-2287. We've been very satisfied with their work and impressed
+with their low prices and rapid turnaround.
+
+== Business-card CD-R blanks ==
+
+Most vendors of optical media now have business card (50 MB) CD-R
+blanks available. You should expect to pay $0.40-$0.60 apiece, in
+quantities of ten to a few hundred.
+
+We usually buy our blanks at retail computer shows and bazaars.
+They're also readily available on-line; Google searches such as
+<http://www.google.com/search?q=business+card+cd-r business card cd-r>
+or <http://www.google.com/search?q=50-MB+cd-r 50-MB cd-r> or
+<http://www.google.com/search?q=business+card+cd+blank business card
+cd blank> return thousands of hits. Some large computer stores such as
+<http://www.frys.com/ Frys> are now carrying blank business card CD-R
+media, but you may find lower prices on-line.
+
+We've heard a recommendation for
+<http://www.memorymedia.com/cgi-bin/webcart/webcart.cgi?CONFIG=mountain&RET=50&RCATS=CDR+Media+Spindled&FIRST_TIME=Yes&START=1&DOSEARCH=YES&CODE=484
+Memory Media>, but have not tried their products.
+
+== Cutting vs. Pressing ==
+
+These days, the molded variety of business card-shaped CD-R are easy
+to come by, and the cut variety should be spurned -- they are prone to
+the same problems as early CD's were: the aluminum coating layer tends
+to degrade since it's exposed at the ends.
+
+Early BBCs (1.0 etc) used the cut variety at first, and they didn't
+last long at all inside a wallet or pocket.  The first few runs of the
+original Linuxcare BBC were fragile, and we got many complaints.  Be
+sure to check that your blanks aren't cut!
+

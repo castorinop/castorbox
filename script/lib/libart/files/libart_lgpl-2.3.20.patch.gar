@@ -1,0 +1,17 @@
+diff -Naur libart_lgpl-2.3.20-old/libart-config.in libart_lgpl-2.3.20-new/libart-config.in
+--- libart_lgpl-2.3.20-old/libart-config.in	2007-10-19 01:36:03.000000000 -0700
++++ libart_lgpl-2.3.20-new/libart-config.in	2008-04-12 09:59:27.000000000 -0700
+@@ -39,11 +39,11 @@
+       echo @LIBART_VERSION@
+       ;;
+     --cflags)
+-      includes=-I@includedir@/libart-2.0
++      includes=-I@GAR_DESTDIR@@includedir@/libart-2.0
+       echo $includes
+       ;;
+     --libs)
+-      libdirs=-L@libdir@
++      libdirs=-L@GAR_DESTDIR@@libdir@
+       echo $libdirs -lart_lgpl_2 -lm
+       ;;
+     *)

@@ -1,0 +1,15 @@
+=== modified file 'plugins/feature/media-rss/media_rss.cpp'
+--- old/plugins/feature/media-rss/media_rss.cpp	2010-02-23 18:47:11 +0000
++++ new/plugins/feature/media-rss/media_rss.cpp	2010-08-30 18:15:33 +0000
+@@ -277,7 +286,9 @@
+ bool MediaRss::in_autodownload(string category, string name) {
+   std::list<MyPair> rules = mr_down->p_rules();
+   foreach (MyPair& rule, rules)
+-    if ( category == rule.first && regex_tools::regex_str_match(name, "^" + rule.second + "(.+?)")) {
++    if ( regex_tools::regex_str_match(category, rule.first + "(.+?)") /* category regex */ 
++		/* all in this category  or title regex */
++		&& (rule.second == "*"   || regex_tools::regex_str_match(name, "^" + rule.second + "(.+?)")) ) {
+       return true;
+     }
+   return false;
+

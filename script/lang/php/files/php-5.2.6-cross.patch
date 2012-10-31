@@ -1,0 +1,11 @@
+--- work/main.d/php-5.2.6/Makefile.global	2009-01-21 23:49:01.000000000 -0300
++++ new-php-5.2.6/Makefile.global	2009-01-21 21:46:56.000000000 -0300
+@@ -2,7 +2,7 @@
+ INSTALL = $(top_srcdir)/build/shtool install -c
+ INSTALL_DATA = $(INSTALL) -m 644
+ 
+-DEFS = -DPHP_ATOM_INC -I$(top_builddir)/include -I$(top_builddir)/main -I$(top_srcdir)
++DEFS = -DPHP_ATOM_INC -I$(DESTDIR)$(top_builddir)/include -I$(top_builddir)/main -I$(top_srcdir)
+ COMMON_FLAGS = $(DEFS) $(INCLUDES) $(EXTRA_INCLUDES) $(CPPFLAGS) $(PHP_FRAMEWORKPATH)
+ 
+ all: $(all_targets) 

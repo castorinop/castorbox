@@ -1,0 +1,500 @@
+Old notes from way back
+
+The BSD ports system is an ingenious tree of makefiles that automate
+the task of compiling third-party source code packages.  Each
+individual "port" consists of a Makefile and a few auxiliary files
+(such as a checksum list and installation manifest).  It should be
+noted that the name "port" comes from the idea of "software that was
+ported to FreeBSD".
+
+The system is designed to support several basic make targets, the most
+important of which are:
+
+fetch:
+	download source code and patches off the net
+
+checksum:
+	verify integrity of downloaded files
+
+extract:
+	unpack downloaded files to a working directory
+
+patch:
+	apply port-maintainer and third-party patches
+
+configure:
+	run any configure, imake, or makemaker scripts
+
+build:
+	run make or compile the program
+
+install:
+	install the software on the system
+
+Each port's individual Makefile sets variables to describe the package
+and define how to build it, and sets pre- and post- rules to describe
+extra work to be done at various stages of the build process.
+
+Here is an example of a fairly simple port Makefile:
+
+----8<----
+# New ports collection makefile for:	oneko
+# Date created:		5 December 1994
+# Whom:			asami
+#
+# $FreeBSD: ports/games/oneko/Makefile,v 1.16 2000/04/14 12:26:16 asami Exp $
+#
+
+PORTNAME=	oneko
+PORTVERSION=	1.2
+CATEGORIES=	games
+MASTER_SITES=	ftp://ftp.cin.nihon-u.ac.jp/pub/Linux/PJE/PJE-0.1.5/sources/xclt/oneko/ \
+		http://hp.vector.co.jp/authors/VA004959/oneko/
+
+MAINTAINER=	candy@kgc.co.jp
+
+USE_IMAKE=	yes
+MAN6=		oneko.6
+
+pre-configure:
+	@${ECHO} "MANSUFFIX=6" >>${WRKSRC}/Imakefile
+
+.include <bsd.port.mk>
+----8<----
+
+There are several advantages to this system:
+	* users can build all software from source, optimizing for
+	  their own particular hardware.
+	* users can customize software installation easily by setting
+	  a few variables in a configuration file.
+	* distributions with multiple architectures (such as NetBSD)
+	  can distribute a bootable CD with multiple binary images
+	  (one per hardware architecture) of the base OS, and provide
+	  source trees for all of the user-level software, keeping
+	  distribution sizes down.
+	* port maintenance can be kept in CVS as a set of makefiles
+	  and patches, all of which are ascii text.
+	* since dependencies are an integral part of the way make
+	  functions, implementation of dependencies is straightforward
+	  and reliable
+
+The file included at the end of the above example, bsd.port.mk, is a
+library of functions used by the port's makefile.  It's a 3000-line
+behemoth of counterintuitive pmake.  God bless JKH and all, but the
+thing is about 2/3 shell script and 1/3 makefile, and provides hours
+of flow-following entertainment for the whole family!
+
+Here's a sample of bsd.port.mk:
+
+----8<----
+.if !target(do-configure)
+do-configure:
+.if defined(USE_AUTOMAKE)
+	@(cd ${CONFIGURE_WRKSRC} && ${SETENV} ${AUTOMAKE_ENV} ${AUTOMAKE} \
+		${AUTOMAKE_ARGS})
+.endif
+.if defined(USE_AUTOCONF)
+	@(cd ${CONFIGURE_WRKSRC} && ${SETENV} ${AUTOCONF_ENV} ${AUTOCONF} \
+		${AUTOCONF_ARGS})
+.endif
+	@if [ -f ${SCRIPTDIR}/configure ]; then \
+		cd ${.CURDIR} && ${SETENV} ${SCRIPTS_ENV} ${SH} \
+		  ${SCRIPTDIR}/configure; \
+	fi
+.if defined(HAS_CONFIGURE)
+	@(cd ${CONFIGURE_WRKSRC} && \
+		if ! ${SETENV} CC="${CC}" CXX="${CXX}" \
+	    CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
+	    INSTALL="/usr/bin/install -c -o ${BINOWN} -g ${BINGRP}" \
+	    INSTALL_DATA="${INSTALL_DATA}" \
+	    INSTALL_PROGRAM="${INSTALL_PROGRAM}" \
+	    INSTALL_SCRIPT="${INSTALL_SCRIPT}" \
+	    ${CONFIGURE_ENV} ./${CONFIGURE_SCRIPT} ${CONFIGURE_ARGS}; then \
+			${ECHO} "===>  Script \"${CONFIGURE_SCRIPT}\" failed: here are the contents of \"${CONFIGURE_LOG}\""; \
+			${CAT} ${CONFIGURE_LOG}; \
+			${ECHO} "(end of \"${CONFIGURE_LOG}\")"; \
+			${FALSE}; \
+		fi)
+.endif
+.if defined(PERL_CONFIGURE)
+	@cd ${CONFIGURE_WRKSRC} && \
+		${SETENV} ${CONFIGURE_ENV} \
+		${PERL5} ./${CONFIGURE_SCRIPT} ${CONFIGURE_ARGS}
+.endif
+.if defined(USE_IMAKE)
+	@(cd ${CONFIGURE_WRKSRC}; ${SETENV} ${MAKE_ENV} ${XMKMF})
+.endif
+.endif
+----8<----
+
+Dizzy yet?  Does this even look remotely like a Makefile to you?  It's
+one big do-configure rule followed by a bunch of variable tests and
+conditional execution of shell code.  There's quite a lot of .ifs and
+.elifs, and there's no way to indent these things in pmake.  It's a
+lot like writing your C programs entirely in preprocessor directives.
+It's a lot like ass, and it's one of the more lucid sections of
+bsd.port.mk!
+
+Just as functions helped to make procedural source code easier to
+read, so too do makefile targets improve Makefiles' readability.
+In working to make a system like ports, I am trying my damndest to
+keep it elegant.  
+
+Three years ago, back when apt was still called "deity" and was
+highly theoretical, I had the notion of porting the NetBSD equivalent
+of the ports system to GNU make.  I figured this way people could
+build their own highly-optimized userland utilities on everything from
+Slackware-i386 to LinuxPPC, all from the same basic set of makefiles.
+
+But I got bogged down in the actual implementation details of
+bsd.port.mk, and learned what a baroque house of cards the thing
+actually is.  Well, I've had three years to think about it, and I've
+come up with the following plan for the BBC project.
+
+The problems that a ports-like system can solve follow:
+	* keeping track of changes made to third-party software
+	  packages
+	  	- accountability
+		- CVS rollback and diff capability
+		- changelogs!
+	* a regular build system to ensure repeatability of compiles
+	* a downloadable and portable build tree that lets net.randoms
+	  easily build their own BBC (the ports-like system would only
+	  be a part of it, since the actual creation and burning of an
+	  ISO image/cloop el-torrito magic would be outside the scope
+	  of the system)
+	* construction of binary packages (omitted from my description
+	  of BSD ports for various reasons)
+	* dependency tracking
+
+The system which I proposed at the December 2nd meeting and described
+at the December 8th meeting is called GAR, and it uses GNU make.
+
+It is more limited in scope than ports; but it is also designed to be
+more modular and extensible, so that full ports-like functionality
+could be added later without destroying the overall aesthetic.  
+
+The example bsd.port.mk code posted above will be much cleaner in GAR,
+and here's a brief run-through.  The code is still very much in flux,
+and the latest versions can be seen at
+
+	<http://cvs.lnx-bbc.org/cgi-bin/viewcvs.cgi/gar/>
+
+First of all, in bbc.gar.mk, we have the configure rule itself:
+
+----8<----
+configure: extract pre-configure $(addprefix configure-,$(CONFIGURE_SCRIPTS)) post-configure
+	true
+----8<----
+
+First of all, to configure a package, it must first be extracted, so
+the first dependency is on the extract rule.  Next we have any work
+that the package maintainer wants to do before the configure work is
+done, such as adding a line to the end of the configuration script in
+the oneko example.
+
+To avoid rule conflicts and missing targets, the pre- and post- rules
+are given wildcards in bbc.gar.mk:
+
+----8<----
+pre-%:
+	true
+
+post-%:
+	true
+----8<----
+
+This means that any actual existing pre-configure target will merely
+be a more specific version of pre-%, and will override it without
+warnings or errors, and the absence of any such rule will cause the
+wildcard rule to silently finish successfully.  
+
+You will note that the very last dependency is the post-configure,
+which follows the same pattern.
+
+The next dependency is a little more complicated, because it uses some
+very gmake-specific variable text manipulation.  Basically, it takes
+the maintainer-supplied CONFIGURE_SCRIPTS variable (a space-separated
+list of configuration scripts and data files (such as a configure.in,
+configure, or Imakefile)) and prepends the string "configure-" onto
+each element.
+
+To understand why we do this, we must venture into bbc.gar.lib.mk to
+see where all the real action is.
+
+The first thing we see is:
+
+----8<----
+VPATH += $(COOKIEDIR)
+----8<----
+
+This adds the directory "COOKIEDIR" to the patch to search for
+dependency files.  That is, when we look for
+configure-foo/bar/Imakefile (a possible expansion of the above
+configure target's dependencies), we also look in the directory
+specified in the COOKIEDIR variable.
+
+Next, we see:
+
+----8<----
+$(DOWNLOADDIR) $(COOKIEDIR) $(WORKSRC) $(WORKDIR) $(EXTRACTDIR):
+	mkdir -p $@
+----8<----
+
+This ensures that (among other things) the COOKIEDIR will be created
+if called as a dependency, which happens in:
+
+----8<----
+configure-%/configure: $(COOKIEDIR) $(WORKSRC)
+	cd $* && ./configure --prefix=$(PREFIX) --sysconfdir=$(SYSCONFDIR) --localstatedir=$(LOCALSTATEDIR) $(CONFIGURE_ARGS)
+	mkdir -p $(COOKIEDIR)/configure-$*
+	date >> $(COOKIEDIR)/$@
+----8<----
+
+There's a lot going on in here, to be sure.  To describe this in
+English, I would say:
+
+> To make the file configure-foo/configure, cd to foo and run
+> ./configure with some options set.  Then make a configure-foo
+> directory in the cookie dir, and cat the current date and time
+> to a cile in the configure-foo dir called configure
+
+How does this help modularity, you ask?  Simple, look at this example
+for imake:
+
+----8<----
+configure-%/Imakefile: $(COOKIEDIR) $(WORKSRC)
+	cd $* && $(XMKMF_ENV) xmkmf
+	mkdir -p $(COOKIEDIR)/configure-$*
+ 	date >> $(COOKIEDIR)/$@
+----8<----
+
+Simple.  No messy if var=foo nonsense, and it actually looks like a
+library of functions.  
+
+To appreciate the elegance of such a system, have a look at some of
+the rules for the extract- targets:
+
+----8<----
+extract-%.tar.Z extract-%.tgz extract-%.tar.gz: $(subst extract-,$(DOWNLOADDIR)/,$@) $(EXTRACTDIR) $(COOKIEDIR)
+	tar xzf $(subst extract-,$(DOWNLOADDIR)/,$@) -C $(EXTRACTDIR)
+	date >> $(COOKIEDIR)/$@
+
+extract-%.tar.bz extract-%.tar.bz2 extract-%.tbz: $(subst extract-,$(DOWNLOADDIR)/,$@) $(EXTRACTDIR) $(COOKIEDIR)
+	tar xf --bzip $(subst extract-,$(DOWNLOADDIR)/,$@) -C $(EXTRACTDIR)
+	date >> $(COOKIEDIR)/$@
+----8<----
+
+It's an actual set of rules for turning foo.tar.whatever files into "I
+finished extracting this" cookies.  It's orthogonal, elegant,
+aesthetically pleasing, and it has a kung-fu grip.  
+
+Furthermore, it is easily overridable on a per-specific-target basis.
+For example, say that you've got an upstream maintainer who names his
+archives with a .tar.gz extension out of force of habit, even though
+he's using the new bzip2 algorithm.  Well, the maintainer of that
+package would just override the extract rule *for that file only*:
+
+----8<----
+extract-shaboom.tar.gz: $(DOWNLOADDIR)/shaboom.tar.gz $(EXTRACTDIR) $(COOKIEDIR)
+	tar xf --bzip $(DOWNLOADDIR)/shaboom.tar.gz -C $(EXTRACTDIR)
+	date >> $(COOKIEDIR)/$@
+----8<----
+
+This way the other tar.gz files will still use "xzf", but this one
+particular file will use the bzip flags.
+
+The only place where this gets hairy is in the fetch rule, where I am
+trying to support multiple protocols and alternate download sites.
+I've also not decided on the format for the dependencies yet, but I'm
+tending toward something like:
+
+Maintainer makefile:
+
+----8<----
+build-depends:  installed-categoryname/packagename
+----8<----
+
+bbc.gar.lib.mk:
+
+----8<----
+installed-%:
+	$(MAKE) -C $(GARDIR)/$*
+----8<----
+
+But may want to add version requirements or something in future.
+
+
+My goal is to make a system where rules used by package maintainers
+can be integrated into the bbc.gar.lib.mk if they become common
+enough.  We may defer certain types of configuration and build systems
+to the package maintainers until we can create general rulesets for
+them.
+
+
+Now, I haven't tested any of this, or built any packages with it.  I
+haven't written even a single maintainer makefile, but I hope to try
+it out soonish.  I welcome comments from everyone, especially Joe
+Grosch, who has a lot of experience with packaging systems.  
+
+This is the result of about three years of musing and mulling and
+reading the FSF's GNU Make book
+(http://www.gnu.org/manual/make/index.html), so there may be many
+features of gmake that I'm glossing over.  If so, please ask me what
+the hell is going on.
+
+====================OLD NOTES FOLLOW==================================
+
+The crux of the ports system is a makefile that is included at the END
+of each port's individual makefile (which I will call the portfile
+from here out).  It's done in this order so that the portfile can set
+variables with = that the included file can augment with +=.
+
+The included file (which I will call the library) provides the targets
+for things like download, patch, compile, install, and clean.  There
+are also hooks for pre- and post- targets for all of these.  The
+portfile must not touch the base targets, using the pre- and post-
+targets for all of its needs.
+
+The variables include the sites where the file can be downloaded,
+build dependencies, library deps, and runtime deps.  presumably these
+deps are satisfied at different points in the build process.
+
+for some reason the core targets (fetch, checksum, extract, patch,
+configure, all, build, install, reinstall, and package) are set to
+dummy print routines, and all the work is done by do- targets (such as
+do-patch and do-install).  
+
+The real layer of indirection gets crazier, since there is a real- set
+of targets that output text and get munged to do the do- targets
+later.  Crazy.  the rules seem to do pattern substitution to take the
+real-foo target and have it call pre-foo, do-foo, and post-foo.
+
+What a mess.
+
+
+============================ OUR SYSTEM ==============================
+
+Our system should be orders of magnitude simpler.  The library should
+provide the base targets listed in paragraph 4 of this document, and
+have each one call pre- do- and post- versions of itself.  The pre-
+and post- targets will be dummies, to be overridden by the user.  The
+standard variables will be parsed by the do- targets to see if any
+action should be taken.  Nothing will be done outside of the rulesets.
+
+In this model, the notion is that rulesets are overridden by the
+portfile, and variables are manipulated by rulesets.  With luck, this
+will let the maintainer munge the library's rules and the library
+munge the maintainer's variables.
+
+According to page 63 of the gnu make manual, this is possible.  I can
+put variable assignments in like so:
+
+----8<----
+foo: BAZ=whoop
+foo: moo.o boo.o
+----8<----
+
+This will make BAZ equal whoop for all targets that build moo.o and
+boo.o.  I seem to only be able to do this once, though.  Perhaps
+having a global namespace isn't so bad.
+
+It also supports pattern-namespace variable settings. So we can do
+like:  
+
+----8<----
+%-fetch: BAZ="${BAZ} ook bar bing"
+----8<----
+
+The pre- and post- target handling seems to be pretty straightforward,
+since we can use pattern rules set up to a do-nothing echo command for
+pre-% and post-%.  Also, overriding seems to just generate a warning
+in GNU make, and works fine.
+
+An important thing to get right is all of the variables, like the
+various directory names, and the names of the variables used by the
+do- targets.
+
+The system should use targets more than variables.  SO instead of
+having a USE_CONFIGURE variable that you set to YES, you just make
+your post-configure target depend on the lib-configure target or
+something.  This allows us to move actions into the bbc.port.mk or
+bbc.port.lib.mk without having to add a bunch of obnoxious variable
+testing code in.
+
+Dependencies need to leave behind files in some orderly hierarchy
+somewhere.  package databases get pretty complicated, so we should
+keep it to simple one-line-per-package entries in a flat file
+somewhere, preferrably tab-delimited.  Another option is to leave
+cookie crumbs in the port dirs.
+
+We should write some awk scripts to parse the file and do things like
+check that all dependencies are met, check that a particular
+dependency is met (using the > = or < operators) etc.
+
+Each package build should keep a manifest file in its port dir, to
+show what files are owned by it.  This sort of administrative file
+will not be removed by a make clean, but will be by a make distclean.
+Looks like BSD makes the maintainer write the manifest file.  This is
+a good idea.  We can compare the install manifest against the build
+results and see what got left behind.
+
+Dependencies can be specified as a dependency on a particular cookie
+file.  We can have pattern rules in the bbc.port.mk that know how to
+parse this dependency up and go do what's needed.  Thus, we could have
+a rule like:
+
+----8<----
+build-depends: installed-games-robotfindskitten built-lib-ncurses
+----8<----
+
+then the installed-%-% rule would parse up $@ and look for
+${PORTSDIR}/games/robotfindskitten and "make install" and built-%-%
+would go to ${PORTSDIR}/lib/ncurses and do a "make build".  It would
+also make the cookie files in the current package's dir, so you can
+see which package dep created which other package.  This could make
+graphing much easier.
+
+Treating rules as functions helps clear up the library a lot.
+
+One rule that I forgot was make makesum.  This makes a "distinfo" file
+on BSD.  The file contains checksums of all files that we care about.
+
+*** BIG WIN ***
+The main targets will look like so:
+
+----8<----
+fetch: pre-fetch $(addprefix fetch-, $(URLS)) post-fetch
+----8<----
+
+and then you have
+
+----8<----
+fetch-http://%: installed-net-wget 
+	wget http://$*
+	date >> cookies/$@
+----8<----
+
+The variables used are like so:
+
+fetch:
+	$URLS
+
+extract:
+	$FILES
+
+checksum:
+	$FILES
+
+configure:
+	$CONFIGURE_SCRIPTS
+
+build:
+	$BUILD_SCRIPTS
+
+install:
+	$INSTALL_SCRIPTS
+
+our VPATH includes the cookies dir
+
+

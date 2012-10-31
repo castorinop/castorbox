@@ -1,0 +1,25 @@
+diff --speed-large-files --minimal -Nru tmp/Python-2.4/Makefile.pre.in work/main.d/Python-2.4/Makefile.pre.in
+--- old/Makefile.pre.in	2004-09-26 14:26:55.000000000 -0300
++++ new/Makefile.pre.in	2007-02-07 16:18:34.000000000 -0300
+@@ -67,6 +67,7 @@
+ # C flags used for building the interpreter object files
+ PY_CFLAGS=	$(CFLAGS) $(CPPFLAGS) $(CFLAGSFORSHARED) -DPy_BUILD_CORE
+ 
++LD_LIBRARY_PATH= @LD_LIBRARY_PATH@:$(DESTDIR)$(libdir)
+ 
+ # Machine-dependent subdirectories
+ MACHDEP=	@MACHDEP@
+@@ -657,10 +658,10 @@
+ 	plat-mac/lib-scriptpackages/SystemEvents \
+ 	plat-mac/lib-scriptpackages/Terminal
+ PLATMACPATH=:plat-mac:plat-mac/lib-scriptpackages
+-LIBSUBDIRS=	lib-old lib-tk site-packages test test/output test/data \
++LIBSUBDIRS=	lib-old lib-tk site-packages \
+ 		test/decimaltestdata \
+-		encodings email email/test email/test/data compiler hotshot \
+-		logging bsddb bsddb/test csv idlelib idlelib/Icons \
++		encodings email compiler hotshot \
++		logging bsddb csv idlelib idlelib/Icons \
+ 		distutils distutils/command $(XMLLIBSUBDIRS) curses $(MACHDEPS)
+ libinstall:	$(BUILDPYTHON) $(srcdir)/Lib/$(PLATDIR)
+ 	@for i in $(SCRIPTDIR) $(LIBDEST); \

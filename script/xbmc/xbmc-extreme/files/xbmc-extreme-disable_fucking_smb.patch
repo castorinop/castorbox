@@ -1,0 +1,25 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-10.1/configure.in work/main.d/xbmc-10.1/configure.in
+--- tmp/xbmc-10.1/configure.in  2011-03-05 00:33:37.000000000 -0300
++++ new-xbmc-10.1/configure.in  2011-07-23 22:13:43.126547006 -0300
+@@ -642,7 +642,7 @@
+   AC_CHECK_LIB([mysqlclient],[main],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_LIB([faad],       [main],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_HEADER([FLAC/stream_decoder.h],, AC_MSG_ERROR($missing_library))
+-  AC_CHECK_LIB([smbclient],  [main],, AC_MSG_ERROR($missing_library))
++  #AC_CHECK_LIB([smbclient],  [main],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_LIB([SDL_mixer],  [main],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_LIB([dl],         [main],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_LIB([resolv],     [main],, AC_MSG_ERROR($missing_library))
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-10.1/guilib/system.h work/main.d/xbmc-10.1/guilib/system.h
+--- tmp/xbmc-10.1/guilib/system.h       2011-03-05 00:33:37.000000000 -0300
++++ new-xbmc-10.1/guilib/system.h       2011-07-24 19:10:23.346781413 -0300
+@@ -58,7 +58,7 @@
+ #endif
+
+ #define HAS_FILESYSTEM
+-#define HAS_FILESYSTEM_SMB
++//#define HAS_FILESYSTEM_SMB
+ #define HAS_FILESYSTEM_CDDA
+ #define HAS_FILESYSTEM_RTV
+ #define HAS_FILESYSTEM_DAAP
+

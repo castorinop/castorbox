@@ -1,0 +1,68 @@
+diff --speed-large-files --minimal -Nru tmp/neverball-1.4.0/Makefile work/main.d/neverball-1.4.0/Makefile
+--- old/Makefile	2004-09-08 17:31:40.000000000 -0300
++++ new/Makefile	2007-01-29 18:19:43.000000000 -0300
+@@ -11,12 +11,12 @@
+ 
+ #------------------------------------------------------------------------------
+ 
+-CFLAGS= -Wall -O3 -ansi $(shell sdl-config --cflags)
++SDL_CFLAGS = $(shell $(BINDIR)/sdl-config --cflags)
+ #CFLAGS= -Wall -g -ansi $(shell sdl-config --cflags)
+ #CFLAGS= -Wall -pg -ansi $(shell sdl-config --cflags)
+ 
+-SDL_LIBS= $(shell sdl-config --libs)
+-FT2_LIBS= $(shell freetype-config --libs)
++SDL_LIBS= $(shell $(BINDIR)/sdl-config --libs)
++FT2_LIBS= $(shell $(BINDIR)/freetype-config --libs)
+ 
+ MAPC_TARG= mapc
+ BALL_TARG= neverball
+@@ -234,38 +234,38 @@
+ #------------------------------------------------------------------------------
+ 
+ %.d : %.c
+-	$(CC) $(CFLAGS) -Ishare -MM -MF $@ $<
++	$(CC) $(CFLAGS) $(SDL_CFLAGS) -Ishare -MM -MF $@ $<
+ 
+ %.o : %.c
+-	$(CC) $(CFLAGS) -Ishare -o $@ -c $<
++	$(CC) $(CFLAGS) $(SDL_CFLAGS) -Ishare -o $@ -c $<
+ 
+ data/map-rlk/%.sol : data/map-rlk/%.map $(MAPC_TARG)
+-	./$(MAPC_TARG) $< data
++	LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(DESTDIR)$(games_libdir)" ./$(MAPC_TARG) $< data
+ 
+ data/map-mym/%.sol : data/map-mym/%.map $(MAPC_TARG)
+-	./$(MAPC_TARG) $< data
++	LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(DESTDIR)$(games_libdir)" ./$(MAPC_TARG) $< dat
+ 
+ data/map-putt/%.sol : data/map-putt/%.map $(MAPC_TARG)
+-	./$(MAPC_TARG) $< data
++	LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(DESTDIR)$(games_libdir)" ./$(MAPC_TARG) $< data
+ 
+ data/map-back/%.sol : data/map-back/%.map $(MAPC_TARG)
+-	./$(MAPC_TARG) $< data
++	LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(DESTDIR)$(games_libdir)" ./$(MAPC_TARG) $< data
+ 
+ data/map-paxed/%.sol : data/map-paxed/%.map $(MAPC_TARG)
+-	./$(MAPC_TARG) $< data
++	LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(DESTDIR)$(games_libdir)" ./$(MAPC_TARG) $< data
+ 
+ #------------------------------------------------------------------------------
+ 
+ all : $(BALL_TARG) $(PUTT_TARG) $(MAPC_TARG) $(SOLS)
+ 
+ $(BALL_TARG) : $(BALL_OBJS)
+-	$(CC) $(CFLAGS) -o $(BALL_TARG) $(BALL_OBJS) $(LIBS)
++	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $(BALL_TARG) $(BALL_OBJS) $(LIBS)
+ 
+ $(PUTT_TARG) : $(PUTT_OBJS)
+-	$(CC) $(CFLAGS) -o $(PUTT_TARG) $(PUTT_OBJS) $(LIBS)
++	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $(PUTT_TARG) $(PUTT_OBJS) $(LIBS)
+ 
+ $(MAPC_TARG) : $(MAPC_OBJS)
+-	$(CC) $(CFLAGS) -o $(MAPC_TARG) $(MAPC_OBJS) $(LIBS)
++	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $(MAPC_TARG) $(MAPC_OBJS) $(LIBS)
+ 
+ clean-src :
+ 	rm -f $(BALL_TARG) $(BALL_OBJS) $(BALL_DEPS)

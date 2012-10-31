@@ -1,0 +1,189 @@
+[===== NOW BUILDING:	core-v2-r983MP	=====]
+/bin/sh: svnversion: command not found
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/meta/core'
+[===== NOW BUILDING:	core-v2-r	=====]
+	[fetch] complete for core.
+	[checksum] complete for core.
+	[extract] complete for core.
+	[patch] complete for core.
+	[configure] complete for core.
+	[build] complete for core.
+checking ...
+  build system binaries ...
+    'ar' (from package 'binutils')
+    'as' (from package 'binutils')
+    'ld' (from package 'binutils')
+    'nm' (from package 'binutils')
+    'ranlib' (from package 'binutils')
+    'bison' (from package 'bison')
+    'bzip2' (from package 'bzip2')
+    'basename' (from package 'coreutils')
+    'cat' (from package 'coreutils')
+    'chmod' (from package 'coreutils')
+    'chown' (from package 'coreutils')
+    'comm' (from package 'coreutils')
+    'cp' (from package 'coreutils')
+    'cut' (from package 'coreutils')
+    'date' (from package 'coreutils')
+    'dirname' (from package 'coreutils')
+    'echo' (from package 'coreutils')
+    'env' (from package 'coreutils')
+    'expr' (from package 'coreutils')
+    'false' (from package 'coreutils')
+    'head' (from package 'coreutils')
+    'id' (from package 'coreutils')
+    'install' (from package 'coreutils')
+    'ln' (from package 'coreutils')
+    'ls' (from package 'coreutils')
+    'md5sum' (from package 'coreutils')
+    'mkdir' (from package 'coreutils')
+    'mv' (from package 'coreutils')
+    'od' (from package 'coreutils')
+    'rm' (from package 'coreutils')
+    'rmdir' (from package 'coreutils')
+    'sleep' (from package 'coreutils')
+    'sort' (from package 'coreutils')
+    'split' (from package 'coreutils')
+    'su' (from package 'coreutils')
+    'tail' (from package 'coreutils')
+    'test' (from package 'coreutils')
+    'touch' (from package 'coreutils')
+    'tr' (from package 'coreutils')
+    'true' (from package 'coreutils')
+    'uname' (from package 'coreutils')
+    'uniq' (from package 'coreutils')
+    'wc' (from package 'coreutils')
+    'cvs' (from package 'cvs')
+    'cmp' (from package 'diffutils')
+    'diff' (from package 'diffutils')
+    'file' (from package 'file')
+    'find' (from package 'findutils')
+    'flex' (from package 'flex')
+    'awk' (from package 'gawk')
+    'gawk' (from package 'gawk')
+    'cpp' (from package 'gcc')
+    'gcc' (from package 'gcc')
+    'git' (from package 'git')
+    'getconf' (from package 'glibc')
+    'iconv' (from package 'glibc')
+    'ldconfig' (from package 'glibc')
+    'egrep' (from package 'grep')
+    'fgrep' (from package 'grep')
+    'grep' (from package 'grep')
+    'gunzip' (from package 'gzip')
+    'gzip' (from package 'gzip')
+    'm4' (from package 'm4')
+    'make' (from package 'make')
+    'hg' (from package 'mercurial')
+    'patch' (from package 'patch')
+    'sed' (from package 'sed')
+    'svn' (from package 'subversion')
+    'tar' (from package 'tar')
+    'makeinfo' (from package 'texinfo')
+    'wget' (from package 'wget')
+  build user uid and gid
+  / and /usr directory access
+  build system binaries ... done
+  obsolete parameters and parameter values ...
+    mm_CHIPSETS
+    mm_INSTALL_TFTP_BOOT
+    mm_INSTALL_CRAMFS
+    mm_INSTALL_NFS
+    mm_XORG_VERSION='old'
+    mm_XORG_VERSION='new'
+  obsolete parameters and parameter values ... done
+  build parameters ...
+    HOME
+    mm_GARCH
+    mm_HOME
+    mm_DEBUG
+    mm_DEBUG_BUILD
+    mm_GRAPHICS
+    mm_KERNEL_HEADERS_VERSION
+    mm_KERNEL_VERSION
+    mm_KERNEL_VERSION >= mm_KERNEL_HEADERS_VERSION
+/bin/sh: line 0: [: 3.0: integer expression expected
+    mm_MMS_VERSION
+    mm_NVIDIA_VERSION
+    mm_XORG_VERSION
+  build parameters ... done
+  build system parameters ...
+  distribution parameters ... done
+checking ... done
+	[all] complete for core.
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core'
+	[fetch] complete for core.
+	[checksum] complete for core.
+	[extract] complete for core.
+	[patch] complete for core.
+/bin/sh: svnversion: command not found
+make[1]: Entering directory `/home/pablo/gar-castorbox/script/meta/core'
+make[1]: `../../devel/build-system-bins/cookies/build.d/install' is up to date.
+make[1]: `../../utils/coreutils/cookies/build.d/install' is up to date.
+ ==> Building devel/fakeroot as a dependency
+make[2]: Entering directory `/home/pablo/gar-castorbox/script/devel/fakeroot'
+[===== NOW BUILDING:	fakeroot-1.16	=====]
+	[fetch] complete for fakeroot.
+	[checksum] complete for fakeroot.
+	[extract] complete for fakeroot.
+	[patch] complete for fakeroot.
+make[3]: Entering directory `/home/pablo/gar-castorbox/script/devel/fakeroot'
+ ==> Building lang/c as a dependency
+make[4]: Entering directory `/home/pablo/gar-castorbox/script/lang/c'
+[===== NOW BUILDING:	c-none	=====]
+	[fetch] complete for c.
+	[checksum] complete for c.
+	[extract] complete for c.
+	[patch] complete for c.
+make[5]: Entering directory `/home/pablo/gar-castorbox/script/lang/c'
+make[5]: `../../lib/libgcc/cookies/build.d/install' is up to date.
+make[5]: `../../devel/build-system-bins/cookies/build.d/install' is up to date.
+make[5]: `../../utils/bash/cookies/build.d/install' is up to date.
+make[5]: `../../perl/perl/cookies/build.d/install' is up to date.
+make[5]: `../../utils/coreutils/cookies/build.d/install' is up to date.
+make[5]: `../../utils/ed/cookies/build.d/install' is up to date.
+make[5]: `../../utils/sed/cookies/build.d/install' is up to date.
+ ==> Building utils/gawk as a dependency
+make[6]: Entering directory `/home/pablo/gar-castorbox/script/utils/gawk'
+[===== NOW BUILDING:	gawk-3.1.8	=====]
+	[fetch] complete for gawk.
+	[checksum] complete for gawk.
+	[extract] complete for gawk.
+	[patch] complete for gawk.
+	[configure] complete for gawk.
+ ==> Running make in work/build.d/gawk-3.1.8
+make[7]: Entering directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8'
+make 'CFLAGS=-pipe -march=x86-64 -O2  -m64' 'LDFLAGS=-export-dynamic' all-recursive
+make[8]: Entering directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8'
+Making all in .
+make[9]: Entering directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8'
+make[9]: Leaving directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8'
+Making all in awklib
+make[9]: Entering directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8/awklib'
+make[9]: Leaving directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8/awklib'
+Making all in doc
+make[9]: Entering directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8/doc'
+make[9]: Nothing to be done for `all'.
+make[9]: Leaving directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8/doc'
+Making all in po
+make[9]: Entering directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8/po'
+*** error: gettext infrastructure mismatch: using a Makefile.in.in from gettext version 0.17 but the autoconf macros are from gettext version 0.18
+make[9]: *** [check-macro-version] Error 1
+make[9]: Leaving directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8/po'
+make[8]: *** [all-recursive] Error 1
+make[8]: Leaving directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8'
+make[7]: *** [all] Error 2
+make[7]: Leaving directory `/home/pablo/gar-castorbox/script/utils/gawk/work/build.d/gawk-3.1.8'
+make[6]: *** [build-work/build.d/gawk-3.1.8/Makefile] Error 2
+make[6]: Leaving directory `/home/pablo/gar-castorbox/script/utils/gawk'
+make[5]: *** [../../utils/gawk/cookies/build.d/install] Error 2
+make[5]: Leaving directory `/home/pablo/gar-castorbox/script/lang/c'
+make[4]: *** [imgdep-build] Error 2
+make[4]: Leaving directory `/home/pablo/gar-castorbox/script/lang/c'
+make[3]: *** [../../lang/c/cookies/build.d/install] Error 2
+make[3]: Leaving directory `/home/pablo/gar-castorbox/script/devel/fakeroot'
+make[2]: *** [imgdep-build] Error 2
+make[2]: Leaving directory `/home/pablo/gar-castorbox/script/devel/fakeroot'
+make[1]: *** [../../devel/fakeroot/cookies/build.d/install] Error 2
+make[1]: Leaving directory `/home/pablo/gar-castorbox/script/meta/core'
+make: *** [imgdep-build] Error 2

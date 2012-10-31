@@ -1,0 +1,12 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp work/main.d/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp
+--- tmp/mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp	2010-03-06 12:48:51.000000000 -0300
++++ new-mms-1.1.0-1788/plugins/feature/media-rss/media_rss.cpp	2010-05-03 19:45:49.000000000 -0300
+@@ -507,6 +516,7 @@
+   int curlayer = render->device->get_current_layer();
+   render->device->switch_to_layer(curlayer+1);
+   render->device->reset_layout_attribs_nowait();
++  render->device->set_layout_alpha(0.0, curlayer+1);
+   render->device->animation_zoom(3,3,1,1,40,curlayer+1);
+   render->device->animation_fade(0,1,50,curlayer+1);
+   render->device->animation_fade(1,0,50,curlayer);
+

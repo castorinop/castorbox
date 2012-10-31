@@ -1,0 +1,12 @@
+diff -Naur perl-5.12.2-old/cpan/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm perl-5.12.2-new/cpan/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm
+--- perl-5.12.2-old/cpan/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm	2010-09-15 10:28:27.000000000 -0700
++++ perl-5.12.2-new/cpan/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm	2010-09-15 10:40:30.000000000 -0700
+@@ -295,7 +295,7 @@
+ sub perl_inc {
+   my $self = shift;
+ 
+-  $self->perl_src() || File::Spec->catdir($self->{config}{archlibexp},"CORE");
++  $self->perl_src() || File::Spec->catdir($ENV{DESTDIR},$self->{config}{archlibexp},"CORE");
+ }
+ 
+ sub DESTROY {

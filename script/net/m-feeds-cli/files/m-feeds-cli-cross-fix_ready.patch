@@ -1,0 +1,111 @@
+diff -ru ../m-feeds-cli-cross/celerity/celerity/amuleEC.py ./celerity/celerity/amuleEC.py
+--- ../m-feeds-cli-cross/celerity/celerity/amuleEC.py	2012-02-27 12:07:43.078899900 -0300
++++ ./celerity/celerity/amuleEC.py	2012-08-07 11:52:16.689203332 -0300
+@@ -40,7 +40,7 @@
+         self.mfcfg.set('amuleHelper', 'daemon',     os.path.expanduser('~/bin/amuled'))
+         self.mfcfg.set('amuleHelper', 'client',     os.path.expanduser('~/bin/amulecmd'))
+         self.mfcfg.set('amuleHelper', 'cfg_remote', os.path.expanduser('~/.aMule/remote.conf'))
+-        self.mfcfg.set('amuleHelper', 'cfg_daemon', os.path.expanduser('~/.aMule/amule.conf'))
++        self.mfcfg.set('amuleHelper', 'cfg_daemon', os.path.expanduser('~/.aMule'))
+         self.mfcfg.set('amuleHelper', 'incoming',   os.path.expanduser('~/.aMule/Incoming'))
+         with open(cfgfile, 'wb') as configfile:
+             self.mfcfg.write(configfile)
+@@ -65,12 +65,19 @@
+     if not (os.path.exists(self.amuled) or os.path.exists(self.amulecfg_remote)): 
+         print "bad amuleEC config, please check. elinks support are disabled"
+         sys.exit(':(')
+-        
++    
++    cmd = [self.amuled]
++    if os.path.exists(self.amulecfg_daemon):
++	cmd.append("-c")
++	cmd.append(self.amulecfg_daemon)
++
+     if not self.ready:
+-        self.ECdaemon = Process([self.amuled])
+-        #FIXME: error handler at launch amuled
+-        time.sleep(10)
+-        #self.ECclient = Process([self.amulecmd, "-f", self.amulecfg_remote ])
++    	if not os.path.exists( os.path.join(self.amulecfg_daemon , 'muleLock')):
++	        self.ECdaemon = Process(cmd)
++        	#FIXME: error handler at launch amuled
++        	print "waiting amule daemon"
++	        time.sleep(10)
++        	#self.ECclient = Process([self.amulecmd, "-f", self.amulecfg_remote ])
+         
+         
+         def tryOpenConfig(ca, fp):
+@@ -107,9 +114,10 @@
+         #passwd = "asd"
+         try:
+             self.ec = ec.conn(passwd, host, port, prog_name, prog_ver)
+-            self.ready = True
++            return True
+         except self.ec.ConnectionFailedError:
+             print("Connection failed")
++        return False
+     
+   def analize_out(self, out):
+ 
+@@ -153,7 +161,7 @@
+     #print "query " + hash
+     while not self.ready:
+         #print "waiting"
+-        time.sleep(1) 
++        time.sleep(30) 
+     
+     if hash in self.files and not self.files[hash]['dwnl'] == None:
+             return True
+@@ -201,13 +210,16 @@
+ 
+   
+   def run(self):
+-
+-    self.connect()
+-    
++    print "amuleEC run"
++    ret = self.ready
+     while True:
++      if not ret:
++      	ret = self.connect()
++      	continue
++      	
+       files_ = self.ec.get_dload_queue()
+       for f in files_:
+-          #print "hash %s " % self.getHash(f['partfile_ed2k_link'])
++          #print "amuleEC hash %s " % self.getHash(f['partfile_ed2k_link'])
+           hash = self.getHash(f['partfile_ed2k_link'])
+           #hash = f['knownfile_aich_masterhash']
+           name = f['partfile_name']
+@@ -236,6 +248,7 @@
+       if self.files:
+           self.saveFiles()
+       
++      self.ready = ret
+ #      self.ECclient.write('show dl\n')
+       
+       time.sleep(10)
+diff -ru ../m-feeds-cli-cross/celerity/celerity/external_ed2k.py ./celerity/celerity/external_ed2k.py
+--- ../m-feeds-cli-cross/celerity/celerity/external_ed2k.py	2012-02-02 22:35:50.149574300 -0300
++++ ./celerity/celerity/external_ed2k.py	2012-08-07 11:52:15.872191131 -0300
+@@ -137,7 +137,7 @@
+             #print process.stdout.readline()
+         
+             #print self.resource._iInstance.getHash(self.loc)
+-            if not _iInstance.query(self.loc):
++            if _iInstance.ready and not _iInstance.query(self.loc):
+                 _iInstance.add(self.loc)
+             
+             self.write(_iInstance.get(self.loc))
+@@ -217,8 +217,8 @@
+                 _iInstance.set(data['hash'], 'dwnl', 'done' )
+             return ret
+         
+-        uri = 'ed2k://|file|%s|%s|%s' % (data['name'],data['size'],data['hash'])
+-        if not _iInstance.query(uri):
+-            _iInstance.add(uri)
++        #uri = 'ed2k://|file|%s|%s|%s' % (data['name'],data['size'],data['hash'])
++        #if not _iInstance.query(uri):
++        #    _iInstance.add(uri)
+         return False
+ 

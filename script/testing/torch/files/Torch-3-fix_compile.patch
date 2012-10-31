@@ -1,0 +1,13 @@
+diff --speed-large-files --minimal -Nru tmp/Torch3/Makefile work/main.d/Torch3/Makefile
+--- tmp/Torch3/Makefile	2004-08-11 12:34:36.000000000 -0400
++++ Torch3/Makefile	2008-02-07 11:35:14.000000000 -0200
+@@ -5,7 +5,7 @@
+ SUBDIRS := core
+ SUBDIRS += $(PACKAGES)
+ 
+-all:
++all: depend
+ 	@echo ">>> Try to compile Torch <<<"
+ 	@for subdir in ${SUBDIRS} ; do ( cd $$subdir ; ${MAKE} $@) || exit 10 ; done
+ 	@echo ">> !!! Ok !!! <<<"
+

@@ -1,0 +1,12 @@
+--- old-mms-castorbox-1.1.x-1792/plugins/feature/movie/series.cpp	2010-12-19 01:12:11.725598760 -0300
++++ new/plugins/feature/movies/series.cpp	2010-12-19 01:10:56.763660624 -0300
+@@ -574,6 +574,9 @@
+   if (scanning)
+     return;
+ 
++  if (series.size() == 0) 
++	  return;
++
+   string serie_str = vector_lookup(series, pos_serie).name;
+   pos_serie = 0;
+   series = getSeries();

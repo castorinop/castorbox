@@ -1,0 +1,27 @@
+diff -Naur libXft-2.1.14-old/xft-config.in libXft-2.1.14-new/xft-config.in
+--- libXft-2.1.14-old/xft-config.in	2006-07-11 11:05:27.000000000 -0700
++++ libXft-2.1.14-new/xft-config.in	2009-10-09 17:45:38.000000000 -0700
+@@ -1,5 +1,6 @@
+ #! /bin/sh
+ 
++DESTDIR=@GAR_DESTDIR@
+ prefix="@prefix@"
+ exec_prefix="@exec_prefix@"
+ libdir="@libdir@"
+@@ -84,14 +85,14 @@
+ fi
+ 
+ if test "$echo_cflags" = "yes" ; then
+- cflags="-I${includedir} ${freetypecflags} ${fontconfigcflags} ${xrendercflags}"
++ cflags="-I$DESTDIR${includedir} ${freetypecflags} ${fontconfigcflags} ${xrendercflags}"
+  echo $cflags
+ fi
+ 
+ if test "$echo_libs" = "yes" ; then
+  libs="-lXft -lX11 ${freetypelibs} ${fontconfiglibs} ${xrenderlibs}"
+  if test "${libdir}" != "/usr/lib" ; then
+-  echo -L${libdir} $libs
++  echo -L$DESTDIR${libdir} $libs
+  else
+   echo $libs
+  fi

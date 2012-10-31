@@ -1,0 +1,170 @@
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/transmission-1.60/cli/cli.c new-transmission-1.60/cli/cli.c
+--- tmp/transmission-1.60/cli/cli.c	2009-05-04 21:40:19.000000000 -0300
++++ new-transmission-1.60/cli/cli.c	2009-05-05 12:01:42.000000000 -0300
+@@ -51,6 +51,7 @@
+ static const char * announce     = NULL;
+ static const char * sourceFile   = NULL;
+ static const char * comment      = NULL;
++static const char * name         = NULL;
+ 
+ static const struct tr_option options[] =
+ {
+@@ -58,6 +59,7 @@
+     { 'b', "blocklist",            "Enable peer blocklists", "b",  0, NULL        },
+     { 'B', "no-blocklist",         "Disable peer blocklists", "B",  0, NULL        },
+     { 'c', "comment",              "Set the new torrent's comment", "c",  1, "<comment>" },
++    { 'e', "title",		   "Set the new torrent's title", "e", 1, "<title>" },
+     { 'd', "downlimit",            "Set max download speed in KB/s", "d",  1, "<speed>"   },
+     { 'D', "no-downlimit",         "Don't limit the download speed", "D",  0, NULL        },
+     { 910, "encryption-required",  "Encrypt all peer connections", "er", 0, NULL        },
+@@ -189,7 +191,8 @@
+     for( i = 0; i < SHA_DIGEST_LENGTH; ++i )
+         fprintf( out, "%02x", inf->hash[i] );
+     fprintf( out, "\n" );
+-
++   
++    fprintf( out, "title:\t%s\n", inf->title );
+     fprintf( out, "name:\t%s\n", inf->name );
+ 
+     for( i = 0; i < inf->trackerCount; ++i )
+@@ -336,7 +339,7 @@
+         tr_tracker_info       ti;
+         ti.tier = 0;
+         ti.announce = (char*) announce;
+-        tr_makeMetaInfo( b, torrentPath, &ti, 1, comment, isPrivate );
++        tr_makeMetaInfo( b, torrentPath, &ti, 1, comment, name, isPrivate );
+         while( !b->isDone )
+         {
+             tr_wait( 1000 );
+@@ -498,6 +501,8 @@
+                       break;
+             case 'c': comment = optarg;
+                       break;
++            case 'e': name = optarg;
++                      break;
+             case 'd': tr_bencDictAddInt ( d, TR_PREFS_KEY_DSPEED, atoi( optarg ) );
+                       tr_bencDictAddBool( d, TR_PREFS_KEY_DSPEED_ENABLED, TRUE );
+                       break;
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/transmission-1.60/gtk/makemeta-ui.c new-transmission-1.60/gtk/makemeta-ui.c
+--- tmp/transmission-1.60/gtk/makemeta-ui.c	2009-05-04 21:40:11.000000000 -0300
++++ new-transmission-1.60/gtk/makemeta-ui.c	2009-05-05 12:01:42.000000000 -0300
+@@ -35,6 +35,7 @@
+     GtkWidget * size_lb;
+     GtkWidget * pieces_lb;
+     GtkWidget * announce_list;
++    GtkWidget * title_entry;
+     GtkWidget * comment_entry;
+     GtkWidget * progressbar;
+     GtkWidget * private_check;
+@@ -227,6 +228,7 @@
+                     NULL,
+                     trackers, trackerCount,
+                     gtk_entry_get_text( GTK_ENTRY( ui->comment_entry ) ),
++                    gtk_entry_get_text( GTK_ENTRY( ui->title_entry ) ), 
+                     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ui->
+                                                                      private_check ) ) );
+ 
+@@ -467,6 +469,8 @@
+     {
+         int         row2 = 0;
+         GtkWidget * t2 = hig_workarea_create( );
++        w = ui->title_entry = gtk_entry_new( );
++        hig_workarea_add_row( t2, &row2, _( "T_itle:" ), w, NULL );
+         w = ui->comment_entry = gtk_entry_new( );
+         hig_workarea_add_row( t2, &row2, _( "Commen_t:" ), w, NULL );
+         w =
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/transmission-1.60/libtransmission/makemeta.c new-transmission-1.60/libtransmission/makemeta.c
+--- tmp/transmission-1.60/libtransmission/makemeta.c	2009-05-04 21:40:08.000000000 -0300
++++ new-transmission-1.60/libtransmission/makemeta.c	2009-05-05 12:01:43.000000000 -0300
+@@ -407,6 +407,8 @@
+     {
+         if( builder->comment && *builder->comment )
+             tr_bencDictAddStr( &top, "comment", builder->comment );
++        if( builder->title && *builder->title )
++            tr_bencDictAddStr( &top, "title", builder->title );
+         tr_bencDictAddStr( &top, "created by",
+                            TR_NAME "/" LONG_VERSION_STRING );
+         tr_bencDictAddInt( &top, "creation date", time( NULL ) );
+@@ -487,6 +489,7 @@
+                  const tr_tracker_info * trackers,
+                  int                     trackerCount,
+                  const char *            comment,
++                 const char *            title,
+                  int                     isPrivate )
+ {
+     int       i;
+@@ -510,6 +513,7 @@
+         builder->trackers[i].announce = tr_strdup( trackers[i].announce );
+     }
+     builder->comment = tr_strdup( comment );
++    builder->title = tr_strdup( title );
+     builder->isPrivate = isPrivate;
+     if( outputFile && *outputFile )
+         builder->outputFile = tr_strdup( outputFile );
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/transmission-1.60/libtransmission/makemeta.h new-transmission-1.60/libtransmission/makemeta.h
+--- tmp/transmission-1.60/libtransmission/makemeta.h	2009-05-04 21:40:08.000000000 -0300
++++ new-transmission-1.60/libtransmission/makemeta.h	2009-05-05 12:01:43.000000000 -0300
+@@ -59,6 +59,7 @@
+     tr_tracker_info *  trackers;
+     int                trackerCount;
+     char *             comment;
++    char *             title;
+     char *             outputFile;
+     int                isPrivate;
+ 
+@@ -116,6 +117,7 @@
+                       const tr_tracker_info * trackers,
+                       int                     trackerCount,
+                       const char *            comment,
++                      const char *            title,
+                       int                     isPrivate );
+ 
+ 
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/transmission-1.60/libtransmission/metainfo.c new-transmission-1.60/libtransmission/metainfo.c
+--- tmp/transmission-1.60/libtransmission/metainfo.c	2009-05-04 21:40:08.000000000 -0300
++++ new-transmission-1.60/libtransmission/metainfo.c	2009-05-05 12:01:43.000000000 -0300
+@@ -381,6 +381,13 @@
+     tr_free( inf->name );
+     inf->name = tr_utf8clean( str, -1, &err );
+ 
++    /* title */
++    if( !tr_bencDictFindStr( meta, "title.utf-8", &str ) )
++	 if( !tr_bencDictFindStr( meta, "title", &str ) )
++             str = "";
++    tr_free( inf->title );
++    inf->title = tr_utf8clean( str, -1, &err );
++
+     /* comment */
+     if( !tr_bencDictFindStr( meta, "comment.utf-8", &str ) )
+         if( !tr_bencDictFindStr( meta, "comment", &str ) )
+@@ -480,6 +487,7 @@
+     tr_free( inf->creator );
+     tr_free( inf->torrent );
+     tr_free( inf->name );
++    tr_free( inf->title );
+ 
+     for( i = 0; i < inf->trackerCount; ++i )
+     {
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/transmission-1.60/libtransmission/rpcimpl.c new-transmission-1.60/libtransmission/rpcimpl.c
+--- tmp/transmission-1.60/libtransmission/rpcimpl.c	2009-05-04 21:40:08.000000000 -0300
++++ new-transmission-1.60/libtransmission/rpcimpl.c	2009-05-05 12:01:43.000000000 -0300
+@@ -468,7 +468,7 @@
+     else if( !strcmp( key, "maxConnectedPeers" ) )
+         tr_bencDictAddInt( d, key,  tr_torrentGetPeerLimit( tor ) );
+     else if( !strcmp( key, "name" ) )
+-        tr_bencDictAddStr( d, key, inf->name );
++        tr_bencDictAddStr( d, key, inf->title ? inf-> title : inf->name ); /* show title if this is avaiable, else name */
+     else if( !strcmp( key, "nextAnnounceTime" ) )
+         tr_bencDictAddInt( d, key, st->nextAnnounceTime );
+     else if( !strcmp( key, "nextScrapeTime" ) )
+diff -x '*~' -x '.*' --speed-large-files --minimal -Nru tmp/transmission-1.60/libtransmission/transmission.h new-transmission-1.60/libtransmission/transmission.h
+--- tmp/transmission-1.60/libtransmission/transmission.h	2009-05-04 21:40:08.000000000 -0300
++++ new-transmission-1.60/libtransmission/transmission.h	2009-05-05 12:01:43.000000000 -0300
+@@ -1274,6 +1274,7 @@
+     uint8_t            hash[SHA_DIGEST_LENGTH];
+     char               hashString[2 * SHA_DIGEST_LENGTH + 1];
+     char            *  name;
++    char            *  title;
+ 
+     /* Path to torrent Transmission's internal copy of the .torrent file.
+        This field exists for compatability reasons in the Mac OS X client

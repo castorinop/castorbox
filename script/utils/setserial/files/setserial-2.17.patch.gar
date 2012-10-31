@@ -1,0 +1,17 @@
+--- old/Makefile.in	2006-12-12 15:42:21.000000000 -0300
++++ new/Makefile.in	2006-12-12 15:45:00.000000000 -0300
+@@ -25,9 +25,13 @@
+ setserial.cat: setserial.8
+ 	nroff -man setserial.8 > setserial.cat
+ 
+-install: setserial setserial.8
++install: setserial-install
++
++setserial-install: 
+ 	$(INSTALL_PROGRAM) setserial $(DESTDIR)/bin
+ 	$(STRIP) $(DESTDIR)/bin/setserial
++
++setserial.8-install:
+ 	$(INSTALL_DATA) setserial.8 $(DESTDIR)/usr/man/man8
+ 
+ clean:

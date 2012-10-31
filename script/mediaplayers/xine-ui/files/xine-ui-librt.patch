@@ -1,0 +1,12 @@
+diff -Naur xine-ui-3056-old/src/xitk/Makefile.am xine-ui-3056-new/src/xitk/Makefile.am
+--- xine-ui-3056-old/src/xitk/Makefile.am	2010-08-20 12:51:27.000000000 -0700
++++ xine-ui-3056-new/src/xitk/Makefile.am	2010-08-20 12:51:30.000000000 -0700
+@@ -71,7 +71,7 @@
+ 	     $(top_builddir)/src/xitk/oxine/liboxine.a \
+ 	     $(X_PRE_LIBS) $(LIRC_LIBS) $(XFT_LIBS) \
+ 	     $(X_LIBS) $(XTEST_LIBS) $(XSSAVER_LIBS) $(CURL_LIBS) $(NVTVSIMPLE_LIBS) \
+-	     -lX11 -lXext -lm $(DBG_LIBS) $(XV_LIB) $(LIBPNG_LIBS) $(JPEG_LIBS) \
++	     -lX11 -lXext -lm -lrt $(DBG_LIBS) $(XV_LIB) $(LIBPNG_LIBS) $(JPEG_LIBS) \
+ 	     $(INTLLIBS) $(THREAD_LIBS)
+ 
+ xine_remote_CFLAGS = $(AM_CFLAGS) -DNETWORK_CLIENT

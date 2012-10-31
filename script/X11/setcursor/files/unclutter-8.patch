@@ -1,0 +1,702 @@
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/changelog work/main.d/unclutter/debian/changelog
+--- tmp/unclutter/debian/changelog	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/changelog	2006-12-23 13:47:04.000000000 -0300
+@@ -0,0 +1,128 @@
++unclutter (8-5) unstable; urgency=low
++
++  * Document -visible in man page. Thanks, Marc-Jano Knopp. Closes: #384365
++  * Fixed a couple typos in help text.
++
++ -- Joey Hess <joeyh@debian.org>  Thu, 24 Aug 2006 16:41:35 -0400
++
++unclutter (8-4) unstable; urgency=low
++
++  * Patch from Jonas Koelker to support subsecond idle times. Closes: #369891
++  * debhelper v5
++  * Current standards version.
++
++ -- Joey Hess <joeyh@debian.org>  Sun, 11 Jun 2006 16:51:08 -0400
++
++unclutter (8-3) unstable; urgency=low
++
++  * Remove the menu file, I think the changes that anyone will want to
++    start/stop unclutter from the menu is slim and its use of killall was
++    evil.
++  * Current standards version.
++
++ -- Joey Hess <joeyh@debian.org>  Sun, 18 Dec 2005 17:24:23 -0500
++
++unclutter (8-2) unstable; urgency=low
++
++  * Rebuild to use new split X library packages, update build depends.
++    Closes: #287675
++  * Menu file updates (qouting).
++
++ -- Joey Hess <joeyh@debian.org>  Wed, 29 Dec 2004 15:51:24 -0500
++
++unclutter (8-1) unstable; urgency=low
++
++  * Taking this package over again.
++  * Update to current policy. Closes: #197714
++  * Changed version number to 8, since the original tarball is named
++    unclutter-8.tar.Z.
++  * Downloaded original tarball, and included it as pristine upstream source,
++    except I had to uncompress it (.Z) and gzip it back up. Still, more
++    pristine than before.
++  * Include patchlevel.h as the upstream changelog, such as it is.
++  * Expanded copyright file with download location and actual non-copyright
++    statement.
++  * Rewrote and simplified the package description.
++  * Update to debhelper v4.
++  * Moved out of the X directories since the Imakefile is not actually used.
++  * Patched it to not spin when a full-screen program (such as a SDL game
++    or xlock) is running and the XGrabPointer fails. Closes: #197684
++  * Applied patch from Stelios Bounanos that adds a -notclass switch, useful
++    for apps like galeon that frequently change the window title.
++    Closes: #149720
++  * Also a patch to add regex support in the -not matching.
++
++ -- Joey Hess <joeyh@debian.org>  Tue, 17 Jun 2003 10:54:44 -0400
++
++unclutter (0.8-22) unstable; urgency=low
++
++  * Updated build-deps to use new xlibs-dev (Closes: #99691) 
++  * Removed dh_suidregister call from debian/rules
++
++ -- Bradley Marshall <bmarshal@pisoftware.com>  Sun,  3 Jun 2001 21:19:58 +1000
++
++unclutter (0.8-21) unstable; urgency=low
++
++  * Change of maintainer
++
++ -- Bradley Marshall <bmarshal@pisoftware.com>  Tue, 22 Aug 2000 19:37:33 +1000
++
++unclutter (0.8-20) unstable; urgency=low
++
++  * Build deps.
++
++ -- Joey Hess <joeyh@debian.org>  Sat,  4 Dec 1999 16:42:27 -0800
++
++unclutter (0.8-19) unstable; urgency=low
++
++  * FHS
++
++ -- Joey Hess <joeyh@debian.org>  Mon,  6 Sep 1999 16:56:50 -0700
++
++unclutter (0.8-18) unstable; urgency=low
++
++  * Fix minior lintian errors.
++
++ -- Joey Hess <joeyh@debian.org>  Sat, 14 Mar 1998 20:05:24 -0800
++
++unclutter (0.8-17) unstable; urgency=low
++
++  * Updated standards-version.
++
++ -- Joey Hess <joeyh@debian.org>  Mon,  9 Feb 1998 15:09:57 -0800
++
++unclutter (0.8-16) unstable; urgency=low
++
++  * Use debhelper.
++
++ -- Joey Hess <joeyh@debian.org>  Sat,  7 Feb 1998 20:03:20 -0800
++
++unclutter (0.8-15) unstable; urgency=low
++
++  * libc6.
++  * Routine update of debian/rules:
++    Fixed binary-indep target.
++
++ -- Joey Hess <joeyh@debian.org>  Mon,  8 Sep 1997 19:31:27 -0400
++
++unclutter (0.8-14) unstable; urgency=low
++
++  * Use debstd.
++
++ -- Joey Hess <joeyh@debian.org>  Mon, 14 Apr 1997 13:46:51 -0400
++
++unclutter (0.8-13) frozen unstable; urgency=low
++
++  * New maintainer.
++  * Changed dependancy on elf-x11r6lib to xlib6.
++  * Added a menu file.
++
++ -- Joey Hess <joeyh@debian.org>  Mon, 14 Apr 1997 13:20:26 -0400
++
++unclutter (0.8-12) unstable; urgency=low
++
++  * Converted to new source format.
++  * New maintainer.
++
++ -- Lars Wirzenius <liw@iki.fi>  Thu, 26 Sep 1996 21:23:33 +0300
++
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/changelog
+ work/main.d/unclutter/debian/changelog
+
+--- tmp/unclutter/debian/changelog
+	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/changelog
+	2006-12-23 13:47:00.000000000 -0300
+@@ -0,0 +1,128 @@
++unclutter (8-5) unstable; urgency=low
++
++  * Document -visible in man page. Thanks, Marc-Jano Knopp. Closes: #384365
++  * Fixed a couple typos in help text.
++
++ -- Joey Hess <joeyh@debian.org>  Thu, 24 Aug 2006 16:41:35 -0400
++
++unclutter (8-4) unstable; urgency=low
++
++  * Patch from Jonas Koelker to support subsecond idle times. Closes: #369891
++  * debhelper v5
++  * Current standards version.
++
++ -- Joey Hess <joeyh@debian.org>  Sun, 11 Jun 2006 16:51:08 -0400
++
++unclutter (8-3) unstable; urgency=low
++
++  * Remove the menu file, I think the changes that anyone will want to
++    start/stop unclutter from the menu is slim and its use of killall was
++    evil.
++  * Current standards version.
++
++ -- Joey Hess <joeyh@debian.org>  Sun, 18 Dec 2005 17:24:23 -0500
++
++unclutter (8-2) unstable; urgency=low
++
++  * Rebuild to use new split X library packages, update build depends.
++    Closes: #287675
++  * Menu file updates (qouting).
++
++ -- Joey Hess <joeyh@debian.org>  Wed, 29 Dec 2004 15:51:24 -0500
++
++unclutter (8-1) unstable; urgency=low
++
++  * Taking this package over again.
++  * Update to current policy. Closes: #197714
++  * Changed version number to 8, since the original tarball is named
++    unclutter-8.tar.Z.
++  * Downloaded original tarball, and included it as pristine upstream source,
++    except I had to uncompress it (.Z) and gzip it back up. Still, more
++    pristine than before.
++  * Include patchlevel.h as the upstream changelog, such as it is.
++  * Expanded copyright file with download location and actual non-copyright
++    statement.
++  * Rewrote and simplified the package description.
++  * Update to debhelper v4.
++  * Moved out of the X directories since the Imakefile is not actually used.
++  * Patched it to not spin when a full-screen program (such as a SDL game
++    or xlock) is running and the XGrabPointer fails. Closes: #197684
++  * Applied patch from Stelios Bounanos that adds a -notclass switch, useful
++    for apps like galeon that frequently change the window title.
++    Closes: #149720
++  * Also a patch to add regex support in the -not matching.
++
++ -- Joey Hess <joeyh@debian.org>  Tue, 17 Jun 2003 10:54:44 -0400
++
++unclutter (0.8-22) unstable; urgency=low
++
++  * Updated build-deps to use new xlibs-dev (Closes: #99691) 
++  * Removed dh_suidregister call from debian/rules
++
++ -- Bradley Marshall <bmarshal@pisoftware.com>  Sun,  3 Jun 2001 21:19:58 +1000
++
++unclutter (0.8-21) unstable; urgency=low
++
++  * Change of maintainer
++
++ -- Bradley Marshall <bmarshal@pisoftware.com>  Tue, 22 Aug 2000 19:37:33 +1000
++
++unclutter (0.8-20) unstable; urgency=low
++
++  * Build deps.
++
++ -- Joey Hess <joeyh@debian.org>  Sat,  4 Dec 1999 16:42:27 -0800
++
++unclutter (0.8-19) unstable; urgency=low
++
++  * FHS
++
++ -- Joey Hess <joeyh@debian.org>  Mon,  6 Sep 1999 16:56:50 -0700
++
++unclutter (0.8-18) unstable; urgency=low
++
++  * Fix minior lintian errors.
++
++ -- Joey Hess <joeyh@debian.org>  Sat, 14 Mar 1998 20:05:24 -0800
++
++unclutter (0.8-17) unstable; urgency=low
++
++  * Updated standards-version.
++
++ -- Joey Hess <joeyh@debian.org>  Mon,  9 Feb 1998 15:09:57 -0800
++
++unclutter (0.8-16) unstable; urgency=low
++
++  * Use debhelper.
++
++ -- Joey Hess <joeyh@debian.org>  Sat,  7 Feb 1998 20:03:20 -0800
++
++unclutter (0.8-15) unstable; urgency=low
++
++  * libc6.
++  * Routine update of debian/rules:
++    Fixed binary-indep target.
++
++ -- Joey Hess <joeyh@debian.org>  Mon,  8 Sep 1997 19:31:27 -0400
++
++unclutter (0.8-14) unstable; urgency=low
++
++  * Use debstd.
++
++ -- Joey Hess <joeyh@debian.org>  Mon, 14 Apr 1997 13:46:51 -0400
++
++unclutter (0.8-13) frozen unstable; urgency=low
++
++  * New maintainer.
++  * Changed dependancy on elf-x11r6lib to xlib6.
++  * Added a menu file.
++
++ -- Joey Hess <joeyh@debian.org>  Mon, 14 Apr 1997 13:20:26 -0400
++
++unclutter (0.8-12) unstable; urgency=low
++
++  * Converted to new source format.
++  * New maintainer.
++
++ -- Lars Wirzenius <liw@iki.fi>  Thu, 26 Sep 1996 21:23:33 +0300
++
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/compat work/main.d/unclutter/debian/compat
+--- tmp/unclutter/debian/compat	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/compat	2006-12-23 13:47:04.000000000 -0300
+@@ -0,0 +1 @@
++5
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/compat
+ work/main.d/unclutter/debian/compat
+
+--- tmp/unclutter/debian/compat
+	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/compat
+	2006-12-23 13:47:00.000000000 -0300
+@@ -0,0 +1 @@
++5
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/control work/main.d/unclutter/debian/control
+--- tmp/unclutter/debian/control	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/control	2006-12-23 13:47:04.000000000 -0300
+@@ -0,0 +1,14 @@
++Source: unclutter
++Section: x11
++Priority: optional
++Build-Depends: debhelper (>= 5), libx11-dev
++Maintainer: Joey Hess <joeyh@debian.org>
++Standards-Version: 3.7.2
++
++Package: unclutter
++Architecture: any
++Depends: ${shlibs:Depends}, ${misc:Depends}
++Description: hides the cursor in X after a period of inactivity
++ unclutter hides your X mouse cursor when you don't need it, to prevent it
++ from getting in the way. You have only to move the mouse to restore the
++ mouse cursor.
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/control
+ work/main.d/unclutter/debian/control
+
+--- tmp/unclutter/debian/control
+	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/control
+	2006-12-23 13:47:00.000000000 -0300
+@@ -0,0 +1,14 @@
++Source: unclutter
++Section: x11
++Priority: optional
++Build-Depends: debhelper (>= 5), libx11-dev
++Maintainer: Joey Hess <joeyh@debian.org>
++Standards-Version: 3.7.2
++
++Package: unclutter
++Architecture: any
++Depends: ${shlibs:Depends}, ${misc:Depends}
++Description: hides the cursor in X after a period of inactivity
++ unclutter hides your X mouse cursor when you don't need it, to prevent it
++ from getting in the way. You have only to move the mouse to restore the
++ mouse cursor.
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/copyright work/main.d/unclutter/debian/copyright
+--- tmp/unclutter/debian/copyright	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/copyright	2006-12-23 13:47:04.000000000 -0300
+@@ -0,0 +1,11 @@
++This is unclutter, maintained by Joey Hess <joeyh@debian.org>, 
++originally packaged for Debian by Lars Wirzenius <liw@iki.fi>.
++
++It was downloaded from ftp://export.lcs.mit.edu:/contrib/utilities/
++
++The README states:
++
++  The program is released into the public domain.  Only the considerate
++  will leave credit for the author.
++
++          Mark M Martin. mmm@cetia.fr  sep 1992.
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/copyright
+ work/main.d/unclutter/debian/copyright
+
+--- tmp/unclutter/debian/copyright
+	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/copyright
+	2006-12-23 13:47:00.000000000 -0300
+@@ -0,0 +1,11 @@
++This is unclutter, maintained by Joey Hess <joeyh@debian.org>, 
++originally packaged for Debian by Lars Wirzenius <liw@iki.fi>.
++
++It was downloaded from ftp://export.lcs.mit.edu:/contrib/utilities/
++
++The README states:
++
++  The program is released into the public domain.  Only the considerate
++  will leave credit for the author.
++
++          Mark M Martin. mmm@cetia.fr  sep 1992.
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/rules work/main.d/unclutter/debian/rules
+--- tmp/unclutter/debian/rules	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/rules	2006-12-23 13:47:04.000000000 -0300
+@@ -0,0 +1,33 @@
++#!/usr/bin/make -f
++
++build: build-stamp
++build-stamp:
++	dh_testdir
++	$(MAKE)
++	touch build-stamp
++
++clean:
++	dh_testdir
++	$(MAKE) clean
++	dh_clean build-stamp
++
++binary-arch: build
++	dh_testdir
++	dh_testroot
++	dh_clean -k
++	dh_install unclutter usr/bin
++	dh_installman unclutter.man
++	dh_installdocs README
++	dh_installchangelogs patchlevel.h
++	dh_strip
++	dh_compress
++	dh_fixperms
++	dh_installdeb
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary-indep: build
++binary: binary-indep binary-arch
++.PHONY: build clean binary-indep binary-arch binary
+diff --speed-large-files --minimal -Nru tmp/unclutter/debian/rules
+ work/main.d/unclutter/debian/rules
+
+--- tmp/unclutter/debian/rules
+	1969-12-31 21:00:00.000000000 -0300
++++ work/main.d/unclutter/debian/rules
+	2006-12-23 13:47:00.000000000 -0300
+@@ -0,0 +1,33 @@
++#!/usr/bin/make -f
++
++build: build-stamp
++build-stamp:
++	dh_testdir
++	$(MAKE)
++	touch build-stamp
++
++clean:
++	dh_testdir
++	$(MAKE) clean
++	dh_clean build-stamp
++
++binary-arch: build
++	dh_testdir
++	dh_testroot
++	dh_clean -k
++	dh_install unclutter usr/bin
++	dh_installman unclutter.man
++	dh_installdocs README
++	dh_installchangelogs patchlevel.h
++	dh_strip
++	dh_compress
++	dh_fixperms
++	dh_installdeb
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary-indep: build
++binary: binary-indep binary-arch
++.PHONY: build clean binary-indep binary-arch binary
+diff --speed-large-files --minimal -Nru tmp/unclutter/Makefile work/main.d/unclutter/Makefile
+--- tmp/unclutter/Makefile	1991-04-09 13:49:52.000000000 -0300
++++ work/main.d/unclutter/Makefile	2006-12-23 13:47:04.000000000 -0300
+@@ -12,7 +12,7 @@
+      INSTPGMFLAGS = -c -s
+      INSTMANFLAGS = -c
+      TOP_INCLUDES = -I$(INCROOT)
+-      CDEBUGFLAGS = -O
++      CDEBUGFLAGS = -O2 -g
+       ALLINCLUDES = $(STD_INCLUDES) $(TOP_INCLUDES) $(INCLUDES) $(EXTRA_INCLUDES)
+        ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(PROTO_DEFINES) $(DEFINES) $(COMPATFLAGS)
+            CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) $(ALLDEFINES)
+@@ -27,7 +27,7 @@
+     MANSOURCEPATH = $(MANPATH)/man
+            MANDIR = $(MANSOURCEPATH)1
+             IMAKE = imake
+-             XLIB = $(EXTENSIONLIB)  -lX11
++             XLIB = $(EXTENSIONLIB) -L/usr/X11R6/lib -lX11
+ 
+   LOCAL_LIBRARIES = $(XLIB)
+ 
+diff --speed-large-files --minimal -Nru tmp/unclutter/unclutter.c work/main.d/unclutter/unclutter.c
+--- tmp/unclutter/unclutter.c	1994-04-11 12:40:47.000000000 -0300
++++ work/main.d/unclutter/unclutter.c	2006-12-23 13:47:04.000000000 -0300
+@@ -25,6 +25,11 @@
+ #include <X11/Xproto.h>
+ #include <stdio.h>
+ #include "vroot.h"
++#include <string.h>
++#include <assert.h>
++#include <stdlib.h>
++#include <sys/types.h>
++#include <regex.h>
+ 
+ char *progname;
+ pexit(str)char *str;{
+@@ -43,9 +48,23 @@
+  	-root	       		apply to cursor on root window too\n\
+ 	-onescreen		apply only to given screen of display\n\
+  	-visible       		ignore visibility events\n\
+- 	-noevents      		dont send pseudo events\n\
+-	-not names...		dont apply to windows whose wm-name begins.\n\
+-				(must be last argument)");
++ 	-noevents      		don't send pseudo events\n\
++	-regex			name or class below is a regular expression\n\
++	-not names...		don't apply to windows whose wm-name begins.\n\
++				(must be last argument)\n\
++	-notname names...	same as -not names...\n\
++	-notclass classes...    don't apply to windows whose wm-class begins.\n\
++				(must be last argument, cannot be used with\n\
++				-not or -notname)");
++}
++
++static void dsleep(float t)
++{
++    struct timeval tv;
++    assert(t >= 0);
++    tv.tv_sec = (int) t;
++    tv.tv_usec = (t - tv.tv_sec) * 1000000;
++    select(0, NULL, NULL, NULL, &tv);
+ }
+ 
+ #define ALMOSTEQUAL(a,b) (abs(a-b)<=jitter)
+@@ -66,27 +85,46 @@
+ 	(*defaulthandler)(display,error);
+ }
+ 
+-char **names;	/* -> argv list of names to avoid */
++char **names = 0;	/* -> argv list of names to avoid */
++char **classes = 0;     /* -> argv list of classes to avoid */
++regex_t *nc_re = 0;     /* regex for list of classes/names to avoid */
+ 
+ /*
+- * return true if window has a wm_name and the start of it matches
+- * one of the given names to avoid
++ * return true if window has a wm_name (class) and the start of it matches
++ * one of the given names (classes) to avoid
+  */
+ nameinlist(display,window)
+ Display *display;
+ Window window;
+ {
+     char **cpp;
+-    char *name;
++    char *name = 0;
+ 
+-    if(names==0)return 0;
+-    if(XFetchName (display, window, &name)){
+-	for(cpp = names;*cpp!=0;cpp++){
+-	    if(strncmp(*cpp,name,strlen(*cpp))==0)
+-		break;
++    if(names)
++	XFetchName (display, window, &name);
++    else if(classes){
++	XClassHint *xch = XAllocClassHint();
++	if(XGetClassHint (display, window, xch))
++	    name = strdup(xch->res_class);
++	if(xch)
++	    XFree(xch);
++    }else
++	return 0;
++
++    if(name){
++	if(nc_re){
++	    if(!regexec(nc_re, name, 0, 0, 0)) {
++		XFree(name);
++		return 1;
++	    }
++	}else{
++	    for(cpp = names!=0 ? names : classes;*cpp!=0;cpp++){
++		if(strncmp(*cpp,name,strlen(*cpp))==0)
++		    break;
++	    }
++	    XFree(name);
++	    return(*cpp!=0);
+ 	}
+-	XFree(name);
+-	return(*cpp!=0);
+     }
+     return 0;
+ }	
+@@ -120,8 +158,9 @@
+ main(argc,argv)char **argv;{
+     Display *display;
+     int screen,oldx = -99,oldy = -99,numscreens;
+-    int doroot = 0, jitter = 0, idletime = 5, usegrabmethod = 0, waitagain = 0,
+-	dovisible = 1, doevents = 1, onescreen = 0;
++    int doroot = 0, jitter = 0, usegrabmethod = 0, waitagain = 0,
++        dovisible = 1, doevents = 1, onescreen = 0;
++    float idletime = 5.0;
+     Cursor *cursor;
+     Window *realroot;
+     Window root;
+@@ -133,7 +172,7 @@
+ 	if(strcmp(*argv,"-idle")==0){
+ 	    argc--,argv++;
+ 	    if(argc<0)usage();
+-	    idletime = atoi(*argv);
++	    idletime = atof(*argv);
+ 	}else if(strcmp(*argv,"-keystroke")==0){
+ 	    idletime = -1;
+ 	}else if(strcmp(*argv,"-jitter")==0){
+@@ -152,17 +191,39 @@
+ 	    onescreen = 1;
+ 	}else if(strcmp(*argv,"-visible")==0){
+ 	    dovisible = 0;
+-	}else if(strcmp(*argv,"-not")==0){
++	}else if(strcmp(*argv,"-regex")==0){
++	    nc_re = (regex_t *)malloc(sizeof(regex_t));
++	}else if(strcmp(*argv,"-not")==0 || strcmp(*argv,"-notname")==0){
+ 	    /* take rest of srg list */
+ 	    names = ++argv;
+ 	    if(*names==0)names = 0;	/* no args follow */
+ 	    argc = 0;
++	}else if(strcmp(*argv,"-notclass")==0){
++	    /* take rest of arg list */
++	    classes = ++argv;
++	    if(*classes==0)classes = 0;	/* no args follow */
++	    argc = 0;
+ 	}else if(strcmp(*argv,"-display")==0 || strcmp(*argv,"-d")==0){
+ 	    argc--,argv++;
+ 	    if(argc<0)usage();
+ 	    displayname = *argv;
+ 	}else usage();
+     }
++    /* compile a regex from the first name or class */
++    if(nc_re){
++	if(names || classes){
++	    if (regcomp(nc_re, (names != 0 ? *names : *classes),
++			REG_EXTENDED | REG_NOSUB)) { /* error */
++		free(nc_re);
++		names = classes = 0;
++		nc_re = 0;
++	    }
++	}else{ /* -regex without -not... ... */
++	    free(nc_re);
++	    nc_re = 0;
++	}
++    }
++
+     display = XOpenDisplay(displayname);
+     if(display==0)pexit("could not open display");
+     numscreens = ScreenCount(display);
+@@ -251,7 +312,7 @@
+ 		}
+ 	    }
+ 	    if(idletime>=0)
+-		sleep(idletime);
++		dsleep(idletime);
+ 	}
+ 	/* wait again next time */
+ 	if(waitagain)
+@@ -270,6 +331,10 @@
+ 			ALMOSTEQUAL(rootx,event.xmotion.x) &&
+ 			ALMOSTEQUAL(rooty,event.xmotion.y)));
+ 		XUngrabPointer(display, CurrentTime);
++	    }else{
++		/* go to sleep to prevent tight loops */
++		if(idletime>=0)
++			dsleep(idletime);
+ 	    }
+ 	}else{
+ 	    XSetWindowAttributes attributes;
+diff --speed-large-files --minimal -Nru tmp/unclutter/unclutter.man work/main.d/unclutter/unclutter.man
+--- tmp/unclutter/unclutter.man	1994-04-11 12:40:48.000000000 -0300
++++ work/main.d/unclutter/unclutter.man	2006-12-23 13:47:04.000000000 -0300
+@@ -1,5 +1,5 @@
+ .\"unclutter man
+-.TH UNCLUTTER 1X
++.TH UNCLUTTER 1
+ .SH NAME
+ unclutter \- remove idle cursor image from screen
+ .SH SYNOPSIS
+@@ -17,8 +17,12 @@
+ .RB [ -reset ]
+ .RB [ -root ]
+ .RB [ -onescreen ]
+-.RB [ -not ]
+-.I "name ...
++.RB [ -visible ]
++.RB [ -regex ]
++.RB [ -not | -notname
++.IR name " " ... ]
++.RB [ -notclass
++.IR class " " ... ]
+ .SH DESCRIPTION
+ .B unclutter
+ removes the cursor image from the screen so that it does not
+@@ -34,7 +38,7 @@
+ .TP
+ -idle
+ is followed by the number of seconds between polls for idleness.
+-The default is 5.
++The default is 5. Supports subsecond idle times.
+ .TP
+ -keystroke
+ tells
+@@ -75,12 +79,30 @@
+ or the default screen for the display.
+ Normally, unclutter will unclutter all the screens on a display.
+ .TP
++-visible
++ignore visibility events (does not apply to -grab).
++If the cursor never gets hidden, despite a generous -jitter value,
++try this option
++.TP
+ -not
+ is followed by a list of window names where the cursor should not be
+ removed.
+ The first few characters of the WM_NAME property on the window need
+ to match one the listed names.
+ This argument must be the last on the command line.
++.TP
++-notname
++is exactly the same as -not
++.TP
++-notclass
++is similar to -notname, except that the WM_CLASS property of the window is used.
++This argument must be the last on the command line, and so cannot be used
++with -not or -notname.
++.TP
++-regex
++treats the first name or class (see above) as a regular expression.
++This means that `` -regex -not foo bar '' will not work as expected; instead
++use `` -regex -not 'foo|bar' ''.
+ .SH LIMITATIONS
+ The -keystroke option may not work (that is, the cursor will not
+ disappear) with clients that request KeyRelease events.

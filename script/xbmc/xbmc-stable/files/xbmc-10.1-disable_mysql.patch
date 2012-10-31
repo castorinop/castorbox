@@ -1,0 +1,29 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-10.1/configure.in work/main.d/xbmc-10.1/configure.in
+--- tmp/xbmc-10.1/configure.in	2011-03-05 00:33:37.000000000 -0300
++++ new-xbmc-10.1/configure.in	2011-07-29 12:17:08.338391075 -0300
+@@ -629,17 +629,17 @@
+     [INCLUDES="$INCLUDES $VORBISFILE_CFLAGS"; LIBS="$LIBS $VORBISFILE_LIBS"],
+     AC_MSG_ERROR($missing_library))
+ else
+-  AC_CHECK_PROG(MYSQL_CONFIG, mysql_config, "yes", "no")
+-  if test $MYSQL_CONFIG = "yes"; then
+-    INCLUDES="$INCLUDES `mysql_config --include`"
+-    LIBS="$LIBS `mysql_config --libs`"
+-  else
+-    AC_MSG_ERROR($missing_program)
+-  fi
++#  AC_CHECK_PROG(MYSQL_CONFIG, mysql_config, "yes", "no")
++#  if test $MYSQL_CONFIG = "yes"; then
++#    INCLUDES="$INCLUDES `mysql_config --include`"
++#    LIBS="$LIBS `mysql_config --libs`"
++#  else
++#    AC_MSG_ERROR($missing_program)
++#  fi
+   # don't combine with mysqlclient check in apple section above, Linux needs
+   # paths from mysql_config
+   AC_CHECK_LIB([modplug],    [main],, AC_MSG_ERROR($missing_library))
+-  AC_CHECK_LIB([mysqlclient],[main],, AC_MSG_ERROR($missing_library))
++#  AC_CHECK_LIB([mysqlclient],[main],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_LIB([faad],       [main],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_HEADER([FLAC/stream_decoder.h],, AC_MSG_ERROR($missing_library))
+   AC_CHECK_LIB([smbclient],  [main],, AC_MSG_ERROR($missing_library))

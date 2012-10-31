@@ -1,0 +1,304 @@
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/boost/python/converter/builtin_converters.hpp boost/boost/python/converter/builtin_converters.hpp
+--- boost-2/boost/python/converter/builtin_converters.hpp	2007-01-13 07:32:49.000000000 +0200
++++ boost/boost/python/converter/builtin_converters.hpp	2007-01-13 09:44:06.000000000 +0200
+@@ -7,6 +7,7 @@
+ # include <boost/python/detail/prefix.hpp>
+ # include <boost/python/detail/none.hpp>
+ # include <boost/python/handle.hpp>
++# include <boost/python/ssize_t.hpp>
+ # include <boost/implicit_cast.hpp>
+ # include <string>
+ # include <complex>
+@@ -115,9 +116,9 @@ BOOST_PYTHON_TO_PYTHON_BY_VALUE(unsigned
+ 
+ BOOST_PYTHON_TO_PYTHON_BY_VALUE(char, converter::do_return_to_python(x))
+ BOOST_PYTHON_TO_PYTHON_BY_VALUE(char const*, converter::do_return_to_python(x))
+-BOOST_PYTHON_TO_PYTHON_BY_VALUE(std::string, ::PyString_FromStringAndSize(x.data(),implicit_cast<int>(x.size())))
++BOOST_PYTHON_TO_PYTHON_BY_VALUE(std::string, ::PyString_FromStringAndSize(x.data(),implicit_cast<ssize_t>(x.size())))
+ # ifndef BOOST_NO_STD_WSTRING
+-BOOST_PYTHON_TO_PYTHON_BY_VALUE(std::wstring, ::PyUnicode_FromWideChar(x.data(),implicit_cast<int>(x.size())))
++BOOST_PYTHON_TO_PYTHON_BY_VALUE(std::wstring, ::PyUnicode_FromWideChar(x.data(),implicit_cast<ssize_t>(x.size())))
+ # endif 
+ BOOST_PYTHON_TO_PYTHON_BY_VALUE(float, ::PyFloat_FromDouble(x))
+ BOOST_PYTHON_TO_PYTHON_BY_VALUE(double, ::PyFloat_FromDouble(x))
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/boost/python/detail/api_placeholder.hpp boost/boost/python/detail/api_placeholder.hpp
+--- boost-2/boost/python/detail/api_placeholder.hpp	2007-01-13 07:32:49.000000000 +0200
++++ boost/boost/python/detail/api_placeholder.hpp	2007-01-13 09:58:19.000000000 +0200
+@@ -5,11 +5,13 @@
+ #ifndef BOOST_PYTHON_API_PLACE_HOLDER_HPP
+ #define BOOST_PYTHON_API_PLACE_HOLDER_HPP
+ 
++# include <boost/python/ssize_t.hpp>
++
+ namespace boost { namespace python {
+ 
+-    inline long len(object const& obj)
++    inline ssize_t len(object const& obj)
+     {
+-        long result = PyObject_Length(obj.ptr());
++        ssize_t result = PyObject_Length(obj.ptr());
+         if (PyErr_Occurred()) throw_error_already_set();
+         return result;
+     }
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/boost/python/list.hpp boost/boost/python/list.hpp
+--- boost-2/boost/python/list.hpp	2007-01-13 07:32:49.000000000 +0200
++++ boost/boost/python/list.hpp	2007-01-13 09:26:21.000000000 +0200
+@@ -9,6 +9,7 @@
+ 
+ # include <boost/python/object.hpp>
+ # include <boost/python/converter/pytype_object_mgr_traits.hpp>
++# include <boost/python/ssize_t.hpp>
+ 
+ namespace boost { namespace python { 
+ 
+@@ -24,11 +25,11 @@ namespace detail
+     
+       long index(object_cref value) const; // return index of first occurrence of value
+ 
+-      void insert(int index, object_cref); // insert object before index
++      void insert(ssize_t index, object_cref); // insert object before index
+       void insert(object const& index, object_cref);
+ 
+       object pop(); // remove and return item at index (default last)
+-      object pop(long index);
++      object pop(ssize_t index);
+       object pop(object const& index);
+ 
+       void remove(object_cref value); // remove first occurrence of value
+@@ -86,7 +87,7 @@ class list : public detail::list_base
+     }
+     
+     template <class T>
+-    void insert(int index, T const& x) // insert object before index
++    void insert(ssize_t index, T const& x) // insert object before index
+     {
+         base::insert(index, object(x));
+     }
+@@ -98,7 +99,7 @@ class list : public detail::list_base
+     }
+ 
+     object pop() { return base::pop(); }
+-    object pop(long index) { return base::pop(index); }
++    object pop(ssize_t index) { return base::pop(index); }
+     
+     template <class T>
+     object pop(T const& index)
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/boost/python/object.hpp boost/boost/python/object.hpp
+--- boost-2/boost/python/object.hpp	2007-01-13 07:32:49.000000000 +0200
++++ boost/boost/python/object.hpp	2007-01-13 09:57:33.000000000 +0200
+@@ -6,6 +6,7 @@
+ # define OBJECT_DWA2002612_HPP
+ 
+ # include <boost/python/detail/prefix.hpp>
++# include <boost/python/ssize_t.hpp>
+ # include <boost/python/object_core.hpp>
+ # include <boost/python/object_attributes.hpp>
+ # include <boost/python/object_items.hpp>
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/boost/python/ssize_t.hpp boost/boost/python/ssize_t.hpp
+--- boost-2/boost/python/ssize_t.hpp	1970-01-01 02:00:00.000000000 +0200
++++ boost/boost/python/ssize_t.hpp	2007-01-13 09:47:10.000000000 +0200
+@@ -0,0 +1,29 @@
++// Copyright Ralf W. Grosse-Kunstleve & David Abrahams 2006.
++// Distributed under the Boost Software License, Version 1.0. (See
++// accompanying file LICENSE_1_0.txt or copy at
++// http://www.boost.org/LICENSE_1_0.txt)
++
++#ifndef BOOST_PYTHON_SSIZE_T_RWGK20060924_HPP
++# define BOOST_PYTHON_SSIZE_T_RWGK20060924_HPP
++
++# include <boost/python/detail/prefix.hpp>
++
++namespace boost { namespace python {
++
++#if PY_VERSION_HEX >= 0x02050000
++
++typedef Py_ssize_t ssize_t;
++ssize_t const ssize_t_max = PY_SSIZE_T_MAX;
++ssize_t const ssize_t_min = PY_SSIZE_T_MIN;
++
++#else
++
++typedef int ssize_t;
++ssize_t const ssize_t_max = INT_MAX;
++ssize_t const ssize_t_min = INT_MIN;
++
++#endif
++
++}} // namespace boost::python
++
++#endif // BOOST_PYTHON_SSIZE_T_RWGK20060924_HPP
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/libs/python/src/list.cpp boost/libs/python/src/list.cpp
+--- boost-2/libs/python/src/list.cpp	2007-01-13 07:36:25.000000000 +0200
++++ boost/libs/python/src/list.cpp	2007-01-13 09:28:09.000000000 +0200
+@@ -3,6 +3,7 @@
+ // accompanying file LICENSE_1_0.txt or copy at
+ // http://www.boost.org/LICENSE_1_0.txt)
+ #include <boost/python/list.hpp>
++#include <boost/python/ssize_t.hpp>
+ 
+ namespace boost { namespace python { namespace detail {
+ 
+@@ -53,7 +54,7 @@ long list_base::index(object_cref value)
+     return result;
+ }
+ 
+-void list_base::insert(int index, object_cref item)
++void list_base::insert(ssize_t index, object_cref item)
+ {
+     if (PyList_CheckExact(this->ptr()))
+     {
+@@ -79,7 +80,7 @@ object list_base::pop()
+     return this->attr("pop")();
+ }
+ 
+-object list_base::pop(long index)
++object list_base::pop(ssize_t index)
+ {
+     return this->pop(object(index));
+ }
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/libs/python/src/object/class.cpp boost/libs/python/src/object/class.cpp
+--- boost-2/libs/python/src/object/class.cpp	2007-01-13 07:36:26.000000000 +0200
++++ boost/libs/python/src/object/class.cpp	2007-01-13 09:28:10.000000000 +0200
+@@ -20,6 +20,7 @@
+ #include <boost/python/self.hpp>
+ #include <boost/python/dict.hpp>
+ #include <boost/python/str.hpp>
++#include <boost/python/ssize_t.hpp>
+ #include <functional>
+ #include <vector>
+ #include <cstddef>
+@@ -480,13 +481,14 @@ namespace objects
+       // were declared, we'll use our class_type() as the single base
+       // class.
+       std::size_t const num_bases = (std::max)(num_types - 1, static_cast<std::size_t>(1));
+-      handle<> bases(PyTuple_New(num_bases));
++      assert(num_bases <= ssize_t_max);
++      handle<> bases(PyTuple_New(static_cast<ssize_t>(num_bases)));
+ 
+       for (std::size_t i = 1; i <= num_bases; ++i)
+       {
+           type_handle c = (i >= num_types) ? class_type() : get_class(types[i]);
+           // PyTuple_SET_ITEM steals this reference
+-          PyTuple_SET_ITEM(bases.get(), i - 1, upcast<PyObject>(c.release()));
++          PyTuple_SET_ITEM(bases.get(), static_cast<ssize_t>(i - 1), upcast<PyObject>(c.release()));
+       }
+ 
+       // Call the class metatype to create a new class
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/libs/python/src/object/function.cpp boost/libs/python/src/object/function.cpp
+--- boost-2/libs/python/src/object/function.cpp	2007-01-13 07:36:26.000000000 +0200
++++ boost/libs/python/src/object/function.cpp	2007-01-13 09:28:11.000000000 +0200
+@@ -14,6 +14,7 @@
+ #include <boost/python/extract.hpp>
+ #include <boost/python/tuple.hpp>
+ #include <boost/python/list.hpp>
++#include <boost/python/ssize_t.hpp>
+ 
+ #include <boost/python/detail/api_placeholder.hpp>
+ #include <boost/python/detail/signature.hpp>
+@@ -60,7 +61,7 @@ function::function(
+             = max_arity > num_keywords ? max_arity - num_keywords : 0;
+ 
+ 
+-        unsigned tuple_size = num_keywords ? max_arity : 0;
++        ssize_t tuple_size = num_keywords ? max_arity : 0;
+         m_arg_names = object(handle<>(PyTuple_New(tuple_size)));
+ 
+         if (num_keywords != 0)
+@@ -154,7 +155,9 @@ PyObject* function::call(PyObject* args,
+                     else
+                     {
+                         // build a new arg tuple, will adjust its size later
+-                        inner_args = handle<>(PyTuple_New(max_arity));
++                        assert(max_arity <= ssize_t_max);
++                        inner_args = handle<>(
++                            PyTuple_New(static_cast<ssize_t>(max_arity)));
+ 
+                         // Fill in the positional arguments
+                         for (std::size_t i = 0; i < n_unnamed_actual; ++i)
+@@ -237,7 +240,7 @@ void function::argument_error(PyObject* 
+         % make_tuple(this->m_namespace, this->m_name);
+     
+     list actual_args;
+-    for (int i = 0; i < PyTuple_Size(args); ++i)
++    for (ssize_t i = 0; i < PyTuple_Size(args); ++i)
+     {
+         char const* name = PyTuple_GetItem(args, i)->ob_type->tp_name;
+         actual_args.append(str(name));
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/libs/python/src/object_protocol.cpp boost/libs/python/src/object_protocol.cpp
+--- boost-2/libs/python/src/object_protocol.cpp	2007-01-13 07:36:25.000000000 +0200
++++ boost/libs/python/src/object_protocol.cpp	2007-01-13 09:28:10.000000000 +0200
+@@ -6,6 +6,7 @@
+ #include <boost/python/object_protocol.hpp>
+ #include <boost/python/errors.hpp>
+ #include <boost/python/object.hpp>
++#include <boost/python/ssize_t.hpp>
+ 
+ namespace boost { namespace python { namespace api {
+ 
+@@ -106,7 +107,7 @@ namespace // slicing code copied directl
+       PySequenceMethods *sq = tp->tp_as_sequence;
+ 
+       if (sq && sq->sq_slice && ISINT(v) && ISINT(w)) {
+-          int ilow = 0, ihigh = INT_MAX;
++          ssize_t ilow = 0, ihigh = ssize_t_max;
+           if (!_PyEval_SliceIndex(v, &ilow))
+               return NULL;
+           if (!_PyEval_SliceIndex(w, &ihigh))
+@@ -133,7 +134,7 @@ namespace // slicing code copied directl
+       PySequenceMethods *sq = tp->tp_as_sequence;
+ 
+       if (sq && sq->sq_slice && ISINT(v) && ISINT(w)) {
+-          int ilow = 0, ihigh = INT_MAX;
++          ssize_t ilow = 0, ihigh = ssize_t_max;
+           if (!_PyEval_SliceIndex(v, &ilow))
+               return -1;
+           if (!_PyEval_SliceIndex(w, &ihigh))
+diff -Nurp -x CVS -x '.#*' -x '*~' -x '*.html' boost-2/libs/python/src/str.cpp boost/libs/python/src/str.cpp
+--- boost-2/libs/python/src/str.cpp	2007-01-13 07:36:25.000000000 +0200
++++ boost/libs/python/src/str.cpp	2007-01-13 09:28:10.000000000 +0200
+@@ -3,6 +3,7 @@
+ // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ #include <boost/python/str.hpp>
+ #include <boost/python/extract.hpp>
++#include <boost/python/ssize_t.hpp>
+ 
+ namespace boost { namespace python { namespace detail {
+ 
+@@ -21,10 +22,25 @@ str_base::str_base(const char* s)
+   : object(detail::new_reference(::PyString_FromString(s)))
+ {}
+ 
++namespace {
++
++    ssize_t str_size_as_py_ssize_t(std::size_t n)
++    {
++      if (n > ssize_t_max)
++      {
++          throw std::range_error("str size > ssize_t_max");
++      }
++      return static_cast<ssize_t>(n);
++    }
++
++} // namespace <anonymous>
++
+ str_base::str_base(char const* start, char const* finish)
+     : object(
+         detail::new_reference(
+-            ::PyString_FromStringAndSize(start, finish - start)
++            ::PyString_FromStringAndSize(
++                start, str_size_as_py_ssize_t(finish - start)
++            )
+         )
+     )
+ {}
+@@ -32,7 +48,9 @@ str_base::str_base(char const* start, ch
+ str_base::str_base(char const* start, std::size_t length) // new str
+     : object(
+         detail::new_reference(
+-            ::PyString_FromStringAndSize(start, length)
++            ::PyString_FromStringAndSize(
++                start, str_size_as_py_ssize_t(length)
++            )
+         )
+     )
+ {}

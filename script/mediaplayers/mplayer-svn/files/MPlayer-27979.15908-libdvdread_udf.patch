@@ -1,0 +1,76 @@
+diff -Naur MPlayer-27979.15908-old/libdvdread/dvd_reader.c MPlayer-27979.15908-new/libdvdread/dvd_reader.c
+--- MPlayer-27979.15908-old/libdvdread/dvd_reader.c	2008-11-22 12:10:31.000000000 -0800
++++ MPlayer-27979.15908-new/libdvdread/dvd_reader.c	2008-11-22 12:12:47.000000000 -0800
+@@ -1391,6 +1391,28 @@
+   return offset;
+ }
+ 
++int DVDFileSeekForce( dvd_file_t *dvd_file, int offset, int force_size )
++{
++  /* Check arguments. */
++  if( dvd_file == NULL || offset < 0 )
++    return -1;
++
++  if( dvd_file->dvd->isImageFile ) {
++    if( force_size < 0 )
++      force_size = (offset - 1) / DVD_VIDEO_LB_LEN + 1;
++    if( dvd_file->filesize < force_size ) {
++      dvd_file->filesize = force_size;
++      fprintf(stderr, "libdvdread: Ignored UDF provided size of file.\n");
++    }
++  }
++
++  if( offset > dvd_file->filesize * DVD_VIDEO_LB_LEN ) {
++    return -1;
++  }
++  dvd_file->seek_pos = (uint32_t) offset;
++  return offset;
++}
++
+ #ifndef HAVE_UINTPTR_T
+ #warning "Assuming that (unsigned long) can hold (void *)"
+ typedef unsigned long uintptr_t;
+@@ -1442,7 +1464,7 @@
+   memcpy( data, &(secbuf[ seek_byte ]), byte_size );
+   free( secbuf_start );
+ 
+-  dvd_file->seek_pos += byte_size;
++  DVDFileSeekForce(dvd_file, dvd_file->seek_pos + byte_size, -1);
+   return byte_size;
+ }
+ 
+diff -Naur MPlayer-27979.15908-old/libdvdread/dvd_reader.h MPlayer-27979.15908-new/libdvdread/dvd_reader.h
+--- MPlayer-27979.15908-old/libdvdread/dvd_reader.h	2008-11-22 12:10:31.000000000 -0800
++++ MPlayer-27979.15908-new/libdvdread/dvd_reader.h	2008-11-22 12:12:47.000000000 -0800
+@@ -240,6 +240,8 @@
+  */
+ int DVDFileSeek( dvd_file_t *, int );
+ 
++int DVDFileSeekForce( dvd_file_t *, int, int );
++
+ /**
+  * Reads the given number of bytes from the file.  This call can only be used
+  * on the information files, and may not be used for reading from a VOB.  This
+diff -Naur MPlayer-27979.15908-old/libdvdread/ifo_read.c MPlayer-27979.15908-new/libdvdread/ifo_read.c
+--- MPlayer-27979.15908-old/libdvdread/ifo_read.c	2008-11-22 12:10:31.000000000 -0800
++++ MPlayer-27979.15908-new/libdvdread/ifo_read.c	2008-11-22 12:12:47.000000000 -0800
+@@ -110,6 +110,10 @@
+   return (DVDFileSeek(dvd_file, (int)offset) == (int)offset);
+ }
+ 
++static inline int DVDFileSeekForce_( dvd_file_t *dvd_file, uint32_t offset, int force_size ) {
++  return (DVDFileSeekForce(dvd_file, (int)offset, force_size) == (int)offset);
++}
++
+ 
+ ifo_handle_t *ifoOpen(dvd_reader_t *dvd, int title) {
+   ifo_handle_t *ifofile;
+@@ -1663,7 +1667,7 @@
+   unsigned int i;
+   int info_length;
+ 
+-  if(!DVDFileSeek_(ifofile->file, sector * DVD_BLOCK_LEN))
++  if(!DVDFileSeekForce_(ifofile->file, sector * DVD_BLOCK_LEN, sector))
+     return 0;
+ 
+   if(!(DVDReadBytes(ifofile->file, vobu_admap, VOBU_ADMAP_SIZE)))

@@ -1,0 +1,1952 @@
+=== modified file 'common.cpp'
+--- old/common.cpp	2009-09-02 07:57:24 +0000
++++ new/common.cpp	2009-09-22 18:51:43 +0000
+@@ -788,7 +794,7 @@
+ std::string string_format::StripHTML(std::string strHTML)
+ {
+   // convert newline
+-  strHTML = regex_tools::regex_replace(strHTML, "\n", "(<br />)", true, true);
++  strHTML = regex_tools::regex_replace(strHTML, "\n", "(<br[^>]*>)", true, true);
+   // remove tags
+   strHTML = regex_tools::regex_replace(strHTML, "", "(<[a-zA-Z/][^>]*>)", true, true);
+   // remove comments
+
+=== modified file 'plugins/feature/media-rss/Makefile'
+--- old/plugins/feature/media-rss/Makefile	2008-06-04 00:07:28 +0000
++++ new/plugins/feature/media-rss/Makefile	2009-09-21 16:10:49 +0000
+@@ -6,8 +6,8 @@
+ 
+ PLUGIN_NAME = lib_feature_media_rss.so
+ 
+-SRCS = media_rss_config.cpp media_rss_autodownload_config.cpp media_rss.cpp media_rss_opts.cpp rss_item.cpp media_rss_plugin.cpp regexx.cc
+-OBJS = media_rss_config.o media_rss_autodownload_config.o media_rss.o media_rss_opts.o rss_item.o  media_rss_plugin.o regexx.o
++SRCS = media_rss_config.cpp media_rss_autodownload_config.cpp media_rss.cpp media_rss_db.cpp media_rss_opts.cpp rss_item.cpp media_rss_plugin.cpp regexx.cc
++OBJS = media_rss_config.o media_rss_autodownload_config.o media_rss.o media_rss_db.o media_rss_opts.o rss_item.o  media_rss_plugin.o regexx.o
+ 
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../output/ -I../tinyxml \
+ 	-I../../input/ -fPIC -shared
+
+=== modified file 'plugins/feature/media-rss/media_rss.cpp'
+--- old/plugins/feature/media-rss/media_rss.cpp	2009-05-12 18:23:56 +0000
++++ new/plugins/feature/media-rss/media_rss.cpp	2009-09-29 19:02:56 +0000
+@@ -10,6 +10,7 @@
+ #include "common-feature.hpp"
+ #include "extra_menu.hpp"
+ 
++#include "search.hpp"
+ #include "graphics.hpp"
+ #include "shutdown.hpp"
+ #include "busy_indicator.hpp"
+@@ -32,6 +33,7 @@
+ #include <ostream>
+ #include <sstream>
+ #include <sys/wait.h>
++#include <cc++/numbers.h>
+ #define OBJOUTPUT(a) ( std::string( std::string("SystemWrapper: <") +  __func__ + "> " + (a) ).c_str())
+ 
+ using std::list;
+@@ -137,7 +139,7 @@
+ pthread_mutex_t MediaRss::singleton_mutex = PTHREAD_MUTEX_INITIALIZER;
+ 
+ MediaRss::MediaRss()
+-  : disabled(true), fetch(false), busy_upd(false), busy_audw(false), 
++  : MediaDB("mediarss.db"), disabled(true), fetch(false), busy_upd(false), busy_audw(false), 
+     overlay("dialog"), pos_categ(0), pos_elem(0), 
+     count_new_elements(0), count_elements(0), count_downloading(0), time_counter(100),
+     mru(0), mriu(0), 
+@@ -151,12 +153,17 @@
+   bind_textdomain_codeset("mms-media-rss", nl_langinfo(CODESET));
+ #endif
+ 
+-  list_font = "Vera/" + conv::itos(resolution_dependant_font_size(16, conf->p_v_res()));
++  if (!recurse_mkdir(conf->p_var_data_dir(),"mediarss", &mediarss_dir))
++    print_critical(dgettext("mms-media-rss", "Could not create directory ") + mediarss_dir, "MediaRSS");
++
++  res_dependant_calc();
++
++/*  list_font = "Vera/" + conv::itos(resolution_dependant_font_size(16, conf->p_v_res()));
+   list_size = string_format::calculate_string_size("abcltuwHPMjJg", list_font);
+ 
+   header_font = graphics::resolution_dependant_font_wrapper(28, conf);
+   header_size = string_format::calculate_string_size("abcltuwHPMjJg", header_font);
+-  header_box_size = static_cast<int>(header_size.second * 0.75);
++  header_box_size = static_cast<int>(header_size.second * 0.75); */
+ }
+ 
+ MediaRss::~MediaRss()
+@@ -187,9 +194,87 @@
+ 	boost::bind(&MediaRss::idle_item, this),
+         boost::bind(&MediaRss::start_update_items, this)));
+ 
++  S_Search::get_instance()->register_module(SearchModule(dgettext("mms-media-rss", "MediaRSS"),
++							 boost::bind(&MediaRss::gen_search_list, this, _1),
++							 boost::bind(&MediaRss::show_id, this, _1)));
+   start_update_rss();
+ }
+ 
++void MediaRss::res_dependant_calc()
++{
++  header_font = graphics::resolution_dependant_font_wrapper(28, conf);
++  search_font = graphics::resolution_dependant_font_wrapper(22, conf);
++  search_select_font = graphics::resolution_dependant_font_wrapper(17, conf);
++  normal_font = graphics::resolution_dependant_font_wrapper(13, conf);
++  position_font = graphics::resolution_dependant_font_wrapper(18, conf);
++  information_header_font = graphics::resolution_dependant_font_wrapper(25, conf);
++  information_font = graphics::resolution_dependant_font_wrapper(18, conf);
++  dialog_header_font = graphics::resolution_dependant_font_wrapper(20, conf);
++  dialog_font = graphics::resolution_dependant_font_wrapper(17, conf);
++  list_font = graphics::resolution_dependant_font_wrapper(16, conf);
++
++  extra_information_font = graphics::resolution_dependant_font_wrapper(13, conf);
++
++  normal_font_height = graphics::calculate_font_height(normal_font, conf);
++  dialog_header_font_height = graphics::calculate_font_height(dialog_header_font, conf);
++  dialog_font_height = graphics::calculate_font_height(dialog_font, conf);
++  list_font_height = graphics::calculate_font_height(list_font, conf);
++  information_font_height = graphics::calculate_font_height(information_font, conf);
++  extra_information_font_height = graphics::calculate_font_height(extra_information_font, conf);
++
++  header_size = string_format::calculate_string_size("abcltuwHPMjJg", header_font);
++  header_box_size = static_cast<int>(header_size.second * 0.75);
++}
++
++
++void MediaRss::show_id(int id)
++{
++  std::cout << "show_id(" << conv::itos(id) << ")" << std::endl;
++  RssItem item = getItem(id);
++  Category lcateg = getCategory(item);
++  std::cout << "show_id category " << conv::itos(lcateg.id) << std::endl;
++  categ = getCategories();
++  for (int i = 0; i < categ.size(); ++i) {
++   	if (lcateg.id == vector_lookup(categ, i).id) {
++		pos_categ = i;
++		break;
++	}
++  }
++  enter_category();
++ 
++  for (int i = 0; i < elems.size(); ++i) {
++   	if (item.id == vector_lookup(elems, i).id) {
++		pos_elem = i;
++		break;
++	}
++  }
++
++  std::cout << "show_id " << conv::itos(pos_categ) << ", " << pos_elem << std::endl;
++  mainloop();
++
++}
++
++void MediaRss::search_func()
++{
++  S_BusyIndicator::get_instance()->idle();
++
++  input_master->search<RssItem>(elems, &pos_elem,
++				  boost::bind(&MediaRss::print, this, _1),
++				  boost::bind(&MediaRss::search_compare, this, _1),
++				  boost::bind(&MediaRss::getTitle, this, _1),
++				  search_mode, search_str, lowercase_search_str, offset);
++}
++
++bool MediaRss::search_compare(const RssItem& s)
++{
++  return (string_format::lowercase_utf(s.title).substr(0, search_str.size()) == lowercase_search_str);
++}
++
++std::string MediaRss::getTitle(const RssItem& e)
++{
++  return e.title;
++}
++
+ bool MediaRss::in_autodownload(string category, string name) {
+   Regexx rex;
+   std::list<MyPair> rules = mr_down->p_rules();
+@@ -201,9 +286,9 @@
+ }
+ 
+ void MediaRss::sort() {
+-  foreach (Category& iter, categ) {
++  /* foreach (Category& iter, categ) {
+       std::sort(iter.items.begin(), iter.items.end());
+-  }
++  } */
+ }
+ 
+ void MediaRss::print_list()
+@@ -214,27 +299,25 @@
+ 
+   if (themes->show_header) {
+     render->current.add(new PFObj(themes->startmenu_media_rss, 25, 10, header_box_size, header_box_size, 2, true));
+-    std::ostringstream header;
+-    header << dgettext("mms-media-rss","Media RSS") <<  " - " << (in_categories ? dgettext("mms-media-rss","Categories") : vector_lookup(categ, pos_categ).name);
+-    render->current.add(new TObj(header.str(), header_font, 25 + header_box_size + 10, 10 + (header_box_size - header_size.second)/2,
++      string header = string(dgettext("mms-media-rss","Media RSS")) +  " - " + string(in_categories ? dgettext("mms-media-rss","Categories") : vector_lookup(categ, pos_categ).name);
++    std::pair<int, int> header_size = string_format::calculate_string_size(header, header_font);
++    render->current.add(new TObj(header, header_font, 25 + header_box_size + 10, 10 + (header_box_size - header_size.second)/2,
+ 				 themes->media_rss_header_font1, themes->media_rss_header_font2,
+ 				 themes->media_rss_header_font3, 2));
+   }
+ 
+   std::ostringstream str;
+-  if (in_categories) { 
++  if (in_categories) {
+     str << pos_categ +1 << "/" << categ.size();
+-    print_range<Category>(categ, vector_lookup(categ, pos_categ), pos_categ, boost::bind(&MediaRss::print_categories, this, _1, _2, _3), 28);
++    print_range<Category>(categ, vector_lookup(categ, pos_categ), pos_categ, boost::bind(&MediaRss::print_categories, this, _1, _2, _3), list_font_height);
+   } else {
+-    vector<RssItem> elems = vector_lookup(categ, pos_categ).items;
+     str << pos_elem +1 << "/" << elems.size();
+-    print_range<RssItem>(elems, vector_lookup(elems, pos_elem), pos_elem, boost::bind(&MediaRss::print_elements, this, _1, _2, _3), 28);	
++    print_range<RssItem>(elems, vector_lookup(elems, pos_elem), pos_elem, boost::bind(&MediaRss::print_elements, this, _1, _2, _3), list_font_height);	
+   } 
+ 
+-  std::pair<int, int>  size;
+-  size = string_format::calculate_string_size(str.str(), "Vera/18");
++  int x = string_format::calculate_string_width(str.str(), position_font);
+     
+-  render->current.add(new TObj(str.str(), "Vera/18", conf->p_h_res()-(60+size.first), 20, 
++  render->current.add(new TObj(str.str(), position_font, conf->p_h_res()-(60+x), 20,
+ 			       themes->media_rss_font1, themes->media_rss_font2, 
+ 			       themes->media_rss_font3, 3));
+ 
+@@ -242,6 +325,92 @@
+   //render->image_mut.leaveMutex();
+ }
+ 
++void MediaRss::print(const std::vector<RssItem>& cur_files)
++{
++  render->prepare_new_image();
++
++  render->current.add(new PObj(themes->movie_background, 0, 0, 0, SCALE_FULL));
++
++  std::pair<int, int> header_size = string_format::calculate_string_size("abcltuwHPMjJg", header_font);
++  int header_box_size = static_cast<int>(header_size.second * 0.75);
++
++  render->current.add(new PFObj(themes->startmenu_media_rss, 25, 10, header_box_size, header_box_size, 2, true));
++
++  if (themes->show_header) {
++
++    string header = string(dgettext("mms-media-rss","Media RSS")) +  " - " + string(vector_lookup(categ, pos_categ).name);
++
++    std::pair<int, int> header_size = string_format::calculate_string_size(header, header_font);
++
++    render->current.add(new TObj(header, header_font, 25 + header_box_size + 10, 10 + (header_box_size - header_size.second)/2,
++				 themes->media_rss_header_font1, themes->media_rss_header_font2,
++				 themes->media_rss_header_font3, 2));
++  } 
++
++  int season_size = 0;
++  if (search_mode) {
++    int y = 10 + header_box_size + 10;
++
++    std::pair<int, int> search_text_size = string_format::calculate_string_size("abcltuwHPMjJg", search_font);
++    int search_size = static_cast<int>(search_text_size.second * 0.75);
++
++    if (offset == -1)
++      render->current.add(new RObj(0, y, conf->p_h_res(), search_size + 5, 0, 0, 0, 215, 2));
++    else
++      render->current.add(new RObj(0, y, conf->p_h_res(), search_size + 5,
++				   themes->general_search_rectangle_color1,
++				   themes->general_search_rectangle_color2,
++				   themes->general_search_rectangle_color3,
++				   themes->general_search_rectangle_color4, 2));
++    
++    render->current.add(new PFObj(themes->general_search, 47, y, search_size, search_size, 3, true));
++    
++    std::pair<int, int> search_select_sizes = string_format::calculate_string_size(search_depth, search_select_font);
++
++    int max_x = conf->p_h_res()-search_select_sizes.first - 25;
++
++    string sw = search_str;
++
++    string s = dgettext("mms-media-rss", "Search: ");
++    int x_size = string_format::calculate_string_width(s, search_font);
++    string_format::format_to_size(sw, search_font, max_x-x_size, true);
++
++    int search_text_height = string_format::calculate_string_size(s + sw, search_font).second;
++
++    render->current.add(new TObj(s + sw, search_font, 47 + search_size + 10,
++				 y + (search_size + 5 - search_text_height)/2,
++				 themes->search_font1, themes->search_font2, themes->search_font3, 3));
++  } 
++
++  if (cur_files.size() > 0) {
++    int pos = pos_elem;
++    if (search_mode && cur_files.size() > 0)
++        pos = offset % cur_files.size();
++
++    print_range<RssItem>(cur_files, vector_lookup(cur_files, pos), pos,
++			   boost::bind(&MediaRss::print_elements, this, _1, _2, _3), list_font_height);
++  }
++
++   std::ostringstream pos;
++
++  if (search_mode)
++    if (cur_files.size() > 0)
++      pos << (offset % cur_files.size()) + 1 << "/" << cur_files.size();
++    else
++      pos << "";
++  else
++    pos << pos_elem +1 << "/" << cur_files.size();
++
++  int x = string_format::calculate_string_width(pos.str(), position_font);
++
++  render->current.add(new TObj(pos.str(), position_font, conf->p_h_res()-(60+x), 20,
++			       themes->media_rss_font1, themes->media_rss_font2, 
++			       themes->media_rss_font3, 3));
++
++  render->draw_and_release("MediaRss List");
++}
++
++
+ void MediaRss::print_categories(const Category& r, const Category& pos, int y)
+ {
+ 
+@@ -252,7 +421,7 @@
+       width -= 5;
+   if (r == pos) {
+     render->current.add(new PFObj(themes->general_marked_large, 67, y + 3,
+-				  width, list_size.second* 0.85, 1, true));
++				  width, list_font_height * 0.85, 1, true));
+   }
+   render->current.add(new TObj(name, list_font, 75, y, themes->media_rss_font1, themes->media_rss_font2, 
+ 			       themes->media_rss_font3, 3));	
+@@ -274,14 +443,9 @@
+ 
+   if (r == pos) 
+   render->current.add(new PFObj(themes->general_marked_large, 67, y + 3,
+-				  width, list_size.second* 0.85, 1, true));
+-
+- /* if (r.percent.size() >= 1 && r.percent != "none") {
+-    render->current.add(new PFObj("media_rss/download.png", 67 + width - 146, y + 3,
+-				  146 , list_size.second* 0.85, 2, true));
+-  } */
++				  width, list_font_height, 1, true));
+   
+-  if (r.percent > M_RSS_HELPER_NONE) {
++  if (r.status > MDB_NONE) {
+     std::pair<int, int> size;
+     string strpcent = conv::itos(r.percent)+"%";
+     size = string_format::calculate_string_size(strpcent, list_font);
+@@ -299,7 +463,7 @@
+ }
+ 
+ int MediaRss::setPercent(const string& category, RssItem& currItem) {
+-  foreach (Category& iter, categ) {
++/*  foreach (Category& iter, categ) {
+ 	if (iter.name == category)
+ 	      foreach (RssItem& i, iter.items) {
+         	if (i == currItem) {
+@@ -307,7 +471,7 @@
+ 			return i.percent;
+ 		}		
+       }
+-  }
++  }*/
+ }
+ 
+ int MediaRss::getPercent(const string& str_categ, RssItem& currItem) {
+@@ -334,18 +498,14 @@
+ string MediaRss::mainloop()
+ {
+ 
+-  int pos;
++  categ = getCategories();
++
+   BusyIndicator *busy_indicator = S_BusyIndicator::get_instance();
+   Shutdown *sd = S_Shutdown::get_instance();
+ 
+-  /*
+-  input_master->save_map();
+-  input_master->set_map("media-rss"); 
+-  */
+-
+   Input input;
+   
+-  render->device->animation_section_begin();
++  render->device->animation_section_begin(true);
+   int curlayer = render->device->get_current_layer();
+   render->device->switch_to_layer(curlayer+1);
+   render->device->reset_layout_attribs_nowait();
+@@ -372,71 +532,20 @@
+       update_needed = true;
+ 
+       if (input.command == "prev")
+- 	{
+-          pos = (in_categories ? pos_categ : pos_elem);
+- 	  if (pos != 0)
+-	    --pos;
+-	  else
+-	    pos = (in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size()) - 1;
+-	  if (in_categories) { 
+-		pos_categ = pos; 
+-		pos_elem = 0; 
+-	  } else 
+-		pos_elem = pos;
+- 	}
++          prev();
+       else if (input.command == "next")
+- 	{
+-          pos = (in_categories ? pos_categ : pos_elem);
+- 	  if (pos != (in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size())-1)
+-	    ++pos;
+-	  else
+-	    pos = 0;
+-	  if (in_categories) { 
+-		pos_categ = pos; 
+-		pos_elem = 0; 
+-	  } else 
+-		pos_elem = pos;
+- 	}
++	  next();
+       else if (input.command == "page_up")
+- 	{
+-          pos = (in_categories ? pos_categ : pos_elem);
+-	  if ((in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size()) > conf->p_jump()) {
+-	    int new_pos = pos-conf->p_jump();
+-	    if (pos == 0)
+-	      pos = (in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size())-1+new_pos;
+-	    else if (new_pos < 0)
+-	      pos = 0;
+-	    else
+-	      pos = new_pos;
+-	  }
+-	  if (in_categories) { 
+-		pos_categ = pos; 
+-		pos_elem = 0; 
+-	  } else 
+-		pos_elem = pos;
+- 	}
++ 	page_up();
+       else if (input.command == "page_down")
+- 	{
+-          pos = (in_categories ? pos_categ : pos_elem);
+-	  if ((in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size()) > conf->p_jump()) {
+-	    if (pos > ((in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size()) - conf->p_jump()) && pos != ((in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size())-1))
+-	      pos = (in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size())-1;
+-	    else
+-	      pos = (pos+conf->p_jump())%(in_categories ? categ.size() : vector_lookup(categ, pos_categ).items.size());
+-	  }
+-	  if (in_categories) { 
+-		pos_categ = pos; 
+-		pos_elem = 0; 
+-	  } else 
+-		pos_elem = pos;
+-	}
++ 	page_down();
+       else if (input.command == "options")
+ 	{
+ 	  options();
+ 	}
+       else if (input.command == "info" && input.mode == "graphical") 
+ 	{
+-	  print_information();
++	  if (!in_categories) print_information();
+ 	}
+       else if (input.command == "action")
+ 	{
+@@ -449,6 +558,10 @@
+        {
+ 	  show_extramenu();
+        }        
++     else if (input.command == "search")
++       {
++	  search_func();
++       }        
+      else if(input.command == "back")
+       {
+          if(in_categories)
+@@ -477,13 +590,94 @@
+   return "";
+ }
+ 
++void MediaRss::prev()
++{
++  int size = (in_categories ? categ.size() : elems.size());
++  int pos = (in_categories ? pos_categ : pos_elem);
++
++  if (pos != 0)
++    --pos;
++  else
++    pos = size -1;
++
++  if (in_categories) { 
++	pos_categ = pos; 
++	pos_elem = 0; 
++  } else 
++	pos_elem = pos;
++}
++
++void MediaRss::next()
++{
++  int size = (in_categories ? categ.size() : elems.size());
++  int pos = (in_categories ? pos_categ : pos_elem);
++
++  if (pos != size -1)
++    ++pos;
++  else
++    pos = 0;
++
++  if (in_categories) { 
++	pos_categ = pos; 
++	pos_elem = 0; 
++  } else 
++	pos_elem = pos;
++}
++
++void MediaRss::page_up()
++{
++
++  int jump = conf->p_jump();
++  int size = (in_categories ? categ.size() : elems.size());
++  int pos = (in_categories ? pos_categ : pos_elem);
++
++  if (size > jump) {
++    int diff = pos - jump;
++    if (pos == 0)
++      pos = (size -1 ) + diff;
++    else if (diff < 0)
++      pos = 0;
++    else
++      pos = diff;
++  }
++
++  if (in_categories) 
++    pos_categ = pos; 
++  else 
++    pos_elem = pos;
++
++}
++
++void MediaRss::page_down()
++{
++  int jump = conf->p_jump();
++  int size = (in_categories ? categ.size() : elems.size());
++  int pos = (in_categories ? pos_categ : pos_elem);
++
++  if (size > jump) {
++    if (pos > (size - jump) && pos != (size - 1))
++      pos = size - 1;
++    else
++      pos = (pos + jump) % size;
++  }
++
++  if (in_categories) 
++    pos_categ = pos; 
++  else 
++    pos_elem = pos;
++
++}
++
+ void MediaRss::enter_category() {
+-	if (vector_lookup(categ, pos_categ).items.size() == 0) {
++	int id =  vector_lookup(categ, pos_categ).id;
++	elems = getItems(id);
++	pos_elem = 0;
++/*	if (vector_lookup(categ, pos_categ).items.size() == 0) {
+                Print pdialog(dgettext("mms-media-rss","not items in this category"), Print::SCREEN);
+-	} else {
++	} else { */
+ 		update_needed = true;
+ 		in_categories = false;
+-	}
++	//}
+ }
+ 
+ void MediaRss::leave_category() {
+@@ -539,10 +733,10 @@
+   render->current.add(new PObj(themes->media_rss_background, 0, 0, 0, SCALE_FULL));
+ 
+   RssItem item;
+-  item = vector_lookup(vector_lookup(categ, pos_categ).items, pos_elem);
++  item = vector_lookup(elems, pos_elem);
+ 
+   string title = item.title;
+-  string description = item.description;
++  string description = string_format::StripHTML(item.description);
+ 
+   if (themes->show_header) {
+     render->current.add(new PFObj(themes->startmenu_media_rss, 25, 10, header_box_size, header_box_size, 2, true));
+@@ -550,50 +744,55 @@
+ 				 themes->media_rss_header_font1, themes->media_rss_header_font2,
+ 				 themes->media_rss_header_font3, 2));
+   }
+-	
+-// Remove any tags that may appear in the text
+-		  bool inTag = false;
+-		  int iPlot = 0;
+-		  char *strPlotStart = new char[strlen(item.description.c_str())+1];
+-		  strcpy(strPlotStart ,item.description.c_str());
+-		  char* strPlot = new char[strlen(strPlotStart)+1];
+-		
+-		  for (int i = 0; i < strlen(strPlotStart); i++)
+-		    {
+-		      if (strPlotStart[i] == '<')
+-			inTag = true;
+-		      else if (strPlotStart[i] == '>')
+-			inTag = false;
+-		      else if (!inTag)
+-			strPlot[iPlot++] = strPlotStart[i];
+-		      else if (inTag && 
+-			strPlotStart[i] == 'b' 
+-			&& strPlotStart[(i+1)] == 'r')
+-			strPlot[iPlot++] = '\n';
+-		    }
+-		  strPlot[iPlot] = '\0';
+-		  description = strPlot;
+-	  delete [] strPlot;
+-	  delete [] strPlotStart;
+ 
+   //int startpos = -1;
+   int lines = 0;
+   int y = 80;
+-  int x = 45;
++  int x = 60;
+ 
+   string line, t;
+   string temp = description;
+   std::string::size_type pos;
+   std::string::size_type startpos = -1;
+ 
+-  render->current.add(new TObj(dgettext("mms-media-rss","Description:"), "Vera/18", x, y, 
+-				   themes->movie_font1, themes->movie_font2, 
+-				   themes->movie_font3, 3));
+-  y = 110;
++  int w = 96, h = 140;
++
++  std::string image = getImage_path(item);
++  if (file_exists(image)) {
++      render->create_scaled_image_wrapper_upscaled(image, w, h);
++      render->current.add(new PFObj(image, conf->p_h_res() - w - 80, y, w, h, false, 2));
++  }
++
++  y-= 5;
++
++  std::string text = dgettext("mms-media-rss","Date:");
++  h = string_format::calculate_string_size(text, "Vera/18").second;
++  render->current.add(new TObj(text, "Vera/18", x, y, 
++				   themes->movie_font1, themes->movie_font2, 
++				   themes->movie_font3, 3));
++  y += h - 5;
++
++  time_t st = time_t(item.pubdate);
++  ost::Datetime dt = ost::Datetime(st);
++  text = dt.strftime("%c");
++
++  h = string_format::calculate_string_size(text, "Vera/14").second;
++  render->current.add(new TObj(text, "Vera/12", x + 10, y, 
++				   themes->movie_font1, themes->movie_font2, 
++				   themes->movie_font3, 3));
++  
++  y += h;
++
++  text = dgettext("mms-media-rss","Description:");
++  h = string_format::calculate_string_size(text, "Vera/18").second;
++  render->current.add(new TObj(text, "Vera/18", x, y, 
++				   themes->movie_font1, themes->movie_font2, 
++				   themes->movie_font3, 3));
++  y += h - 5;
+ 
+   while ((pos = temp.find("\n")) != std::string::npos) {
+     line = string_format::trim(temp.substr(startpos + 1 , pos - startpos - 1 ));
+-    render->current.add(new TObj(line, "Vera/16", x + 10, y + lines*25, 
++    render->current.add(new TObj(line, "Vera/12", x + 10, y + lines*25, 
+ 				   themes->movie_font1, themes->movie_font2, 
+ 				   themes->movie_font3, 3));
+     ++lines;
+@@ -601,7 +800,7 @@
+     startpos = pos;
+   }
+   line = string_format::trim(temp.substr(startpos + 1 , pos - startpos - 1 ));
+-    render->current.add(new TObj(line, "Vera/16", x + 10, y + lines*25, 
++    render->current.add(new TObj(line, "Vera/12", x + 10, y + lines*25, 
+ 				   themes->movie_font1, themes->movie_font2, 
+ 				   themes->movie_font3, 3));
+   
+@@ -616,17 +815,19 @@
+ 
+ void MediaRss::action_download() {
+ 	string category = vector_lookup(categ, pos_categ).name;
+-	RssItem item = vector_lookup(vector_lookup(categ, pos_categ).items, pos_elem); 
++	RssItem item = getItem(vector_lookup(elems, pos_elem).id); 
+ 	DialogStepPrint wait_dialog(overlay);
+ 	wait_dialog.add_line(dgettext("mms-media-rss","Downloading..."));
+ 	download(category, item, wait_dialog);
+-	//cur_files.at(pos) = item;
++	elems.at(pos_elem) = getItem(item.id);
++        update_needed = true;
+ }
+ 
+ void MediaRss::download(string category, RssItem &item, DialogStepPrint wait_dialog, bool quiet) {
+ 	if (!quiet)
+           wait_dialog.print_step1();
+ 	bool ret = call_helper(category, item);	 
++	checkItem(category, item);
+         item.percent = setPercent(category, item);
+ 	if (!quiet) {
+ 	  wait_dialog.print_step2();
+@@ -656,16 +857,18 @@
+   Regexx rex;
+   string rss_handle, rss_path, rss_dir;
+   list<string> tmpList;
+-  list<string> links;
++  listEnclosure links;
+   list<MyPair> temp;
+ 	
+   if (currItem.enclosure.size()) 
+ 	links = currItem.enclosure;
+ 
+-  if (currItem.link.size())
+-	links.push_back(currItem.link);
+-
+-  foreach (string& iterLnk, links) {
++  if (currItem.link.size()) {
++	RssEnclosure enc;
++	enc.url = currItem.link;
++	links.push_back(enc);
++  }
++  foreach (RssEnclosure& iterLnk, links) {
+ 
+     rss_handle.clear();
+ 
+@@ -680,7 +883,7 @@
+     if (rss_handle.size() == 0) {
+       temp = mr_conf->p_rss_helper_ext();
+       foreach(MyPair& iter, temp) {
+-        if ( rex.exec(iterLnk,iter.second + "$", Regexx::global)) { // end with
++        if ( rex.exec(iterLnk.url, iter.second + "$", Regexx::global)) { // end with
+ 	  rss_handle = iter.first;
+ 	  break;
+ 	}
+@@ -690,7 +893,7 @@
+     if (rss_handle.size() == 0) {
+       temp = mr_conf->p_rss_helper_proto();
+       foreach(MyPair& iter, temp) {
+-        if ( rex.exec("^" + iterLnk,iter.second, Regexx::global)) { // start with
++        if ( rex.exec("^" + iterLnk.url, iter.second, Regexx::global)) { // start with
+ 	  rss_handle = iter.first;
+ 	  break;
+         }
+@@ -713,7 +916,7 @@
+       }
+     }
+     
+-    string strHelper = rss_path + ' ' + action + " \"" + currItem.title + "\" \"" + iterLnk + "\" \"" + rss_dir + "\"";
++    string strHelper = rss_path + ' ' + action + " \"" + currItem.title + "\" \"" + iterLnk.url + "\" \"" + rss_dir + "\"";
+     tmpList.push_back(strHelper);
+   }
+   return tmpList;
+@@ -752,6 +955,11 @@
+ 	return conv::atoi(ret);
+ }
+ 
++void MediaRss::update_percent_stats() 
++{
++	count_update_percent++;
++}
++
+ void MediaRss::update_percents() {
+ 
+   if (!busy_upd) {
+@@ -760,23 +968,7 @@
+     int old_percent = 0;
+     // counter reset
+     count_update_percent = 0;
+-    //print_info("MediaRss: updating percents");
+-    foreach(Category& iter, categ) {
+-      foreach (RssItem& i, iter.items) {
+-	old_percent = i.percent;
+-        if ( old_percent == M_RSS_HELPER_RECHECK || (100 > old_percent && old_percent > M_RSS_HELPER_NONE)) {
+-	  i.percent = getPercent(iter.name, i);
+-	  if (i.percent > M_RSS_HELPER_NONE) {
+-	    if (i.percent < 100) tmp_count_downloading++;
+-	    if (old_percent != 100) { 	
+-	      list<string> helpers = find_helper(iter.name, i, "set_cover");
+-	      system_helper(helpers.front() + " " + conv::itos(i.percent));
+-	    }
+-	  }
+-        }
+-	count_update_percent++;
+-      }
+-    }
++    check();
+     std::cout << "end update percent" << std::endl;
+     count_downloading = tmp_count_downloading;
+     busy_upd = false;
+@@ -788,16 +980,18 @@
+   if (opts.autodownload() == dgettext("mms-media-rss","yes") && !busy_audw) {
+     busy_audw = true;
+     //print_info("MediaRss: finding autodownloads");
+-    foreach (Category& iter, categ) {
+-      foreach (RssItem& i, iter.items) {
+-	if (in_autodownload(iter.name, i.title) && (i.percent == M_RSS_HELPER_RECHECK || i.percent == M_RSS_HELPER_NONE) ) {
++    std::list<MyPair> rules = mr_down->p_rules();
++    foreach (MyPair& rule, rules) {
++      vector<RssItem> iter = getItemsMatch(rule.first, rule.second);
++      foreach (RssItem& i, iter) {
++        if (i.status <= MDB_NONE) {
+ 	  name = i.title;
+           string_format::format_to_size(name, list_font, conf->p_h_res()-x_end, true);
+           //print_info("MediaRss: finded autodownload " + i.title);
+ 	  DialogStepPrint wait_dialog(overlay);
+ 	  wait_dialog.add_line(dgettext("mms-media-rss","Autodownloading..."));
+ 	  wait_dialog.add_line("   " + name);
+-	  download(iter.name, i, wait_dialog, S_Global::get_instance()->is_playback("Movie"));
++	  download(rule.first, i, wait_dialog, S_Global::get_instance()->is_playback("Movie"));
+         }
+       }
+     }
+@@ -805,16 +999,6 @@
+   }
+ }
+ 
+-int MediaRss::count_items() {
+- int count = 0;
+-  foreach (Category& iter, categ) {
+-        //print_info(string("MediaRss: " + iter.name + " " + conv::itos(iter.items.size()) + " items"));
+-	count += iter.items.size();
+-  }
+-  count_elements = count;
+-  return count;
+-}
+-
+ void MediaRss::disable()
+ {
+ #ifdef use_notify_area
+@@ -921,7 +1105,7 @@
+       fetch_rss(link);
+     }
+     count_new_elements = count_tmp_new_elements;
+-    total_items = count_items();
++    count_elements = total_items = count_items();
+ }
+ 
+ void MediaRss::fetch_rss(std::pair<string, string> rsscfg) {
+@@ -932,9 +1116,10 @@
+   TiXmlElement* item;
+   TiXmlElement* enclosure;
+   TiXmlText *text;
+-
++  string time;
+   int startpos = 0;
+-
++  int id = idCategory(rsscfg.first);
++ 
+   mkCategory(rsscfg.first);
+ 
+   foreach (Category& iter, categ) {
+@@ -961,19 +1146,29 @@
+ 					rItem.link = string_format::ConvertHTMLToAnsi(text->Value());
+ 
+ 				if ((text = handle.FirstChild("pubDate").FirstChild().ToText()) != NULL)
+-					rItem.pubdate = str_to_time(text->Value()); 
++					rItem.pubdate = static_cast<int>(str_to_time(text->Value())); 
+ 
+-				if ((text = handle.FirstChild("description").FirstChild().ToText()) != NULL)
++				if ((text = handle.FirstChild("description").FirstChild().ToText()) != NULL) {
+ 					rItem.description = string_format::ConvertHTMLToAnsi(text->Value());
++					rItem.img = regex_tools::extract_substr(text->Value(), "<img.*src=\"(.*?)\".*/?>", true);
++                                }
+ 	
+ 				enclosure = handle.FirstChild("enclosure").ToElement();
+ 				for ( enclosure; enclosure; enclosure = enclosure->NextSiblingElement() ) {
+-					buff = string_format::trim(enclosure->Attribute("url"));
+-					rItem.enclosure.push_back(buff);
++
++					RssEnclosure enc;
++					enc.url = string_format::trim(enclosure->Attribute("url"));
++					enc.type = string_format::trim(enclosure->Attribute("type"));
++					enc.length = string_format::trim(enclosure->Attribute("length"));
++
++					rItem.enclosure.push_back(enc);
+ 				}
+ 
+-				if (rItem.title.size() && !find_item(rItem)) {
+-					iter.items.push_back(rItem);
++				if (rItem.title.size()) {
++					store(id, rItem);
++					if (rItem.img.size() > 0)
++					  S_BackgroundUpdater::get_instance()->run_once(boost::bind(&MediaRss::getImage, this, rItem));
++
+ 					count_tmp_new_elements++;
+ 				}
+ 				count_fetch++;
+@@ -985,18 +1180,41 @@
+   }
+ }
+ 
+-bool MediaRss::find_item(const RssItem& item) {
+-
+-  foreach(Category& iter, categ) {
+-    foreach (RssItem& i, iter.items) {
+-      if (i == item) {
+-	return true;
+-      }
++std::string MediaRss::getImage_path(const RssItem& item)
++{
++
++  std::string img = item.img;
++  std::string filename;
++  
++  if (img.size()) {
++    size_t pos = item.img.rfind("/");
++    if (pos != string::npos)
++      img = item.img.substr( item.img.rfind('/')+1 );
++
++    filename = mediarss_dir + "/" + img;
++  }
++  return filename;
++}
++
++void MediaRss::getImage(const RssItem& item)
++{
++  if (item.img.size() == 0) 
++    return;
++
++  std::string filename = getImage_path(item);
++  std::string filename_tmp =  filename + ".tmp";
++
++  if (!filesystem::isFile(filename) || filesystem::getFileSize(filename) <= 0 ) {
++    WgetWrapper::download_to_file(item.img,  filename_tmp);
++    if (filesystem::isFile(filename_tmp) && filesystem::getFileSize(filename_tmp) > 0 ) {
++      run::external_program("mv " + string_format::escape_string(filename_tmp) + " " + string_format::escape_string(filename));
++    } else {
++      run::external_program("rm " + string_format::escape_string(filename_tmp));
+     }
+   }
+-  return false;
+ }
+ 
++
+ #ifdef use_notify_area
+ void MediaRss::ShowNotifyArea() {
+ 
+
+=== modified file 'plugins/feature/media-rss/media_rss.hpp'
+--- old/plugins/feature/media-rss/media_rss.hpp	2009-03-27 00:51:40 +0000
++++ new/plugins/feature/media-rss/media_rss.hpp	2009-09-25 03:34:21 +0000
+@@ -2,6 +2,7 @@
+ #define MEDIA_RSS_HPP
+ 
+ #include "rss_item.hpp"
++#include "media_rss_db.hpp"
+ #include "media_rss_config.hpp"
+ #include "media_rss_autodownload_config.hpp"
+ 
+@@ -20,7 +21,7 @@
+ #include <list>
+ #include <string>
+ 
+-enum { M_RSS_HELPER_RECHECK = -2, M_RSS_HELPER_NONE };
++
+ 
+ using namespace regexx;
+ 
+@@ -30,7 +31,6 @@
+     bool call(const std::string& command, std::string& contents);
+ }
+ 
+-
+ class MediaRssUpdate : public ost::Thread
+ {
+ private:
+@@ -43,20 +43,7 @@
+   virtual void run();
+ };
+ 
+-
+-class Category {
+-  public:
+-	string name;
+-	vector <RssItem> items;
+-
+-  bool operator==(const Category& rhs) const
+-{
+-  return (this->name == rhs.name);
+-}
+-
+-};
+-
+-class MediaRss : public Module
++class MediaRss : public MediaDB
+ {
+ public:
+ 
+@@ -97,15 +84,9 @@
+     return &opts;
+   }
+ 
+-
+   Overlay overlay;
+   vector<Category> categ;
+-
+-  std::string list_font;
+-  std::pair<int, int> list_size;
+-  std::string header_font;
+-  std::pair<int, int> header_size;
+-  int header_box_size;
++  vector<RssItem>  elems;
+ 
+   bool busy_upd;
+   bool busy_audw;
+@@ -131,11 +112,8 @@
+   int idle_item();
+ 	
+   int total_items;
+-
+-  int count_items();
+   
+   int x_end;
+-  bool find_item(const RssItem& item);
+ 
+   void print_list();
+   void print_categories(const Category& r, const Category& position, int y);
+@@ -194,9 +172,55 @@
+   void update_autodownloads();
+   void update_percents();
+ 
++  void show_id(int id);
+   
+   MediaRssOpts opts;
+ 
++private:
++
++  std::string mediarss_dir;
++
++  std::string header_font;
++  std::string search_font;
++  std::string search_select_font;
++  std::string normal_font;
++  std::string position_font;
++  std::string information_header_font;
++  std::string information_font;
++  std::string dialog_header_font;
++  std::string dialog_font;
++  std::string list_font;
++  std::string extra_information_font;
++
++  std::pair<int, int> header_size;		// Size of Header
++  int header_box_size;
++
++  int normal_font_height;
++  int dialog_header_font_height;
++  int dialog_font_height;
++  int list_font_height;
++  int information_font_height;
++  int extra_information_font_height;
++
++
++  void updated_db() {}
++  void update_percent_stats();
++  void search_func();
++
++  void prev();
++  void next();
++  void page_up();
++  void page_down();
++
++  std::string getTitle(const RssItem& item);
++  bool search_compare(const RssItem& item);
++  void print(const std::vector<RssItem>& elems);
++
++  void getImage(const RssItem& item);
++  std::string getImage_path(const RssItem& item);
++
++  void res_dependant_calc();
++
+ };
+ 
+ #endif
+
+=== added file 'plugins/feature/media-rss/media_rss_db.cpp'
+--- old/plugins/feature/media-rss/media_rss_db.cpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/media-rss/media_rss_db.cpp	2009-09-29 18:15:42 +0000
+@@ -0,0 +1,711 @@
++#include "media_rss_db.hpp"
++
++#include "common-feature.hpp"
++#include "graphics.hpp"
++#include "updater.hpp"
++#include "busy_indicator.hpp"
++#include "touch.hpp"
++#include "resolution.hpp"
++
++// ostringstream
++#include <sstream>
++
++#include <vector>
++#include <string>
++
++#include <iostream>
++
++using std::vector;
++using std::string;
++using std::list;
++using string_format::str_printf;
++
++MediaDB::MediaDB(const string& filename)
++  : db((conf->p_var_data_dir() + filename).c_str())
++{
++  check_db();
++  check_db_consistency();
++
++  if (!db)
++    print_critical(dgettext("mms-movie", "Series database could not be opened or created"), "MOVIE");
++
++}
++
++MediaDB::~MediaDB()
++{
++  db_mutex.enterMutex();
++  db.close();
++  db_mutex.leaveMutex();
++}
++
++void MediaDB::create_db()
++{
++  vector<string> fields;
++  fields.push_back("version INTEGER NOT NULL");
++  db.createTable("Schema", fields);
++
++  db.execute("INSERT INTO Schema VALUES('1')");
++
++  fields.clear();
++  fields.push_back("id INTEGER PRIMARY KEY"); // internal
++  fields.push_back("idCategory INTEGER");
++  fields.push_back("title TEXT");
++  fields.push_back("link TEXT");
++  //fields.push_back("img TEXT"); // tag 
++  fields.push_back("description TEXT");
++  fields.push_back("pubdate DATE");
++  fields.push_back("image TEXT");
++  fields.push_back("enable INTEGER"); // 1 is true
++  fields.push_back("status TEXT");
++  fields.push_back("percent INTEGER"); 
++  db.createTable("Item", fields);
++
++  fields.clear();
++  fields.push_back("id INTEGER PRIMARY KEY");
++  fields.push_back("idItem INTEGER");
++  fields.push_back("url TEXT");
++  fields.push_back("length TEXT");
++  fields.push_back("type TEXT");
++  db.createTable("Enclosure", fields);
++
++  fields.clear();
++  fields.push_back("id INTEGER PRIMARY KEY"); // internal
++  fields.push_back("name TEXT");
++  db.createTable("Category", fields);
++
++  create_indexes();
++}
++
++void MediaDB::create_indexes()
++{
++  db.execute("CREATE INDEX idx_item_idcategory ON Item (idCategory)");
++  db.execute("CREATE INDEX idx_item_title ON Item (title)");
++  db.execute("CREATE INDEX idx_item_link ON Item (link)");
++  db.execute("CREATE INDEX idx_item_description ON Item (desciption)");
++  db.execute("CREATE INDEX idx_item_pubdate ON Item (pubdate)");
++  db.execute("CREATE INDEX idx_item_status ON Item (status)");
++
++  db.execute("CREATE INDEX idx_enclosure_iditem ON Enclosure (idItem)");
++  db.execute("CREATE INDEX idx_enclosure_url ON Enclosure (url)");
++
++  db.execute("CREATE INDEX idx_category_name ON Caregory (name)");
++}
++
++void MediaDB::check_db()
++{
++  if (db.hasTable("Schema")) {
++    // check for correct version
++   /*  SQLQuery *q = db.query("Schema", "SELECT version FROM %t");
++    if (q && q->numberOfTuples() > 0) {
++      SQLRow &row = (*q)[0];
++      if (row["version"] == "4")
++	; // correct version
++      else if (row["version"] == "3") {
++	Print print(gettext("Upgrading video database schema"), Print::INFO);
++	db.execute("ALTER TABLE Folders ADD is_thumbnailed INTEGER");
++	db.execute("UPDATE Schema SET version=4");
++      }	else if (row["version"] != "3") {
++
++	Print print(gettext("Upgrading video database schema"), Print::INFO);
++
++	SQLQuery *dq = db.query("sqlite_master", "SELECT name FROM %t WHERE type='table'");
++	if (dq) {
++	  for (int i = 0; i < dq->numberOfTuples(); ++i) {
++	    db.execute(("DROP TABLE " + (*dq)[i]["name"]).c_str());
++	  }
++	}
++
++	delete dq;
++
++	dq = db.query("sqlite_master", "SELECT name FROM %t WHERE type='index'");
++	if (dq) {
++	  for (int i = 0; i < dq->numberOfTuples(); ++i) {
++	    db.execute(("DROP INDEX " + (*dq)[i]["name"]).c_str());
++	  }
++	}
++
++	delete dq;
++
++	create_db();
++      }
++    } 
++    delete q; */
++  } else {
++    // create the whole db
++    create_db();
++  }
++}
++
++void MediaDB::check_db_consistency()
++{
++  string query = "UPDATE Item SET enable = 0 WHERE status <= '" + conv::itos(MDB_NONE) + "'";
++
++  db_mutex.enterMutex();
++  db.execute(query.c_str());
++  db_mutex.leaveMutex();
++}
++
++int MediaDB::count_items()
++{
++  int items = 0;
++
++  db_mutex.enterMutex();
++
++  string query = "SELECT id FROM Item WHERE enable = 1";
++  std::cout << "count items " << query << std::endl;
++
++  SQLQuery *q = db.query("Item", query.c_str());
++  if (q)
++    items = q->numberOfTuples();
++  delete q;
++
++  db_mutex.leaveMutex();
++  std::cout << "count items =" << conv::itos(items) << std::endl;
++  return items;
++
++}
++
++vector<Category> MediaDB::getCategories() 
++{
++  vector<Category> names;
++
++  db_mutex.enterMutex();
++
++  string query = "SELECT Category.*, COUNT(Item.id) as elements FROM Category JOIN Item on Item.idCategory = Category.id GROUP BY Category.id ORDER BY name";
++  std::cout << "getCategories" << query << std::endl;
++
++  SQLQuery *q = db.query("Category", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       Category ns;
++       ns.id = conv::atoi(row["id"]);
++       ns.name = row["name"];
++       ns.elements = conv::atoi(row["elements"]);
++       names.push_back(ns);
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return names;
++
++}
++
++vector<RssItem> MediaDB::getItems(int& idCateg) 
++{
++  vector<RssItem> names;
++
++  db_mutex.enterMutex();
++
++  string query = "SELECT * FROM Item WHERE idCategory =  '" + conv::itos(idCateg) + "' AND enable = 1 ORDER BY pubdate desc, title";
++  std::cout << "getItems" << query << std::endl;
++
++  SQLQuery *q = db.query("Item", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       RssItem ns = RssItem();
++       ns.id = conv::atoi(row["id"]);
++       ns.status = conv::atoi(row["status"]);
++       ns.percent = conv::atoi(row["percent"]);
++       ns.pubdate = conv::atoi(row["pubdate"]);
++       ns.title = row["title"];
++       ns.link = row["link"];
++       ns.description = row["description"];
++       ns.img = row["image"];
++       names.push_back(ns);
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return names;
++
++}
++
++vector<RssItem> MediaDB::getItemsMatch(const std::string& categ, const std::string& title) 
++{
++  vector<RssItem> names;
++
++  db_mutex.enterMutex();
++
++  string query = "SELECT * FROM Item JOIN Category ON item.idCategory = Category.id WHERE Category.name LIKE '" + categ + "' AND Item.title LIKE '" + title + "%%' AND enable = 1 ORDER BY pubdate desc, title";
++
++  std::cout << "getItemsMatch" << query << std::endl;
++
++  SQLQuery *q = db.query("Item", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       RssItem ns = getItem(conv::atoi(row["id"]));
++       names.push_back(ns);
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return names;
++
++}
++
++void MediaDB::checkItem(const std::string& categ, RssItem& item)
++{
++ 
++  int percent = 0;
++  percent = getPercent(categ, item);
++  std::cout << "checkItem getPercent=" << percent << std::endl;
++
++  if (percent == M_RSS_HELPER_RECHECK) {
++	setStatus(MDB_UNCHECK, item);
++	return;
++  }
++
++  if (percent == M_RSS_HELPER_NONE) {
++	setStatus(MDB_NONE, item);
++        return;
++  }
++  
++  setStatus( (percent == 100 ? MDB_DONE : MDB_DOWNLOADING) , item);
++  setPercent(percent, item);
++	
++}
++
++void MediaDB::check() 
++{
++
++  RssItem ns;
++  string query = "SELECT Item.id, Category.name FROM Item JOIN Category ON Item.idCategory = Category.id WHERE( status = '" + conv::itos(MDB_UNCHECK)
++		  + "' OR status = '" + conv::itos(MDB_DOWNLOADING) + "')"
++		  + " AND enable = 1"
++		  + " ORDER BY pubdate desc, title";
++
++  std::cout << "Check" << query << std::endl;
++
++  db_mutex.enterMutex();
++  SQLQuery *q = db.query("Item", query.c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++       SQLRow &row = (*q)[i];
++       ns = getItem(conv::atoi(row["id"]));
++       checkItem(row["name"], ns);
++       update_percent_stats();
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++}
++
++
++int MediaDB::find_idCategory(const string& name)
++{
++
++  int id = 0;
++  db_mutex.enterMutex();
++
++  // check if already exists
++  string query = "SELECT id FROM Category WHERE name LIKE '" + name + "'";
++  //std::cout << "query " << query << std::endl;
++  SQLQuery *q = db.query("Series", query.c_str());
++  if (q && q->numberOfTuples() > 0) {
++    SQLRow &row = (*q)[0];
++    id = conv::atoi(row["id"]);
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++  return id;
++}
++
++int MediaDB::find_idItem(const RssItem& item)
++{
++
++  int id = 0;
++
++  char *query = sqlite3_mprintf("SELECT id FROM Item WHERE title = '%q' AND link = '%q' AND description = '%q'", 
++		item.title.c_str(),
++		item.link.c_str(),
++		item.description.c_str());
++
++  db_mutex.enterMutex();
++  SQLQuery *q = db.query("Item", query);
++  //std::cout << "query " << query << std::endl;
++  if (q && q->numberOfTuples() > 0) {
++    SQLRow &row = (*q)[0];
++    id = conv::atoi(row["id"]);
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  sqlite3_free(query);
++  //std::cout << "select id=" << id << std::endl;
++  return id;
++}
++
++
++int MediaDB::idCategory(const string& name)
++{
++   int id = find_idCategory(name);
++   if (id == 0) {
++     db_mutex.enterMutex();
++     char *tmp_insert = sqlite3_mprintf("INSERT INTO Category (name) VALUES ('%q')", name.c_str());
++     db.execute(tmp_insert);
++     sqlite3_free(tmp_insert);
++     id = find_idCategory(name);
++     db_mutex.leaveMutex();
++
++     updated_db();
++   }
++   return id;
++}
++
++int MediaDB::idItem(const RssItem& item)
++{
++   int id = find_idItem(item);
++   if (id == 0) {
++     db_mutex.enterMutex();
++     char *tmp_insert = sqlite3_mprintf("INSERT INTO Item (title, link, pubdate, description, status) VALUES ('%q', '%q', '%q', '%q', '%q')", 
++		item.title.c_str(),
++		item.link.c_str(),
++		conv::itos(item.pubdate).c_str(),
++		item.description.c_str(),
++		conv::itos(MDB_UNCHECK).c_str());
++
++     if (!db.execute(tmp_insert))
++	     std::cout << "failed query " << tmp_insert << std::endl;
++     sqlite3_free(tmp_insert);
++     id = find_idItem(item);
++     db_mutex.leaveMutex();
++     std::cout << "insert id=" << id << std::endl;
++     updated_db();
++   }
++
++   return id;
++}
++
++int MediaDB::idEnclosure(const int& idItem, const RssEnclosure& enc)
++{
++  int id = 0;
++  char *query = sqlite3_mprintf("SELECT * FROM Enclosure WHERE idItem = '%q' AND url ='%q' AND type ='%q' AND length = '%q'",
++		conv::itos(idItem).c_str(), 
++		enc.url.c_str(), 
++		enc.type.c_str(), 
++		enc.length.c_str());
++
++  db_mutex.enterMutex();
++  SQLQuery *q = db.query("Enclosure", query);
++  if (q && q->numberOfTuples() > 0) {
++    SQLRow &row = (*q)[0];
++    id = conv::atoi(row["id"]);
++
++  }
++  sqlite3_free(query);
++  delete q;
++  db_mutex.leaveMutex();
++
++   if (id == 0) {
++     db_mutex.enterMutex();
++     char *query_sql = sqlite3_mprintf("INSERT INTO Enclosure (idItem, url, type, length) VALUES ('%q', '%q', '%q', '%q')",
++		conv::itos(idItem).c_str(), 
++		enc.url.c_str(), 
++		enc.type.c_str(), 
++		enc.length.c_str());
++
++     db.execute(query_sql);
++     std::cout << "query " << query_sql << std::endl << std::endl;
++     sqlite3_free(query_sql);
++     id = db.last_index();
++     db_mutex.leaveMutex();
++
++     updated_db();
++   }
++   return id;
++}
++
++RssItem MediaDB::getItem(const int& id) 
++{
++  RssItem ep;
++  string query;
++  SQLQuery *q;
++  query = "SELECT * FROM Item WHERE id = '"+ conv::itos(id) + "'";
++
++  db_mutex.enterMutex();
++  q = db.query("Serie", query.c_str());
++  if (q && q->numberOfTuples() > 0) {
++        SQLRow &row = (*q)[0];
++        ep.id = conv::atoi(row["id"]);
++        ep.status = conv::atoi(row["status"]);
++        ep.percent = conv::atoi(row["percent"]);
++        ep.pubdate = conv::atoi(row["pubdate"]);
++	ep.title = row["title"];
++	ep.link = row["link"];
++	ep.description = row["description"];
++	ep.img = row["image"];
++  }
++  delete q;
++
++  query = "SELECT * FROM Enclosure WHERE idItem = '"+ conv::itos(id) + "'";
++  q = db.query("Serie", query.c_str());
++  if (q)
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++        RssEnclosure enc = RssEnclosure();
++        SQLRow &row = (*q)[i];
++        //enc.id = conv::atoi(row["id"]);
++	enc.url = row["url"];
++	enc.type = row["type"];
++	enc.length = row["length"];
++	ep.enclosure.push_back(enc);
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return ep;
++
++}
++
++Category MediaDB::getCategory(const int& id) 
++{
++  Category ctgr;
++
++  string query = "SELECT Category.*, COUNT(Item.id) as elements FROM Category JOIN Item on Item.idCategory = Category.id WHERE Item.id = '" + conv::itos(id) + "' GROUP BY Category.id ORDER BY name";
++  std::cout << "getCategory" << query << std::endl;
++
++  db_mutex.enterMutex();
++
++  SQLQuery *q = db.query("Category", query.c_str());
++  if (q && q->numberOfTuples()) {
++       SQLRow &row = (*q)[0];
++       ctgr.id = conv::atoi(row["id"]);
++       ctgr.name = row["name"];
++       ctgr.elements = conv::atoi(row["elements"]);
++  }
++
++  db_mutex.leaveMutex();
++
++  return ctgr;
++
++}
++
++Category MediaDB::getCategory(const RssItem& item) 
++{
++  Category ctgr = getCategory(item.id);
++  return ctgr;
++
++  string query;
++  SQLQuery *q;
++  query = "SELECT * FROM Item WHERE id = '"+ conv::itos(item.id) + "'";
++  std::cout << "getCategory" << query << std::endl;
++
++  db_mutex.enterMutex();
++  q = db.query("Serie", query.c_str());
++  if (q && q->numberOfTuples() > 0) {
++        SQLRow &row = (*q)[0];
++        ctgr = getCategory(conv::atoi(row["idCategory"]));
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return ctgr;
++
++}
++
++bool MediaDB::store(const int& idCategory, const RssItem& item)
++{
++
++  int id = idItem(item);
++
++  std::string img = item.img;
++
++  size_t pos = item.img.rfind("/");
++  if (pos != string::npos)
++    img = item.img.substr( item.img.rfind('/')+1 );
++
++//  std::cout << "store " << item.title << " id=" << id << std::endl;
++
++  char *query_sql = sqlite3_mprintf("UPDATE Item SET idCategory='%q', title = '%q', link = '%q', pubdate = '%q', description = '%q', image = '%q', enable = 1 WHERE id = '%q'",
++		conv::itos(idCategory).c_str(),
++		item.title.c_str(), 
++		item.link.c_str(), 
++		conv::itos(item.pubdate).c_str(),
++		item.description.c_str(),
++		img.c_str(),  
++		conv::itos(id).c_str());
++   
++  db_mutex.enterMutex();
++  if (!db.execute(query_sql))
++    std::cout << "SQL failed " << query_sql << std::endl;
++  db_mutex.leaveMutex();
++
++
++  sqlite3_free(query_sql);
++
++  foreach (RssEnclosure enc, item.enclosure) {
++    store(id, enc);
++  }
++
++  return true;
++}
++
++bool MediaDB::store(const int& idItem, const RssEnclosure& enc)
++{
++
++  int id = idEnclosure(idItem, enc);
++  
++  char *query_sql = sqlite3_mprintf("UPDATE Enclosure set url = '%q', type = '%q', length = '%q' WHERE id = '%q'",
++		enc.url.c_str(), 
++		enc.type.c_str(), 
++		enc.length.c_str(),
++		conv::itos(id).c_str());
++   
++  db_mutex.enterMutex();
++  db.execute(query_sql);
++  db_mutex.leaveMutex();
++  //std::cout << "SQL " << query_sql << std::endl;
++  sqlite3_free(query_sql);
++
++
++  return true;
++}
++
++bool MediaDB::setStatus(const int& status, const RssItem& item)
++{
++
++  int id = idItem(item);
++
++  char *query_sql = sqlite3_mprintf("UPDATE Item SET status ='%q' WHERE id = '%q'",
++		conv::itos(status).c_str(),
++		conv::itos(id).c_str());
++   
++  db_mutex.enterMutex();
++  bool ret = db.execute(query_sql);
++  db_mutex.leaveMutex();
++  //std::cout << "SQL " << query_sql << std::endl;
++  sqlite3_free(query_sql);
++
++  return ret;
++}
++
++bool MediaDB::setPercent(const int& percent, const RssItem& item)
++{
++
++  int id = idItem(item);
++
++  char *query_sql = sqlite3_mprintf("UPDATE Item SET percent ='%q' WHERE id = '%q'",
++		conv::itos(percent).c_str(),
++		conv::itos(id).c_str());
++   
++  db_mutex.enterMutex();
++  bool ret = db.execute(query_sql);
++  db_mutex.leaveMutex();
++  sqlite3_free(query_sql);
++
++  return ret;
++}
++
++std::vector<std::pair<std::string, int> > MediaDB::gen_search_list(const std::string& search_word)
++{
++  string parent = "", movie_parent = "";
++  SQLQuery *q;
++  std::vector<std::pair<std::string, int> > result;
++
++ /* if (input_master->current_saved_map() == "movie" && search_depth == dgettext("mms-movie", "current folder")) {
++    string parent_sql_str = "SELECT id FROM %t WHERE";
++
++    list<string> current_folders = folders.top().first;
++    bool first = true;
++    foreach (string& folder, current_folders) {
++      if (first) {
++	parent_sql_str += " filename='" + folder + "'";
++	first = false;
++      } else
++	parent_sql_str += " OR filename='" + folder + "'";
++    }
++
++    string parent_ids = "";
++
++    db_mutex.enterMutex();
++
++    SQLQuery *q0 = db.query("Folders", parent_sql_str.c_str());
++
++    if (q0) {
++      for (int i = 0; i < q0->numberOfTuples(); ++i) {
++	SQLRow &row = (*q0)[i];
++	if (i > 0)
++	  parent_ids += ", " + row["id"];
++	else
++	  parent_ids += row["id"];
++      }
++    }
++    delete q0;
++
++    db_mutex.leaveMutex();
++
++    parent = "parent in (" + parent_ids + ") AND";
++    movie_parent = "path = (SELECT filename FROM Folders WHERE parent in (" + parent_ids + ")) AND";
++  }
++
++  vector<int> ids_already_found;
++
++  db_mutex.enterMutex();
++
++  // folders
++  SQLQuery *q = db.query("Folders", ("SELECT id, parent, filename, name, is_folder FROM %t WHERE " + parent + " fuzzycmp('" + search_word + "', lname, 1)").c_str());
++
++  if (q) {
++
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++
++      SQLRow &row = (*q)[i];
++
++      string out;
++
++      bool result_ok = false;
++
++      if (input_master->current_saved_map() == "movie" && search_depth == dgettext("mms-movie", "current folder")) {
++	foreach (string& folder, folders.top().first)
++	  if (row["filename"].find(folder) != string::npos) {
++	    result_ok = true;
++	    break;
++	  }
++      } else
++	result_ok = true;
++
++      if (result_ok && row["parent"] != "0") {
++	if (row["is_folder"] == "1")
++	  out = row["name"] + "/";
++	else
++	  out = row["name"];
++
++	int id = conv::atoi(row["id"]);
++	result.push_back(std::make_pair(string_format::convert(out), id));
++	ids_already_found.push_back(id);
++      }
++    }
++  }
++  delete q; */
++
++  q = db.query("Item", ("SELECT id, title FROM %t WHERE enable = 1 AND title LIKE '%%" + search_word + "%%'").c_str());
++  if (q) {
++    for (int i = 0; i < q->numberOfTuples(); ++i) {
++
++      SQLRow &row = (*q)[i];
++
++      int id = conv::atoi(row["id"]);
++
++      result.push_back(std::make_pair(row["title"], id));
++    }
++  }
++  delete q;
++
++  db_mutex.leaveMutex();
++
++  return result;
++}
+
+=== added file 'plugins/feature/media-rss/media_rss_db.hpp'
+--- old/plugins/feature/media-rss/media_rss_db.hpp	1970-01-01 00:00:00 +0000
++++ new/plugins/feature/media-rss/media_rss_db.hpp	2009-09-24 14:23:35 +0000
+@@ -0,0 +1,75 @@
++#ifndef MEDIA_RSS_DB_HPP
++#define MEDIA_RSS_DB_HPP
++
++#include "config.h"
++#include "module.hpp"
++#include "rss_item.hpp"
++
++#include "cpp_sqlitepp.hpp"
++#include "singleton.hpp"
++
++class MediaDB : public Module
++{
++private:
++  int find_idCategory(const std::string& name);
++  int find_idItem(const RssItem& item);
++
++protected:
++  SQLDatabase db;
++
++//  virtual Episode extract_file_info(const std::string& filename) = 0;
++  virtual void updated_db() = 0;
++  virtual int getPercent(const std::string& str_categ, RssItem& item) = 0;
++  virtual void update_percent_stats() {};
++
++  ost::Mutex db_mutex;
++
++  void check_db();
++  void create_db();
++  void create_indexes();
++  void check_db_consistency();
++
++  int idCategory(const std::string& name);
++  int idItem(const RssItem& item);
++  int idEnclosure(const int& idItem, const RssEnclosure& enc);
++
++  std::vector<RssItem> getItems(int& idCateg);
++  std::vector<Category> getCategories();
++
++/*  Serie getSerie(const int& id);
++  Serie getSerie(const std::string& name);
++  Episode getEpisode(const int& id); */
++
++  int count_items();
++
++  void check();
++  void checkItem(const std::string& categ, RssItem& item);
++
++  RssItem getItem(const int& id);
++
++  Category getCategory(const int& id);
++  Category getCategory(const RssItem& item);
++
++  std::vector<RssItem> getItemsMatch(const std::string& categ, const std::string& title);
++
++  bool setStatus(const int& status, const RssItem& item);
++  bool setPercent(const int& percent, const RssItem& item);
++
++  bool store(const int& id, const RssItem& se);
++  bool store(const int& id, const RssEnclosure& se);
++//  bool store(const Episode& ee);
++
++
++//  void setViewed(const int& id_episode, bool flag = true);
++
++public:
++
++  SQLDatabase* get_db() { return &db; }
++
++  MediaDB(const std::string& filename);
++  ~MediaDB();
++
++  std::vector<std::pair<std::string, int> > gen_search_list(const std::string& search_word);
++};
++
++#endif
+
+=== modified file 'plugins/feature/media-rss/rss_item.cpp'
+--- old/plugins/feature/media-rss/rss_item.cpp	2008-09-27 00:07:47 +0000
++++ new/plugins/feature/media-rss/rss_item.cpp	2009-09-25 04:04:41 +0000
+@@ -25,8 +25,19 @@
+   return mktime(&tm);
+ }
+ 
+-RssItem::RssItem() : percent(-2)
+-{}
++/*std::string time_to_str(const int s)
++{
++struct tm *tm;
++char chars[80];
++time_t _time;
++
++  _time = time(s);
++  tm = localtime(&_time);
++  strftime( chars, 80, "%H:%M.%S, %A de %B de %Y", tm);
++
++} */
++
++RssItem::RssItem() : percent(-2), status(MDB_UNCHECK) {}
+ 
+ bool RssItem::operator==(const RssItem& rhs) const
+ {
+@@ -51,3 +62,5 @@
+   return (this->pubdate > rhs.pubdate);
+ }
+ 
++Category::Category() : id(0), elements(0) {}
++
+
+=== modified file 'plugins/feature/media-rss/rss_item.hpp'
+--- old/plugins/feature/media-rss/rss_item.hpp	2008-09-27 00:07:47 +0000
++++ new/plugins/feature/media-rss/rss_item.hpp	2009-09-25 02:40:23 +0000
+@@ -7,16 +7,30 @@
+ 
+ #include <time.h>
+ 
++  enum { MDB_UNCHECK = -1, MDB_NONE, MDB_DOWNLOADING,  MDB_DONE };
++  enum { M_RSS_HELPER_RECHECK = -2, M_RSS_HELPER_NONE };
++
++class RssEnclosure {
++  public:
++	std::string url;
++	std::string type;
++	std::string length;
++};
++
++typedef std::vector<RssEnclosure> listEnclosure;
+ 
+ class RssItem {
+-public:
++ public:
+    RssItem();
++   int id;
+    std::string title;
+    std::string link;
+-   time_t pubdate;
++   int pubdate;
+    std::string description;
+-   std::list<std::string> enclosure;
++   std::string img;
++   listEnclosure enclosure;
+ 
++   int status;
+    int percent;
+ 
+    bool operator==(const RssItem& rhs) const;
+@@ -24,9 +38,24 @@
+    bool operator<(const RssItem& rhs) const;
+ };
+ 
++class Category {
++ public:
++  Category();
++  int id;
++  std::string name;
++  int elements; // count Elements
++
++  bool operator==(const Category& rhs) const
++  {
++    return (this->name == rhs.name);
++  }
++
++};
++
+ typedef std::pair<std::string, RssItem> categItem;
+ typedef std::vector<categItem> listItems;
+ 
+ time_t str_to_time(const char *s);
+ 
++
+ #endif
+

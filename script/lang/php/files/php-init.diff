@@ -1,0 +1,11 @@
+--- old/Zend/zend.h	2009-03-18 02:08:12.000000000 +0100
++++ new/Zend/zend.h.oden	2009-03-27 12:04:15.000000000 +0100
+@@ -671,7 +671,7 @@ END_EXTERN_C()
+ 	(z)->refcount__gc = 1;	\
+ 	(z)->is_ref__gc = 0;
+ 
+-#define INIT_ZVAL(z) z = zval_used_for_init;
++#define INIT_ZVAL(z) memcpy(&z, &zval_used_for_init, sizeof(zval_used_for_init))
+ 
+ #define ALLOC_INIT_ZVAL(zp)						\
+ 	ALLOC_ZVAL(zp);		\

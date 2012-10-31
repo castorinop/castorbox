@@ -1,0 +1,54 @@
+--- old/checksums	2009-12-31 14:29:52.000000000 -0300
++++ new/checksums	2010-11-02 15:00:03.381706168 -0300
+@@ -1 +1 @@
+-03a8498828866b407c61c0aaf8ebe66c  download/sqlite-3.6.21.tar.gz
++74fe78b264f1c434c4b159d45b78e9b7  download/sqlite-amalgamation-3.7.3.tar.gz
+--- old/Makefile	2010-07-29 19:04:15.000000000 -0300
++++ new/Makefile	2010-11-02 15:00:03.381706168 -0300
+@@ -1,15 +1,15 @@
+ GARNAME = sqlite
+-GARVERSION = 3.6.21
++GARVERSION = 3.7.3
+ CATEGORIES = db
+ MASTER_SITES = http://www.sqlite.org/
+-DISTFILES = $(DISTNAME).tar.gz
++DISTFILES = $(GARNAME)-amalgamation-$(GARVERSION).tar.gz
+ LICENSE =
+ 
+ DESCRIPTION = 
+ define BLURB
+ endef
+ 
+-DEPENDS   = lang/c
++DEPENDS   = lang/c lib/readline
+ BUILDDEPS = utils/tcl
+ 
+ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
+@@ -19,24 +19,15 @@
+ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+ 	--enable-shared \
+ 	--disable-static \
+-	--enable-largefile \
++	--enable-readline \
+ 	--enable-threadsafe \
+-	--disable-cross-thread-connections \
+-	--disable-threads-override-locks \
+-	--disable-releasemode \
+-	--enable-tempstore=no \
+-	--disable-tcl \
+-	--disable-readline \
+-	--disable-debug \
+-	--enable-amalgamation \
+-	--disable-load-extension \
+-	--disable-gcov  \
++	--enable-dynamic-extensions \
+ 	--with-gnu-ld
+ 
+ include ../../gar.mk
+ 
+ pre-configure:
+-	@cd $(WORKSRC) ; autoreconf --verbose --install --force
++	@$(call RUN_AUTOTOOLS)
+ 	@$(call FIX_LIBTOOL,$(WORKSRC),configure)
+ 	@$(MAKECOOKIE)
+ 

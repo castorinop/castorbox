@@ -1,0 +1,110 @@
+diff -Naur Python-2.7-old/setup.py Python-2.7-new/setup.py
+--- Python-2.7-old/setup.py	2010-07-09 14:35:25.000000000 -0700
++++ Python-2.7-new/setup.py	2010-07-09 14:36:31.000000000 -0700
+@@ -351,48 +351,8 @@
+ 
+     def detect_modules(self):
+         # Ensure that /usr/local is always used
+-        add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
+-        add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
+-
+-        # Add paths specified in the environment variables LDFLAGS and
+-        # CPPFLAGS for header and library files.
+-        # We must get the values from the Makefile and not the environment
+-        # directly since an inconsistently reproducible issue comes up where
+-        # the environment variable is not set even though the value were passed
+-        # into configure and stored in the Makefile (issue found on OS X 10.3).
+-        for env_var, arg_name, dir_list in (
+-                ('LDFLAGS', '-R', self.compiler.runtime_library_dirs),
+-                ('LDFLAGS', '-L', self.compiler.library_dirs),
+-                ('CPPFLAGS', '-I', self.compiler.include_dirs)):
+-            env_val = sysconfig.get_config_var(env_var)
+-            if env_val:
+-                # To prevent optparse from raising an exception about any
+-                # options in env_val that it doesn't know about we strip out
+-                # all double dashes and any dashes followed by a character
+-                # that is not for the option we are dealing with.
+-                #
+-                # Please note that order of the regex is important!  We must
+-                # strip out double-dashes first so that we don't end up with
+-                # substituting "--Long" to "-Long" and thus lead to "ong" being
+-                # used for a library directory.
+-                env_val = re.sub(r'(^|\s+)-(-|(?!%s))' % arg_name[1],
+-                                 ' ', env_val)
+-                parser = optparse.OptionParser()
+-                # Make sure that allowing args interspersed with options is
+-                # allowed
+-                parser.allow_interspersed_args = True
+-                parser.error = lambda msg: None
+-                parser.add_option(arg_name, dest="dirs", action="append")
+-                options = parser.parse_args(env_val.split())[0]
+-                if options.dirs:
+-                    for directory in reversed(options.dirs):
+-                        add_dir_to_list(dir_list, directory)
+-
+-        if os.path.normpath(sys.prefix) != '/usr':
+-            add_dir_to_list(self.compiler.library_dirs,
+-                            sysconfig.get_config_var("LIBDIR"))
+-            add_dir_to_list(self.compiler.include_dirs,
+-                            sysconfig.get_config_var("INCLUDEDIR"))
++        add_dir_to_list(self.compiler.library_dirs, '@GAR_DESTDIR@@GAR_libdir@')
++        add_dir_to_list(self.compiler.include_dirs, '@GAR_DESTDIR@@GAR_includedir@')
+ 
+         try:
+             have_unicode = unicode
+@@ -402,11 +362,8 @@
+         # lib_dirs and inc_dirs are used to search for files;
+         # if a file is found in one of those directories, it can
+         # be assumed that no additional -I,-L directives are needed.
+-        lib_dirs = self.compiler.library_dirs + [
+-            '/lib64', '/usr/lib64',
+-            '/lib', '/usr/lib',
+-            ]
+-        inc_dirs = self.compiler.include_dirs + ['/usr/include']
++        lib_dirs = self.compiler.library_dirs
++        inc_dirs = self.compiler.include_dirs
+         exts = []
+         missing = []
+ 
+@@ -646,12 +603,12 @@
+                 pass # Issue 7384: Already linked against curses or tinfo.
+             elif curses_library:
+                 readline_libs.append(curses_library)
+-            elif self.compiler.find_library_file(lib_dirs +
+-                                                     ['/usr/lib/termcap'],
++            elif self.compiler.find_library_file(lib_dirs,
++                                                     ['@GAR_DESTDIR@@GAR_libdir@/termcap'],
+                                                      'termcap'):
+                 readline_libs.append('termcap')
+             exts.append( Extension('readline', ['readline.c'],
+-                                   library_dirs=['/usr/lib/termcap'],
++                                   library_dirs=['@GAR_DESTDIR@@GAR_libdir@/termcap'],
+                                    extra_link_args=readline_extra_link_args,
+                                    libraries=readline_libs) )
+         else:
+@@ -673,20 +630,20 @@
+                                depends = ['socketmodule.h']) )
+         # Detect SSL support for the socket module (via _ssl)
+         search_for_ssl_incs_in = [
+-                              '/usr/local/ssl/include',
+-                              '/usr/contrib/ssl/include/'
++                              '@GAR_DESTDIR@@GAR_includedir@',
++                              '@GAR_DESTDIR@@GAR_includedir@'
+                              ]
+         ssl_incs = find_file('openssl/ssl.h', inc_dirs,
+                              search_for_ssl_incs_in
+                              )
+         if ssl_incs is not None:
+             krb5_h = find_file('krb5.h', inc_dirs,
+-                               ['/usr/kerberos/include'])
++                               ['@GAR_DESTDIR@@GAR_includedir@'])
+             if krb5_h:
+                 ssl_incs += krb5_h
+         ssl_libs = find_library_file(self.compiler, 'ssl',lib_dirs,
+-                                     ['/usr/local/ssl/lib',
+-                                      '/usr/contrib/ssl/lib/'
++                                     ['@GAR_DESTDIR@@GAR_libdir@',
++                                      '@GAR_DESTDIR@@GAR_libdir@'
+                                      ] )
+ 
+         if (ssl_incs is not None and

@@ -1,0 +1,11 @@
+--- work/main.d/mms-1.1.0-1789/plugins/feature/movie/players/mplayer/Makefile	2010-07-17 18:18:40.000000000 -0300
++++ new/plugins/feature/movie/players/mplayer/Makefile	2010-07-17 18:02:12.000000000 -0300
+@@ -14,7 +14,7 @@
+ 
+ CXXFLAGS += -I../ -I../../ -I../../../ -I../../../../ -I../../../../ \
+ 	-I../../../../../ -I../../../../output/ \
+-	-I../../../../input/ -fPIC -shared
++	-I../../../../input/ $(ffmpeg_FLAGS) -fPIC -shared
+ 
+ SUBDIRS += po
+ 
