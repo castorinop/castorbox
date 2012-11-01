@@ -1,0 +1,5 @@
+#!/bin/sh
+s2ram
+if [ "$?" -gt "0" ]; then
+	poweroff_safe
+fi

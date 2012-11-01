@@ -1,0 +1,8 @@
+# Load the appropriate kernel modules using module aliases.
+ACTION=="add", SUBSYSTEM=="?*", ENV{MODALIAS}=="?*", RUN+="/sbin/modprobe -q $env{MODALIAS}"
+
+# Some cards that use the bttv driver use the lirc_gpio driver as well.
+ACTION=="add", DRIVER=="bttv", RUN+="/sbin/modprobe -q lirc_gpio"
+
+# Some cards that use the ivtv driver use the lirc_i2c driver as well.
+ACTION=="add", DRIVER=="ivtv", RUN+="/sbin/modprobe -q lirc_i2c"

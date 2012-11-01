@@ -1,0 +1,17 @@
+# v4l devices
+SUBSYSTEM=="video4linux", GROUP="video"
+KERNEL=="video0",				SYMLINK+="video",						GROUP="video"
+KERNEL=="video[0-9]*",			NAME="v4l/video%n",	SYMLINK+="video%n",	GROUP="video"
+KERNEL=="radio0",				SYMLINK+="radio",						GROUP="video"
+KERNEL=="radio[0-9]",			SYMLINK+="v4l/radio%n",					GROUP="video"
+KERNEL=="vbi0",					SYMLINK+="vbi",							GROUP="video"
+#KERNEL=="vbi[0-9]",				SYMLINK+="v4l/vbi%n",					GROUP="video"
+KERNEL=="vbi[0-9]*",			    NAME="v4l/vbi%n",   SYMLINK+="vbi%n",	GROUP="video"
+KERNEL=="vtx0",					SYMLINK+="vtx",							GROUP="video"
+KERNEL=="vtx[0-9]",				SYMLINK+="v4l/vtx%n",					GROUP="video"
+
+KERNEL=="em8300",				NAME="video/%k"
+KERNEL=="em8300_ma",				NAME="video/%k"
+KERNEL=="em8300_mv",				NAME="video/%k"
+KERNEL=="em8300_sp",				NAME="video/%k"
+

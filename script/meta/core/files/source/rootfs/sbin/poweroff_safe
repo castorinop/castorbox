@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Apagando CastorBOX..."
+/sbin/shutdown_safe;
+poweroff

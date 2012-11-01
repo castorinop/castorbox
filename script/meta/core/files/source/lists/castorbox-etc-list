@@ -1,0 +1,16 @@
+avahi/avahi*
+ssh/
+fonts/
+sensors3.conf
+ssh/moduli
+udev/udev.conf
+udev/rules.d/90-hal.rules
+#tvtime/
+mms-1.1.0/
+php.d/
+hal/
+dbus-1/
+#NetworkManager/
+#dhcp3/
+resolvconf/
+ifplugd/

@@ -1,0 +1,15 @@
+mount -o remount,rw /config 
+BACKUP_DIR="/config/backup/`date +%Y%m%d-%H%M%S`"
+rsync -auv -b --backup-dir="$BACKUP_DIR" /usr/share/config/ /config
+chown -R nobody.nogroup /config/daap 
+
+if [ ! -s /config/port ]; then
+	php -r "srand(time()); echo (rand()%99);" > /config/port
+fi
+if [ ! -s /config/localtime ]; then
+	ln -s /usr/share/zoneinfo/America/Argentina/Mendoza /config/localtime
+fi
+ln -s /config/localtime /etc/localtime
+
+# RELOAD ENV VARS
+. /etc/conf

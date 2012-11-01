@@ -1,0 +1,40 @@
+#!/bin/sh
+################################################################################
+# shutdown
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local mountline
+    local mountpoint
+    local mounttype
+
+    mm_message_output info 'finishing shutdown ...'
+
+    # unmount any remaining network file systems.
+    /bin/cat /proc/mounts | while read mountline; do
+        mountpoint=`/bin/echo ${mountline} | /usr/bin/cut -d ' ' -f 2`
+        mounttype=`/bin/echo  ${mountline} | /usr/bin/cut -d ' ' -f 3`
+        if /usr/bin/test "${mounttype}" = "cifs"  ||
+           /usr/bin/test "${mounttype}" = "nfs"   ||
+           /usr/bin/test "${mounttype}" = "smbfs" ; then
+            /bin/umount -r ${mountpoint}
+        fi
+    done
+
+    return 0
+}
+
+stop() {
+    start
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

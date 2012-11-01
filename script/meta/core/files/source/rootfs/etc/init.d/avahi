@@ -1,0 +1,6 @@
+
+#TCP_PORT=$((8000 + `cat /config/port`))
+#sed -i "s|@TCP_PORT@|$TCP_PORT|g" /etc/avahi/services/webdav.service
+
+avahi-daemon -D
+

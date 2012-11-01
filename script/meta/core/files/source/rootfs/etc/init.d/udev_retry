@@ -1,0 +1,5 @@
+#!/bin/sh
+for file in /dev/.udev/failed/*/uevent ; do
+	echo "add" >"${file}"
+done 2>/dev/null
+/sbin/udevadm settle

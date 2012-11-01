@@ -1,0 +1,5 @@
+export DISPLAY=':0.0'
+export HOME='/root'
+export LD_LIBRARY_PATH='@LDPATH@'
+export PATH='@PATH@'
+export LANG='es_ES.UTF-8'

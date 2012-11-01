@@ -1,0 +1,18 @@
+#!/bin/sh
+#exec 1>>/var/log/boot.log
+#exec 2>>/var/log/boot.log
+
+mount -n -t proc /proc /proc
+[ -d /proc/bus/usb ] && mount -n -t usbfs /proc/bus/usb /proc/bus/usb
+mount -n -t sysfs /sys /sys
+
+. /etc/conf
+. /etc/init.d/rc.functions
+
+BOOT_SCRIPT="/etc/rc.d";
+SPLASH=/initrd/fs/root/splash/cache/.splash
+echo "Iniciando CastorBOX..."
+run_services;
+
+#exec 1>&-
+#exec 2>&-

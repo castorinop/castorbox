@@ -1,0 +1,6 @@
+# Kernel
+modules/*/kernel/drivers/gpu/drm/savage/savage.ko
+
+# X11
+xorg/modules/dri/savage_dri.so
+xorg/modules/drivers/savage_drv.so

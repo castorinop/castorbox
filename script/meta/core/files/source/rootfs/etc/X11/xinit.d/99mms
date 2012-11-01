@@ -1,0 +1,15 @@
+################################################################################
+# Start mms program.
+#
+# The mms program (not the window manager) is the application that runs in the
+# foreground because it is the only application that we can be sure will be
+# running.
+################################################################################
+
+STAT=0
+while [ "$STAT" -gt "0" ]; do
+        /usr/bin/mms *> /var/log/mms.log
+        STAT=$?
+	killall alsaplayer
+	rm -f /tmp/mms.lock
+done

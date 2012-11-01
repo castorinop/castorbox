@@ -1,0 +1,2 @@
+#FIXME: REALMENTE CHEQUEAR
+mount -o remount,rw /media/CastorBOX

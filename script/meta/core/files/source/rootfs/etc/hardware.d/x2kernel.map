@@ -1,0 +1,12 @@
+# Maps X video driver to a kernel module.
+#
+# The first field ('x_driver') is required.
+#
+# x_driver   , kernel_module
+  intel      ,
+  intel_i810 , i810
+  intel_i830 , i830
+  intel_i915 , i915
+  nvidia     , nvidia
+  via        , via
+  via_pro    , via

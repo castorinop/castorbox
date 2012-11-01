@@ -1,0 +1,48 @@
+#!/bin/ash
+amixer_command=/usr/bin/amixer
+if test ! -s /etc/asound.state; then
+  if ${amixer_command} > /dev/null 2>&1 ; then
+        control=
+        ${amixer_command} | /bin/grep -e '^Simple mixer control' | /bin/sed -e "s%^[^']*'%%" | /bin/sed -e "s%'[^']*$%%" |
+            while read control ; do
+                case "${control}" in
+                    # General unmuting.
+                    PCM)                         ${amixer_command} set 'PCM'                       95% unmute ;;
+                    Master)                      ${amixer_command} set 'Master'                    95% unmute ;;
+                    Front)                       ${amixer_command} set 'Front'                     95% unmute ;;
+                    Master\ Front)               ${amixer_command} set 'Master Front'              95% unmute ;;
+                    Analog\ Front)               ${amixer_command} set 'Analog Front'              95% unmute ;;
+                    Surround)                    ${amixer_command} set 'Surround'                  95% unmute ;;
+                    Analog\ Side)                ${amixer_command} set 'Analog Side'               95% unmute ;;
+                    Analog\ Rear)                ${amixer_command} set 'Analog Rear'               95% unmute ;;
+                    Center)                      ${amixer_command} set 'Center'                    95% unmute ;;
+                    LFE)                         ${amixer_command} set 'LFE'                       95% unmute ;;
+                    Analog\ Center/LFE)          ${amixer_command} set 'Analog Center/LFE'         95% unmute ;;
+		    Side)			 ${amixer_command} set 'Side'			   95% unmute ;;
+		    Line)			 ${amixer_command} set 'Line'			   25% unmute ;;
+                    # VIA Specific unmuting.
+                    VIA\ DXS)                    ${amixer_command} set 'VIA DXS'                   100%       ;;
+                esac
+            done
+
+        ${amixer_command} | /bin/grep -e '^Simple mixer control' | /bin/sed -e "s%^[^']*'%%" | /bin/sed -e "s%'[^']*$%%" |
+            while read control ; do
+                case "${control}" in
+                    # General unmuting.
+                    IEC958)                      ${amixer_command} set 'IEC958'                    on         ;;
+                    IEC958\ Front)               ${amixer_command} set 'IEC958 Front'              95% unmute ;;
+                    IEC958\ Side)                ${amixer_command} set 'IEC958 Side'               95% unmute ;;
+                    IEC958\ Rear)                ${amixer_command} set 'IEC958 Rear'               95% unmute ;;
+                    IEC958\ Center/LFE)          ${amixer_command} set 'IEC958 Center/LFE'         95% unmute ;;
+                    # VIA Specific unmuting.
+                    IEC958\ Playback\ AC97-SPSA) ${amixer_command} set 'IEC958 Playback AC97-SPSA' 0          ;;
+                esac
+            done
+    /usr/sbin/alsactl store
+    fi
+    
+fi
+
+modprobe snd-pcm-oss
+/usr/sbin/alsactl restore
+#amixer sset PCM 77%

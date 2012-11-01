@@ -1,0 +1,64 @@
+#!/bin/sh
+################################################################################
+# modules
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local file
+    local file_old
+    local file_new
+
+    mm_message_output info 'loading kernel modules ...'
+
+    # Real time clock.
+    /sbin/modprobe rtc
+
+    # IO scheduler.
+    /sbin/modprobe as-iosched
+
+    # Load ACPI kernel modules.
+    /sbin/modprobe button
+    /sbin/modprobe fan
+    /sbin/modprobe processor
+    /sbin/modprobe thermal
+    /sbin/modprobe video
+
+    # Loopback device.
+    /sbin/modprobe loop
+
+    # Net.
+    /sbin/modprobe af_packet
+
+    # Parallel port.
+    /sbin/modprobe parport
+    /sbin/modprobe parport_pc
+    /sbin/modprobe ppdev
+
+    # Enable udev rules that handle detected hardware.
+    for file in `cd /etc/udev/rules.d ; /bin/ls -1 *.rules.disabled 2> /dev/null` ; do
+        file_old=`/bin/echo ${file}`
+        file_new=`/bin/echo ${file} | /bin/sed -e 's%\.disabled\$%%'`
+	/bin/mv -f /etc/udev/rules.d/${file_old} /etc/udev/rules.d/${file_new}
+    done
+
+    # Restart udev with the additional udev rules that handle detected hardware.
+    /usr/bin/test -n "`pidof udevd`" && killall udevd
+    /sbin/udevd -d
+    /sbin/udevtrigger
+    /sbin/udevsettle --timeout=60
+
+    return 0
+}
+
+stop() {
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

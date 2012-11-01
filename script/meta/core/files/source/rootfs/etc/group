@@ -1,0 +1,7 @@
+root:x:0:
+rpc:x:32:
+messagebus:x:33:
+haldaemon:x:34:
+sshd:x:50:
+nogroup:x:99:
+audio:x:99:

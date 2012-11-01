@@ -1,0 +1,133 @@
+#!/bin/sh
+################################################################################
+# audio
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local control
+    local timeout
+
+    mm_message_output info 'configuring audio ...'
+
+    # Wait for audio driver to load.
+    timeout=10
+    while /usr/bin/test `/usr/bin/amixer > /dev/null 2>&1 ; /bin/echo $?` -ne 0 && /usr/bin/test ${timeout} -gt 0 ; do
+        /bin/sleep 1
+        timeout=$((timeout-1))
+    done
+    if /usr/bin/test `/usr/bin/amixer > /dev/null 2>&1 ; /bin/echo $?` -ne 0 ; then
+        mm_message_output err "error: the audio driver does not appear to be loaded."
+        exit 1
+    fi
+
+    # Unmute audio.
+    if /usr/bin/test `/usr/bin/amixer > /dev/null 2>&1 ; /bin/echo $?` -eq 0 ; then
+        control=
+        /usr/bin/amixer | /bin/grep -e '^Simple mixer control' | /bin/sed -e "s%^[^']*'%%" | /bin/sed -e "s%'[^']*$%%" |
+        while read control ; do
+            case "${MM_AUDIO_TYPE}" in
+                analog)
+                    /bin/sed -i 's%@SPEAKER_ARRANGEMENT@%Stereo 2.0%'   /root/.xine/config
+                    case "${control}" in
+                        # General unmuting.
+                        PCM)                         /usr/bin/amixer set 'PCM'                       90% unmute ;;
+                        Master)                      /usr/bin/amixer set 'Master'                    90% unmute ;;
+                        Front)                       /usr/bin/amixer set 'Front'                     90% unmute ;;
+                        Surround)                    /usr/bin/amixer set 'Surround'                  90% unmute ;;
+                        Center)                      /usr/bin/amixer set 'Center'                    90% unmute ;;
+                        LFE)                         /usr/bin/amixer set 'LFE'                       90% unmute ;;
+                        # VIA Specific unmuting.
+                        VIA\ DXS)                    /usr/bin/amixer set 'VIA DXS'                   100%       ;;
+                    esac
+                    ;;
+                digital)
+                    /bin/sed -i 's%@SPEAKER_ARRANGEMENT@%Pass Through%' /root/.xine/config
+                    case "${control}" in
+                        # General unmuting.
+                        IEC958)                      /usr/bin/amixer set 'IEC958'                    on         ;;
+                        # VIA Specific unmuting.
+                        IEC958\ Playback\ AC97-SPSA) /usr/bin/amixer set 'IEC958 Playback AC97-SPSA' 0          ;;
+                    esac
+                    ;;
+                digital+analog)
+                    /bin/sed -i 's%@SPEAKER_ARRANGEMENT@%Pass Through%' /root/.xine/config
+                    case "${control}" in
+                        # General unmuting.
+                        IEC958)                      /usr/bin/amixer set 'IEC958'                    on         ;;
+                        PCM)                         /usr/bin/amixer set 'PCM'                       90% unmute ;;
+                        Master)                      /usr/bin/amixer set 'Master'                    90% unmute ;;
+                        Front)                       /usr/bin/amixer set 'Front'                     90% unmute ;;
+                        Surround)                    /usr/bin/amixer set 'Surround'                  90% unmute ;;
+                        Center)                      /usr/bin/amixer set 'Center'                    90% unmute ;;
+                        LFE)                         /usr/bin/amixer set 'LFE'                       90% unmute ;;
+                        # VIA Specific unmuting.
+                        IEC958\ Playback\ AC97-SPSA) /usr/bin/amixer set 'IEC958 Playback AC97-SPSA' 0          ;;
+                        VIA\ DXS)                    /usr/bin/amixer set 'VIA DXS'                   100%       ;;
+                    esac
+                    ;;
+            esac
+        done
+    fi
+
+    return 0
+}
+
+stop () {
+
+    local control
+
+    mm_message_output info 'muting audio ...'
+
+    # Mute audio.
+    if /usr/bin/test `/usr/bin/amixer > /dev/null 2>&1 ; /bin/echo $?` -eq 0 ; then
+        /usr/bin/amixer | /bin/grep -e '^Simple mixer control' | /bin/sed -e "s%^[^']*'%%" | /bin/sed -e "s%'[^']*$%%" |
+        while read control ; do
+            case "${MM_AUDIO_TYPE}" in
+                analog)
+                    case "${control}" in
+                        # General muting.
+                        PCM)      /usr/bin/amixer set 'PCM'      0% mute ;;
+                        Master)   /usr/bin/amixer set 'Master'   0% mute ;;
+                        Front)    /usr/bin/amixer set 'Front'    0% mute ;;
+                        Surround) /usr/bin/amixer set 'Surround' 0% mute ;;
+                        Center)   /usr/bin/amixer set 'Center'   0% mute ;;
+                        LFE)      /usr/bin/amixer set 'LFE'      0% mute ;;
+                        # VIA Specific muting.
+                        VIA\ DXS) /usr/bin/amixer set 'VIA DXS'  0%      ;;
+                    esac
+                    ;;
+                digital)
+                    case "${control}" in
+                        # General unmuting.
+                        IEC958)   /usr/bin/amixer set 'IEC958'   off     ;;
+                    esac
+                    ;;
+                digital+analog)
+                    case "${control}" in
+                        # General unmuting.
+                        IEC958)   /usr/bin/amixer set 'IEC958'   off     ;;
+                        PCM)      /usr/bin/amixer set 'PCM'      0% mute ;;
+                        Master)   /usr/bin/amixer set 'Master'   0% mute ;;
+                        Front)    /usr/bin/amixer set 'Front'    0% mute ;;
+                        Surround) /usr/bin/amixer set 'Surround' 0% mute ;;
+                        Center)   /usr/bin/amixer set 'Center'   0% mute ;;
+                        LFE)      /usr/bin/amixer set 'LFE'      0% mute ;;
+                        # VIA Specific muting.
+                        VIA\ DXS) /usr/bin/amixer set 'VIA DXS'  0%      ;;
+                    esac
+                    ;;
+            esac
+        done
+    fi
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

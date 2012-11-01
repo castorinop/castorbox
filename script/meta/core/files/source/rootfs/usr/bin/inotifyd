@@ -1,0 +1,36 @@
+#!/bin/sh
+mvIndex=0;
+echo "iniciando inotifyd..."
+
+inotifywait --format "%w|%:e|%f" -q -m -r  \
+	-e create -e close_write -e move -e delete \
+	"/media/CastorBOX" \
+  | while read line; do
+	DIR=`echo $line | cut -d '|' -f 1`
+	IGNORE=`echo $DIR |grep amule/Temp`
+	if [ -z "$IGNORE" ]; then
+		echo "$line";
+		FILE=`echo $line | cut -d '|' -f 3`
+		FILENAME="$DIR$FILE"
+		NAME="${FILE%%.*}"
+		EXT="${FILE##*.}"
+		CMD=`echo $line | cut -d '|' -f 2`
+		mainCMD=`echo $CMD | cut -d ':' -f 1`
+		subCMD=`echo $CMD | cut -d ':' -f 2`
+		case "$CMD" in
+		        "MOVED_FROM")
+				eval mvCookie$mvIndex=\"$FILENAME\"
+		                mvIndex=$(($mvIndex+1))
+ 				;;
+			*)
+				if [ "$CMD" == "MOVED_TO" ]; then
+					mvIndexTmp=$(($mvIndex-1))
+					eval FROM_FILENAME="\$mvCookie$mvIndexTmp"
+				fi
+				for i in /etc/inotify.d/*.sh; do
+					. "$i"
+				done
+				;;
+		esac
+	fi
+   done

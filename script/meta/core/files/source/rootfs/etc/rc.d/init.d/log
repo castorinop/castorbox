@@ -1,0 +1,35 @@
+#!/bin/sh
+################################################################################
+# log
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local LOG_SERVER
+
+    mm_message_output info 'starting system logging ...'
+
+    LOG_SERVER=`/bin/echo ${MM_LOG_SERVERS} | /usr/bin/cut -d ' ' -f 1`
+    if /usr/bin/test -n "${LOG_SERVER}" ; then
+        /usr/bin/test -n "`/bin/pidof klogd`"   && /usr/bin/killall klogd
+        /usr/bin/test -n "`/bin/pidof syslogd`" && /usr/bin/killall syslogd
+        /sbin/syslogd -R "${MM_LOG_SERVER}"
+    fi
+    /usr/bin/test -z "`/bin/pidof syslogd`" && /sbin/syslogd
+    /usr/bin/test -z "`/bin/pidof klogd`"   && /sbin/klogd
+}
+
+stop() {
+    mm_message_output info 'stopping system logging ...'
+
+    /usr/bin/test -n "`/bin/pidof klogd`"   && /usr/bin/killall klogd
+    /usr/bin/test -n "`/bin/pidof syslogd`" && /usr/bin/killall syslogd
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

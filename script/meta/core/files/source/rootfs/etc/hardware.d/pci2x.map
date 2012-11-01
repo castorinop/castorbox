@@ -1,0 +1,20 @@
+# Maps PCI bus information to an X video driver.
+#
+# classes:
+#    0300: VGA
+# vendors:
+#    8086: Intel
+#    10de: NVIDIA
+#    1106: VIA
+#
+# The first field ('class') is required.
+#
+# class , class_prog , vendor , device , x_driver
+  0300  ,            , 8086   , 3577   , intel_i830
+  0300  ,            , 10de   , 0240   , nvidia
+  0300  ,            , 10de   , 0322   , nvidia
+  0300  ,            , 10de   ,        , nvidia
+  0300  ,            , 1106   , 3022   , via
+  0300  ,            , 1106   , 3118   , via_pro
+  0300  ,            , 1106   , 3122   , via
+  0300  ,            , 1106   , 3344   , via_pro

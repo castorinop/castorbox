@@ -1,0 +1,9 @@
+# Kernel
+modules/*/misc/nvidia/nvidia.ko
+
+# X11
+vdpau/libvdpau_nvidia.so.1
+libXvMCNVIDIA.so.1
+va/nvidia_drv_video.so
+xorg/modules/libwfb.so
+xorg/modules/drivers/nvidia_drv.so

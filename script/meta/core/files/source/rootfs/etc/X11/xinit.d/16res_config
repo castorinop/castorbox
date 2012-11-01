@@ -1,0 +1,17 @@
+################################################################################
+# Configuring Native Resolution
+#
+################################################################################
+
+connected=`xrandr --prop |grep " connected"`
+h_res=`echo $connected | sed "s/\(.*\) connected \(.*\)x\(.*\)+\(.*\)+\(.*\) \(.*\)/\2/g"`
+v_res=`echo $connected | sed "s/\(.*\) connected \(.*\)x\(.*\)+\(.*\)+\(.*\) \(.*\)/\3/g"`
+
+#MMS
+sed -i "s/@h_res@/$h_res/g" /config/mms/Config
+sed -i "s/@v_res@/$v_res/g" /config/mms/Config
+
+#Mplayer
+sed -i "s/@h_res@/$h_res/g" /etc/mplayer/mplayer.conf
+sed -i "s/@v_res@/$v_res/g" /etc/mplayer/mplayer.conf
+

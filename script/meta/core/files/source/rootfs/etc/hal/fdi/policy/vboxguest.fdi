@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deviceinfo version="0.2">
+  <device>
+    <match key="info.subsystem" string="pci">
+      <match key="info.product" string="VirtualBox Guest Service">
+        <append key="info.capabilities" type="strlist">input</append>
+        <append key="info.capabilities" type="strlist">input.mouse</append>
+        <merge key="input.x11_driver" type="string">vboxmouse</merge>
+        <merge key="input.device" type="string">/dev/vboxguest</merge>
+      </match>
+    </match>
+  </device>

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Include CastorBOX variables so that they are available for use.
+. /etc/conf
+
+for file in /etc/X11/xinit.d/* ; do
+    . ${file}
+done

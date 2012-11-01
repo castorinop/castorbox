@@ -1,0 +1,3 @@
+if [ -s /config/port ]; then
+	export PORT=`cat /config/port`
+fi	

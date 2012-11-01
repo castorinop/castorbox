@@ -1,0 +1,1 @@
+hald --daemon=yes --use-syslog

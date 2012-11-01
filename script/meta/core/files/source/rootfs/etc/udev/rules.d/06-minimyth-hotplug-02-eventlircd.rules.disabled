@@ -1,0 +1,60 @@
+ACTION=="add", ENV{mm_device_owner}=="?*", GOTO="end"
+
+ACTION!="add|remove", GOTO="end"
+
+ATTRS{name}=="eventlircd", GOTO="end"
+
+# Devices blacklisted in minimyth.conf.
+@MM_LIRC_BLACKLIST@
+
+# Device configured in minimyth.conf.
+@MM_LIRC_DEVICE_TRUE@ENV{DEVNAME}=="@MM_LIRC_DEVICE_DEVNAME@", GOTO="begin-conf"
+@MM_LIRC_DEVICE_TRUE@ENV{DEVLINKS}=="@MM_LIRC_DEVICE_DEVLINK@", GOTO="begin-conf"
+GOTO="end-conf"
+LABEL="begin-conf"
+ENV{eventlircd_enable}="true"
+ENV{eventlircd_evmap}="devinput.evmap"
+GOTO="begin-generic"
+LABEL="end-conf"
+
+KERNEL=="event[0-9]*", SUBSYSTEM=="input", SUBSYSTEMS=="usb", GOTO="begin-usb"
+GOTO="end-usb"
+LABEL="begin-usb"
+
+ENV{ID_USB_INTERFACES}=="", IMPORT{program}="usb_id --export %p"
+
+ENV{ID_VENDOR_ID}=="0419", ENV{ID_MODEL_ID}=="0001", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="03_$env{ID_VENDOR_ID}_$env{ID_MODEL_ID}.evmap"
+ENV{ID_VENDOR_ID}=="05a4", ENV{ID_MODEL_ID}=="9881", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="03_$env{ID_VENDOR_ID}_$env{ID_MODEL_ID}.evmap"
+ENV{ID_VENDOR_ID}=="0766", ENV{ID_MODEL_ID}=="0204", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="03_$env{ID_VENDOR_ID}_$env{ID_MODEL_ID}.evmap"
+ENV{ID_VENDOR_ID}=="147a", ENV{ID_MODEL_ID}=="e02d", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="03_$env{ID_VENDOR_ID}_$env{ID_MODEL_ID}.evmap"
+GOTO="begin-generic"
+
+LABEL="end-usb"
+
+KERNEL=="event[0-9]*", SUBSYSTEM=="input", GOTO="begin-notusb"
+GOTO="end-notusb"
+LABEL="begin-notusb"
+ATTRS{name}=="lircd", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="default.evmap"
+ATTRS{name}=="bdremoteng", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="bdremoteng.evmap"
+GOTO="begin-generic"
+LABEL="end-notusb"
+
+LABEL="begin-generic"
+
+ENV{eventlircd_enable}!="true", GOTO="end"
+@MM_LIRC_WAKEUP_TRUE@SUBSYSTEMS=="usb", RUN+="wakeup_enable"
+ENV{mm_device_owner}="eventlircd"
+
+LABEL="end"

@@ -1,0 +1,198 @@
+# lircrc.example.HauppaugeGrey-nativelirc
+# 2003-09-17, Robert Kulagowski
+# mailto:rkulagow@rocketmail.com
+# Save this file in ~/.mythtv/lircrc
+
+begin
+    prog = irexec
+    button = power
+    config = /usr/sbin/s2ram
+end
+
+begin 
+    prog = irexec
+    button = stop
+    config = exit_program
+end
+
+##### DPMS ##################
+begin
+   prog = irexec
+   button = tv-power-on
+   config = xset dpms force on
+end
+
+begin
+   prog = irexec
+   button = tv-power-off
+   config = xset dpms force off
+end
+
+#############################
+
+## xmame lirc setup
+
+begin
+   prog = xmame 
+   button = stop
+   config = 1
+end
+
+begin
+   prog = xmame
+   button = 1
+   config = 2
+end
+
+begin
+  prog = xmame
+  button = 2
+  config = 3
+end
+
+begin
+ prog = xmame
+ button = 3
+ config = 4
+end 
+
+begin
+ prog = xmame
+ button = 4
+ config = 6
+end 
+
+begin
+ prog = xmame
+ button = 5
+ config = 7
+end 
+
+begin
+ prog = xmame
+ button = 6
+ config = 8
+end 
+
+begin
+  prog = zsnes
+  button = stop
+  config = exit
+end
+
+begin
+   prog = irexec 
+   button = stop
+   config = kill `pidof dosbox`
+end
+
+begin 
+   prog = mixerosd
+   button = vol+
+   config = VOLUP
+end
+
+begin 
+   prog = mixerosd
+   button = vol-
+   config = VOLDOWN
+end
+
+begin 
+   prog = mixerosd
+   button = Mute
+   config = VOLMUTE 
+end
+
+###########3
+# Date Time 
+
+begin 
+   prog = irexec
+   button = F_TV
+   config = /root/.osdDateTime.sh
+end
+
+
+##### dxr3Player #########
+
+begin
+    prog = dxr3player
+    button = Up
+    config = UP
+end
+
+begin
+    prog = dxr3player
+    button = Down
+    config = DOWN
+end
+
+begin
+    prog = dxr3player
+    button = Left
+    config = LEFT
+end
+
+begin
+    prog = dxr3player
+    button = Right
+    config = RIGHT
+end
+
+begin
+    prog = dxr3player
+    button = Ok
+    config = ACTIVATE
+end
+
+begin
+    prog = dxr3player
+    button = Menu
+    config = MENU_ROOT
+end
+
+begin
+    prog = dxr3player
+    button = Undo
+    config = PREVIOUS_CHAPTER
+end
+
+begin
+    prog = dxr3player
+    button = Redo
+    config = NEXT_CHAPTER
+end
+
+begin
+    prog = dxr3player
+    button = Pause
+    config = PAUSE
+end
+
+begin
+    prog = dxr3player
+    button = Play
+    config = PLAY
+end
+
+begin
+    prog = dxr3player
+    button = FForward
+    config = PLAY_FAST_FORWARD
+end
+
+begin
+    prog = dxr3player
+    button = Rewind
+    config = PLAY_FAST_BACKWARD
+end
+
+begin
+    prog = dxr3player
+    button = Stop
+    config = QUIT
+end
+
+################################
+

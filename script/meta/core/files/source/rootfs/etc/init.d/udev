@@ -1,0 +1,18 @@
+#!/bin/ash
+ [[ -e /sys/class/firmware/timeout ]] && echo 50 > /sys/class/firmware/timeout
+mount -n -t tmpfs tmpfs /dev -o mode=755
+/bin/ln -s /proc/kcore     /dev/core
+/bin/ln -s /proc/self/fd   /dev/fd
+/bin/ln -s /proc/self/fd/0 /dev/stdin
+/bin/ln -s /proc/self/fd/1 /dev/stdout
+/bin/ln -s /proc/self/fd/2 /dev/stderr
+
+/bin/mkdir -p /dev/pts
+/bin/mount -n -t devpts /dev/pts /dev/pts
+/bin/mkdir -p /dev/shm
+/bin/mount -n -t tmpfs  /dev/shm /dev/shm
+
+echo -e '\000\000\000\000' > /proc/sys/kernel/hotplug
+/sbin/udevd --daemon
+/sbin/udevadm trigger --action=add
+/sbin/udevadm settle

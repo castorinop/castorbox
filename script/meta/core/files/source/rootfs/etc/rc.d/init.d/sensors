@@ -1,0 +1,41 @@
+#!/bin/sh
+################################################################################
+# sensors
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local kernel_module
+
+    mm_message_output info 'starting sensors ...'
+
+    # Load sensor kernel modules.
+    for kernel_module in ${MM_SENSOR_KERNEL_MODULES} ; do
+        /sbin/modprobe ${kernel_module}
+        if /usr/bin/test $? -ne 0 ; then
+            mm_message_output err "error: failed to load kernel module: ${kernel_module}"
+            exit 1
+        fi
+    done
+
+    # Start sensors.
+    /usr/bin/sensors -s
+
+    return 0
+}
+
+stop() {
+    mm_message_output info 'stopping sensors ...'
+
+    /usr/bin/test -n "`/bin/pidof sensors`" && /usr/bin/killall sensors
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

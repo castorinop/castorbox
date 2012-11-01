@@ -1,0 +1,15 @@
+
+CBX_MEDIA=LABEL=CastorBOX
+
+for i in /etc/conf.d/*; do
+	/usr/bin/test -f $i && . $i
+done
+
+#load kernel params override 
+
+for i in `cat /proc/cmdline`; do 
+  if test  -n "` echo ${i} |grep CBX_`"; then
+	 export ${i};
+  fi
+done
+

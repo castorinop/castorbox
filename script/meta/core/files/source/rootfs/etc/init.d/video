@@ -1,0 +1,237 @@
+#!/bin/sh
+################################################################################
+# video
+#
+# The script configures the video.
+################################################################################
+
+mm_file_replace_bool () {
+    local file="$1"
+    local var_name=$2
+    local var_value
+    eval var_value=$`echo $var_name`
+
+   if  "$var_value" = "true"; then
+      mm_file_replace_variable "$file" "@${var_name}\_TRUE@"   ''
+      mm_file_replace_variable "$file" "@${var_name}\_FALSE@"   '\#'
+   else 
+      mm_file_replace_variable "$file" "@${var_name}\_TRUE@"   '\#'
+      mm_file_replace_variable "$file" "@${var_name}\_FALSE@"  ''
+   fi   
+}
+
+mm_file_replace_variable() {
+    local file=$1
+    local var_name=$2
+    local var_value=$3
+
+    local mode
+    local uid
+    local gid
+
+    mode=`/bin/stat -c%a "${file}"`
+    uid=`/bin/stat -c%u "${file}"`
+    gid=`/bin/stat -c%g "${file}"`
+    /bin/sed -i "s%${var_name}%${var_value}%g" "${file}"
+    /bin/chmod ${mode} "${file}"
+    /bin/chown ${uid}:${gid} "${file}"
+
+    return
+}
+
+
+    local hostname
+    local pref_cmp0
+    local pref_decoder
+    local pref_max_cpus
+    local pref_osdfade
+    local pref_osdrenderer
+    local pref_videorenderer
+    local pref_deint0
+    local pref_deint1
+    local pref_filters
+    local profilegroupid
+    local profileid
+    local X_RESOLUTION
+    local X_RESOLUTION_X
+    local X_RESOLUTION_Y
+    local XVMC_LIB
+
+    MM_VIDEO_DECODER="auto"
+    MM_VIDEO_DEINTERLACER="auto" 
+    MM_X_DRIVER=`cat /var/cache/castorbox/detect/video/*`
+    VBOX=false
+
+    echo "configuring video ..."
+
+    case "${MM_X_DRIVER}" in
+        intel_810)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='xvmc'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            XVMC_LIB='/usr/lib/libI810XvMC.so.1'  && \
+                /usr/bin/test -e ${XVMC_LIB}      && \
+                mm_file_replace_variable '/etc/X11/XvMCConfig' '@MM_XVMC_LIB@' "${XVMC_LIB}"
+            ;;
+        intel_915)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            XVMC_LIB='/usr/lib/libIntelXvMC.so.1' && \
+                /usr/bin/test -e ${XVMC_LIB}      && \
+                mm_file_replace_variable '/etc/X11/XvMCConfig' '@MM_XVMC_LIB@' "${XVMC_LIB}"
+            ;;
+        nvidia)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            XVMC_LIB='/usr/lib/nvidia/libXvMCNVIDIA.so.1'         && \
+                /usr/bin/test -e ${XVMC_LIB}                      && \
+                mm_file_replace_variable '/etc/X11/XvMCConfig' '@MM_XVMC_LIB@' "${XVMC_LIB}"
+            XVMC_LIB='/usr/lib/nvidia/libXvMCNVIDIA_dynamic.so.1' && \
+                /usr/bin/test -e ${XVMC_LIB}                      && \
+                mm_file_replace_variable '/etc/X11/XvMCConfig' '@MM_XVMC_LIB@' "${XVMC_LIB}"
+            ;;
+        openchrome)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='xvmc-vld'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            XVMC_LIB='/usr/lib/libchromeXvMC.so.1' && \
+                /usr/bin/test -e ${XVMC_LIB}       && \
+                mm_file_replace_variable '/etc/X11/XvMCConfig' '@MM_XVMC_LIB@' "${XVMC_LIB}"
+            ;;
+        radeon)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            ;;
+        radeonhd)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            ;;
+        savage)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            ;;
+        sis)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            ;;
+        vmware)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+            ;;
+        vboxvideo)
+            /usr/bin/test "${MM_VIDEO_DECODER}"      = "auto" && MM_VIDEO_DECODER='ffmpeg'
+            /usr/bin/test "${MM_VIDEO_DEINTERLACER}" = "auto" && MM_VIDEO_DEINTERLACER='bobdeint'
+	    VBOX=true;
+            ;;
+    esac
+    mm_file_replace_variable '/etc/X11/XvMCConfig' '@MM_XVMC_LIB@' ''
+
+    mm_file_replace_bool '/etc/mplayer/mplayer.conf' 'VBOX'
+
+    case "${MM_VIDEO_DECODER}" in
+        ffmpeg)
+            /usr/bin/test ! -e /usr/bin/mplayer && /usr/bin/test -e /usr/bin/mplayer-svn && /bin/ln -s mplayer-svn /usr/bin/mplayer
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@VIDEO_DRIVER@' 'xv'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_TRUE@'   '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_FALSE@'  ''
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_TRUE@'    '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_FALSE@'   ''
+            ;;
+        libmpeg2)
+            /usr/bin/test ! -e /usr/bin/mplayer && /usr/bin/test -e /usr/bin/mplayer-svn && /bin/ln -s mplayer-svn /usr/bin/mplayer
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@VIDEO_DRIVER@' 'xv'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_TRUE@'   '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_FALSE@'  ''
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_TRUE@'    '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_FALSE@'   ''
+            ;;
+        vdpau)
+            /usr/bin/test ! -e /usr/bin/mplayer && /usr/bin/test -e /usr/bin/mplayer-svn && /bin/ln -s mplayer-svn /usr/bin/mplayer
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@VIDEO_DRIVER@' 'vdpau'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_TRUE@'   ''
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_FALSE@'  '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_TRUE@'    '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_FALSE@'   ''
+            ;;
+        xvmc)
+            /usr/bin/test ! -e /usr/bin/mplayer && /usr/bin/test -e /usr/bin/mplayer-svn && /bin/ln -s mplayer-svn /usr/bin/mplayer
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@VIDEO_DRIVER@' 'xvmc'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_TRUE@'   '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_FALSE@'  ''
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_TRUE@'    ''
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_FALSE@'   '\#'
+            ;;
+        xvmc-vld)
+            /usr/bin/test ! -e /usr/bin/mplayer && /usr/bin/test -e /usr/bin/mplayer-vld && /bin/ln -s mplayer-vld /usr/bin/mplayer
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@VIDEO_DRIVER@' 'xxmc'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_TRUE@'   '\#'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@VDPAU_FALSE@'  ''
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_TRUE@'    ''
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@XVMC_FALSE@'   '\#'
+            ;;
+        *)
+            echo "error: something is very wrong in the 'video' init script."
+            exit 1
+            ;;
+    esac
+
+    case "${MM_VIDEO_DEINTERLACER}" in
+        none)
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@DEINTERLACE_BY_DEFAULT@' '0'
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@DEINTERLACE_PLUGIN@'     'none'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@BOBDEINT@'               ''
+            ;;
+        bobdeint|openglbobdeint|vdpaubobdeint)
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@DEINTERLACE_BY_DEFAULT@' '1'
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@DEINTERLACE_PLUGIN@'     'tvtime:method=ScalerBob%'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@BOBDEINT@'               ':bobdeint'
+            ;;
+        *)
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@DEINTERLACE_BY_DEFAULT@' '1'
+#            mm_file_replace_variable '/home/minimyth/.xine/config'    '@DEINTERLACE_PLUGIN@'     'tvtime:method=LinearBlend'
+            mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@BOBDEINT@'               ''
+            ;;
+    esac
+
+#    if   /usr/bin/test "${MM_VIDEO_ASPECT_RATIO}" = "4:3"   ; then
+#        mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@MONITORASPECT@' '4:3'
+#    elif /usr/bin/test "${MM_VIDEO_ASPECT_RATIO}" = "16:9"  ; then
+#        mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@MONITORASPECT@' '16:9'
+#    elif /usr/bin/test "${MM_VIDEO_ASPECT_RATIO}" = "16:10" ; then
+#        mm_file_replace_variable '/etc/mplayer/mplayer.conf' '@MONITORASPECT@' '16:10'
+#    else
+#        mm_message_output err "error: something is very wrong in the 'video' init script."
+#        exit 1
+#    fi
+
+    # Configure CPU features.
+    if /usr/bin/test -e /usr/bin/vlc ; then
+        cpu_flags=`/bin/cat /proc/cpuinfo \
+             | /bin/sed -e 's%[[:cntrl:]]% %g' \
+             | /bin/grep -e '^flags *:' \
+             | /bin/sed -e 's%^flags *:%%' -e 's%  *% %g' -e 's%^ %%' -e 's% $%%'`
+        if /bin/echo " ${cpu_flags} " | /bin/grep -q ' 3dnow '  > /dev/null 2>&1 ; then
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_3DN@'    '1'
+        else
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_3DN@'    '0'
+        fi
+        if /bin/echo " ${cpu_flags} " | /bin/grep -q ' mmx '    > /dev/null 2>&1 ; then
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_MMX@'    '1'
+        else
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_MMX@'    '0'
+        fi
+        if /bin/echo " ${cpu_flags} " | /bin/grep -q ' mmxext ' > /dev/null 2>&1 ; then
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_MMXEXT@' '1'
+        else
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_MMXEXT@' '0'
+        fi
+        if /bin/echo " ${cpu_flags} " | /bin/grep -q ' sse '    > /dev/null 2>&1 ; then
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_SSE@'    '1'
+        else
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_SSE@'    '0'
+        fi
+        if /bin/echo " ${cpu_flags} " | /bin/grep -q ' sse2 '   > /dev/null 2>&1 ; then
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_SSE2@'   '1'
+        else
+            mm_file_replace_variable '/home/minimyth/.config/vlc/vlcrc' '@MM_VLC_VLCRC_SSE2@'   '0'
+        fi
+    fi
+

@@ -1,0 +1,3 @@
+#start system logging
+/sbin/syslogd 
+/sbin/klogd

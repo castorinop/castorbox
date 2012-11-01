@@ -1,0 +1,8 @@
+#!/bin/sh
+/bin/mount -n -t tmpfs none /rw
+/bin/mkdir -p /rw/rootfs
+/bin/mount -n -t unionfs -o dirs=/rw/rootfs=rw:/rootfs-ro=ro none /rootfs
+cd /rootfs
+/bin/mkdir -p initrd
+/sbin/pivot_root . initrd
+exec /usr/sbin/chroot . ./bin/sh -c 'exec /sbin/init' <dev/console >dev/console 2>&1

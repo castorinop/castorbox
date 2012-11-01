@@ -1,0 +1,80 @@
+################################################################################
+# lircd file for the new Microsoft Media Center remote using a new Microsoft
+# Media Center receiver
+################################################################################
+begin remote
+
+  name mceusb2
+  bits           16
+  flags RC6|CONST_LENGTH
+  eps            30
+  aeps          100
+
+  header       2667   889
+  one           444   444
+  zero          444   444
+  pre_data_bits 21
+  pre_data      0x37FF0
+  gap          105000
+  toggle_bit     22
+  rc6_mask     0x100000000
+
+
+      begin codes
+
+# starts at A1
+        BLUE        0x00007BA1
+        YELLOW      0x00007BA2
+        GREEN       0x00007BA3
+        RED         0x00007BA4
+        TELETEXT    0x00007BA5
+        RADIO       0x00007BAF
+        PRINT       0x00007BB1
+        VIDEOS      0x00007BB5
+        PICTURES    0x00007BB6
+        RECORDED_TV 0x00007BB7
+        MUSIC       0x00007BB8
+        TV          0x00007BB9
+# no BA - D8
+        GUIDE       0x00007BD9
+        LIVE_TV     0x00007BDA
+        DVD         0x00007BDB
+        BACK        0x00007BDC
+        OK          0x00007BDD
+        RIGHT       0x00007BDE
+        LEFT        0x00007BDF
+        DOWN        0x00007BE0
+        UP          0x00007BE1
+        STAR        0x00007BE2
+        HASH        0x00007BE3
+        REPLAY      0x00007BE4
+        SKIP        0x00007BE5
+        STOP        0x00007BE6
+        PAUSE       0x00007BE7
+        RECORD      0x00007BE8
+        PLAY        0x00007BE9
+        REWIND      0x00007BEA
+        FORWARD     0x00007BEB
+        CHANNEL-    0x00007BEC
+        CHANNEL+    0x00007BED
+        VOLUME-     0x00007BEE
+        VOLUME+     0x00007BEF
+        MORE        0x00007BF0
+        MUTE        0x00007BF1
+        START       0x00007BF2
+        POWER_PC    0x00007BF3
+        ENTER       0x00007BF4
+        CLEAR       0x00007BF5
+        9           0x00007BF6
+        8           0x00007BF7
+        7           0x00007BF8
+        6           0x00007BF9
+        5           0x00007BFA
+        4           0x00007BFB
+        3           0x00007BFC
+        2           0x00007BFD
+        1           0x00007BFE
+        0           0x00007BFF
+      end codes
+
+end remote

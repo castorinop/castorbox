@@ -1,0 +1,98 @@
+#!/bin/sh
+################################################################################
+# lirc
+#
+# This script configures and starts LIRC.
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local DELAY
+    local LIRC_DRIVER
+
+    mm_message_output info 'starting remote control ...'
+
+    # lircd is already running, so return.
+    if /usr/bin/test -n "`/bin/pidof lircd`" ; then
+        return
+    fi
+
+    # No LIRC driver was provided, so see whether or not we can autodetect it.
+    if /usr/bin/test -z "${MM_LIRC_DRIVER}" ; then
+        /usr/bin/logger -t minimyth -p "local0.info" "MM_LIRC_DRIVER not set. attempting to autodetect remote control receiver."
+        MM_LIRC_DRIVER=`mm_hardware_usb_process mm_hardware_usb2lirc_driver_map`
+        if /usr/bin/test -n "${MM_LIRC_DRIVER}" ; then
+            /usr/bin/logger -t minimyth -p "local0.info" "autodetected remote control receiver '${MM_LIRC_DRIVER}'."
+            /usr/bin/test -e /etc/lirc.d/driver.${MM_LIRC_DRIVER}.conf && . /etc/lirc.d/driver.${MM_LIRC_DRIVER}.conf
+        fi
+    fi
+    # No LIRC remote was provided, so see whether or not we can autodetect it.
+    if /usr/bin/test -z "${MM_LIRC_REMOTE}" ; then
+        /usr/bin/logger -t minimyth -p "local0.info" "MM_LIRC_REMOTE not set. attempting to autodetect remote control."
+        MM_LIRC_REMOTE=`mm_hardware_usb_process mm_hardware_usb2lirc_remote_map`
+        if /usr/bin/test -n "${MM_LIRC_REMOTE}" ; then
+            /usr/bin/logger -t minimyth -p "local0.info" "autodetected remote control '${MM_LIRC_REMOTE}'."
+        fi
+    fi
+
+    # Load the LIRC configuration files.
+    if /usr/bin/test -n "${MM_LIRC_REMOTE}" ; then
+        if /usr/bin/test -e /etc/lirc.d/lircd.conf.${MM_LIRC_REMOTE}.${MM_LIRC_DRIVER} ; then
+            /bin/cp -f /etc/lirc.d/lircd.conf.${MM_LIRC_REMOTE}.${MM_LIRC_DRIVER} /etc/lircd.conf
+        fi
+        if /usr/bin/test -e /etc/lirc.d/lircrc.${MM_LIRC_REMOTE} ; then
+            /bin/cp -f /etc/lirc.d/lircrc.${MM_LIRC_REMOTE} /etc/lircrc
+        fi
+    fi
+
+    # Get the LIRC configuration files.
+    mm_conf_get /lircd.conf /etc/lircd.conf
+    mm_conf_get /lircrc /etc/lircrc
+
+    # Load kernel module (if needed).
+    if /usr/bin/test -n "${MM_LIRC_KERNEL_MODULE}" ; then
+        /sbin/modprobe ${MM_LIRC_KERNEL_MODULE} ${MM_LIRC_KERNEL_MODULE_OPTIONS}
+    fi
+    # Start the LIRC daemon.
+
+    if /usr/bin/test -n "${MM_LIRC_DRIVER}" && /usr/bin/test -n "${MM_LIRC_DEVICE}" ; then
+        /bin/mkdir -p /var/lock
+        /bin/mkdir -p /var/run
+
+        # Wait up to 60 seconds for the device to appear in the device file system.
+        DELAY=0
+        while /usr/bin/test ! -e ${MM_LIRC_DEVICE} && /usr/bin/test ${DELAY} -lt 60 ; do
+            /bin/sleep 1
+            DELAY=$((DELAY + 1))
+            mm_message_output info "waiting for remote control device (${DELAY} seconds) ..."
+        done
+        if /usr/bin/test ! -e ${MM_LIRC_DEVICE} ; then
+            mm_message_output err 'error: timed out waiting for remote control device.'
+            exit 1
+        fi
+
+        LIRC_DRIVER=`/usr/sbin/lircd --driver=help 2>&1 | /bin/grep -i "${MM_LIRC_DRIVER}" | /bin/sed 's%[[:cntrl:]]%%g'`
+        /usr/bin/test -z "${LIRC_DRIVER}" && LIRC_DRIVER="default"
+
+        /usr/sbin/lircd --driver=${LIRC_DRIVER} --device=${MM_LIRC_DEVICE}
+    fi
+
+    # Start the irexec daemon.
+    if /usr/bin/test "${MM_LIRC_IREXEC_ENABLED}" = "yes" ; then
+        /usr/bin/irexec -d /etc/lircrc
+    fi
+}
+
+stop() {
+    mm_message_output info 'stopping remote control ...'
+
+    /usr/bin/test -n "`/bin/pidof lircd`" && /usr/bin/killall lircd
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

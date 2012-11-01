@@ -1,0 +1,65 @@
+#-------------------------------------------------------------------------------
+# Detect audio devices.
+#
+# mm_detect_state_audio has the following format:
+#     <audio_card_number>,<audio_device_number>,<audio_gain>
+# where
+#     <audio_card_number>: The audio card number. %n should work.
+#     <audio_card_device>: The audio device number for audio playback.
+#     <audio_gain>:        The audio gain (in %) for audio playback.
+#-------------------------------------------------------------------------------
+ACTION!="add|change|remove", GOTO="end"
+KERNEL=="card[0-9]*", SUBSYSTEM=="sound", GOTO="begin"
+GOTO="end"
+LABEL="begin"
+
+ENV{MODALIAS}!="?*", IMPORT{parent}=="MODALIAS"
+
+# Initialize state
+ENV{mm_detect_state_audio}=""
+
+#-------------------------------------------------------------------------------
+# Intel
+#-------------------------------------------------------------------------------
+
+# Jetway J9F2-Extreme
+# ENV{MODALIAS}=="pci:v00008086d000027D8sv000016F3sd0000806Ebc04sc03i00", ENV{mm_detect_state_audio}="%n,,90"
+# Intel DG965OT
+# ENV{MODALIAS}=="pci:v00008086d0000284Bsv00008086sd00002503bc04sc03i00", ENV{mm_detect_state_audio}="%n,,90"
+# ASUS P5E-VM HDMI
+# ENV{MODALIAS}=="pci:v00008086d0000293Esv00001043sd00008277bc04sc03i00", ENV{mm_detect_state_audio}="%n,,90"
+# Intel DG33TL
+  ENV{MODALIAS}=-"pci:v00008086d0000293Esv00008086sd00004001bc04sc03i00", ENV{mm_detect_state_audio}="%n,0,100"
+
+#-------------------------------------------------------------------------------
+# NVIDIA
+#-------------------------------------------------------------------------------
+
+# ASUS A7N8X-E
+  ENV{MODALIAS}=="pci:v000010DEd0000006Bsv00001043sd00000C11bc04sc01i00", ENV{mm_detect_state_audio}="%n,2,90"
+# ASUS A7N8X-E
+# ENV{MODALIAS}=="pci:v000010DEd0000006Asv00001043sd00008095bc04sc01i00", ENV{mm_detect_state_audio}="%n,2,90"
+# ASUS A8N-VM CSM
+  ENV{MODALIAS}=="pci:v000010DEd0000026Csv000010DEsd0000CB84bc04sc03i00", ENV{mm_detect_state_audio}="%n,0,90"
+# ASUS M2NPV-VM
+  ENV{MODALIAS}=="pci:v000010DEd0000026Csv00001043sd000081CBbc04sc03i00", ENV{mm_detect_state_audio}="%n,0,90"
+# ASUS M3N78-VM
+  ENV{MODALIAS}=="pci:v000010DEd00000774sv00001043sd00008345bc04sc03i00", ENV{mm_detect_state_audio}="%n,0,90"
+
+#-------------------------------------------------------------------------------
+# VIA
+#-------------------------------------------------------------------------------
+
+# VIA EPIA PD10000 and VIA EPIA ME6000
+  ENV{MODALIAS}=="pci:v00001106d00003059sv00001106sd0000AA01bc04sc01i00", ENV{mm_detect_state_audio}="%n,0,90"
+# VIA EPIA SP8000E
+  ENV{MODALIAS}=="pci:v00001106d00003059sv00001106sd0000AA01bc04sc01i00", ENV{mm_detect_state_audio}="%n,0,90"
+# VIA EPIA NX15000G
+# ENV{MODALIAS}=="pci:v00001106d00003288sv00001106sd0000AA09bc04sc03i00", ENV{mm_detect_state_audio}="%n,,90"
+# Albatron PX865PE
+# ENV{MODALIAS}=="pci:v00001412d00001724sv00001412sd00001724bc04sc01i00", ENV{mm_detect_state_audio}="%n,,90"
+
+# The state has been set, so save it.
+ENV{mm_detect_state_audio}=="?*", RUN+="/lib/udev/mm_detect audio %k $env{mm_detect_state_audio}"
+
+LABEL="end"

@@ -1,0 +1,32 @@
+#!/bin/sh
+################################################################################
+# extras
+#
+# This script (downloads and) mounts the extras directory tree.
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+    mm_message_output info 'installing extras ...'
+
+    if /usr/bin/test "${MM_EXTRAS_URL}" = "default" ; then
+        MM_EXTRAS_URL="hunt://extras.sfs"
+    fi
+    if /usr/bin/test -n "${MM_EXTRAS_URL}" ; then
+        mm_url_mount "${MM_EXTRAS_URL}" "@EXTRAS_ROOTDIR@"
+        /usr/sbin/ldconfig
+    fi
+
+    return 0
+}
+
+stop() {
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

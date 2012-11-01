@@ -1,0 +1,7 @@
+#!/bin/sh
+if [ -z "$1" ]; then
+	START_PATH="$1"
+else
+	START_PATH=`pwd`
+fi
+find "$START_PATH" -name "*mp3" -type f -print0 |xargs -0 nice mp3gain -r -k

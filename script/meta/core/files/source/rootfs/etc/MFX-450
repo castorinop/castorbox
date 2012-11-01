@@ -1,0 +1,59 @@
+#
+# this config file was automatically generated
+# using lirc-0.8.1-CVS(default) on Sat Apr  8 21:41:23 2006
+#
+# contributed by Greg Woolsey
+#
+# brand:                       Magnavox
+# model no. of remote control: Magnavox Home Cinema Control for tuner MFX-450
+# devices being controlled by this remote: VCR mode (I use it with MythTV)
+#
+
+begin remote
+
+  name  Magnavox_HCC-MFX-450
+  bits           13
+  flags RC5|CONST_LENGTH
+  eps            30
+  aeps          100
+
+  one           889  889
+  zero          889  889
+  plead         889
+  gap          113792
+  toggle_bit      2
+
+
+      begin codes
+          0                        0x1940
+          1                        0x1941
+          2                        0x1942
+          3                        0x1143
+          4                        0x1944
+          5                        0x1145
+          6                        0x1946
+          7                        0x1947
+          8                        0x1948
+          9                        0x1149
+          CancelAngle              0x1971
+          ChMinus                  0x1172
+          ChPlus                   0x1974
+          DOWN                     0x0151
+          IndexTC                  0x0970
+          LEFT                     0x0155
+          Menu                     0x0952
+          News                     0x041A
+          Night                    0x1C3E
+          OK                       0x0157
+          Pause                    0x1969
+          Play                     0x1175
+          Power                    0x194C
+          Record                   0x1177
+          RIGHT                    0x0956
+          Stop                     0x1176
+          UP                       0x0950
+          VOL+                     0x1410
+          VOL-                     0x1C11
+      end codes
+
+end remote

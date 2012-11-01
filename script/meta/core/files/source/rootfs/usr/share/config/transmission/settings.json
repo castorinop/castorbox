@@ -1,0 +1,7 @@
+{
+    "download-dir": "/media/CastorBOX/transmission", 
+    "peer-port": @TCP_PORT@, 
+    "peer-port-random-on-start": false, 
+    "port-forwarding-enabled": true, 
+    "rpc-whitelist-enabled": false 
+}

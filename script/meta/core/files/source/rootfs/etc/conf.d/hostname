@@ -1,0 +1,3 @@
+if [ -s /config/hostname ]; then
+	export HOSTNAME=`cat /config/hostname`
+fi	

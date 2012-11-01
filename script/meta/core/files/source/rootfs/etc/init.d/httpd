@@ -1,0 +1,11 @@
+#!/bin/sh
+mkdir -p /var/log/lighttpd
+mkdir -p /var/run/lighttpd
+mkdir -p /media/CastorBOX/.tmp/
+
+TCP_PORT=$((8000 + `cat /config/port`))
+sed -i "s|@TCP_PORT@|$TCP_PORT|g" /etc/lighttpd/lighttpd.conf
+
+watch -n 300 -t upnpc -r $TCP_PORT tcp > /var/log/upnpc.log 2>&1 &
+
+lighttpd -f /etc/lighttpd/lighttpd.conf

@@ -1,0 +1,11 @@
+################################################################################
+# hack_hide_blueline
+#
+# Hides the blue(s) line that sometimes appears on one or more sides of the
+# display when using the NVIDIA driver. More information can be found here:
+# <http://www.mythtv.org/wiki/index.php/NVidiaProprietaryDriver#Blue_line.28s.29_surrounding_picture>
+################################################################################
+
+if /usr/bin/test "${MM_X_HACK_HIDE_BLUE_LINE}" = "yes" ; then
+    /usr/bin/xvattr -a XV_COLORKEY -v 66048
+fi

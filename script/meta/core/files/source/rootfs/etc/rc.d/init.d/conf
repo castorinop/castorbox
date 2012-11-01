@@ -1,0 +1,341 @@
+#!/bin/sh
+################################################################################
+# conf
+#
+# This script retrieves and the user's minimyth.conf configuration file.
+################################################################################
+. /etc/rc.d/functions
+
+# Check minimyth.conf for obosolete variables and values.
+conf_check() {
+    # MiniMyth configuration file.
+    /usr/bin/test -r /etc/minimyth.d/minimyth.conf && . /etc/minimyth.d/minimyth.conf
+    
+    if /usr/bin/test "${MM_CODECS_URL}"         = "default"        ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_CODECS_URL=default" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test "${MM_EXTRAS_URL}"         = "default"        ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_EXTRAS_URL=default" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test "${MM_LIRC_DRIVER}"        = "mceusbnew"      ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_LIRC_DRIVER=mceusbnew" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test "${MM_LIRC_KERNEL_MODULE}" = "lirc_mceusbnew" ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_LIRC_KERNEL_MODULE=lirc_mceusbnew" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test "${MM_LIRC_REMOTE}"        = "mceusbnew"      ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_LIRC_REMOTE=mceusbnew" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test "${MM_THEMECACHE_URL}"     = "default"        ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_THEMECACHE_URL=default" is obsolete.'
+        exit 1
+    fi
+    /bin/cat /etc/minimyth.d/minimyth.conf | /bin/grep -q '^MM_MYTHDB_SETTING_'
+    if /usr/bin/test $? -eq 0 ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_MYTHDB_SETTING_<setting>" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_HARDWARE_CHIPSET}"     ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_HARDWARE_CHIPSET" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_HARDWARE_NORTHBRIDGE}" ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_HARDWARE_NORTHBRIDGE" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_HARDWARE_SOUTHBRIDGE}" ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_HARDWARE_SOUTHBRIDGE" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_HARDWARE_LAN}"         ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_HARDWARE_LAN" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_HARDWARE_AUDIO}"       ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_HARDWARE_AUDIO" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_HARDWARE_TV}"          ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_HARDWARE_TV" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_HARDWARE_SENSOR}"      ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_HARDWARE_SENSOR" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_NAME_SERVER}"          ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_NAME_SERVER" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_NO_X}"                 ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_NO_X" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_NO_XWM}"               ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_NO_XWM" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_NO_VNC}"               ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_NO_VNC" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_SOUND}"                ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_SOUND" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_SYSLOG_SERVER}"        ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_SYSLOG_SERVER" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_TIME_SERVER}"          ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_TIME_SERVER" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_TV}"                   ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_X_TV" is obsolete.'
+        exit 1
+    fi
+    if /usr/bin/test ! -z "${MM_X_RESOLUTION}"         ; then
+        mm_message_output err 'error: "minimyth.conf" is out of date. "MM_X_RESOLUTION" is obsolete.'
+        exit 1
+    fi
+
+    return 0
+}
+
+conf_file=/etc/conf.d/minimyth
+
+conf_variable_write() {
+    /bin/echo -n "$2=" >> $1
+    /bin/echo -n "'"   >> $1
+    /bin/echo -n "$3"  >> $1
+    /bin/echo    "'"   >> $1
+
+    return 0
+}
+
+conf_init() {
+    /bin/rm -rf ${conf_file}
+
+    return 0
+}
+
+conf_write() {
+    ###########################################################################
+    # Read configuration variables from their configuration files.
+    ###########################################################################
+
+    # Read MiniMyth environment variables from the MiniMyth configuration file.
+    /usr/bin/test -r /etc/minimyth.d/minimyth.conf && \
+	. /etc/minimyth.d/minimyth.conf
+    # Read motherboard hardware specific configuration file.
+    /usr/bin/test -n "${MM_HARDWARE_MOTHERBOARD}" && /usr/bin/test -r /etc/hardware.d/motherboard.${MM_HARDWARE_MOTHERBOARD}.conf && \
+	. /etc/hardware.d/motherboard.${MM_HARDWARE_MOTHERBOARD}.conf
+    # Read LIRC driver specific configuration file.
+    /usr/bin/test -n "${MM_LIRC_DRIVER}" && /usr/bin/test -r /etc/lirc.d/driver.${MM_LIRC_DRIVER}.conf && \
+	. /etc/lirc.d/driver.${MM_LIRC_DRIVER}.conf
+    # Reread MiniMyth environment variables from the MiniMyth configuration file,
+    # in case variables in minimyth.conf override variables in motherboard.*.conf or driver.*.conf.
+    /usr/bin/test -r /etc/minimyth.d/minimyth.conf && \
+	. /etc/minimyth.d/minimyth.conf
+    
+    ###########################################################################
+    # Set unset/null configuration variables to their defaults.
+    ###########################################################################
+
+    # MiniMyth update URL.
+    MM_UPDATE_URL=${MM_UPDATE_URL:-'http://linpvr.org/minimyth/download/stable/latest/'}
+    # DCHP provided parameters.
+    MM_HOSTNAME=${MM_HOSTNAME:-${MM_DHCP_HOSTNAME}}
+    MM_DOMAIN=${MM_DOMAIN:-${MM_DHCP_DOMAIN}}
+    MM_DNS_SERVERS=${MM_DNS_SERVER:-${MM_DHCP_DNS_SERVERS}}
+    MM_NTP_SERVERS=${MM_NTP_SERVERS:-${MM_DHCP_NTP_SERVERS}}
+    MM_LOG_SERVERS=${MM_LOG_SERVERS:-${MM_DHCP_LOG_SERVERS}}
+    # Default hardware.
+    MM_HARDWARE_CPU=${MM_HARDWARE_CPU:-`mm_hardware_cpu_get`}
+    # Default CPU frequency governor.
+    MM_CPUFREQ_GOVERNOR=${MM_CPUFREQ_GOVERNOR:-'performance'}
+    # Default audio.
+    MM_AUDIO_TYPE=${MM_AUDIO_TYPE:-'analog'}
+    # Default video.
+    MM_VIDEO_ASPECT_RATIO=${MM_VIDEO_ASPECT_RATIO:-'4:3'}
+    MM_VIDEO_DEINTERLACE_ENABLED=${MM_VIDEO_DEINTERLACE_ENABLED:-'no'}
+    # Default X.
+    MM_X_DRIVER=${MM_X_DRIVER:-`mm_hardware_pci_process mm_hardware_pci2x_map | /usr/bin/cut -d ' ' -f 1`}
+    MM_X_KERNEL_MODULES=${MM_X_KERNEL_MODULES:-`mm_hardware_x2kernel_map "${MM_X_DRIVER}"`}
+    MM_X_ENABLED=${MM_X_ENABLED:-'yes'}
+    MM_X_WM_ENABLED=${MM_X_WM_ENABLED:-'no'}
+    MM_X_VNC_ENABLED=${MM_X_VNC_ENABLED:-'yes'}
+    MM_X_SCREENSAVER_ENABLED=${MM_X_SCREENSAVER_ENABLED:-'no'}
+    MM_X_DVI_ENABLED=${MM_X_DVI_ENABLED:-'no'}
+    MM_X_VGA_ENABLED=${MM_X_VGA_ENABLED:-'no'}
+    MM_X_TV_ENABLED=${MM_X_TV_ENABLED:-'yes'}
+    MM_X_TV_TYPE=${MM_X_TV_TYPE:-'NTSC'}
+    MM_X_TV_OUTPUT=${MM_X_TV_OUTPUT:-'Composite'}
+    MM_X_REFRESH=${MM_X_REFRESH:-`
+        case "${MM_X_TV_TYPE}" in
+            NTSC) /bin/echo '60' ;;
+            PAL)  /bin/echo '50' ;;
+        esac`}
+    MM_X_MODE=${MM_X_MODE:-`
+        case "${MM_X_TV_ENABLED}:${MM_X_VGA_ENABLED}:${MM_X_DVI_ENABLED}" in
+            yes:no:no)
+                case "${MM_X_TV_TYPE}" in
+                    NTSC) /bin/echo '720x480Noscale' ;;
+                    PAL)  /bin/echo '720x576Noscale' ;;
+                esac
+                ;;
+            *)
+                /bin/echo '800x600'
+                ;;
+        esac`}
+    # Default Myth master backend.
+    MM_MYTH_SERVER=${MM_MYTH_SERVER:-${MM_TFTP_SERVER}}
+    MM_MYTH_DBUSERNAME=${MM_MYTH_DBUSERNAME:-'mythtv'}
+    MM_MYTH_DBPASSWORD=${MM_MYTH_DBPASSWORD:-'mythtv'}
+    MM_MYTH_DBNAME=${MM_MYTH_DBNAME:-'mythconverg'}
+    MM_MYTH_WOL_ENABLED=${MM_MYTH_WOL_ENABLED:-'no'}
+    MM_MYTH_WOL_MAC=${MM_MYTH_WOL_MAC:-'00:00:00:00:00:00'}
+    MM_MYTH_WOLSQLRECONNECTWAITTIME=${MM_MYTH_WOLSQLRECONNECTWAITTIME:-'15'}
+    MM_MYTH_WOLSQLCONNECTRETRY=${MM_MYTH_WOLSQLCONNECTRETRY:-'20'}
+    MM_MYTH_WOLSQLCOMMAND=${MM_MYTH_WOLSQLCOMMAND:-'wakelan -b @MM_MYTH_WOL_BROADCAST@ -m @MM_MYTH_WOL_MAC@'}
+    # Default Myth plugins.
+    MM_MYTHTV_OPTICAL_DISK_ENABLED=${MM_MYTHTV_OPTICAL_DISK_ENABLED:-'yes'}
+    MM_MYTHDVD_ENABLED=${MM_MYTHDVD_ENABLED:-'yes'}
+    MM_MYTHGALLERY_ENABLED=${MM_MYTHGALLERY_ENABLED:-'yes'}
+    MM_MYTHMUSIC_ENABLED=${MM_MYTHMUSIC_ENABLED:-'yes'}
+    MM_MYTHVIDEO_ENABLED=${MM_MYTHVIDEO_ENABLED:-'yes'}
+    MM_MYTHWEATHER_ENABLED=${MM_MYTHWEATHER_ENABLED:-'yes'}
+    # Default LIRC (some values were defaulted by /etc/lirc.d/driver.*.conf).
+    MM_LIRC_IREXEC_ENABLED=${MM_LIRC_IREXEC_ENABLED:-'no'}
+
+    ###########################################################################
+    # Write the configuration variables /etc/conf.d/minimyth.
+    ###########################################################################
+
+    # Write MiniMyth update url.
+    conf_variable_write "${conf_file}" MM_UPDATE_URL                   "${MM_UPDATE_URL}"
+
+    # Write network.
+    conf_variable_write "${conf_file}" MM_HOSTNAME                     "${MM_HOSTNAME}"
+    conf_variable_write "${conf_file}" MM_DOMAIN                       "${MM_DOMAIN}"
+    conf_variable_write "${conf_file}" MM_DNS_SERVERS                  "${MM_DNS_SERVERS}"
+    conf_variable_write "${conf_file}" MM_NTP_SERVERS                  "${MM_NTP_SERVERS}"
+    conf_variable_write "${conf_file}" MM_LOG_SERVERS                  "${MM_LOG_SERVERS}"
+    # Write timezone.
+    conf_variable_write "${conf_file}" MM_TZ                           "${MM_TZ}"
+    # Write hardware.
+    conf_variable_write "${conf_file}" MM_HARDWARE_MOTHERBOARD         "${MM_HARDWARE_MOTHERBOARD}"
+    conf_variable_write "${conf_file}" MM_HARDWARE_CPU                 "${MM_HARDWARE_CPU}"
+    conf_variable_write "${conf_file}" MM_HARDWARE_KERNEL_MODULES      "${MM_HARDWARE_KERNEL_MODULES}"
+    # Write CPU frequency governor.
+    conf_variable_write "${conf_file}" MM_CPUFREQ_GOVERNOR             "${MM_CPUFREQ_GOVERNOR}"
+    # Write audio.
+    conf_variable_write "${conf_file}" MM_AUDIO_TYPE                   "${MM_AUDIO_TYPE}"
+    # Write video.
+    conf_variable_write "${conf_file}" MM_VIDEO_ASPECT_RATIO           "${MM_VIDEO_ASPECT_RATIO}"
+    conf_variable_write "${conf_file}" MM_VIDEO_DEINTERLACE_ENABLED    "${MM_VIDEO_DEINTERLACE_ENABLED}"
+    # Write X.
+    conf_variable_write "${conf_file}" MM_X_KERNEL_MODULES             "${MM_X_KERNEL_MODULES}"
+    conf_variable_write "${conf_file}" MM_X_DRIVER                     "${MM_X_DRIVER}"
+    conf_variable_write "${conf_file}" MM_X_DRIVER_TV                  "${MM_X_DRIVER_TV}"
+    conf_variable_write "${conf_file}" MM_X_ENABLED                    "${MM_X_ENABLED}"
+    conf_variable_write "${conf_file}" MM_X_WM_ENABLED                 "${MM_X_WM_ENABLED}"
+    conf_variable_write "${conf_file}" MM_X_VNC_ENABLED                "${MM_X_VNC_ENABLED}"
+    conf_variable_write "${conf_file}" MM_X_SCREENSAVER_ENABLED        "${MM_X_SCREENSAVER_ENABLED}"
+    conf_variable_write "${conf_file}" MM_X_DVI_ENABLED                "${MM_X_DVI_ENABLED}"
+    conf_variable_write "${conf_file}" MM_X_VGA_ENABLED                "${MM_X_VGA_ENABLED}"
+    conf_variable_write "${conf_file}" MM_X_TV_ENABLED                 "${MM_X_TV_ENABLED}"
+    conf_variable_write "${conf_file}" MM_X_TV_TYPE                    "${MM_X_TV_TYPE}"
+    conf_variable_write "${conf_file}" MM_X_TV_OUTPUT                  "${MM_X_TV_OUTPUT}"
+    conf_variable_write "${conf_file}" MM_X_REFRESH                    "${MM_X_REFRESH}"
+    conf_variable_write "${conf_file}" MM_X_MODE                       "${MM_X_MODE}"
+    conf_variable_write "${conf_file}" MM_X_MODELINE                   "${MM_X_MODELINE}"
+    conf_variable_write "${conf_file}" MM_X_RESOLUTION_X               "${MM_X_RESOLUTION_X}"
+    conf_variable_write "${conf_file}" MM_X_RESOLUTION_Y               "${MM_X_RESOLUTION_Y}"
+    conf_variable_write "${conf_file}" MM_X_DISPLAYSIZE_X              "${MM_X_DISPLAYSIZE_X}"
+    conf_variable_write "${conf_file}" MM_X_DISPLAYSIZE_Y              "${MM_X_DISPLAYSIZE_Y}"
+    # Write Myth master backend.
+    conf_variable_write "${conf_file}" MM_MYTH_SERVER                  "${MM_MYTH_SERVER}"
+    conf_variable_write "${conf_file}" MM_MYTH_DBUSERNAME              "${MM_MYTH_DBUSERNAME}"
+    conf_variable_write "${conf_file}" MM_MYTH_DBPASSWORD              "${MM_MYTH_DBPASSWORD}"
+    conf_variable_write "${conf_file}" MM_MYTH_DBNAME                  "${MM_MYTH_DBNAME}"
+    conf_variable_write "${conf_file}" MM_MYTH_WOL_ENABLED             "${MM_MYTH_WOL_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTH_WOL_MAC                 "${MM_MYTH_WOL_MAC}"
+    conf_variable_write "${conf_file}" MM_MYTH_WOLSQLRECONNECTWAITTIME "${MM_MYTH_WOLSQLRECONNECTWAITTIME}"
+    conf_variable_write "${conf_file}" MM_MYTH_WOLSQLCONNECTRETRY      "${MM_MYTH_WOLSQLCONNECTRETRY}"
+    conf_variable_write "${conf_file}" MM_MYTH_WOLSQLCOMMAND           "${MM_MYTH_WOLSQLCOMMAND}"
+    # Write Myth plugins.
+    conf_variable_write "${conf_file}" MM_MYTHTV_OPTICAL_DISK_ENABLED  "${MM_MYTHTV_OPTICAL_DISK_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTHDVD_ENABLED              "${MM_MYTHDVD_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTHGALLERY_ENABLED          "${MM_MYTHGALLERY_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTHMUSIC_ENABLED            "${MM_MYTHMUSIC_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTHNEWS_ENABLED             "${MM_MYTHNEWS_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTHSTREAM_ENABLED           "${MM_MYTHSTREAM_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTHVIDEO_ENABLED            "${MM_MYTHVIDEO_ENABLED}"
+    conf_variable_write "${conf_file}" MM_MYTHWEATHER_ENABLED          "${MM_MYTHWEATHER_ENABLED}"
+    # Write extras.
+    conf_variable_write "${conf_file}" MM_EXTRAS_URL                   "${MM_EXTRAS_URL}"
+    # Write codecs.
+    conf_variable_write "${conf_file}" MM_CODECS_URL                   "${MM_CODECS_URL}"
+    # Write themes.
+    conf_variable_write "${conf_file}" MM_THEME_NAME                   "${MM_THEME_NAME}"
+    conf_variable_write "${conf_file}" MM_THEMEOSD_NAME                "${MM_THEMEOSD_NAME}"
+    conf_variable_write "${conf_file}" MM_THEME_URL                    "${MM_THEME_URL}"
+    conf_variable_write "${conf_file}" MM_THEMEOSD_URL                 "${MM_THEMEOSD_URL}"
+    conf_variable_write "${conf_file}" MM_THEMECACHE_URL               "${MM_THEMECACHE_URL}"
+    # Write media shares.
+    conf_variable_write "${conf_file}" MM_MYTHDVD_URL                  "${MM_MYTHDVD_URL}"
+    conf_variable_write "${conf_file}" MM_MYTHGALLERY_URL              "${MM_MYTHGALLERY_URL}"
+    conf_variable_write "${conf_file}" MM_MYTHMUSIC_URL                "${MM_MYTHMUSIC_URL}"
+    conf_variable_write "${conf_file}" MM_MYTHVIDEO_URL                "${MM_MYTHVIDEO_URL}"
+    # Write LIRC.
+    conf_variable_write "${conf_file}" MM_LIRC_REMOTE                  "${MM_LIRC_REMOTE}"
+    conf_variable_write "${conf_file}" MM_LIRC_DRIVER                  "${MM_LIRC_DRIVER}"
+    conf_variable_write "${conf_file}" MM_LIRC_DEVICE                  "${MM_LIRC_DEVICE}"
+    conf_variable_write "${conf_file}" MM_LIRC_KERNEL_MODULE           "${MM_LIRC_KERNEL_MODULE}"
+    conf_variable_write "${conf_file}" MM_LIRC_KERNEL_MODULE_OPTIONS   "${MM_LIRC_KERNEL_MODULE_OPTIONS}"
+    conf_variable_write "${conf_file}" MM_LIRC_IREXEC_ENABLED          "${MM_LIRC_IREXEC_ENABLED}"
+    # Write LCDproc.
+    conf_variable_write "${conf_file}" MM_LCDPROC_DRIVER               "${MM_LCDPROC_DRIVER}"
+    # Write sensor.
+    conf_variable_write "${conf_file}" MM_SENSOR_KERNEL_MODULES        "${MM_SENSOR_KERNEL_MODULES}"
+
+    return 0
+}
+
+start() {
+    mm_message_output info 'processing configuration ...'
+
+    # Get minimyth.conf file.
+    mm_conf_get /minimyth.conf /etc/minimyth.d/minimyth.conf
+
+    # Make sure that there is a minimyth.conf file.
+    if /usr/bin/test ! -e /etc/minimyth.d/minimyth.conf ; then
+        mm_message_output err 'error: no minimyth.conf configuration file found.'
+        exit 1
+    fi
+
+    conf_check
+
+    conf_init
+    conf_write
+
+    return 0
+}
+
+stop() {
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

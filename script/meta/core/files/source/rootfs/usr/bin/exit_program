@@ -1,0 +1,27 @@
+#!/bin/sh
+
+exit_program()
+{
+    program="${1}"
+    command="${2}"
+
+    # Make sure that the program is running.
+    if /usr/bin/test -n "`/bin/pidof ${program}`" ; then
+        # Make sure that the X window manager is running, since we depend on it to select the program window.
+        /bin/echo -e "${command}" | /usr/bin/xmacroplay -d 100 :0.0 > /dev/null 2>&1
+        if /usr/bin/test -n "`/bin/pidof ${program}`" ; then
+		mm_message_output error "failed to exit emulator '${program}'."
+	fi
+    fi
+}
+
+exit_program 'fceu'             'KeyStr Escape\n'
+exit_program 'jzintv'           'KeyStr F1\n'
+exit_program 'mame'             'KeyStr Escape\n'
+exit_program 'mess'             'KeyStr Escape\n'
+exit_program 'stella'           'KeyStrPress Control_L\n KeyStrPress Q\n KeyStrRelease Q\n KeyStrRelease Control_L\n'
+exit_program 'VisualBoyAdvance' 'KeyStr Escape\n'
+exit_program 'zsnes'            'KeyStr Escape\n KeyStr Q\n KeyStr Return\n'
+exit_program 'crack-attack' 	'KeyStr Escape\n'
+exit_program 'dgen'	 	'KeyStr Escape\n'
+exit_program 'xwelltris' 	'KeyStr Escape\n'

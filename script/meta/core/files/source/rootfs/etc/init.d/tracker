@@ -1,0 +1,4 @@
+
+mkdir -p /config/bnbt
+cd /config/bnbt
+bnbt 2>&1 > /var/log/tracker.log &

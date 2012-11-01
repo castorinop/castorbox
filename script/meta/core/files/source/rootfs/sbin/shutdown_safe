@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. /etc/init.d/rc.functions
+
+BOOT_SCRIPT="/etc/rs.d";
+SPLASH=/initrd/rw/splash/cache/.splash
+#SPLASH=/lib/splash/cache/.splash
+#splash_start;
+run_services;
+#umount -a;
+

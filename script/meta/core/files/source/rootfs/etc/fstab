@@ -1,0 +1,10 @@
+LABEL=CBX_CORE	/mnt/system	ext3	rw	        0     0
+LABEL=CBX_CONFIG /config	ext3	ro	        0     0
+LABEL=CBX_SWAP	swap		swap    pri=1           0     0
+/dev/dvd        /mnt/cdrom      auto    noauto          0     0
+#unionfs		/media		unionfs dirs=/mnt/local 0     0
+proc    	/proc		proc	defaults        0     0
+sysfs		/sys		sysfs	defaults        0     0
+devpts		/dev/pts	devpts	gid=4,mode=620  0     0
+usbfs		/proc/bus/usb	usbfs   devgid=14,devmode=0660 0 0
+

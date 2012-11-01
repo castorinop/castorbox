@@ -1,0 +1,2 @@
+#!/bin/sh
+nice /usr/sbin/mt-daapd -c /etc/mt-daapd.conf

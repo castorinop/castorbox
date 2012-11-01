@@ -1,0 +1,147 @@
+#!/bin/sh
+################################################################################
+# x
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local DRI_TRUE
+    local LIB_PATH
+    local NVIDIA_TRUE
+
+    mm_message_output info 'starting X ...'
+
+    mm_conf_get /xorg.conf /etc/X11/xorg.conf
+    mm_conf_get /xinitrc   /etc/X11/xinit/xinitrc
+
+    MM_X_DEVICE_NVIDIA=""
+    MM_X_DEVICE_VIA=""
+    if /usr/bin/test "${MM_X_TV_ENABLED}"  = yes ; then
+        MM_X_DEVICE_NVIDIA="TV"
+        /usr/bin/test -n "${MM_X_DEVICE_VIA}" && MM_X_DEVICE_VIA=",${MM_X_DEVICE_VIA}"
+        MM_X_DEVICE_VIA="TV${MM_X_DEVICE_VIA}"
+    fi
+    if /usr/bin/test "${MM_X_VGA_ENABLED}" = yes ; then
+        MM_X_DEVICE_NVIDIA="CRT"
+        /usr/bin/test -n "${MM_X_DEVICE_VIA}" && MM_X_DEVICE_VIA=",${MM_X_DEVICE_VIA}"
+        MM_X_DEVICE_VIA="CRT${MM_X_DEVICE_VIA}"
+    fi
+    if /usr/bin/test "${MM_X_DVI_ENABLED}" = yes ; then
+        MM_X_DEVICE_NVIDIA="DFP"
+        /usr/bin/test -n "${MM_X_DEVICE_VIA}" && MM_X_DEVICE_VIA=",${MM_X_DEVICE_VIA}"
+        MM_X_DEVICE_VIA="LCD${MM_X_DEVICE_VIA}"
+    fi
+    case "${MM_X_DRIVER}" in
+        nvidia)
+            if /usr/bin/test ! -n "${MM_X_DEVICE_NVIDIA}" ; then
+                mm_message_output err 'error: no X video output enabled'
+                exit 1
+            fi
+            ;;
+        via|via_pro)
+            if /usr/bin/test ! -n "${MM_X_DEVICE_VIA}"    ; then
+                mm_message_output err 'error: no X video output enabled'
+                exit 1
+            fi
+            ;;
+    esac
+
+    # Override MM_X_MODE and MM_X_MODELINE if MM_X_RESOLUTION_X and MM_X_RESOLUTION_Y are set.
+    if   /usr/bin/test ! -z "${MM_X_RESOLUTION_X}" && /usr/bin/test ! -z "${MM_X_RESOLUTION_Y}" ; then
+        MM_X_MODELINE=`/usr/bin/gtf ${MM_X_RESOLUTION_X} ${MM_X_RESOLUTION_Y} ${MM_X_REFRESH} | /bin/sed 's% *#.*%%'`
+        MM_X_MODELINE=`/bin/echo ${MM_X_MODELINE}`
+        MM_X_MODE=`/bin/echo ${MM_X_MODELINE} | /bin/sed 's%^Modeline "\([^"]*\)".*%\1%'`
+    fi
+
+    # Set MM_X_DISPLAYSIZE
+    if   /usr/bin/test ! -z "${MM_X_DISPLAYSIZE_X}" && /usr/bin/test ! -z "${MM_X_DISPLAYSIZE_Y}" ; then
+        MM_X_DISPLAYSIZE="DisplaySize ${MM_X_DISPLAYSIZE_X} ${MM_X_DISPLAYSIZE_Y}"
+        MM_X_USE_EDID_DPI="false"
+    else
+        MM_X_DISPLAYSIZE=
+        MM_X_USE_EDID_DPI="true"
+    fi
+
+    # Hacks to deal with the fact that the proprietary NVIDIA GL libraries
+    # conflict with the Open Source Mesa GL libraries.
+    DRI_TRUE=
+    NVIDIA_TRUE=
+    case "${MM_X_DRIVER}" in
+        intel_i810)
+            DRI_TRUE=""
+            NVIDIA_TRUE="#"
+            ;;
+        intel_i830)
+            DRI_TRUE=""
+            NVIDIA_TRUE="#"
+            ;;
+        intel_i915)
+            DRI_TRUE=""
+            NVIDIA_TRUE="#"
+            ;;
+        nvidia)
+            DRI_TRUE="#"
+            NVIDIA_TRUE=""
+            # Include path to proprietary NVIDIA libraries.
+            LIB_PATHS=`/bin/cat /etc/ld.so.conf`
+            LIB_PATHS="/usr/lib/${MM_X_DRIVER} ${LIB_PATHS}"
+            /bin/echo -n > /etc/ld.so.conf
+            for LIB_PATH in ${LIB_PATHS} ; do
+                /bin/echo "${LIB_PATH}" >> /etc/ld.so.conf
+            done
+            # Remove Open Source libraries that conflict with NVIDIA libraries.
+            /bin/rm -f /usr/lib/libGL.*
+            /bin/rm -f /usr/lib/xorg/modules/extensions/libGLcore.*
+            /bin/rm -f /usr/lib/xorg/modules/extensions/libglx.*
+            # Rebuild library cache.
+            /usr/sbin/ldconfig
+            ;;
+        via)
+            DRI_TRUE=""
+            NVIDIA_TRUE="#"
+            ;;
+        via_pro)
+            DRI_TRUE=""
+            NVIDIA_TRUE="#"
+            ;;
+    esac
+
+    /bin/sed -i "s%@MM_X_DRIVER@%${MM_X_DRIVER}%"               /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_DEVICE_NVIDIA@%${MM_X_DEVICE_NVIDIA}%" /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_DEVICE_VIA@%${MM_X_DEVICE_VIA}%"       /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_TV_TYPE@%${MM_X_TV_TYPE}%"             /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_TV_OUTPUT@%${MM_X_TV_OUTPUT}%"         /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_REFRESH@%${MM_X_REFRESH}%"             /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_MODELINE@%${MM_X_MODELINE}%"           /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_MODE@%${MM_X_MODE}%"                   /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_DISPLAYSIZE@%${MM_X_DISPLAYSIZE}%"     /etc/X11/xorg.conf
+    /bin/sed -i "s%@DRI_TRUE@%${DRI_TRUE}%"                     /etc/X11/xorg.conf
+    /bin/sed -i "s%@NVIDIA_TRUE@%${NVIDIA_TRUE}%"               /etc/X11/xorg.conf
+    /bin/sed -i "s%@MM_X_USE_EDID_DPI@%${MM_X_USE_EDID_DPI}%"   /etc/X11/xorg.conf
+
+    # Turn off splash screen.
+    mm_splash_halt
+
+    # Start X.
+    if /usr/bin/test "${MM_X_ENABLED}" = "yes" ; then
+        /usr/bin/xinit -- /usr/bin/X &
+    fi
+
+    return 0
+}
+
+stop() {
+    mm_message_output info 'stopping X ...'
+
+    /usr/bin/test -n "`/bin/pidof X`" && /usr/bin/killall X
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

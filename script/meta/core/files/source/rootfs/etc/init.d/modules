@@ -1,0 +1,10 @@
+depmod
+if [ -d "/etc/modprobe.preload.d/" ] && [ -n "`ls /etc/modprobe.preload.d/`" ]; then 
+	PRE_LIST=`cat /etc/modprobe.preload.d/*` 
+fi
+
+LIST=`lspci -k |grep modules |while read line; do echo $line |cut -d ":" -f 2 |sed 's/,/\n/g'; done`
+
+for i in $PRE_LIST $LIST; do
+	/sbin/modprobe -v $i 
+done

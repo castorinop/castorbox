@@ -1,0 +1,6 @@
+#!/bin/sh
+
+TCP_PORT=$((51413 + `cat /config/port`))
+sed -i "s|@TCP_PORT@|$TCP_PORT|g" /config/transmission/settings.json
+
+nice transmission-daemon

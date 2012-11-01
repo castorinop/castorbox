@@ -1,0 +1,25 @@
+# Maps USB device to corresponding LIRC driver and remote.
+#
+# vendor, product, driver     , remote
+  03eb  , 0002   , igorplugusb,
+  045e  , 006d   , mceusb     , mceusb
+  0471  , 0602   , atiusb     ,
+  0471  , 0603   , atiusb     ,
+  0471  , 0815   , mceusb2    , mceusb2
+  0609  , 031d   , mceusb2    , mceusb2
+  0bc7  , 0002   , atiusb     ,
+  0bc7  , 0003   , atiusb     ,
+  0bc7  , 0004   , atiusb     ,
+  0bc7  , 0005   , atiusb     ,
+  0bc7  , 0006   , atiusb     ,
+  0bc7  , 0007   , atiusb     ,
+  0bc7  , 0008   , atiusb     ,
+  0bc7  , 0009   , atiusb     ,
+  0bc7  , 000a   , atiusb     ,
+  0bc7  , 000b   , atiusb     ,
+  0bc7  , 000c   , atiusb     ,
+  0bc7  , 000d   , atiusb     ,
+  0bc7  , 000e   , atiusb     ,
+  0bc7  , 000f   , atiusb     ,
+  0e9c  , 0000   , streamzap  , streamzap
+  1460  , 9150   , mceusb2    , mceusb2

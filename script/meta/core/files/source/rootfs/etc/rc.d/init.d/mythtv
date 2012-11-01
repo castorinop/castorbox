@@ -1,0 +1,197 @@
+#!/bin/sh
+################################################################################
+# mythtv
+#
+# This script configures MythTV.
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local jumpoint
+    local jumppoint_destination
+    local jumppoint_keylist
+    local keybinding
+    local keybinding_action
+    local keybinding_context
+    local keybinding_keylist
+    local setting
+    local setting_data
+    local setting_value
+    local TRANSCODE
+
+    mm_message_output info 'configuring MythTV ...'
+
+    # Check for required variables.
+    if /usr/bin/test -z "${MM_THEME_NAME}"    ; then
+        mm_message_output err 'error: "MM_THEME_NAME" not present.'
+        exit 1
+    fi
+    if /usr/bin/test -z "${MM_THEMEOSD_NAME}" ; then
+        mm_message_output err 'error: "MM_THEMEOSD_NAME" not present.'
+        exit 1
+    fi
+
+    # Set OSD fonts.
+    mm_mythdb_setting_update "OSDFont"   "luxisr.ttf"
+    mm_mythdb_setting_update "OSDCCFont" "luxisr.ttf"
+
+    # Set themes.
+    if /usr/bin/test -n "${MM_THEME_NAME}" ; then
+        mm_mythdb_setting_update "Theme"    "${MM_THEME_NAME}"
+    fi
+    if /usr/bin/test -n "${MM_THEMEOSD_NAME}" ; then
+        mm_mythdb_setting_update "OSDTheme" "${MM_THEMEOSD_NAME}"
+    fi
+
+    # Mount user specified theme directories.
+    if /usr/bin/test -n "${MM_THEME_URL}" ; then
+        if /usr/bin/test -e "/usr/share/themes/${MM_THEME_NAME}" ; then
+            mm_message_output err "error: MythTV theme directory '${MM_THEME_NAME}' already exists."
+            exit 1
+        fi
+        mm_url_mount "${MM_THEME_URL}" "/usr/share/mythtv/themes/${MM_THEME_NAME}"
+        if /usr/bin/test $? -ne 0 ; then
+            mm_message_output err "error: mount of 'MM_THEME_URL=${MM_THEME_URL}'' failed."
+            exit 1
+        fi
+    fi
+    if /usr/bin/test -n "${MM_THEMEOSD_URL}" ; then
+        if /usr/bin/test -e "/usr/share/themes/${MM_THEMEOSD_NAME}" ; then
+            mm_message_output err "error: MythTV OSD theme directory '${MM_THEMEOSD_NAME}' already exists."
+            exit 1
+        fi
+        mm_url_mount "${MM_THEMEOSD_URL}" "/usr/share/mythtv/themes/${MM_THEMEOSD_NAME}"
+        if /usr/bin/test $? -ne 0 ; then
+            mm_message_output err "error: mount of 'MM_THEMEOSD_URL=${MM_THEMEOSD_URL}' failed."
+            exit 1
+        fi
+    fi
+
+    # Mount distribution provided theme directories.
+    if /usr/bin/test ! -e "/usr/share/themes/${MM_THEME_NAME}"    ; then
+        mm_url_mount "dist:themes/${MM_THEME_NAME}.sfs"    "/usr/share/mythtv/themes/${MM_THEME_NAME}"
+    fi
+    if /usr/bin/test ! -e "/usr/share/themes/${MM_OSDTHEME_NAME}" ; then
+        mm_url_mount "dist:themes/${MM_THEMEOSD_NAME}.sfs" "/usr/share/mythtv/themes/${MM_THEMEOSD_NAME}"
+    fi
+
+    # Check for theme directories.
+    if /usr/bin/test ! -e "/usr/share/mythtv/themes/${MM_THEME_NAME}"    ; then
+        mm_message_output err "error: MythTV theme '${MM_THEME_NAME}' not found."
+        exit 1
+    fi
+    if /usr/bin/test ! -e "/usr/share/mythtv/themes/${MM_THEMEOSD_NAME}" ; then
+        mm_message_output err "error: MythTV OSD theme '${MM_THEMEOSD_NAME}' not found."
+        exit 1
+    fi
+
+    # Mount themecache directory.
+    if /usr/bin/test -n "${MM_THEMECACHE_URL}" ; then
+        mm_url_mount "${MM_THEMECACHE_URL}" "/root/.mythtv/themecache"
+        if /usr/bin/test $? -ne 0 ; then
+            mm_message_output err "error: mount of 'MM_THEMECACHE_URL=${MM_THEMECACHE_URL}' failed."
+            exit 1
+        fi
+    fi
+
+    # Configure MythDVD ripping.
+    if /usr/bin/test "${MM_MYTHDVD_ENABLED}" = "yes" ; then
+        if /usr/bin/test -d /mnt/dvd && /usr/bin/test -w /mnt/dvd ; then
+            /bin/mkdir -p /mnt/dvd/mythdvd/temp
+        fi
+        if /usr/bin/test -d /mnt/dvd/mythdvd/temp && /usr/bin/test -w /mnt/dvd/mythdvd/temp  ; then
+            mm_mythdb_setting_update "DVDRipLocation" "/mnt/dvd/mythdvd/temp"
+            TRANSCODE=`which transcode`
+            mm_mythdb_setting_update "TranscodeCommand" "${TRANSCODE}"
+            /usr/bin/mtd --daemon
+        fi
+    fi
+
+    # Configure Myth database jumppoints to match MiniMyth frontend.
+    /bin/cat /etc/minimyth.d/minimyth.conf | /bin/grep '^MM_MYTHDB_JUMPPOINT=' | /bin/sed -e 's%^MM_MYTHDB_JUMPPOINT=%%' | \
+        /bin/sed -e 's%^[ ]*%%' -e 's%[ ]*$%%' | \
+        /bin/sed -e 's%^"%%'    -e 's%"$%%'    | \
+        /bin/sed -e "s%^'%%"    -e "s%'$%%"    |
+    while read jumppoint ; do
+        jumppoint_destination=`/bin/echo ${jumppoint} | /usr/bin/cut -d '~' -f 1`
+        jumppoint_keylist=`/bin/echo ${jumppoint} | /usr/bin/cut -d '~' -f 2`
+        mm_mythdb_jumppoint_update "${jumppoint_destination}" "${jumppoint_keylist}"
+    done
+
+    # Configure Myth database keybindings to match MiniMyth frontend.
+    /bin/cat /etc/minimyth.d/minimyth.conf | /bin/grep '^MM_MYTHDB_KEYBINDING=' | /bin/sed -e 's%^MM_MYTHDB_KEYBINDING=%%' | \
+        /bin/sed -e 's%^[ ]*%%' -e 's%[ ]*$%%' | \
+        /bin/sed -e 's%^"%%'    -e 's%"$%%'    | \
+        /bin/sed -e "s%^'%%"    -e "s%'$%%"    |
+    while read keybinding ; do
+        keybinding_context=`/bin/echo ${keybinding} | /usr/bin/cut -d '~' -f 1`
+        keybinding_action=`/bin/echo ${keybinding} | /usr/bin/cut -d '~' -f 2`
+        keybinding_keylist=`/bin/echo ${keybinding} | /usr/bin/cut -d '~' -f 3`
+        mm_mythdb_keybinding_update "${keybinding_context}" "${keybinding_action}" "${keybinding_keylist}"
+    done
+
+    # Configure Myth database settings to match MiniMyth frontend.
+    /bin/cat /etc/minimyth.d/minimyth.conf | /bin/grep '^MM_MYTHDB_SETTING=' | /bin/sed -e 's%^MM_MYTHDB_SETTING=%%' | \
+        /bin/sed -e 's%^[ ]*%%' -e 's%[ ]*$%%' | \
+        /bin/sed -e 's%^"%%'    -e 's%"$%%'    | \
+        /bin/sed -e "s%^'%%"    -e "s%'$%%"    |
+    while read setting ; do
+        setting_value=`/bin/echo ${setting} | /usr/bin/cut -d '~' -f 1`
+        setting_data=`/bin/echo ${setting} | /usr/bin/cut -d '~' -f 2`
+        mm_mythdb_setting_update "${setting_value}" "${setting_data}"
+    done
+
+    # Delete disabled plugins.
+    if /usr/bin/test "${MM_MYTHTV_OPTICAL_DISK_ENABLED}" = "no" ; then
+        /bin/sed -i 's%<depends>mythmusic mythdvd</depends>%<depends>disabled</depends>%' /usr/share/mythtv/mainmenu.xml
+    fi
+    if /usr/bin/test "${MM_MYTHDVD_ENABLED}"     = "no" ; then
+        /bin/rm -rf /usr/lib/mythtv/plugins/libmythdvd.so
+        /bin/rm -rf /usr/share/mythtv/dvd*
+        /bin/rm -rf /usr/share/mythtv/mythdvd*
+    fi
+    if /usr/bin/test "${MM_MYTHGALLERY_ENABLED}" = "no" ; then
+        /bin/rm -rf /usr/lib/mythtv/plugins/libmythgallery.so
+        /bin/rm -rf /usr/share/mythtv/gallery*
+        /bin/rm -rf /usr/share/mythtv/mythgallery*
+    fi
+    if /usr/bin/test "${MM_MYTHMUSIC_ENABLED}"   = "no" ; then
+        /bin/rm -rf /usr/lib/mythtv/plugins/libmythmusic.so
+        /bin/rm -rf /usr/share/mythtv/music*
+        /bin/rm -rf /usr/share/mythtv/mythmusic*
+    fi
+    if /usr/bin/test "${MM_MYTHNEWS_ENABLED}"    = "no" ; then
+        /bin/rm -rf /usr/lib/mythtv/plugins/libmythnews.so
+        /bin/rm -rf /usr/share/mythtv/news*
+        /bin/rm -rf /usr/share/mythtv/mythnews*
+    fi
+    if /usr/bin/test "${MM_MYTHSTREAM_ENABLED}"  = "no" ; then
+        /bin/rm -rf /usr/lib/mythtv/plugins/libmythstream.so
+        /bin/rm -rf /usr/share/mythtv/stream*
+        /bin/rm -rf /usr/share/mythtv/mythstream*
+    fi
+    if /usr/bin/test "${MM_MYTHVIDEO_ENABLED}"   = "no" ; then
+        /bin/rm -rf /usr/lib/mythtv/plugins/libmythvideo.so
+        /bin/rm -rf /usr/share/mythtv/video*
+        /bin/rm -rf /usr/share/mythtv/mythvideo*
+    fi
+    if /usr/bin/test "${MM_MYTHWEATHER_ENABLED}" = "no" ; then
+        /bin/rm -rf /usr/lib/mythtv/plugins/libmythweather.so
+        /bin/rm -rf /usr/share/mythtv/weather*
+        /bin/rm -rf /usr/share/mythtv/mythweather*
+    fi
+
+    return 0
+}
+
+stop() {
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

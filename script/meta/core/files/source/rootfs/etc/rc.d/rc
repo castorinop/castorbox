@@ -1,0 +1,63 @@
+#!/bin/sh
+################################################################################
+# rc
+################################################################################
+. /etc/rc.d/functions
+
+init_script_list="\
+    ld \
+    network \
+    telnet \
+    modules \
+    conf \
+    name \
+    log \
+    minimyth \
+    mysql \
+    codecs \
+    extras \
+    sensors \
+    acpi \
+    cpufreq \
+    time \
+    web \
+    mount \
+    audio \
+    video \
+    lirc \
+    lcdproc \
+    mythtv \
+    x"
+
+halt_script_list="\
+    audio \
+    time \
+    telnet"
+
+rc_script_list_run() {
+    local action=$1
+    local script_list=$2
+
+    local count
+    local script
+
+    count=`/bin/echo ${script_list} | /usr/bin/wc -w`
+    mm_splash_init ${count}
+    script=
+    for script in ${script_list} ; do
+        mm_command_run "/bin/sh /etc/rc.d/init.d/${script} ${action}"
+        if /usr/bin/test $? -ne 0 ; then
+            exit $?
+        fi
+        mm_splash_progress_update
+    done
+    mm_splash_halt
+}
+
+case $1 in
+    1|2|3|4|5) rc_script_list_run "start" "${init_script_list}"        ;;
+    0)         rc_script_list_run "stop"  "${halt_script_list} halt"   ;;
+    6)         rc_script_list_run "stop"  "${halt_script_list} reboot" ;;
+esac
+
+exit 0

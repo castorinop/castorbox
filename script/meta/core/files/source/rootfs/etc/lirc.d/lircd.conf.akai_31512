@@ -1,0 +1,42 @@
+
+# Please make this file available to others
+# by sending it to <lirc@bartelmus.de>
+#
+# this config file was automatically generated
+# using lirc-0.9.0(default) on Mon Sep 24 12:47:36 2012
+#
+# contributed by 
+#
+# brand:                       akai
+# model no. of remote control:  31512
+# devices being controlled by this remote: 
+#
+
+begin remote
+
+  name  test.conf
+  bits            5
+  flags RC5|CONST_LENGTH
+  eps            30
+  aeps          100
+
+  one           849   914
+  zero          849   914
+  plead         824
+  pre_data_bits   8
+  pre_data       0xA2
+  gap          112842
+  min_repeat      1
+#  suppress_repeat 1
+#  uncomment to suppress unwanted repeats
+  toggle_bit_mask 0x800
+
+      begin codes
+          vol+             0x10
+          vol-             0x11
+          Mute             0x0D
+      end codes
+
+end remote
+
+

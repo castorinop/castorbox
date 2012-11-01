@@ -1,0 +1,25 @@
+#-------------------------------------------------------------------------------
+# Detect video devices.
+#
+# cbx_detect_state_video has the following format:
+#     <driver>
+# where
+#     <driver>: The X video driver. Actually, this is the 'Identifier' (sans the
+#               'Device_' prefix) of the 'Device' section in the
+#               '/etc/xorg.conf' file.
+#-------------------------------------------------------------------------------
+ACTION!="add|change|remove", GOTO="end"
+SUBSYSTEM=="pci", ATTR{class}=="0x0300??", GOTO="begin"
+GOTO="end"
+LABEL="begin"
+
+ENV{cbx_detect_state_video}=""
+
+  ENV{MODALIAS}!="pci:v000080EEd0000????sv0000????sd0000????bc03sc00i??", GOTO="end-80ee"
+  ENV{MODALIAS}=="pci:v000080EEd0000BEEFsv0000????sd0000????bc03sc00i??", ENV{cbx_detect_state_video}="vboxvideo"
+  LABEL="end-80ee"
+
+# The state has been set, so save it.
+ENV{cbx_detect_state_video}=="?*", RUN+="/etc/udev/scripts.d/mm_detect video %k $env{cbx_detect_state_video}"
+
+LABEL="end"

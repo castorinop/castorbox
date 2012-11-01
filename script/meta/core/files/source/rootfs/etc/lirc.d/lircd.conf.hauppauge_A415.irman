@@ -1,0 +1,69 @@
+################################################################################
+# lircd file for the Hauppauge A415 remote using an irman receiver
+################################################################################
+begin remote
+
+  name  hauppauge_A415
+  bits           16
+  eps            30
+  aeps          100
+
+  one             0     0
+  zero            0     0
+  pre_data_bits   16
+  pre_data       0xFFFF
+  post_data_bits  32
+  post_data      0x0
+  gap          213921
+  min_repeat      33
+  toggle_bit      0
+
+      begin codes
+          GO                       0x1806
+          POWER                    0x0606
+          GUIDE                    0x9804
+          TV                       0x8404
+          VIDEOS                   0x9004
+          MUSIC                    0x9204
+          PICTURES                 0x2701
+          RADIO                    0x2404
+          UP                       0x3C01
+          DOWN                     0x3E01
+          LEFT                     0x3901
+          RIGHT                    0xE004
+          OK                       0xCE01
+          BACK                     0x0012
+          MENU                     0x2604
+          VOLUME+                  0xC004
+          VOLUME-                  0xC204
+          CHANNEL_PREVIOUS         0x3301
+          MUTE                     0x8010
+          CHANNEL+                 0x0007
+          CHANNEL-                 0x0207
+          RECORD                   0x6006
+          STOP                     0x9901
+          REWIND                   0x9301
+          PLAY                     0x9E01
+          FORWARD                  0x9C01
+          REPLAY                   0xCC01
+          PAUSE                    0x4006
+          SKIP                     0x8104
+          1                        0x0210
+          2                        0x0304
+          3                        0x0810
+          4                        0x0C04
+          5                        0x0E04
+          6                        0x0904
+          7                        0x2010
+          8                        0x3004
+          9                        0x3204
+          0                        0x0010
+          STAR                     0x0F01
+          HASH                     0x2104
+          RED                      0x3804
+          GREEN                    0xE101
+          YELLOW                   0x1006
+          BLUE                     0xF201
+      end codes
+
+end remote

@@ -1,0 +1,82 @@
+#!/bin/sh
+################################################################################
+# mythtv
+#
+# This script configures Myth database communication.
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local WOLSqlConnectRetry
+    local WOLSqlReconnectWaitTime
+    local WOLSqlCommand
+    local WOLSqlConnectAttempt
+
+    mm_message_output info 'configuring Myth database communication ...'
+
+    # Determine broadcast address.
+    MM_MYTH_WOL_BROADCAST=`/sbin/ifconfig eth0 | /bin/grep ' Bcast:' | /bin/sed 's%.* Bcast:\([^ ]*\) .*%\1%'`
+
+    # Configure mysql.txt file.
+    /bin/sed -i "s%@MM_MYTH_SERVER@%${MM_MYTH_SERVER}%"                                   /root/.mythtv/mysql.txt
+    /bin/sed -i "s%@MM_MYTH_DBUSERNAME@%${MM_MYTH_DBUSERNAME}%"                           /root/.mythtv/mysql.txt
+    /bin/sed -i "s%@MM_MYTH_DBPASSWORD@%${MM_MYTH_DBPASSWORD}%"                           /root/.mythtv/mysql.txt
+    /bin/sed -i "s%@MM_MYTH_DBNAME@%${MM_MYTH_DBNAME}%"                                   /root/.mythtv/mysql.txt
+    if /usr/bin/test "${MM_MYTH_WOL_ENABLED}" = "yes" ; then
+        /bin/sed -i "s%@MM_MYTH_WOL_FALSE@%\#%"                                           /root/.mythtv/mysql.txt
+        /bin/sed -i "s%@MM_MYTH_WOL_TRUE@%%"                                              /root/.mythtv/mysql.txt
+    else
+        /bin/sed -i "s%@MM_MYTH_WOL_FALSE@%%"                                             /root/.mythtv/mysql.txt
+        /bin/sed -i "s%@MM_MYTH_WOL_TRUE@%\#%"                                            /root/.mythtv/mysql.txt
+    fi
+    /bin/sed -i "s%@MM_MYTH_WOLSQLRECONNECTWAITTIME@%${MM_MYTH_WOLSQLRECONNECTWAITTIME}%" /root/.mythtv/mysql.txt
+    /bin/sed -i "s%@MM_MYTH_WOLSQLCONNECTRETRY@%${MM_MYTH_WOLSQLCONNECTRETRY}%"           /root/.mythtv/mysql.txt
+    /bin/sed -i "s%@MM_MYTH_WOLSQLCOMMAND@%${MM_MYTH_WOLSQLCOMMAND}%"                     /root/.mythtv/mysql.txt
+    /bin/sed -i "s%@MM_MYTH_WOL_BROADCAST@%${MM_MYTH_WOL_BROADCAST}%"                     /root/.mythtv/mysql.txt
+    /bin/sed -i "s%@MM_MYTH_WOL_MAC@%${MM_MYTH_WOL_MAC}%"                                 /root/.mythtv/mysql.txt
+
+    # If using wake-on-lan, then make sure that the Myth database is awake.
+    if /usr/bin/test "${MM_MYTH_WOL_ENABLED}" = "yes" ; then
+        WOLSqlConnectRetry=` \
+		/bin/cat /root/.mythtv/mysql.txt | \
+		/bin/grep '^WOLSqlConnectRetry=' | \
+		/bin/sed 's%WOLSqlConnectRetry=%%'`
+        WOLSqlReconnectWaitTime=` \
+		/bin/cat /root/.mythtv/mysql.txt | \
+		/bin/grep '^WOLSqlReconnectWaitTime=' | \
+		/bin/sed 's%WOLSqlReconnectWaitTime=%%'`
+        WOLSqlCommand=` \
+		/bin/cat /root/.mythtv/mysql.txt | \
+		/bin/grep '^WOLSqlCommand=' | \
+		/bin/sed 's%WOLSqlCommand=%%'`
+        WOLSqlConnectAttempt=1
+        while /usr/bin/test ${WOLSqlConnectAttempt} -le ${WOLSqlConnectRetry} && \
+              /usr/bin/test `mm_mythdb_command_run > /dev/null 2>&1 ; /bin/echo $?` -ne 0 ; do
+            mm_message_output info "waking Myth database (${WOLSqlConnectAttempt}) ..."
+            ${WOLSqlCommand}
+            /bin/sleep ${WOLSqlReconnectWaitTime}
+            WOLSqlConnectAttempt=$((WOLSqlConnectAttempt+1))
+        done
+    fi
+
+    # Test Myth database connection.
+    mm_mythdb_command_run
+    if /usr/bin/test $? -ne 0 ; then
+        mm_message_output err 'error: cannot connect to the Myth database.'
+        exit 1
+    fi
+
+    return 0
+}
+
+stop() {
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

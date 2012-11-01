@@ -1,0 +1,47 @@
+#!/usr/bin/php
+<?
+
+require_once("phpScrobbler.php");
+
+for($i = 0; $i < count ($argv); $i++) {
+	switch($argv[$i]) {
+		case "--artist":
+			$artist = $argv[++$i];
+			break;
+		case "--album" :
+			$album = $argv[++$i];
+			break;
+		case "--title" :
+			$title = $argv[++$i];			
+			break;
+		case "--length" :
+			$length = $argv[++$i];
+			break;
+		default:
+			if ($i != 0) echo "no catch ".$argv[$i]."\n";
+	}
+}	
+
+if (!$artist || !$album || !$title || !$length)  {
+	echo "error $artist - $album - $title - $length\n";
+	exit(1);
+}
+
+$objFile="/tmp/scrobbler";
+if (is_file($objFile))
+	$scrobbler = unserialize(file_get_contents($objFile));
+else
+	$scrobbler = new md_Scrobbler('castorblex', 'upsda45');
+	
+# Sending last tracks
+$scrobbler->submit();
+
+$scrobbler->SendNowPlaying($artist, $title, $album, $length);
+$scrobbler->Add($artist, $title, $album, $length);
+
+file_put_contents($objFile, serialize($scrobbler));
+
+
+echo "scrobbling: $artist - $album - $title - $length\n";
+
+?>

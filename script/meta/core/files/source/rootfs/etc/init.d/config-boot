@@ -1,0 +1,14 @@
+#
+# config test boot as default if all services are loaded without problems
+# NOTE: this is the last service to execulte.
+#
+
+BOOT_FILE=/initrd/system/boot.ok
+TEST_FILE=/initrd/system/boot.testing
+
+if [ -f "$BOOT_FILE" ] & [ "$CBX_CFG" == "test" ]; then
+	BOOT=`cat $BOOT_FILE`
+	mv -f /initrd/system/config-test /initrd/system/config-$BOOT
+	mv -f /initrd/system/boot/kernel-test /initrd/system/boot/kernel-$BOOT 
+	mv -f /initrd/system/boot/initrd.sfs-test /initrd/system/boot/initrd.sfs-$BOOT
+fi

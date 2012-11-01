@@ -1,0 +1,57 @@
+#!/bin/sh
+
+UDITAB=/var/lib/halevt/uditab
+
+if [ ! -d "$2" ]; then
+
+	if [ ! -s "$UDITAB" ]; then
+		echo "mounter: don't exist '$UDITAB' "
+	 	exit 
+	fi
+
+	FULL_PATH="`cat $UDITAB |grep $2\$ |cut -d ':' -f 3`"
+
+	if [ -z "$FULL_PATH" ]; then
+		echo "mounter: bad mount path"
+		exit
+	fi
+else
+	FULL_PATH=$2
+fi
+
+DEV_NAME=`basename "$FULL_PATH"`
+
+for i in Fotos Musica Videos; do
+	 
+	SINGLE="/mnt/single/$i/$DEV_NAME"
+	MERGED="/mnt/merged/$i/Todos"
+
+	case "$1" in
+	mount)
+	if [ -d "$FULL_PATH/$i" ]; then
+		
+		mkdir -p "$SINGLE"
+		mkdir -p "$MERGED"
+		if [ -z "`mount |grep "$SINGLE type" |grep bind`" ]; then
+			mount --bind "$FULL_PATH/$i" "$SINGLE"
+		fi
+		if [ -n "`mount |grep unionfs |grep "$MERGED"`" ]; then
+			mount -t unionfs -o remount,add=:"$FULL_PATH/$i"=ro none "$MERGED/"
+		else
+			mount -t unionfs -o dirs="$FULL_PATH/$i" unionfs "$MERGED/"
+		fi
+		mms-service.notify.sh "" "" "$DEV_NAME" "conectado" || true
+		
+	fi
+	;;
+	umount)
+	if [ -d "$SINGLE" ]; then
+		umount "$SINGLE"
+		rmdir "$SINGLE"
+	fi
+	mount -t unionfs -o remount,del="$FULL_PATH/$i" unionfs "$MERGED/"
+	mms-service.notify.sh "" "" "$DEV_NAME" "desconectado" || true
+	;;
+	esac
+done
+

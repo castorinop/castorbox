@@ -1,0 +1,60 @@
+#
+# this config file was automatically generated
+# using lirc-0.8.0(serial) on Tue Apr  4 19:54:02 2006
+#
+# contributed by Greg Holbrow
+#
+# brand:                       Audiovox SIR-CMB3
+# model no. of remote control: 
+# devices being controlled by this remote: Sirius PNP3 Receiver
+#
+
+begin remote
+
+  name Audiovox_SIR_CMB3 
+  bits           16
+  flags SPACE_ENC|CONST_LENGTH
+  eps            30
+  aeps          100
+
+  header       9048  4487
+  one           578  1674
+  zero          578   548
+  ptrail        580
+  repeat       9048  2235
+  pre_data_bits   16
+  pre_data       0x8F7
+  gap          108151
+  toggle_bit      0
+
+
+      begin codes
+          power                    0x20DF
+          mute                     0x00FF
+          band                     0xE01F
+          back                     0xA05F
+          memo                     0x609F
+          ch+                      0x48B7
+          ch-                      0xC837
+          cat+                     0x6897
+          cat-                     0x28D7
+          select                   0xA857
+          1                        0x906F
+          2                        0x18E7
+          3                        0xD827
+          4                        0x58A7
+          5                        0x10EF
+          6                        0x30CF
+          7                        0x38C7
+          8                        0x50AF
+          9                        0xC03F
+          0                        0x8877
+          vol-                     0xB847
+          vol+                     0x40BF
+          disp                     0xB04F
+          menu                     0x08F7
+      end codes
+
+end remote
+
+

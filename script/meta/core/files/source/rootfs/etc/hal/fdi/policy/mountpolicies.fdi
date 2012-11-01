@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- -*- SGML -*- -->
+<deviceinfo version="0.2">
+ <device>
+    <!-- Whitelist bus types of storage devices we care about  -->
+    <match key="info.category" string="storage">
+      <match key="storage.bus" string="usb">
+        <merge key="storage.policy.should_mount" type="bool">true</merge>      
+      </match>
+      <match key="storage.bus" string="ide">
+        <merge key="storage.policy.should_mount" type="bool">true</merge>
+      </match>
+      <match key="storage.bus" string="ieee1394">
+        <merge key="storage.policy.should_mount" type="bool">true</merge>
+      </match>
+      <match key="storage.bus" string="sata">
+        <merge key="storage.policy.should_mount" type="bool">true</merge>
+      </match>
+      <match key="storage.bus" string="platform">
+        <merge key="storage.policy.should_mount" type="bool">true</merge>
+      </match>
+    </match>
+ </device> 
+</deviceinfo>

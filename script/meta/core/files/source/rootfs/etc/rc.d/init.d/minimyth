@@ -1,0 +1,29 @@
+#!/bin/sh
+################################################################################
+# minimyth
+#
+# This script retrieves and runs the user's minimyth.script script.
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+    mm_message_output info 'running minimyth.script ...'
+
+    # Get minimyth.script file.
+    mm_conf_get /minimyth.script /etc/minimyth.d/minimyth.script
+
+    /usr/bin/test -f /etc/minimyth.d/minimyth.script && /bin/sh /etc/minimyth.d/minimyth.script
+
+    return 0
+}
+
+stop() {
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

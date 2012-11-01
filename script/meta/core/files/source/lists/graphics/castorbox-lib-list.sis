@@ -1,0 +1,6 @@
+# Kernel
+modules/*/kernel/drivers/gpu/drm/sis/sis.ko
+
+# X11
+xorg/modules/dri/sis_dri.so
+xorg/modules/drivers/sis_drv.so

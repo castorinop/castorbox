@@ -1,0 +1,9 @@
+################################################################################
+# Start mixerosd program.
+#
+# The mixerosd program (not the window manager) is the application that runs in the
+# foreground because it is the only application that we can be sure will be
+# running.
+################################################################################
+
+/usr/bin/mixerosd &

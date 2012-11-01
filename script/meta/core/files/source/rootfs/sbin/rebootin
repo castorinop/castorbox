@@ -1,0 +1,19 @@
+#!/bin/sh
+if [ -z "$1" ]; then
+	echo "use: $0 <boot>"
+	exit 1
+fi
+
+LABELS=`cat /initrd/system/boot/extlinux.conf  |grep label |cut -d " "  -f 2`
+for i in $LABELS; do 
+	if [ "$1" == "$i" ]; then 
+		LABEL=$i;
+	fi;
+done
+if [ -z "$LABEL" ]; then
+	echo "label $1 don't exist"
+	exit 1
+fi
+
+extlinux -o $LABEL /initrd/system/boot
+reboot

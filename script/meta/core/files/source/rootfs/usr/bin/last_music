@@ -1,0 +1,2 @@
+find /mnt/store/music -mtime -3 ! -name cover.jpg |cut -d / -f 6,7 |grep /
+

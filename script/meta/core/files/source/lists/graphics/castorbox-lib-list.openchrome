@@ -1,0 +1,8 @@
+# Kernel
+modules/*/kernel/drivers/gpu/drm/via/via.ko
+
+# X11
+libchromeXvMC.so.1
+libchromeXvMCPro.so.1
+xorg/modules/dri/unichrome_dri.so
+xorg/modules/drivers/openchrome_drv.so

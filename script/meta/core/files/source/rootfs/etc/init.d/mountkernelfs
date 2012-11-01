@@ -1,0 +1,5 @@
+#!/bin/sh
+mount -n -t proc /proc /proc
+[ -d /proc/bus/usb ] && mount -n -t usbfs /proc/bus/usb /proc/bus/usb
+mount -n -t sysfs /sys /sys
+

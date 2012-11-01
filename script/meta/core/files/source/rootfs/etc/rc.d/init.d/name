@@ -1,0 +1,69 @@
+#!/bin/sh
+################################################################################
+# name
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local DNS_SERVER
+    local HOSTS_CONF
+    local RESOLV_CONF
+
+    mm_message_output info 'configuring name services ...'
+
+    # Checking for hostname.
+    if /usr/bin/test -z "${MM_HOSTNAME}" ; then
+        mm_message_output err 'error: "MM_HOSTNAME not present.'
+        exit 1
+    fi
+
+    # Checking for DNS servers.
+    if /usr/bin/test -z "${MM_DNS_SERVERS}" ; then
+        mm_message_output err 'error: no DNS server(s) provided.'
+        exit 1
+    fi
+
+    HOSTS_CONF='/etc/hosts'
+    RESOLV_CONF='/etc/resolv.conf'
+
+    # Set hostname.
+    /bin/hostname ${MM_HOSTNAME}
+
+    # Create local hosts file.
+    /bin/rm -f ${HOSTS_CONF}~
+    /bin/echo "127.0.0.1 localhost.localdomain localhost" >> ${HOSTS_CONF}~
+    if /usr/bin/test -n "${MM_HOSTNAME}" ; then
+        /bin/echo -n "${MM_DHCP_ADDRESS}"                 >> ${HOSTS_CONF}~
+        if /usr/bin/test -n "${MM_DOMAIN}" ; then
+            /bin/echo -n " ${MM_HOSTNAME}.${MM_DOMAIN}"   >> ${HOSTS_CONF}~
+        fi
+        /bin/echo -n " ${MM_HOSTNAME}"                    >> ${HOSTS_CONF}~
+    fi
+    /bin/mv -f ${HOSTS_CONF}~ ${HOSTS_CONF}
+
+    # Create DNS client.
+    /bin/rm -f ${RESOLV_CONF}~
+    if /usr/bin/test -n "${MM_DOMAIN}" ; then
+        /bin/echo search ${MM_DOMAIN}  >> ${RESOLV_CONF}~
+    fi
+    for DNS_SERVER in ${MM_DNS_SERVERS} ; do
+        if /usr/bin/test -n "${DNS_SERVER}" ; then
+            /bin/echo nameserver ${DNS_SERVER} >> ${RESOLV_CONF}~
+        fi
+    done
+    /bin/mv -f ${RESOLV_CONF}~ ${RESOLV_CONF}
+
+    return 0
+}
+
+stop() {
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

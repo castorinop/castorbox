@@ -1,0 +1,4 @@
+# Maps USB device to corresponding LCDproc driver.
+#
+# vendor, product, driver
+  0403  , fc0d   , CFontzPacket

@@ -1,0 +1,75 @@
+# Input devices
+KERNEL=="event[0-9]*",                 NAME="input/%k"
+KERNEL=="js[0-9]*",                    NAME="input/%k"
+KERNEL=="mice",                        NAME="input/%k"
+KERNEL=="mouse[0-9]*",                 NAME="input/%k"
+KERNEL=="ts[0-9]*",                    NAME="input/%k"
+KERNEL=="uinput,                       NAME="input/%k"
+
+# DRI devices
+KERNEL=="card*",                       NAME="dri/card%n"
+
+# alsa devices
+KERNEL=="controlC[0-9]*",              NAME="snd/%k"
+KERNEL=="hw[CD0-9]*",                  NAME="snd/%k"
+KERNEL=="pcm[CD0-9cp]*",               NAME="snd/%k"
+KERNEL=="midiC[D0-9]*",                NAME="snd/%k"
+KERNEL=="timer",                       NAME="snd/%k"
+KERNEL=="seq",                         NAME="snd/%k"
+
+# libusb device nodes
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", NAME="bus/usb/$env{BUSNUM}/$env{DEVNUM}", MODE="0664"
+
+# USB devices
+KERNEL=="hiddev*",                     NAME="usb/%k"
+KERNEL=="auer*",                       NAME="usb/%k"
+KERNEL=="legousbtower*",               NAME="usb/%k"
+KERNEL=="dabusb*",                     NAME="usb/%k"
+SUBSYSTEMS=="usb", KERNEL=="lp[0-9]*", NAME="usb/%k"
+
+# CAPI devices
+KERNEL=="capi",                        NAME="capi20", SYMLINK+="isdn/capi20"
+KERNEL=="capi*",                       NAME="capi/%n"
+
+# Network devices
+KERNEL=="tun",                         NAME="net/%k"
+
+# raw devices
+KERNEL=="raw[0-9]*",                   NAME="raw/%k"
+
+# CPU microcode device
+KERNEL=="microcode",                   NAME="cpu/%k"
+
+# dvb devices
+SUBSYSTEM=="dvb", PROGRAM="/bin/sh -c 'X=%k; X=$${X#dvb}; A=$${X%%%%.*}; D=$${X#*.}; echo dvb/adapter$$A/$$D'", NAME="%c"
+
+# Non-default device permissions.
+KERNEL=="rtc",          OWNER="root", GROUP="root" , MODE="0644"
+
+KERNEL=="js*",          OWNER="root", GROUP="root" , MODE="0644"
+
+SUBSYSTEM=="sound",     OWNER="root", GROUP="audio", MODE="0660"
+
+SUBSYSTEM=="drm",       OWNER="root", GROUP="video", MODE="0660"
+SUBSYSTEM=="graphics",  OWNER="root", GROUP="video", MODE="0660"
+SUBSYSTEM=="dvb",       OWNER="root", GROUP="video", MODE="0660"
+SUBSYSTEM=="firewire", ATTR{units}=="*0x00a02d:0x00010*",  OWNER="root", GROUP="video", MODE="0660"
+SUBSYSTEM=="firewire", ATTR{units}=="*0x00a02d:0x010001*", OWNER="root", GROUP="video", MODE="0660"
+KERNEL=="nvidia[0-9]*", OWNER="root", GROUP="video", MODE="0660"
+KERNEL=="nvidiactl",    OWNER="root", GROUP="video", MODE="0660"
+KERNEL=="vbi[0-9]*",    OWNER="root", GROUP="video", MODE="0660"
+KERNEL=="video[0-9]*",  OWNER="root", GROUP="video", MODE="0660"
+
+KERNEL=="full",         OWNER="root", GROUP="root",  MODE="0666"
+KERNEL=="null",         OWNER="root", GROUP="root",  MODE="0666"
+KERNEL=="random",       OWNER="root", GROUP="root",  MODE="0666"
+KERNEL=="urandom",      OWNER="root", GROUP="root",  MODE="0666"
+KERNEL=="zero",         OWNER="root", GROUP="root",  MODE="0666"
+
+# console devices
+KERNEL=="tty",          OWNER="root", GROUP="root",  MODE="0666"
+KERNEL=="console",      OWNER="root", GROUP="root",  MODE="0600"
+KERNEL=="tty[0-9]*",    OWNER="root", GROUP="root",  MODE="0660"
+
+# pty devices
+KERNEL=="ptmx",         OWNER="root", GROUP="root",  MODE="0666"

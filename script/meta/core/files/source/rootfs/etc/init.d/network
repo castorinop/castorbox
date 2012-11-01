@@ -1,0 +1,29 @@
+modprobe af_packet
+
+NETS=/sys/class/net
+NM=/usr/sbin/NetworkManager
+
+launch_ifplugd () {
+	echo "launch ifplugd for $1"
+	/usr/sbin/ifplugd -I -b -i $1 
+}
+
+launch_dhcp () {
+	echo "launch udhcpc for $1"
+	/sbin/udhcpc -i $1 -b -s /etc/udhcpc.script > /var/log/network.log 2>&1
+}
+
+if [ -n "$CBX_NM" ]; then
+	echo "launch NetworkManager"
+	$NM
+fi
+
+if [ -d "$NETS" ]; then 
+	for i in `ls $NETS`; do
+		[ "$i" == "lo" ] && continue
+		[ -z "$CBX_NM" ] && launch_ifplugd $i
+		/usr/sbin/ethtool -s $i wol g
+	done
+fi
+ 
+

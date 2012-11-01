@@ -1,0 +1,38 @@
+#
+# Take CPU frequency
+#
+CPU_FREQ="`cat /proc/cpuinfo  |grep "cpu M" |head -1 |sed "s@\(.*\): \(.*\)@\2@g" |cut -d "." -f 1`"
+
+#
+# if CPU is slow, run better with powernowd
+if [ "$CPU_FREQ" -gt 1000 ]; then
+	CPU_FREQUENCY_GOVERNOR=ondemand
+else
+	CPU_FREQUENCY_GOVERNOR=userspace
+fi
+
+if /usr/bin/test ! "${CPU_FREQUENCY_GOVERNOR}" = "performance" ; then
+        # Load CPU frequency scaling processor kernel modules.
+        # Kernel modules that do not support the CPU should fail to load.
+        /bin/ls /lib/modules/*/kernel/arch/*/kernel/cpu/cpufreq/ \
+        | while read kernel_module_path ; do
+            kernel_module=`/usr/bin/basename "${kernel_module_path}" '.ko'`
+            /sbin/modprobe ${kernel_module} || /bin/true
+        done
+        # Load CPU frequency governor kernel module.
+        kernel_module="cpufreq-${CPU_FREQUENCY_GOVERNOR}"
+        if ! /sbin/modprobe ${kernel_module} > /dev/null 2>&1 ; then
+            echo "error: failed to load kernel module: ${kernel_module}"
+            exit 1
+        fi
+        # Wait for everything to settle.                                        
+        /sbin/udevadm settle --timeout=60
+
+        for dir in /sys/devices/system/cpu/cpu*/cpufreq ; do
+            /bin/echo "${CPU_FREQUENCY_GOVERNOR}" > ${dir}/scaling_governor
+        done
+
+        if /usr/bin/test "${CPU_FREQUENCY_GOVERNOR}" = "userspace" ; then
+            /usr/sbin/powernowd > /dev/null 2>&1
+        fi
+    fi

@@ -1,0 +1,996 @@
+#!/bin/sh
+################################################################################
+# functions
+################################################################################
+/usr/bin/test -n "${MM_DEBUG}" && set -x
+
+. /etc/conf
+
+#===============================================================================
+# general functions.
+#===============================================================================
+mm_command_run() {
+    local COMMAND=$1
+
+    local LOG_DIR
+    local LOG_FILE
+    local RETURN
+
+    if /usr/bin/test "${MM_DEBUG}" = "yes" ; then
+        LOG_DIR="/var/log"
+        LOG_FILE="/var/log/minimyth.log"
+    else
+        LOG_DIR="/dev"
+        LOG_FILE="/dev/null"
+    fi
+
+    RETURN=0
+    if /usr/bin/test -w "${LOG_FILE}" || /usr/bin/test -w "${LOG_DIR}" ; then
+        /bin/echo "--- execution start: ${COMMAND}"  >> "${LOG_FILE}" 2>&1
+        ${COMMAND}                              >> "${LOG_FILE}" 2>&1
+        RETURN=$?
+        /bin/echo "--- execution end  : ${COMMAND}"  >> "${LOG_FILE}" 2>&1
+    else
+        /bin/echo "--- execution start: ${COMMAND}"                   2>&1
+        ${COMMAND}                              2>&1
+        RETURN=$?
+        /bin/echo "--- execution end  : ${COMMAND}"                   2>&1
+    fi
+
+    return ${RETURN}
+}
+
+mm_url_file_get() {
+    local LOCAL_FILE=$1
+    local REMOTE_FILE=$2
+    local REMOTE_SERVER=$3
+
+    local LOCAL_DIR
+
+    LOCAL_DIR=`/bin/echo "${LOCAL_FILE}" | /bin/sed -e 's%[^/]*$%%' -e 's%/$%%'`
+    /usr/bin/test -n "${LOCAL_DIR}" && /bin/mkdir -p "${LOCAL_DIR}"
+    /usr/bin/test -n "${LOCAL_DIR}" && /usr/bin/test ! -d "${LOCAL_DIR}" && return
+
+    /bin/cp "${REMOTE_FILE}" "${LOCAL_FILE}" || return
+    /usr/bin/logger -t minimyth -p "local0.info" "file:/${REMOTE_FILE} retrieved."
+}
+
+mm_url_http_get() {
+    local LOCAL_FILE=$1
+    local REMOTE_FILE=$2
+    local REMOTE_SERVER=$3
+
+    local LOCAL_DIR
+
+    LOCAL_DIR=`/bin/echo "${LOCAL_FILE}" | /bin/sed -e 's%[^/]*$%%' -e 's%/$%%'`
+    /usr/bin/test -n "${LOCAL_DIR}" && /bin/mkdir -p "${LOCAL_DIR}"
+    /usr/bin/test -n "${LOCAL_DIR}" && /usr/bin/test ! -d "${LOCAL_DIR}" && return
+
+    /usr/bin/wget "http://${REMOTE_SERVER}/${REMOTE}" -O "${LOCAL_FILE}" || return
+
+    /usr/bin/logger -t minimyth -p "local0.info" "http://${REMOTE_SERVER}/${REMOTE_FILE} retrieved."
+}
+
+mm_url_tftp_get() {
+    local LOCAL_FILE=$1
+    local REMOTE_FILE=$2
+    local REMOTE_SERVER=$3
+
+    local LOCAL_DIR
+
+    LOCAL_DIR=`/bin/echo "${LOCAL_FILE}" | /bin/sed -e 's%[^/]*$%%' -e 's%/$%%'`
+    /usr/bin/test -n "${LOCAL_DIR}" && /bin/mkdir -p "${LOCAL_DIR}"
+    /usr/bin/test -n "${LOCAL_DIR}" && /usr/bin/test ! -d "${LOCAL_DIR}" && return
+
+    /usr/bin/tftp -g -r "${REMOTE_FILE}" -l "${FILE}" "${REMOTE_SERVER}" || return
+
+    /usr/bin/logger -t minimyth -p "local0.info" "tftp://${REMOTE_SERVER}/${REMOTE_FILE} retrieved."
+}
+
+mm_url_conf_get() {
+    local LOCAL_FILE=$1
+    local REMOTE_FILE=$2
+    local REMOTE_SERVER=$3
+
+    local FILE_GOT
+    local LOCAL_DIR
+    local TMP_FILE
+
+    LOCAL_DIR=`/bin/echo "${LOCAL_FILE}" | /bin/sed -e 's%[^/]*$%%' -e 's%/$%%'`
+    /usr/bin/test -n "${LOCAL_DIR}" && /bin/mkdir -p "${LOCAL_DIR}"
+    /usr/bin/test -n "${LOCAL_DIR}" && /usr/bin/test ! -d "${LOCAL_DIR}" && return
+
+    TMP_FILE="${LOCAL_FILE}~"
+
+    /bin/rm -f "${TMP_FILE}"
+    FILE_GOT=
+    if /usr/bin/test -d "/minimyth" ; then
+        /usr/bin/test -z "${FILE_GOT}" && /usr/bin/test -n "`/bin/hostname`" && /usr/bin/test -e "/minimyth/conf/`/bin/hostname`/${REMOTE_FILE}" &&
+	    /bin/cp          "/minimyth/conf/`/bin/hostname`/${REMOTE_FILE}"                "${TMP_FILE}"                     && 
+	    FILE_GOT="'file:/minimyth/conf/`hostname`/${REMOTE_FILE}' retrieved."
+        /usr/bin/test -z "${FILE_GOT}" &&                             /usr/bin/test -e "/minimyth/conf/default/${REMOTE_FILE}"         &&
+	    /bin/cp          "/minimyth/conf/default/${REMOTE_FILE}"                        "${TMP_FILE}"                     &&
+	    FILE_GOT="'file:/minimyth/conf/default/${REMOTE_FILE}' retrieved."
+    else
+        /usr/bin/test -z "${FILE_GOT}" && /usr/bin/test -n "`/bin/hostname`" &&
+            /usr/bin/tftp -g -r "${MM_TFTP_ROOTDIR}/conf/`/bin/hostname`/${REMOTE_FILE}" -l "${TMP_FILE}" "${MM_TFTP_SERVER}" &&
+	    FILE_GOT="'tftp://${MM_TFTP_SERVER}/${MM_TFTP_ROOTDIR}/conf/`hostname`/${REMOTE_FILE}' retrieved."
+        /usr/bin/test -z "${FILE_GOT}" && 
+            /usr/bin/tftp -g -r "${MM_TFTP_ROOTDIR}/conf/default/${REMOTE_FILE}"         -l "${TMP_FILE}" "${MM_TFTP_SERVER}" &&
+	    FILE_GOT="'tftp://${MM_TFTP_SERVER}/${MM_TFTP_ROOTDIR}/conf/default/${REMOTE_FILE}' retrieved."
+    fi
+    if /usr/bin/test -n "${FILE_GOT}" ; then
+        /bin/mv -f "${TMP_FILE}" "${LOCAL_FILE}"
+        /usr/bin/logger -t minimyth -p "local0.info" "${FILE_GOT}"
+    fi
+    /bin/rm -f "${TMP_FILE}"
+    if /usr/bin/test -z "${FILE_GOT}" ; then
+        /bin/false
+        return
+    fi
+}
+
+mm_url_dist_get() {
+    local LOCAL_FILE=$1
+    local REMOTE_FILE=$2
+    local REMOTE_SERVER=$3
+
+    local FILE_GOT
+    local LOCAL_DIR
+    local REMOTE_DIR
+    local TMP_FILE
+
+    LOCAL_DIR=`/bin/echo "${LOCAL_FILE}" | /bin/sed -e 's%[^/]*$%%' -e 's%/$%%'`
+    /usr/bin/test -n "${LOCAL_DIR}" && /bin/mkdir -p "${LOCAL_DIR}"
+    /usr/bin/test -n "${LOCAL_DIR}" && /usr/bin/test ! -d "${LOCAL_DIR}" && return
+
+    TMP_FILE="${LOCAL_FILE}~"
+
+    /bin/rm -f "${TMP_FILE}"
+    FILE_GOT=
+    if /usr/bin/test -n "${initrd}" ; then
+        REMOTE_DIR=` /bin/echo ${initrd} | /bin/sed 's%[^/]*$%%'`
+        if /usr/bin/test -d "/minimyth" ; then
+	    /bin/cp          "/minimyth/${REOMTE_DIR}${REMOTE_FILE}"                "${TMP_FILE}"                     &&
+	    FILE_GOT="'file://minimyth/${REMOTE_DIR}${REMOTE_FILE}' retrieved."
+        else
+            /usr/bin/tftp -g -r "${MM_TFTP_ROOTDIR}/${REMOTE_DIR}${REMOTE_FILE}" -l "${TMP_FILE}" "${MM_TFTP_SERVER}" &&
+	    FILE_GOT="'tftp://${MM_TFTP_SERVER}/${MM_TFTP_ROOTDIR}/${REMOTE_DIR}${REMOTE_FILE}' retrieved."
+        fi
+    fi
+    if /usr/bin/test -n "${FILE_GOT}" ; then
+        /bin/mv -f "${TMP_FILE}" "${LOCAL_FILE}"
+        /usr/bin/logger -t minimyth -p "local0.info" "${FILE_GOT}"
+    fi
+    /bin/rm -f "${TMP_FILE}"
+    if /usr/bin/test -z "${FILE_GOT}" ; then
+        /bin/false
+        return
+    fi
+}
+
+mm_url_hunt_get() {
+    local LOCAL_FILE=$1
+    local REMOTE_FILE=$2
+    local REMOTE_SERVER=$3
+
+    local LOCAL_DIR
+
+    LOCAL_DIR=`/bin/echo "${LOCAL_FILE}" | /bin/sed -e 's%[^/]*$%%' -e 's%/$%%'`
+    /usr/bin/test -n "${LOCAL_DIR}" && /bin/mkdir -p "${LOCAL_DIR}"
+    /usr/bin/test -n "${LOCAL_DIR}" && /usr/bin/test ! -d "${LOCAL_DIR}" && return
+
+    mm_url_conf_get "${LOCAL_FILE}" "${REMOTE_FILE}"
+    if /usr/bin/test $? -ne 0 ; then
+        mm_url_dist_get "${LOCAL_FILE}" "${REMOTE_FILE}"
+    fi
+    if /usr/bin/test $? -ne 0 ; then
+        return
+    fi
+}
+
+mm_conf_get() {
+    local REMOTE_FILE=$1
+    local LOCAL_FILE=$2
+
+    mm_url_conf_get "${LOCAL_FILE}" "${REMOTE_FILE}"
+}
+
+mm_message_output() {
+    local LEVEL=$1
+    local MESSAGE=$2
+
+    if /usr/bin/test `mm_splash_running_test ; /bin/echo $?` -eq 0 ; then
+        /usr/bin/logger    -t minimyth -p "local0.${LEVEL}" "${MESSAGE}"
+        mm_splash_message_output "${MESSAGE}"
+    else
+        /usr/bin/logger -s -t minimyth -p "local0.${LEVEL}" "${MESSAGE}"
+    fi
+}
+
+mm_uniq() {
+
+    local ARG
+
+    if /usr/bin/test $# -eq 0 ; then
+        ARG=
+        local line=
+        while read line ; do
+            ARG="${ARG} ${line}"
+        done
+    else
+        ARG=$1
+    fi
+
+    /bin/echo `/bin/echo "${ARG}" | /bin/sed -e 's% %\n%g' | /usr/bin/sort | /usr/bin/uniq | /bin/sed -e :a -e '$!N;s/\n/ /;ta' -e 'P;D'`
+}
+
+#-------------------------------------------------------------------------------
+# mm_url_mount
+#
+# This function mounts a remote directory as a local directory.
+#
+# This function takes three arguments:
+#     URL: required argument:
+#         A URL that points to the remote directory. A URL must have the
+#         following form:
+#             <protocol>://<username>:<password>@<server>/<path>?<options>
+#         where <options> are additional mount options (-o).
+#         For example:
+#             nfs://server.home/home/public/music
+#             cifs://user:pass@server.home/home/public/music,domain=home
+#             conf:themecache.tar.bz2
+#         The valid protocol values are: 'nfs', 'cifs', 'http', 'tftp', 'conf',
+#         'dist', 'hunt' and 'file'. For 'nfs' and 'cifs' the URL points to a
+#         remote directory. For 'http', 'tftp', 'conf', 'dist' and 'hunt', the
+#         URL points to a remote file. For 'file', the URL point to a local
+#         directory or file. A directory will be mounted at the mount point.
+#         A file, which can be a squashfs image (*.sfs.), cramfs image (*.cmg)
+#         or a tarball file (*.tar.bz2) will be retrieved and mounted at (for
+#         *.sfs and *.cmg files) or retrieved at expanded into (for *.tar.bz2
+#         files) the mount point. The 'conf', 'dist' and 'hunt' are special
+#         MiniMyth specific URLs. A 'dist' URL causes MiniMyth to look for the
+#         file in the MiniMyth distribution directory (the directory with the
+#         MiniMyth root file system squashfs image). A 'conf' URL causes MiniMyth
+#         to look for the MiniMyth configuration directory. A 'hunt' URL causes
+#         MiniMyth to look first in the MiniMyth distributiion directory and
+#         second in the MiniMyth configuration directory.
+#     MOUNT_DIR: required argument:
+#         The local directory (e.g. /mnt/music) where the URL will be mounted.
+#-------------------------------------------------------------------------------
+mm_url_mount() {
+    local URL="$1"
+    local MOUNT_DIR="$2"
+
+    local DIR
+    local EXTRA_OPTIONS
+    local FILE
+    local MOUNT_DEVICE
+    local MOUNT_OPTIONS
+    local MOUNT_VFSTYPE
+    local OPTIONS
+    local URL_EXT1
+    local URL_EXT2
+    local URL_EXTMAX
+    local URL_FILE
+    local URL_OPTIONS
+    local URL_PASSWORD
+    local URL_PATH
+    local URL_PROTOCOL
+    local URL_SERVER
+    local URL_USERNAME
+
+    /bin/mkdir -p "${MOUNT_DIR}" || return
+
+    URL_PROTOCOL=`/bin/echo "${URL}" | /usr/bin/cut -d? -f1 | \
+                        /usr/bin/cut -d: -f1`
+    URL_USERNAME=`/bin/echo "${URL}" | /usr/bin/cut -d? -f1 | \
+                        /bin/sed 's%^[^:]*:%%' | /bin/sed 's%^//%%' | /bin/sed 's%[^@]*$%%'  | /bin/sed 's%@$%%' | /usr/bin/cut -d: -f1`
+    URL_PASSWORD=`/bin/echo "${URL}" | /usr/bin/cut -d? -f1 | \
+                        /bin/sed 's%^[^:]*:%%' | /bin/sed 's%^//%%' | /bin/sed 's%[^@]*$%%'  | /bin/sed 's%@$%%' | /usr/bin/cut -d: -f2`
+    URL_SERVER=`  /bin/echo "${URL}" | /usr/bin/cut -d? -f1 | \
+                        /bin/sed 's%^[^:]*:%%' | /bin/sed 's%^//%%' | /bin/sed 's%^[^@]*@%%' | /bin/sed 's%/[^/]*%%g'`
+    URL_PATH=`    /bin/echo "${URL}" | /usr/bin/cut -d? -f1 | \
+                        /bin/sed 's%^[^:]*:%%' | /bin/sed 's%^//[^/]*/%/%'`
+    URL_OPTIONS=` /bin/echo "${URL}"                        | \
+                        /bin/sed 's%^[^?]*%%'  | /bin/sed 's%^?%%'`
+
+    URL_FILE=`    /bin/echo "${URL_PATH}" | /bin/sed 's%^.*/%%'`
+    URL_EXTMAX=`  /bin/echo "${URL_FILE}" | /bin/sed 's%^.*/%%' |/bin/sed 's%[^.]*%%g' | /usr/bin/wc -c` 
+    URL_EXT1=
+    /usr/bin/test ${URL_EXTMAX} -ge 1 && URL_EXT1=`/bin/echo ${URL_FILE} | /bin/sed 's%^.*/%%' | /usr/bin/cut -s -d. -f$((${URL_EXTMAX}-0))`
+    URL_EXT2=
+    /usr/bin/test ${URL_EXTMAX} -ge 2 && URL_EXT2=`/bin/echo ${URL_FILE} | /bin/sed 's%^.*/%%' | /usr/bin/cut -s -d. -f$((${URL_EXTMAX}-1))`
+
+    MOUNT_VFSTYPE=""
+    EXTRA_OPTIONS=""
+    MOUNT_DEVICE=""
+    MOUNT_OPTIONS="${URL_OPTIONS}"
+    if   /usr/bin/test "${URL_PROTOCOL}" = "nfs" ; then
+        MOUNT_VFSTYPE="nfs"
+        MOUNT_DEVICE="${URL_SERVER}:${URL_PATH}"
+        MOUNT_OPTIONS="${MOUNT_OPTIONS},rsize=8192,wsize=8192"
+    elif /usr/bin/test "${URL_PROTOCOL}" = "cifs" ; then
+        MOUNT_VFSTYPE="cifs"
+        EXTRA_OPTIONS="-n"
+        MOUNT_DEVICE="//${URL_SERVER}${URL_PATH}"
+        if /usr/bin/test ! "${URL_USERNAME}" = "" ; then
+            MOUNT_OPTIONS="${MOUNT_OPTIONS},username=${URL_USERNAME}"
+        fi
+        if /usr/bin/test ! "${URL_PASSWORD}" = "" ; then
+            MOUNT_OPTIONS="${MOUNT_OPTIONS},password=${URL_PASSWORD}"
+        fi
+    elif ( /usr/bin/test "${URL_PROTOCOL}" = "http"                                   ) ||
+         ( /usr/bin/test "${URL_PROTOCOL}" = "tftp"                                   ) ||
+         ( /usr/bin/test "${URL_PROTOCOL}" = "conf"                                   ) ||
+         ( /usr/bin/test "${URL_PROTOCOL}" = "dist"                                   ) ||
+         ( /usr/bin/test "${URL_PROTOCOL}" = "hunt"                                   ) ||
+         ( /usr/bin/test "${URL_PROTOCOL}" = "file" && /usr/bin/test -f "${URL_PATH}" ) ; then
+        if   /usr/bin/test "${URL_EXT1}" = "sfs" ; then
+            DIR="/initrd/rw/loopfs/`/bin/echo ${MOUNT_DIR} | /bin/sed 's%//*%~%g'`"
+            FILE="image.sfs"
+            /bin/mkdir -p "${DIR}"
+            /bin/mkdir -p "${DIR}/ro"
+            /bin/mkdir -p "${DIR}/rw"
+            cd "${DIR}"
+            mm_url_${URL_PROTOCOL}_get "${FILE}" "${URL_PATH}" "${URL_SERVER}"          || return
+            /bin/mount -t squashfs -o loop "${DIR}/${FILE}" "${DIR}/ro"                 || return
+            /bin/mount -t unionfs -o dirs=${DIR}/rw=rw:${DIR}/ro=ro none "${MOUNT_DIR}" || return
+        elif /usr/bin/test "${URL_EXT1}" = "cmg" ; then
+            DIR="/initrd/rw/loopfs/`/bin/echo ${MOUNT_DIR} | /bin/sed 's%//*%~%g'`"
+            FILE="image.cmg"
+            /bin/mkdir -p "${DIR}"
+            /bin/mkdir -p "${DIR}/ro"
+            /bin/mkdir -p "${DIR}/rw"
+            cd "${DIR}"
+            mm_url_${URL_PROTOCOL}_get "${FILE}" "${URL_PATH}" "${URL_SERVER}"          || return
+            /bin/mount -t cramfs -o loop "${DIR}/${FILE}" "${DIR}/ro"                   || return
+            /bin/mount -t unionfs -o dirs=${DIR}/rw=rw:${DIR}/ro=ro none "${MOUNT_DIR}" || return
+        elif /usr/bin/test "${URL_EXT1}" = "bz2" && /usr/bin/test "${URL_EXT2}" = "tar" ; then
+            FILE="tmp.tar.bz2~"
+            cd "${MOUNT_DIR}"
+            mm_url_${URL_PROTOCOL}_get "${FILE}" "${URL_PATH}" "${URL_SERVER}" || return
+            /bin/tar -jxf "${FILE}"                                            || return
+            /bin/rm -f "${FILE}"                                               || return
+        fi
+    elif ( /usr/bin/test "${URL_PROTOCOL}" = "file" && /usr/bin/test -d "${URL_PATH}" ) ; then
+        /bin/mount --rbind "${URL_PATH}" "${MOUNT_DIR}"
+    fi
+
+    if /usr/bin/test -n "${MOUNT_VFSTYPE}" ; then
+        OPTIONS=""
+        MOUNT_OPTIONS=`/bin/echo ${MOUNT_OPTIONS} | /bin/sed 's%^,%%'`
+        /usr/bin/test -n "${EXTRA_OPTIONS}" && OPTIONS="${EXTRA_OPTIONS}"
+        /usr/bin/test -n "${MOUNT_OPTIONS}" && OPTIONS="${OPTIONS} -o ${MOUNT_OPTIONS}"
+        /bin/mount -n -t "${MOUNT_VFSTYPE}" ${OPTIONS} "${MOUNT_DEVICE}" "${MOUNT_DIR}" || return
+    fi
+
+    # Update fstab.
+    case "${MOUNT_VFSTYPE}" in
+        cifs)
+            /bin/echo "${MOUNT_DEVICE} ${MOUNT_DIR} ${MOUNT_VFSTYPE} ${MOUNT_OPTIONS} 0 0" >> /etc/fstab
+            ;;
+        nfs)
+            /bin/echo "${MOUNT_DEVICE} ${MOUNT_DIR} ${MOUNT_VFSTYPE} ${MOUNT_OPTIONS} 0 0" >> /etc/fstab
+            ;;
+    esac
+}
+
+mm_var_get() {
+    local VAR=$1
+
+    /bin/echo `set | /bin/grep "^${VAR}=" | /bin/sed 's%^[^=]*=%%' | /bin/sed "s%^'%%" | /bin/sed "s%'$%%"`
+}
+
+#===============================================================================
+# squashfs functions
+#===============================================================================
+mm_squashfs_codecs_make() {
+
+    local FILE
+
+    if /usr/bin/test -d /usr/lib/codecs && /usr/bin/test `ls -1 /usr/lib/codecs | /usr/bin/wc -l` -ne 0 ; then
+        /bin/true
+    else
+        /bin/rm -rf /usr/lib/codecs
+        /bin/mkdir -p /usr/lib/codecs
+        cd /usr/lib/codecs
+        /usr/bin/wget http://www4.mplayerhq.hu/MPlayer/releases/codecs/essential-20060611.tar.bz2
+        /bin/tar -jxf essential-20060611.tar.bz2
+        /bin/rm -f essential-20060611.tar.bz2
+        /bin/mv essential-20060611/* .
+        /bin/rm -rf essential-20060611
+    fi
+
+    FILE=/codecs.sfs
+    /usr/bin/mksquashfs /usr/lib/codecs ${FILE} > /dev/null 2>&1
+    if /usr/bin/test $? -ne 0 ; then
+        /bin/rm -f ${FILE}
+        /bin/echo "error: mksquashfs failed."
+        return 1
+    fi
+
+    /bin/chmod 644 ${FILE}
+
+    /bin/echo "created codecs squashfs image: \"${FILE}\"."
+    return 0
+}
+
+mm_squashfs_extras_make() {
+
+    local FILE
+    local INITRD_FILE
+    local INITRD_FILE_PREFIX
+
+    if /usr/bin/test ! -d /usr/local ; then
+        /bin/echo "error: the extras directory does not exist."
+        return 1
+    fi
+
+    INITRD_FILE=`/bin/echo ${initrd} | /bin/sed 's%^.*/%%'`
+    INITRD_FILE_PREFIX=`/bin/echo ${INITRD_FILE} | /bin/sed 's%-.*$%%'`
+    FILE=
+    if /usr/bin/test "${INITRD_FILE_PREFIX}" = "rootfs" ; then
+        FILE=/`/bin/echo ${INITRD_FILE} | /bin/sed 's%^rootfs%extras%'`.sfs
+    else
+        FILE=/extras.sfs
+    fi
+
+    /usr/bin/mksquashfs /usr/local ${FILE} > /dev/null 2>&1
+    if /usr/bin/test $? -ne 0 ; then
+        /bin/rm -f ${FILE}
+        /bin/echo "error: mksquashfs failed."
+        return 1
+    fi
+
+    /bin/chmod 644 ${FILE}
+
+    /bin/echo "created extras squashfs image: \"${FILE}\"."
+    return 0
+}
+
+mm_squashfs_themecache_make() {
+
+    local FILE
+
+    if /usr/bin/test ! -d /root/.mythtv/themecache ; then
+        /bin/echo "error: the MythTV themecache directory does not exist."
+        return 1
+    fi
+    if /usr/bin/test ! "`cd /root/.mythtv/themecache ; ls -1 | /bin/grep -c *`" = "1" ; then
+        /bin/echo "error: the MythTV themecache directory does not contain exactly one cached theme."
+        return 1
+    fi
+
+    FILE=/`cd /root/.mythtv/themecache ; ls`.sfs
+    /usr/bin/mksquashfs /root/.mythtv/themecache ${FILE} > /dev/null 2>&1
+    if /usr/bin/test $? -ne 0 ; then
+        /bin/rm -f ${FILE}
+        /bin/echo "error: mksquashfs failed."
+        return 1
+    fi
+
+    /bin/chmod 644 ${FILE}
+
+    /bin/echo "created themecache squashfs image: \"${FILE}\"."
+    return 0
+}
+
+#===============================================================================
+# splash screen functions
+#===============================================================================
+mm_splash_progress_val=1
+mm_splash_progress_max=1
+
+mm_splash_running_test() {
+    if /usr/bin/test -n "`/bin/pidof splash_util`" && /usr/bin/test -e /var/cache/splash/fifo ; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+mm_splash_init() {
+    # Initialize progress variables.
+    mm_splash_progress_val=0
+    mm_splash_progress_max=$1
+
+    local DEPTH
+    local GEOMETRY
+    local LOGLEVEL
+    local SPLASH_ENABLE
+    local VXRES
+    local VYRES
+    local XRES
+    local YRES
+
+    SPLASH_ENABLE=yes
+
+    # Disable splash screen when more than kernel errors are logged to the console.
+    # That is when the loglevel is greater than 4.
+    if /usr/bin/test "${SPLASH_ENABLE}" = "yes" ; then
+        LOGLEVEL=`/bin/cat /proc/sys/kernel/printk | /usr/bin/cut -f 1`
+        /usr/bin/test -z "${LOGLEVEL}" && SPLASH_ENABLE='no'
+        /usr/bin/test -n "${LOGLEVEL}" && /usr/bin/test ${LOGLEVEL} -gt 4 && SPLASH_ENABLE='no'
+    fi
+
+    # Disable splash screen when there is no framebuffer device.
+    if /usr/bin/test "${SPLASH_ENABLE}" = "yes" ; then
+        /usr/bin/test ! -e '/dev/fb0' && SPLASH_ENABLE='no'
+    fi
+
+    # Disable splash screen when the video resolution is not compatible.
+    # That is when the resolution is not 800x600 or color depth is less than 16.
+    if /usr/bin/test "${SPLASH_ENABLE}" = "yes" ; then
+        GEOMETRY=`/usr/sbin/fbset | /bin/grep geometry`
+        XRES=` /bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 2`
+        YRES=` /bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 3`
+        VXRES=`/bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 4`
+        VYRES=`/bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 5`
+        DEPTH=`/bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 6`
+        /usr/bin/test -z "${XRES}"  && SPLASH_ENABLE='no'
+        /usr/bin/test -z "${YRES}"  && SPLASH_ENABLE='no'
+        /usr/bin/test -z "${VXRES}" && SPLASH_ENABLE='no'
+        /usr/bin/test -z "${VYRES}" && SPLASH_ENABLE='no'
+        /usr/bin/test -z "${DEPTH}" && SPLASH_ENABLE='no'
+        /usr/bin/test -n "${XRES}"  && /usr/bin/test ${XRES}  -ne 800 && SPLASH_ENABLE='no'
+        /usr/bin/test -n "${YRES}"  && /usr/bin/test ${YRES}  -ne 600 && SPLASH_ENABLE='no'
+        /usr/bin/test -n "${VXRES}" && /usr/bin/test ${VXRES} -ne 800 && SPLASH_ENABLE='no'
+        /usr/bin/test -n "${VYRES}" && /usr/bin/test ${VYRES} -ne 600 && SPLASH_ENABLE='no'
+        /usr/bin/test -n "${DEPTH}" && /usr/bin/test ${DEPTH} -lt 16  && SPLASH_ENABLE='no'
+    fi
+
+    if /usr/bin/test "${SPLASH_ENABLE}" = "yes" ; then
+        /usr/bin/chvt 1
+        /bin/mkdir -p "/var/cache/splash"
+        /sbin/splash_util --daemon --theme="MythTV"
+        mm_splash_command "set mode silent"
+        mm_splash_command "progress 0"
+        mm_splash_command "set message starting splash screen ..."
+        mm_splash_command "repaint"
+    fi
+
+    return 0
+}
+
+mm_splash_halt() {
+    /usr/bin/test -n "`/bin/pidof -s splash_util`" && /usr/bin/killall splash_util
+
+    /usr/bin/test -e "/var/cache/splash" && /bin/rm -rf "/var/cache/spalsh"
+
+    return 0
+}
+
+mm_splash_command()
+{
+    /usr/bin/test `mm_splash_running_test ; /bin/echo $?` -eq 0 && /bin/echo "$1" >> "/var/cache/splash/fifo"
+
+    return 0
+}
+
+mm_splash_message_output() {
+    local MESSAGE=$1
+
+    mm_splash_command "set message ${MESSAGE}"
+    mm_splash_command "repaint"
+
+    return 0
+}
+
+mm_splash_progress_update() {
+    mm_splash_progress_val=$((mm_splash_progress_val + 1))
+    /usr/bin/test ${mm_splash_progress_val} -gt ${mm_splash_progress_max} && mm_splash_progress_val=${mm_splash_progress_max}
+    mm_splash_command "progress $(( 65535 * ${mm_splash_progress_val} / ${mm_splash_progress_max} ))"
+    mm_splash_command "repaint"
+
+    return 0
+}
+
+#===============================================================================
+# mythdb functions.
+#===============================================================================
+mm_mythdb_command_run() {
+    local COMMAND=$1
+
+    local RETURN
+
+    /usr/bin/mysql \
+        --host=${MM_MYTH_SERVER} \
+        --user=${MM_MYTH_DBUSERNAME} \
+        --password=${MM_MYTH_DBPASSWORD} \
+        --database=${MM_MYTH_DBNAME} \
+        --execute="${COMMAND} ;"
+    RETURN=$?
+
+    return ${RETURN}
+}
+
+mm_mythdb_jumppoint_delete() {
+    local DESTINATION=$1
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    if /usr/bin/test -n "${DESTINATION}" ; then
+        mm_mythdb_command_run "DELETE FROM jumppoints \
+            WHERE hostname=\"${HOSTNAME}\" AND destination=\"${DESTINATION}\""
+    else
+        mm_mythdb_command_run "DELETE FROM jumppoints \
+            WHERE hostname=\"${HOSTNAME}\""
+    fi
+}
+
+mm_mythdb_jumppoint_dump() {
+    local DESTINATION=$1
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    if /usr/bin/test -n "${DESTINATION}" ; then
+        mm_mythdb_command_run "SELECT * FROM jumppoints \
+            WHERE hostname=\"${HOSTNAME}\" AND destination=\"${DESTINATION}\""
+    else
+        mm_mythdb_command_run "SELECT * FROM jumppoints \
+            WHERE hostname=\"${HOSTNAME}\""
+    fi
+}
+
+mm_mythdb_jumppoint_update() {
+    local DESTINATION=$1
+    local KEYLIST=$2
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    mm_mythdb_command_run "UPDATE jumppoints SET keylist=\"${KEYLIST}\" \
+        WHERE hostname=\"${HOSTNAME}\" AND destination=\"${DESTINATION}\""
+}
+
+mm_mythdb_keybinding_delete() {
+    local CONTEXT=$1
+    local ACTION=$2
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    if   /usr/bin/test -n "${CONTEXT}" && /usr/bin/test -n "${ACTION}" ; then
+        mm_mythdb_command_run "DELETE FROM keybindings \
+            WHERE hostname=\"${HOSTNAME}\" AND context=\"${CONTEXT}\" AND action=\"${ACTION}\""
+    elif /usr/bin/test -n "${CONTEXT}" ; then
+        mm_mythdb_command_run "DELETE FROM keybindings \
+            WHERE hostname=\"${HOSTNAME}\" AND context=\"${CONTEXT}\""
+    else
+        mm_mythdb_command_run "DELETE FROM keybindings \
+            WHERE hostname=\"${HOSTNAME}\""
+    fi
+}
+
+mm_mythdb_keybinding_dump() {
+    local CONTEXT=$1
+    local ACTION=$2
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    if   /usr/bin/test -n "${CONTEXT}" && /usr/bin/test -n "${ACTION}" ; then
+        mm_mythdb_command_run "SELECT * FROM keybindings \
+            WHERE hostname=\"${HOSTNAME}\" AND context=\"${CONTEXT}\" AND action=\"${ACTION}\""
+    elif /usr/bin/test -n "${CONTEXT}" ; then
+        mm_mythdb_command_run "SELECT * FROM keybindings \
+            WHERE hostname=\"${HOSTNAME}\" AND context=\"${CONTEXT}\""
+    else
+        mm_mythdb_command_run "SELECT * FROM keybindings \
+            WHERE hostname=\"${HOSTNAME}\""
+    fi
+}
+
+mm_mythdb_keybinding_update() {
+    local CONTEXT=$1
+    local ACTION=$2
+    local KEYLIST=$3
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    mm_mythdb_command_run "UPDATE keybindings SET keylist=\"${KEYLIST}\" \
+        WHERE hostname=\"${HOSTNAME}\" AND context=\"${CONTEXT}\" AND action=\"${ACTION}\""
+}
+
+mm_mythdb_musicplaylist_dump() {
+    mm_mythdb_command_run "SELECT * FROM musicplaylist"
+}
+
+mm_mythdb_musicplaylist_scope() {
+    local MUSICPLAYLIST=$1
+    local SCOPE=$2
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    case "${SCOPE}" in
+        local)
+            mm_mythdb_command_run "UPDATE musicplaylist SET hostname=\"${HOSTNAME}\" WHERE name=\"${MUSICPLAYLIST}\""
+            ;;
+        global)
+            mm_mythdb_command_run "UPDATE musicplaylist SET hostname=\"\"            WHERE name=\"${MUSICPLAYLIST}\""
+            ;;
+    esac
+}
+
+mm_mythdb_setting_delete() {
+    local VALUE=$1
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    if /usr/bin/test -n "${VALUE}" ; then
+        mm_mythdb_command_run "DELETE FROM settings WHERE value=\"${VALUE}\" AND hostname=\"${HOSTNAME}\""
+    else
+        mm_mythdb_command_run "DELETE FROM settings WHERE hostname=\"${HOSTNAME}\""
+    fi
+}
+
+mm_mythdb_setting_dump() {
+    local VALUE=$1
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    if /usr/bin/test -n "${VALUE}" ; then
+        mm_mythdb_command_run "SELECT * FROM settings WHERE value=\"${VALUE}\" AND hostname=\"${HOSTNAME}\""
+    else
+        mm_mythdb_command_run "SELECT * FROM settings WHERE hostname=\"${HOSTNAME}\""
+    fi
+}
+
+mm_mythdb_setting_update() {
+    local VALUE=$1
+    local DATA=$2
+
+    local HOSTNAME
+
+    HOSTNAME=`/bin/hostname`
+
+    mm_mythdb_command_run "UPDATE settings SET data=\"${DATA}\" WHERE value=\"${VALUE}\" AND hostname=\"${HOSTNAME}\""
+}
+
+mm_mythdb_setting_get() {
+    local VALUE=$1
+
+    local DATA
+
+    DATA=`mm_mythdb_setting_dump "$1" | /bin/grep -e "$1" |  /usr/bin/cut -f 2`
+
+    echo "${DATA}"
+}
+
+
+#===============================================================================
+# Hardware processing functions.
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+mm_hardware_pci_process() {
+    local pci_process_function=$1
+
+    local bus
+    local class
+    local class_prog
+    local device
+    local index
+    local pci
+    local revision
+    local subdevice
+    local subvendor
+    local vendor
+
+    /usr/sbin/lspci -mn | /bin/sed -e 's%"%%g' | 
+    while read pci ; do
+        index=1            ; bus=`      /bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; class=`    /bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; vendor=`   /bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; device=`   /bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; revision=` /bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        if /usr/bin/test `/bin/echo "${revision}"   | /bin/grep -c -e '^-r'` = "1" ; then
+            revision=`  /bin/echo "${revision}"   | /bin/sed -e 's%^-r%%'`
+        else
+            index=$((index-1)) ; revision='00'
+        fi
+        index=$((index+1)) ; class_prog=`/bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        if /usr/bin/test `/bin/echo "${class_prog}" | /bin/grep -c -e '^-p'` = "1" ; then
+            class_prog=`/bin/echo "${class_prog}" | /bin/sed -e 's%^-p%%'`
+        else
+            index=$((index-1)) ; class_prog='00'
+        fi
+        index=$((index+1)) ; subvendor=`/bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; subdevice=`/bin/echo "${pci}" | /usr/bin/cut -d ' ' -f ${index}`
+        /bin/echo `${pci_process_function} ${class} ${vendor} ${device} ${revision} ${class_prog} ${subvendor} ${subdevice}`
+    done |
+    mm_uniq
+}
+
+mm_hardware_pci2x_map() {
+    local class=$1
+    local vendor=$2
+    local device=$3
+    local revision=$4
+    local class_prog=$5
+    local subvendor=$6
+    local subdevice=$7
+
+    local found
+    local map
+    local map_class_prog
+    local map_device
+    local map_vendor
+    local map_x_driver
+
+    if /usr/bin/test -n "${class}" ; then
+        /bin/cat /etc/hardware.d/pci2x.map | /bin/sed -e 's%#.*$%%g' | /bin/sed -e 's% *%%g' | /bin/grep -e "^${class}," |
+        {
+            found=
+            while read map ; do
+                if /usr/bin/test -n "${map}" ; then
+                    map_class_prog=`/bin/echo ${map} | /usr/bin/cut -d ',' -f 2`
+                    map_vendor=`    /bin/echo ${map} | /usr/bin/cut -d ',' -f 3`
+                    map_device=`    /bin/echo ${map} | /usr/bin/cut -d ',' -f 4`
+                    map_x_driver=`  /bin/echo ${map} | /usr/bin/cut -d ',' -f 5`
+                    if ( /usr/bin/test -z "${map_class_prog}" || /usr/bin/test "${map_class_prog}" = "${class_prog}" ) &&
+                       ( /usr/bin/test -z "${map_vendor}"     || /usr/bin/test "${map_vendor}"     = "${vendor}"     ) &&
+                       ( /usr/bin/test -z "${map_device}"     || /usr/bin/test "${map_device}"     = "${device}"     ) ; then
+                        if /usr/bin/test -z "${found}" ; then
+                            found=1
+                            /bin/echo ${map_x_driver}
+                        fi
+                    fi
+                fi
+            done
+        }
+    fi
+}
+
+mm_hardware_x2kernel_map() {
+    local x_driver=$1
+
+    local found
+    local map
+    local map_kernel_module
+
+    if /usr/bin/test -n "${x_driver}" ; then
+        /bin/cat /etc/hardware.d/x2kernel.map | /bin/sed -e 's%#.*$%%g' | /bin/sed -e 's% *%%g' | /bin/grep -e "^${x_driver}," |
+        {
+            found=
+            while read map ; do
+                map_kernel_module=
+                if /usr/bin/test -n "${map}" ; then
+                    map_kernel_module=`/bin/echo ${map} | /usr/bin/cut -d ',' -f 2`
+                fi
+                if /usr/bin/test -z "${found}" ; then
+                    found=1
+                    /bin/echo ${map_kernel_module}
+                fi
+            done
+        }
+    fi
+}
+
+mm_hardware_usb_process() {
+    local usb_process_function=$1
+
+    local bus
+    local device
+    local index
+    local product
+    local usb
+    local vendor
+
+    /usr/sbin/lsusb | /bin/sed -e 's%Bus \([^ ]*\) Device \([^:]*\): ID \([^:]*\):\([^ ]*\) .*$%\1 \2 \3\ \4%' | 
+    while read usb ; do
+        index=1            ; bus=`    /bin/echo ${usb} | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; device=` /bin/echo ${usb} | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; vendor=` /bin/echo ${usb} | /usr/bin/cut -d ' ' -f ${index}`
+        index=$((index+1)) ; product=`/bin/echo ${usb} | /usr/bin/cut -d ' ' -f ${index}`
+        /bin/echo `${usb_process_function} ${bus} ${device} ${vendor} ${product}`
+    done |
+    mm_uniq
+}
+
+mm_hardware_usb2lirc_driver_map() {
+    local bus=$1
+    local device=$2
+    local vendor=$3
+    local product=$4
+
+    local found
+    local map
+    local map_driver
+
+    if /usr/bin/test -n "${vendor}" && /usr/bin/test -n "${product}" ; then
+        /bin/cat /etc/hardware.d/usb2lirc.map | /bin/sed -e 's%#.*$%%g' | /bin/sed -e 's% *%%g' | /bin/grep -e "^${vendor},${product}," |
+        {
+            found=
+            while read map ; do
+                if /usr/bin/test -n "${map}" ; then
+                    map_driver=`/bin/echo ${map} | /usr/bin/cut -d ',' -f 3`
+                    if /usr/bin/test -z "${found}" ; then
+                        found=1
+                        /bin/echo ${map_driver}
+                    fi
+                fi
+            done
+        }
+    fi
+}
+
+mm_hardware_usb2lirc_remote_map() {
+    local bus=$1
+    local device=$2
+    local vendor=$3
+    local product=$4
+
+    local found
+    local map
+    local map_remote
+
+    if /usr/bin/test -n "${vendor}" && /usr/bin/test -n "${product}" ; then
+        /bin/cat /etc/hardware.d/usb2lirc.map | /bin/sed -e 's%#.*$%%g' | /bin/sed -e 's% *%%g' | /bin/grep -e "^${vendor},${product}," |
+        {
+            found=
+            while read map ; do
+                if /usr/bin/test -n "${map}" ; then
+                    map_remote=`/bin/echo ${map} | /usr/bin/cut -d ',' -f 4`
+                    if /usr/bin/test -z "${found}" ; then
+                        found=1
+                        /bin/echo ${map_remote}
+                    fi
+                fi
+            done
+        }
+    fi
+}
+
+mm_hardware_usb2lcdproc_map() {
+    local bus=$1
+    local device=$2
+    local vendor=$3
+    local product=$4
+
+    local found
+    local map
+    local map_driver
+
+    if /usr/bin/test -n "${vendor}" && /usr/bin/test -n "${product}" ; then
+        /bin/cat /etc/hardware.d/usb2lcdproc.map | /bin/sed -e 's%#.*$%%g' | /bin/sed -e 's% *%%g' | /bin/grep -e "^${vendor},${product}," |
+        {
+            found=
+            while read map ; do
+                if /usr/bin/test -n "${map}" ; then
+                    map_driver=`/bin/echo ${map} | /usr/bin/cut -d ',' -f 3`
+                    if /usr/bin/test -z "${found}" ; then
+                        found=1
+                        /bin/echo ${map_driver}
+                    fi
+                fi
+            done
+        }
+    fi
+}
+
+mm_hardware_cpu_get() {
+    case `/bin/cat /proc/cpuinfo | /bin/grep '^model name' | /usr/bin/cut -d ':' -f 2 | /bin/sed 's%^ *%%' | /bin/sed 's% *$$%%'` in
+        AMD\ Athlon\(tm\)\ 64\ Processor\ *) /bin/echo 'athlon64' ;;
+        VIA\ Nehemiah)                       /bin/echo 'c3-2'     ;;
+        VIA\ Samuel\ 2)                      /bin/echo 'c3'       ;;
+        *)                                   /bin/echo ''         ;;
+    esac
+}

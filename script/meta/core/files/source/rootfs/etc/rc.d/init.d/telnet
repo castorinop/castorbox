@@ -1,0 +1,28 @@
+#!/bin/sh
+################################################################################
+# telnet
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+    mm_message_output info 'starting telnet ...'
+
+    /usr/sbin/telnetd -l /bin/sh
+
+    return 0
+}
+
+stop() {
+    mm_message_output info 'stopping telnet ...'
+
+    /usr/bin/test -n "`/bin/pidof telnetd`" && /usr/bin/killall telnetd
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

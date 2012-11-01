@@ -1,0 +1,7 @@
+timeout: 2
+cycle: 0
+lock: false
+dpmsEnabled: false
+splash: false
+fade: false
+unfade: false

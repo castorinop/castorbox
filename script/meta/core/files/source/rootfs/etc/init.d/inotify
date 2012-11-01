@@ -1,0 +1,2 @@
+#!/bin/sh
+inotifyd >> /var/log/inotify.log &

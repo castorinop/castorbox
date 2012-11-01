@@ -1,0 +1,58 @@
+#!/bin/sh
+
+splash_start() {
+	#rm -r /lib/splash/cache
+	#mkdir -p /lib/splash/cache 
+	#fbsplashd -t CastorBOX --type=shutdown --effect=fadein,fadeout
+	echo "set mode silent"	 > $SPLASH
+	echo "paint" 		 > $SPLASH
+	chvt 1
+}
+
+splash_stop() {
+	#echo "exit"              > $SPLASH
+	#sleep 5
+	#rm $SPLASH
+	echo nothing to do
+}
+
+progressbar() {
+	if test -p  $SPLASH; then
+		echo "progress $(( 65534 * $(($1 + 1))  / $(($2 + 1)) ))" > $SPLASH
+		echo "repaint" > $SPLASH
+	fi
+}
+
+run_services() {
+	BS_COUNT=1;
+
+	#Base
+	if [ -d "$BOOT_SCRIPT" ]; then
+		BS_TOTAL=`ls $BOOT_SCRIPT/S* | wc -l`;
+		for i in `ls $BOOT_SCRIPT/S*`; do 
+			echo $i;
+			trap - INT QUIT TSTP
+			set start
+			. $i
+			progressbar $BS_COUNT $BS_TOTAL;	
+			BS_COUNT=$(($BS_COUNT + 1));
+		done
+	fi
+
+	#Servicios Extras
+	if [ -d "$BOOT_SCRIPT/services" ]; then
+
+		#sleep 5
+		#splash_stop
+
+		for i in `ls $BOOT_SCRIPT/services/S*`; do 
+			echo $i;
+			trap - INT QUIT TSTP
+			set start
+			. $i
+		done
+	fi
+
+	echo "run services complete!"
+
+}

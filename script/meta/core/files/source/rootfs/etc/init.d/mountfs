@@ -1,0 +1,12 @@
+#!/bin/sh
+
+mount -t tmpfs none /tmp 
+[ -f /proc/bus/usb/devices ] && mount -f -t usbfs usbfs /proc/bus/usb
+
+mount ${CBX_MEDIA} -o ro /media/CastorBOX
+#mounter mount /media/CastorBOX
+
+mount -a 
+
+mkdir /tmp/mms /var/log/lastlog
+

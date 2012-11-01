@@ -1,0 +1,56 @@
+#!/bin/sh
+################################################################################
+# lcdproc
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+    mm_message_output info 'starting LCD/VFD display ...'
+
+    # LCDd is already running, so return.
+    if /usr/bin/test -n "`/bin/pidof LCDd`" ; then
+        return
+    fi
+
+    # No LCDproc driver was provided, so see whether or not we can autodetect it.
+    if /usr/bin/test -z "${MM_LCDPROC_DRIVER}" ; then
+        /usr/bin/logger -t minimyth -p "local0.info" "MM_LCDPROC_DRIVER not set. attempting to autodetect LCD/VFD display."
+        MM_LCDPROC_DRIVER=`mm_hardware_usb_process mm_hardware_usb2lcdproc_map`
+        if /usr/bin/test -n "${MM_LCDPROC_DRIVER}" ; then
+            /usr/bin/logger -t minimyth -p "local0.info" "autodetected LCD/VFD display '${MM_LCDPROC_DRIVER}'."
+        fi
+    fi
+
+    if /usr/bin/test -n "${MM_LCDPROC_DRIVER}" ; then
+        if /usr/bin/test -e /etc/lcdproc.d/LCDd.conf.${MM_LCDPROC_DRIVER} ; then
+            cp /etc/lcdproc.d/LCDd.conf.${MM_LCDPROC_DRIVER} /etc/LCDd.conf
+        else
+            cp /etc/lcdproc.d/LCDd.conf                      /etc/LCDd.conf
+        fi
+        mm_conf_get LCDd.conf /etc/LCDd.conf
+        
+        /bin/sed -i "s%@MM_LCDPROC_DRIVER@%${MM_LCDPROC_DRIVER}%" /etc/LCDd.conf
+
+        /usr/bin/test -e /usr/sbin/LCDd         && /usr/sbin/LCDd -c /etc/LCDd.conf
+        /usr/bin/test -e /usr/bin/mythlcdserver && /usr/bin/mythlcdserver -d -l /var/log/mythlcdserver.log
+    fi
+
+    return 0
+}
+
+
+stop() {
+    mm_message_output info 'stopping LCD/VFD display ...'
+
+    /usr/bin/test -n "`/bin/pidof mythlcdserver`" && /usr/bin/killall mythlcdserver
+    /usr/bin/test -n "`/bin/pidof LCDd`"          && /usr/bin/killall LCDd
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

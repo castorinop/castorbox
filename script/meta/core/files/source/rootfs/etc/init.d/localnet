@@ -1,0 +1,14 @@
+#!/bin/sh
+ip addr add 127.0.0.1/8 label lo dev lo
+ip link set lo up
+
+if [ -s "/config/hostname" ]; then
+	ln -s /config/hostname /etc/hostname
+else
+	echo "castorbox" > /etc/hostname
+fi
+
+hostname $HOSTNAME
+
+#reload EVN VARS
+. /etc/conf

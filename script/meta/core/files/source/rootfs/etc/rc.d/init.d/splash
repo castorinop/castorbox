@@ -1,0 +1,77 @@
+#!/bin/sh
+################################################################################
+# splash
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local DEPTH
+    local GEOMETRY
+    local LOGLEVEL
+    local PRINTK
+    local SPLASH_ENABLE
+    local VXRES
+    local VYRES
+    local XRES
+    local YRES
+
+    mm_message_output info 'starting splash screen ...'
+
+    SPLASH_ENABLE=yes
+
+    # Disable splash screen when more than kernel errors are logged to the console.
+    # That is when the loglevel is greater than 4.
+    PRINTK=`/bin/cat /proc/sys/kernel/printk`
+    LOGLEVEL=`/bin/echo ${PRINTK} | /usr/bin/cut -d ' ' -f 1`
+    /usr/bin/test ${LOGLEVEL} -gt 4 && SPLASH_ENABLE=no
+
+    # Disable splash screen when the video resolution is not compatible.
+    # That is when the resolution is not 800x600 or color depth is less than 16.
+    GEOMETRY=`/usr/sbin/fbset | /bin/grep geometry`
+    XRES=` /bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 2`
+    YRES=` /bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 3`
+    VXRES=`/bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 4`
+    VYRES=`/bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 5`
+    DEPTH=`/bin/echo ${GEOMETRY} | /usr/bin/cut -d ' ' -f 6`
+    /usr/bin/test ${XRES}  -ne 800 && SPLASH_ENABLE=no
+    /usr/bin/test ${YRES}  -ne 600 && SPLASH_ENABLE=no
+    /usr/bin/test ${VXRES} -ne 800 && SPLASH_ENABLE=no
+    /usr/bin/test ${VYRES} -ne 600 && SPLASH_ENABLE=no
+    /usr/bin/test ${DEPTH} -lt 16  && SPLASH_ENABLE=no
+
+    if /usr/bin/test "${SPLASH_ENABLE}" = "yes" ; then
+        /usr/bin/chvt 1
+        /bin/mkdir -p /var/cache/splash
+        /sbin/splash_util --daemon --theme="MythTV"
+        /bin/echo "set mode silent"                        >> /var/cache/splash/fifo
+        /bin/echo "progress 0"                             >> /var/cache/splash/fifo
+        /bin/echo "set message starting splash screen ..." >> /var/cache/splash/fifo
+        /bin/echo "repaint"                                >> /var/cache/splash/fifo
+    fi
+
+    return 0
+}
+
+stop() {
+    mm_message_output info 'stopping splash screen ...'
+
+    if /usr/bin/test -e "/var/cache/splash" ; then
+        /bin/echo "setmode off" >> /var/cache/splash/fifo
+    fi
+
+    /usr/bin/test -n "`/bin/pidof -s splash_util`" && /usr/bin/killall splash_util
+
+    if /usr/bin/test -e "/var/cache/splash" ; then
+        /bin/rm -rf /var/cache/spalsh
+    fi
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

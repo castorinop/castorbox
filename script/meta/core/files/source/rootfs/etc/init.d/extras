@@ -1,0 +1,31 @@
+HOME_EXTRA=/mnt/system
+
+CFGBASE=config
+
+for i in `cat /proc/cmdline`; do
+  export $i;
+done
+
+if [ -f "${HOME_EXTRA}/${CFGBASE}" ]; then
+        . ${HOME_EXTRA}/${CFGBASE}
+else
+
+	mount ${HOME_EXTRA}
+	if [ "$?" -ne "0" ]; then
+		echo can't mount ${HOME_EXTRA}
+		exit
+	fi
+	if [ -f "${HOME_EXTRA}/${CFGBASE}" ]; then
+	        . ${HOME_EXTRA}/${CFGBASE}
+	else
+		echo can't load ${HOME_EXTRA}/${CFGBASE}
+		exit
+	fi
+fi
+for extra in ${IMGEXTRA}; do
+	if [ -f "${HOME_EXTRA}/${CFGBASE}-$extra" ]; then
+		. ${HOME_EXTRA}/$CFGBASE-$extra
+		mount -t squashfs -o loop ${HOME_EXTRA}/roms/${IMGNAME} /${IMGPATH}
+	fi
+done
+ldconfig -C /tmp/ld.so.cache

@@ -1,0 +1,14 @@
+################################################################################
+# Start mms program.
+#
+# The mms program (not the window manager) is the application that runs in the
+# foreground because it is the only application that we can be sure will be
+# running.
+################################################################################
+ln -s /config/xbmc /root/.xbmc 
+ldconfig
+STAT=1
+while [ "$STAT" -gt "0" ]; do
+        /usr/bin/xbmc > /var/log/xmbc.log
+        STAT=$?
+done

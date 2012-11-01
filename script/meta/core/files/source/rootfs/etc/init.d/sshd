@@ -1,0 +1,9 @@
+#!/bin/sh
+FILE="/config/authorized_keys"
+sed -i "s@#AuthorizedKeysFile\(.*\)@AuthorizedKeysFile	$FILE@g" /etc/ssh/sshd_config
+
+if [ ! -e "$FILE" ]; then 
+	cp /usr/share/$FILE.castorbox $FILE
+	chmod 0600 $FILE
+fi
+/usr/sbin/sshd

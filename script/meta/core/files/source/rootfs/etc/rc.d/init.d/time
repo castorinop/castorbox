@@ -1,0 +1,66 @@
+#!/bin/sh
+################################################################################
+# time
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+
+    local NTP_CONF
+    local NTP_SERVER
+
+    mm_message_output info 'configuring time ...'
+
+    # Check for timezone.
+    if /usr/bin/test -z "${MM_TZ}" ; then
+        mm_message_output err 'error: "MM_TZ" not present.'
+        exit 1
+    fi
+
+    # Check for NTP time servers.
+    if /usr/bin/test -z "$MM_NTP_SERVERS}" ; then
+        mm_message_output err 'error: no NTP server(s) provided.'
+        exit 1
+    fi
+
+    NTP_CONF='/etc/ntp.conf'
+
+    /bin/rm -f ${NTP_CONF}~
+    for NTP_SERVER in ${MM_NTP_SERVERS}; do
+        if /usr/bin/test -n "${NTP_SERVER}" ; then
+            /bin/echo server ${NTP_SERVER} >> ${NTP_CONF}~
+        fi
+    done
+    /bin/mv -f ${NTP_CONF}~ ${NTP_CONF}
+
+    NTP_SERVER=`/bin/echo ${MM_NTP_SERVERS} | /usr/bin/cut -d ' ' -f 1`
+
+    # Set localtime file.
+    /bin/cp /usr/share/zoneinfo/${MM_TZ} /etc/localtime
+
+    # Set time.
+    /usr/bin/ntpdate ${NTP_SERVER}
+
+    # Start NTP daemon.
+    /usr/bin/ntpd
+
+    return 0
+}
+
+stop() {
+    mm_message_output info 'saving time ...'
+
+    if /usr/bin/test -n "`/bin/pidof ntpd`" ; then
+        /usr/bin/killall ntpd
+        /sbin/hwclock --systohc --utc
+    fi
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

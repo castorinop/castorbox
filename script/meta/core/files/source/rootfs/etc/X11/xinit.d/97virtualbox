@@ -1,0 +1,4 @@
+#/usr/bin/VBoxClient --clipboard
+#/usr/bin/VBoxClient --checkhostversion
+/usr/bin/VBoxClient --display
+/usr/bin/VBoxClient --seamless

@@ -1,0 +1,52 @@
+#!/bin/sh
+################################################################################
+# mount
+#
+# This script mounts the remote media directories.
+################################################################################
+. /etc/rc.d/functions
+
+start() {
+    mm_message_output info 'mounting media shares ...'
+
+    if /usr/bin/test -n "${MM_MYTHDVD_URL}"     ; then
+        mm_url_mount "${MM_MYTHDVD_URL}"     "/mnt/dvd"
+    fi
+    if /usr/bin/test -n "${MM_MYTHGALLERY_URL}" ; then
+        mm_url_mount "${MM_MYTHGALLERY_URL}" "/mnt/gallery"
+    fi
+    if /usr/bin/test -n "${MM_MYTHMUSIC_URL}"   ; then
+        mm_url_mount "${MM_MYTHMUSIC_URL}"   "/mnt/music"
+    fi
+    if /usr/bin/test -n "${MM_MYTHVIDEO_URL}"   ; then
+        mm_url_mount "${MM_MYTHVIDEO_URL}"   "/mnt/video"
+    fi
+
+    return 0
+}
+
+stop() {
+    mm_message_output info 'unmounting media shares ...'
+
+    if /usr/bin/test -n "${MM_MYTHVIDEO_URL}"   && /usr/bin/test -d /mnt/video   ; then
+        /bin/umount /mnt/video
+    fi
+    if /usr/bin/test -n "${MM_MYTHMUSIC_URL}"   && /usr/bin/test -d /mnt/music   ; then
+        /bin/umount /mnt/music
+    fi
+    if /usr/bin/test -n "${MM_MYTHGALLERY_URL}" && /usr/bin/test -d /mnt/gallery ; then
+        /bin/umount /mnt/gallery
+    fi
+    if /usr/bin/test -n "${MM_MYTHDVD_URL}"     && /usr/bin/test -d /mnt/dvd     ; then
+        /bin/umount /mnt/dvd
+    fi
+
+    return 0
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop  ;;
+esac
+
+exit 0

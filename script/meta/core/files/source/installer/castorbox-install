@@ -1,0 +1,107 @@
+#!/bin/sh 
+
+cfg_file=/initrd/system/config-test
+
+check_md5 () {
+	DIR=`dirname "$1"`
+	FILE=`basename "$1"`
+	echo "checking $FILE.md5"
+	cd /initrd/system/roms
+	cd "$DIR"
+	md5sum -c "$FILE".md5
+	if [ "$?" != 0 ]; then
+		echo "invalid md5sum: $FILE"
+		exit 1
+	fi
+	echo "	[checksum] complete for $FILE.md5"
+}
+
+get_current_boot () {
+	BOOT=`cat /initrd/system/boot/extlinux.conf |grep default |sed "s@default \(.*\)@\1@g"`
+	if [ "$BOOT" != "test" ]; then
+		echo $BOOT > /initrd/system/boot.ok
+	fi
+}
+
+update_bootloader () {
+	#extlinux --install /initrd/system/boot
+	#extlinux --reset-adv /initrd/system/boot
+	extlinux -O /initrd/system/boot
+}
+
+config_write () {
+	echo "CBX_IMGBASE='${CBX_IMGBASE}'" > ${cfg_file}
+	echo "CBX_CFGEXTRA='${CBX_CFGEXTRA}'" >> ${cfg_file}
+	for img in ${CBX_CFGEXTRA}; do
+		eval value=$`echo CBX_IMG_$img`
+		echo "CBX_IMG_$img=$value" >> ${cfg_file}
+	done
+	echo "config:		done"
+}
+
+config_kernel () {
+	ln -sf ../roms/$1 /initrd/system/boot/kernel-test
+	echo "config kernel:						done"
+}
+
+config_initrd () {
+	ln -sf ../roms/$1 /initrd/system/boot/initrd.sfs-test
+	echo "config initrd:						done"
+}
+
+update_scripts () {
+	ln -sf /initrd/system/roms/"$1"/scripts /initrd/system/
+}
+
+CBX_CFGBASE=config
+
+for i in `cat /proc/cmdline`; do 
+  if test  -n "` echo ${i} |grep CBX_`"; then
+	 export ${i};
+  fi
+done
+
+if [ -n "${CBX_CFG}" ]; then
+	export CBX_CFGBASE=config-${CBX_CFG}
+fi
+
+if [ -f "${cfg_file}" ]; then
+	. ${cfg_file}
+else 
+	if [ -f "/initrd/system/${CBX_CFGBASE}" ]; then
+		. /initrd/system/${CBX_CFGBASE}
+	fi
+fi
+
+PATH="/initrd/system/roms/$1/$2/scripts:$PATH"
+
+check_md5 "$1/$2/$1"
+
+if [ "$1" == "core" ]; then
+	get_current_boot
+	CBX_IMGBASE="$1/$2/castorbox-$1.sfs" 
+	CBX_KERNEL="$1/$2/kernel" 
+	CBX_INITRD="$1/$2/initrd.sfs"
+	update_scripts "$1/$2"
+else
+	PATH_BOOT=`dirname ${CBX_IMGBASE}`
+	CBX_KERNEL="${PATH_BOOT}/kernel"
+	CBX_INITRD="${PATH_BOOT}/initrd.sfs"
+	
+  	for i in ${CBX_CFGEXTRA}; do
+  		if [ "$1" == "$i" ]; then
+  			ADD=true;
+  		fi;
+  	done;
+	if [ -z "$ADD" ]; then 
+		CBX_CFGEXTRA="${CBX_CFGEXTRA} $1"
+        fi
+        eval CBX_IMG_$1="$1/$2/castorbox-$1.sfs"
+fi
+
+config_kernel "${CBX_KERNEL}"
+config_initrd "${CBX_INITRD}"
+config_write
+echo "	[configure] complete for $1-$2"
+extlinux -O /initrd/system/boot
+extlinux -o test /initrd/system/boot

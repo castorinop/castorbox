@@ -1,0 +1,22 @@
+#!/bin/sh
+#prepare amuled
+rm -f /config/amule/muleLock
+
+mkdir -p /media/CastorBOX/amule/Incoming
+mkdir -p /media/CastorBOX/amule/Temp
+
+ln -s /media/CastorBOX/amule/Incoming /config/amule
+ln -s /media/CastorBOX/amule/Temp /config/amule
+
+TCP_PORT=$((4662 + `cat /config/port`))
+UDP_PORT=$((4672 + `cat /config/port`))
+sed -i "s|@TCP_PORT@|$TCP_PORT|g" /config/amule/amule.conf
+sed -i "s|@UDP_PORT@|$UDP_PORT|g" /config/amule/amule.conf
+
+nice amuled -c /config/amule -f
+mkdir -p /root/.aMule
+cp /config/amule/remote.conf /root/.aMule/
+#amuleweb -q & 
+
+m-feeds-cli 2>&1 > /var/log/m-feeds-cli.log &
+

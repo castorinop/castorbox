@@ -1,0 +1,831 @@
+################################################################################
+# lircrc file for the new Microsft Media Center remote.
+################################################################################
+
+################################################################################
+#
+################################################################################
+begin
+    prog = irexec
+    button = POWER_PC
+    config = /bin/pidof xscreensaver && xscreensaver-command -deactivate
+end
+
+################################################################################
+# MythTV
+#
+# The 'PgUp' and 'PgDown' are mapped to CHANNEL+ and CHANNEL- respectively.
+# This enables page up and page down support in list boxes. This should not
+# cause any loss of functionality since 'Up' and 'Down' also act as channel up
+# and channel down within MythTV.
+#
+# ')' and '(' are used for FORWARD and REWIND respectively. This allows
+# fast forward and rewind to work in MythMusic with losing the page up and 
+# page down support in list boxes. Therefore, you will need to change the
+# following MythTV keybindings:
+#       context      |  action    |  keylist
+#     ---------------+------------+-----------
+#       Music        |  FFWD      |  )
+#       Music        |  RWND      |  (
+#       Stream       |  FORWARD   |  )
+#       Stream       |  REWIND    |  (
+#       TV Playback  |  SEEKFFWD  |  )
+#       TV Playback  |  SEEKRWND  |  (
+#
+# Non-obvious key mappings:
+#     START  : Menu
+#     LIVE_TV: Switch Capture Card
+#     MORE   : Info
+#     STAR   : Screen Mode
+#     HASH   : Close Captioning
+################################################################################
+begin
+    prog = mythtv
+    button = POWER_TV
+    config =
+end
+
+begin
+    prog = mythtv
+    button = POWER_PC
+    config =
+end
+
+begin
+    prog = mythtv
+    button = RECORD
+    config = R
+end
+
+begin
+    prog = mythtv
+    button = STOP
+    config = O
+end
+
+begin
+    prog = mythtv
+    button = PAUSE
+    config = P
+end
+
+begin
+    prog = mythtv
+    button = PLAY
+    config = Space
+end
+
+begin
+    prog = mythtv
+    button = REWIND
+    config = (
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = FORWARD
+    config = )
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = REPLAY
+    config = Q
+end
+
+begin
+    prog = mythtv
+    button = SKIP
+    config = Z
+end
+
+begin
+    prog = mythtv
+    button = BACK
+    config = Esc
+end
+
+begin
+    prog = mythtv
+    button = MORE
+    config = I
+end
+
+begin
+    prog = mythtv
+    button = UP
+    config = Up
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = DOWN
+    config = Down
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = LEFT
+    config = Left
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = RIGHT
+    config = Right
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = OK
+    config = Enter
+end
+
+begin
+    prog = mythtv
+    button = START
+    config = M
+end
+
+begin
+    prog = mythtv
+    button = VOLUME+
+    config = ]
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = VOLUME-
+    config = [
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = CHANNEL+
+    config = PgUp
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = CHANNEL-
+    config = PgDown
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mythtv
+    button = MUTE
+    config = |
+end
+
+begin
+    prog = mythtv
+    button = RECORDED_TV
+    config =
+end
+
+begin
+    prog = mythtv
+    button = GUIDE
+    config = O
+end
+
+begin
+    prog = mythtv
+    button = LIVE_TV
+    config = Y
+end
+
+begin
+    prog = mythtv
+    button = DVD_MENU
+    config =
+end
+
+begin
+    prog = mythtv
+    button = 1
+    config = 1
+end
+
+begin
+    prog = mythtv
+    button = 2
+    config = 2
+end
+
+begin
+    prog = mythtv
+    button = 3
+    config = 3
+end
+
+begin
+    prog = mythtv
+    button = 4
+    config = 4
+end
+
+begin
+    prog = mythtv
+    button = 5
+    config = 5
+end
+
+begin
+    prog = mythtv
+    button = 6
+    config = 6
+end
+
+begin
+    prog = mythtv
+    button = 7
+    config = 7
+end
+
+begin
+    prog = mythtv
+    button = 8
+    config = 8
+end
+
+begin
+    prog = mythtv
+    button = 9
+    config = 9
+end
+
+begin
+    prog = mythtv
+    button = 0
+    config = 0
+end
+
+begin
+    prog = mythtv
+    button = STAR
+    config = W
+end
+
+begin
+    prog = mythtv
+    button = HASH
+    config = T
+end
+
+begin
+    prog = mythtv
+    button = CLEAR
+    config = Esc
+end
+
+begin
+    prog = mythtv
+    button = ENTER
+    config = Enter
+end
+
+################################################################################
+# MPlayer
+################################################################################
+begin
+    prog = mplayer
+    button = POWER_TV
+    config =
+end
+
+begin
+    prog = mplayer
+    button = POWER_PC
+    config =
+end
+
+begin
+    prog = mplayer
+    button = RECORD
+    config =
+end
+
+begin
+    prog = mplayer
+    button = STOP
+    config = seek 0 1\npause
+end
+
+begin
+    prog = mplayer
+    button = PAUSE
+    config = pause
+end
+
+begin
+    prog = mplayer
+    button = PLAY
+    config = backspace
+end
+
+begin
+    prog = mplayer
+    button = REWIND
+    config =
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mplayer
+    button = FORWARD
+    config =
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mplayer
+    button = REPLAY
+    config = seek -10
+end
+
+begin
+    prog = mplayer
+    button = SKIP
+    config = seek +10
+end
+
+begin
+    prog = mplayer
+    button = BACK
+    config = quit
+end
+
+begin
+    prog = mplayer
+    button = MORE
+    config =
+end
+
+begin
+    prog = mplayer
+    button = UP
+end
+
+begin
+    prog = mplayer
+    button = DOWN
+    config =
+end
+
+begin
+    prog = mplayer
+    button = LEFT
+    config = seek -10
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mplayer
+    button = RIGHT
+    config = seek +10
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = mplayer
+    button = OK
+    config =
+end
+
+begin
+    prog = mplayer
+    button = START
+    config = osd
+end
+
+begin
+    prog = mplayer
+    button = VOLUME+
+    config =
+end
+
+begin
+    prog = mplayer
+    button = VOLUME-
+    config =
+end
+
+begin
+    prog = mplayer
+    button = CHANNEL+
+    config = pt_step +1
+end
+
+begin
+    prog = mplayer
+    button = CHANNEL-
+    config = pt_step -1
+end
+
+begin
+    prog = mplayer
+    button = MUTE
+    config =
+end
+
+begin
+    prog = mplayer
+    button = RECORDED_TV
+    config =
+end
+
+begin
+    prog = mplayer
+    button = GUIDE
+    config =
+end
+
+begin
+    prog = mplayer
+    button = LIVE_TV
+    config =
+end
+
+begin
+    prog = mplayer
+    button = DVD_MENU
+    config =
+end
+
+begin
+    prog = mplayer
+    button = 1
+    config = 1
+end
+
+begin
+    prog = mplayer
+    button = 2
+    config = 2
+end
+
+begin
+    prog = mplayer
+    button = 3
+    config = 3
+end
+
+begin
+    prog = mplayer
+    button = 4
+    config = 4
+end
+
+begin
+    prog = mplayer
+    button = 5
+    config = 5
+end
+
+begin
+    prog = mplayer
+    button = 6
+    config = 6
+end
+
+begin
+    prog = mplayer
+    button = 7
+    config = 7
+end
+
+begin
+    prog = mplayer
+    button = 8
+    config = 8
+end
+
+begin
+    prog = mplayer
+    button = 9
+    config = 9
+end
+
+begin
+    prog = mplayer
+    button = 0
+    config = 0
+end
+
+begin
+    prog = mplayer
+    button = STAR
+    config =
+end
+
+begin
+    prog = mplayer
+    button = HASH
+    config =
+end
+
+begin
+    prog = mplayer
+    button = CLEAR
+    config =
+end
+
+begin
+    prog = mplayer
+    button = ENTER
+    config =
+end
+
+################################################################################
+# Xine
+################################################################################
+begin
+    prog = xine
+    button = POWER_TV
+    config =
+end
+
+begin
+    prog = xine
+    button = POWER_PC
+    config =
+end
+
+begin
+    prog = xine
+    button = RECORD
+    config =
+end
+
+begin
+    prog = xine
+    button = STOP
+    config = Stop
+end
+
+begin
+    prog = xine
+    button = PAUSE
+    config = Pause
+end
+
+begin
+    prog = xine
+    button = PLAY
+    config = Play
+end
+
+begin
+    prog = xine
+    button = REWIND
+    config = SpeedSlower
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = FORWARD
+    config = SpeedFaster
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = REPLAY
+    config = SeekRelative-10
+end
+
+begin
+    prog = xine
+    button = SKIP
+    config = SeekRelative+10
+end
+
+begin
+    prog = xine
+    button = BACK
+    config = Quit
+end
+
+begin
+    prog = xine
+    button = MORE
+    config = OSDStreamInfos
+end
+
+begin
+    prog = xine
+    button = UP
+    config = EventUp
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = DOWN
+    config = EventDown
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = LEFT
+    config = EventLeft
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = RIGHT
+    config = EventRight
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = OK
+    config = EventSelect
+end
+
+begin
+    prog = xine
+    button = START
+    config =
+end
+
+begin
+    prog = xine
+    button = VOLUME+
+    config = Volume+
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = VOLUME-
+    config = Volume-
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = CHANNEL+
+    config = EventNext
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = CHANNEL-
+    config = EventPrior
+    repeat = 1
+    delay = 2
+end
+
+begin
+    prog = xine
+    button = MUTE
+    config = Mute
+end
+
+begin
+    prog = xine
+    button = RECORDED_TV
+    config =
+end
+
+begin
+    prog = xine
+    button = GUIDE
+    config =
+end
+
+begin
+    prog = xine
+    button = LIVE_TV
+    config =
+end
+
+begin
+    prog = xine
+    button = DVD_MENU
+    config = RootMenu
+end
+
+begin
+    prog = xine
+    button = 1
+    config = Number1
+end
+
+begin
+    prog = xine
+    button = 2
+    config = Number2
+end
+
+begin
+    prog = xine
+    button = 3
+    config = Number3
+end
+
+begin
+    prog = xine
+    button = 4
+    config = Number4
+end
+
+begin
+    prog = xine
+    button = 5
+    config = Number5
+end
+
+begin
+    prog = xine
+    button = 6
+    config = Number6
+end
+
+begin
+    prog = xine
+    button = 7
+    config = Number7
+end
+
+begin
+    prog = xine
+    button = 8
+    config = Number8
+end
+
+begin
+    prog = xine
+    button = 9
+    config = Number9
+end
+
+begin
+    prog = xine
+    button = 0
+    config = Number0
+end
+
+begin
+    prog = xine
+    button = STAR
+    config =
+end
+
+begin
+    prog = xine
+    button = HASH
+    config =
+end
+
+begin
+    prog = xine
+    button = CLEAR
+    config =
+end
+
+begin
+    prog = xine
+    button = ENTER
+    config =
+end

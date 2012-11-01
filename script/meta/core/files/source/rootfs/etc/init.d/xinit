@@ -1,0 +1,86 @@
+
+
+
+X_DRIVER=`cat /var/cache/castorbox/detect/video/*`
+NVIDIA_TRUE="#"
+DRI_TRUE=""
+DRI_FALSE="#"
+
+
+case "${X_DRIVER}" in
+        intel_810)
+            ;;
+        intel_915)
+            ;;
+        nvidia)
+            DRI_TRUE="#"
+            NVIDIA_TRUE=""
+            # Include path to proprietary libraries.
+            LIB_PATHS=`/bin/cat /etc/ld.so.conf`
+            LIB_PATHS="/usr/lib/${X_DRIVER} ${LIB_PATHS}"
+            /bin/echo -n > /etc/ld.so.conf
+            for LIB_PATH in ${LIB_PATHS} ; do
+                /bin/echo "${LIB_PATH}" >> /etc/ld.so.conf
+            done
+            # Remove Open Source libraries that conflict with proprietary libraries.
+            LIBS=`/usr/bin/find /usr/lib/${X_DRIVER} -type f | /bin/sed -e "s%^.*/%%"`
+            for LIB in ${LIBS} ; do
+                LIB_PATH=`/usr/bin/find /usr/lib -name ${LIB} | /bin/sed -e "s%^/usr/lib/${X_DRIVER}/.*\$%%"`
+                if /usr/bin/test -n "${LIB_PATH}" ; then
+                    /bin/rm -f ${LIB_PATH}
+                fi
+            done
+            # Rebuild library cache.
+            /sbin/ldconfig
+            ;;
+        openchrome)
+            ;;
+        radeon)
+            ;;
+        radeonhd)
+            ;;
+        savage)
+            ;;
+        sis)
+            ;;
+        vmware)
+            ;;
+	vboxvideo)
+	    ;;
+    esac
+
+#input                                                    
+EVENT_LAYOUT=/tmp/event_layout
+EVENT_INPUT=/tmp/event_input                                                        
+                                                                                      
+rm $EVENT_INPUT $EVENT_LAYOUT -r   
+                                                                                                  
+for dev in `ls /dev/input/event*`; do                   
+        ident=`basename $dev`;            
+                                     
+echo "Section \"InputDevice\"\\
+        Identifier \"$ident\"\\
+        Driver     \"evdev\"\\
+        Option \"Device\"     \"$dev\"\\
+EndSection\\" >> $EVENT_INPUT        
+  
+echo "    InputDevice \"$ident\" \"SendCoreEvents\"\\" >> $EVENT_LAYOUT
+done
+INPUTDEVICE_EVENT="`cat $EVENT_INPUT`"                               
+SERVERLAYOUT_EVENT="`cat $EVENT_LAYOUT`"
+
+sed -i "s/@DRIVER@/$X_DRIVER/g" /etc/X11/xorg.conf
+sed -i "s/@NVIDIA_TRUE@/$NVIDIA_TRUE/g" /etc/X11/xorg.conf
+sed -i "s/@DRI_TRUE@/$DRI_TRUE/g" /etc/X11/xorg.conf
+sed -i "s/@DRI_FALSE@/$DRI_FALSE/g" /etc/X11/xorg.conf
+sed -i "s#@INPUTDEVICE_EVENT@#'$INPUTDEVICE_EVENT'#g" /etc/X11/xorg.conf
+sed -i "s#@SERVERLAYOUT_EVENT@#'$SERVERLAYOUT_EVENT'#g" /etc/X11/xorg.conf
+sed -i "s/'//g" /etc/X11/xorg.conf
+
+
+rm $EVENT_INPUT $EVENT_LAYOUT -r
+
+if [ -z "$CBX_NO_X" ]; then
+	/usr/bin/xinit /etc/X11/xinit/xinitrc 2> /var/log/xinit.log &
+fi
+

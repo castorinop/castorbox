@@ -1,0 +1,15 @@
+VBoxOGL*.so
+
+# Kernel
+modules/*/misc/vbox/
+
+# X11
+xorg/modules/dri/swrast_dri.so
+xorg/modules/dri/vboxvideo_dri.so
+xorg/modules/dri/libdricore.so
+xorg/modules/dri/libglsl.so
+xorg/modules/drivers/vboxvideo_drv.so
+xorg/modules/drivers/ati_drv.so
+xorg/modules/input/vboxmouse_drv.so
+xorg/modules/libshadowfb.so
+

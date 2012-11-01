@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE halevt:Configuration [
+
+<!-- this entity corresponds with mountable devices, which have 
+ volume.policy.should_mount true or don't have 
+ volume.policy.should_mount false and are block devices hotpluggable or
+ removable.
+-->
+<!ENTITY MOUNTABLE "hal.block.device &amp; hal.block.is_volume = true &amp; (hal.volume.policy.should_mount = true | ((! hal.volume.policy.should_mount = false) &amp; (hal.block.storage_device.hal.storage.policy.should_mount = true | ((! hal.block.storage_device.hal.storage.policy.should_mount = false)))))">
+]>
+<halevt:Configuration version="0.1" xmlns:halevt="http://www.environnement.ens.fr/perso/dumas/halevt.html">
+
+<!--
+Remember to use &amp; and &quot; for & and " in xml attributes.
+
+In a match attribute, hal.* is special since it matches any device.
+In a match attribute property it is possible to refer to other
+device properties. For example 
+hal.block.storage_device.hal.storage.policy.should_mount
+refers to the storage.policy.should_mount property of the block.storage_device
+device associated with a given device.
+
+In an exec attribute, $hal.udi$ is special since it is replaced by
+the device udi. $hal.some.property$ is replaced by the value
+of the property some.property.
+!-->
+
+<!--
+Removable devices support
+!-->
+
+<!--
+This rule matches removable devices which have volume.policy.should_mount true
+or don't have volume.policy.should_mount false.
+Upon insertion, they are mounted and recorded by halevt-mount. 
+-m 002 sets the umask of mount to 002 when pmount is used system-wide
+to mount the device. This allows regular users to read the device.
+!-->
+<halevt:Device match="&MOUNTABLE;">
+   <halevt:Insertion exec="halevt-mount -u $hal.udi$"/>
+</halevt:Device>
+
+<!--
+When a device get a mount point, it is passed to halevt-mount which can 
+record it. The property that changes is volume.is_mounted, and the action is
+executed when the value of volume.is_mounted becomes true.
+!-->
+<halevt:Device match="hal.block.device &amp; hal.block.is_volume = true &amp; hal.volume.mount_point">
+   <halevt:Property name="hal.volume.is_mounted">
+      <halevt:Action value="true" exec="halevt-mount -s &amp;&amp; mounter mount '$hal.udi$'"/>
+   </halevt:Property>
+</halevt:Device>
+
+<!--
+When a device is unmounted, it is recorded by halevt-mount.
+<halevt:Device match="hal.block.device &amp; hal.block.is_volume = true">
+    <halevt:Property name="hal.volume.is_mounted">
+        <halevt:Action value="false" exec="halevt-mount -s"/>
+    </halevt:Property>
+</halevt:Device>
+
+!-->
+<!--
+When a device is removed, it is recorded by halevt-mount.
+Note that at that point the device is already out of hal, so we use
+* which matches any device in the match attribute, and only pass the
+udi to the command.
+!-->
+<halevt:Device match="hal.block.device &amp; hal.block.is_volume = true" >
+     <halevt:Removal exec=" mounter umount '$hal.udi$'; halevt-umount -u $hal.udi$; halevt-umount -s"/>
+</halevt:Device>
+
+
+<!-- 
+Example of a use of OnInit. At startup all the devices are matched and the exec
+comand is run for those that match. Here we match all the removable devices
+that aren't already mounted and mount and register them.
+!-->
+
+<halevt:Device match="&MOUNTABLE;">
+   <halevt:OnInit exec="halevt-mount -u $hal.udi$"/>
+</halevt:Device>
+
+<!-- 
+Example of a use of Condition. When a device matches and the condition has become
+true for that device, the corresponding exec command is launched.
+
+<halevt:Device match="hal.info.udi = /org/freedesktop/Hal/devices/acpi_PWRF">
+    <halevt:Condition name="ButtonPressed" exec="/usr/bin/sudo /sbin/shutdown"/>
+</halevt:Device>
+
+!-->
+
+<!-- 
+Example of a use of OnInit. At startup all the devices are matched and the exec
+comand is run for those that match.
+
+<halevt:Device match="hal.info.category = battery">
+    <halevt:OnInit exec="hvbattery -u $hal.udi$ -l $hal.battery.charge_level.percentage$ -s $hal.battery.rechargeable.is_discharging"/>
+</halevt:Device>
+!-->
+
+
+</halevt:Configuration>

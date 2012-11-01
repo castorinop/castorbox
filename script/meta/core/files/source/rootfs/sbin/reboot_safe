@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Reiniciando CastorBOX..."
+/sbin/shutdown_safe;
+reboot

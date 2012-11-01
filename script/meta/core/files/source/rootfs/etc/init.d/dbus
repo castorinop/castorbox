@@ -1,0 +1,10 @@
+#FIXME: permissions
+chmod u+s /usr/libexec/dbus-daemon-launch-helper 
+
+if [ -s /etc/castorbox-id ]; then 
+	dbus-uuidgen --get=/etc/castorbox-id
+else
+	dbus-uuidgen > /etc/castorbox-id
+fi
+
+dbus-daemon --system

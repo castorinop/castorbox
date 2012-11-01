@@ -1,0 +1,40 @@
+#-------------------------------------------------------------------------------
+# Detect LCDproc devices.
+#
+# mm_detect_state_lcdproc has the following format:
+#     <driver>
+# where
+#     <driver>     : The LCDproc driver.
+# The state requires the LCDproc device name. However, since it is not yet
+# known, it cannot be added be included in mm_detect_state_lcdproc. Therefore,
+# the mm_detect script will prepend the LCDproc device name to the state.
+#-------------------------------------------------------------------------------
+ACTION!="add|change|remove", GOTO="end"
+KERNEL=="lcd[0-9]*",    SUBSYSTEM=="lcd", SUBSYSTEMS=="usb", GOTO="begin"
+KERNEL=="ttyUSB[0-9]*", SUBSYSTEM=="tty", SUBSYSTEMS=="usb", GOTO="begin"
+GOTO="end"
+LABEL="begin"
+
+ENV{MODALIAS}!="?*", IMPORT{parent}=="MODALIAS"
+
+# Initialize state
+ENV{mm_detect_state_lcdproc}=""
+
+#-------------------------------------------------------------------------------
+#
+#-------------------------------------------------------------------------------
+  ENV{MODALIAS}=="usb:v0403pFA01d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="MtxOrb"
+  ENV{MODALIAS}=="usb:v0403pFC0dd*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="CFontzPacket"
+  ENV{MODALIAS}=="usb:v0403pFC60d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="irtrans"
+  ENV{MODALIAS}=="usb:v040Bp7001d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="dm140"
+  ENV{MODALIAS}=="usb:v046Dp0A07d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="g15"
+  ENV{MODALIAS}=="usb:v15C2p0038d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="imonlcd"
+  ENV{MODALIAS}=="usb:v15C2pFFDCd*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="imon"
+  ENV{MODALIAS}=="usb:v1B3Dp0153d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="MtxOrb"
+  ENV{MODALIAS}=="usb:v04D8p0002d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="picolcd"
+  ENV{MODALIAS}=="usb:v04D8pC001d*dc*dsc*dp*ic*isc*ip*", ENV{mm_detect_state_lcdproc}="picolcd"
+
+# The state has been set, so save it.
+ENV{mm_detect_state_lcdproc}=="?*", RUN+="/lib/udev/mm_detect lcdproc %k $env{mm_detect_state_lcdproc} state_prepend_devname"
+
+LABEL="end"

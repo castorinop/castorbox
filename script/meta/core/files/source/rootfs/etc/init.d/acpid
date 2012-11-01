@@ -1,0 +1,5 @@
+for i in button fan processor thermal; do
+	modprobe $i
+done
+
+/usr/sbin/acpid
