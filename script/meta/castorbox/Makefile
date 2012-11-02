@@ -87,3 +87,8 @@ post-install:
 
 install-reboot: install 
 	/usr/bin/ssh $(dst_HOST) reboot
+
+version:
+	@echo full: $(mm_VERSION) 
+	@echo base: $(mm_VERSION_BASE)
+	@echo rev: $(mm_VERSION_VCS)
