@@ -38,7 +38,8 @@ DEPENDS = lang/cxx \
 	  lib/libtiff \
 	  xbmc/wavpack \
 	  xbmc/yajl \
-	  python/python
+	  python/python \
+	  python-python-Imaging
 
 BUILDDEPS = xbmc/cmake utils/zip
 
