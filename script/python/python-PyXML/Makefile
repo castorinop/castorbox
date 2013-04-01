@@ -37,6 +37,9 @@ endif
 GAR_EXTRA_CONF += python/python/package-api.mk
 include ../../gar.mk
 
+CFLAGS  := $(CFLAGS)  -fPIC
+LDFLAGS := $(LDFLAGS) -fPIC
+
 CFLAGS  += -L$(DESTDIR)$(libdir)
 LDFLAGS += -L$(DESTDIR)$(libdir)
 

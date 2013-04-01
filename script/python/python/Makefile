@@ -3,7 +3,7 @@ GARVERSION =  $(PYTHON_VERSION)
 CATEGORIES = python
 MASTER_SITES = http://www.python.org/ftp/python/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES  = $(DISTNAME)-parallel.patch $(DISTNAME)-configure.patch
+PATCHFILES  = $(DISTNAME)-parallel.patch $(DISTNAME)-configure.patch $(DISTNAME).patch.gar
 ifneq ($(DESTIMG),build)
 PATCHFILES += $(DISTNAME)-cross.patch
 endif
@@ -19,6 +19,8 @@ BUILDDEPS  = devel/autoconf-2.65 devel/automake
 ifneq ($(DESTIMG),build)
 DEPENDS   += lib/bluez
 BUILDDEPS += python/python
+else 
+DEPENDS	 += db/sqlite
 endif
 
 CONFIGURE_SCRIPTS  = $(WORKSRC)/configure
