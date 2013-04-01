@@ -16,7 +16,7 @@ include $(top_build)/config.mk
 
 mm_VERSION_BUILD = $(shell cat $(HOME)/.castorbox/.BUILD)
 
-mm_RELEASE = $(mm_VERSION_BASE)-r$(mm_VERSION_SVN)-b$(mm_VERSION_BUILD)
+mm_RELEASE = $(mm_VERSION_BASE)-r$(mm_VERSION_VCS)-b$(mm_VERSION_BUILD)
 
 mm_FULL_VERSION = $(mm_NAME)-$(mm_RELEASE)
 
