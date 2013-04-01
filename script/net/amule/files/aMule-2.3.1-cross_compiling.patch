@@ -6,7 +6,7 @@ diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru t
  
  
 -	if test $cross_compiling = no; then :
-+	if test $cross_compiling = xno; then :
++	if test $cross_compiling = yes; then :
  
  		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libupnp version >= 1.6.6" >&5
  $as_echo_n "checking for libupnp version >= 1.6.6... " >&6; }
