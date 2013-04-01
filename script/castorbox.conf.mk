@@ -70,7 +70,9 @@ mm_MMS_VERSION		?= castorbox-1.1.x
 # The version of the NVIDIA driver.
 # Valid values are '71.86.09' (legacy), '96.43.11' (legacy), '169.12' (legacy),
 # '173.14.18' (legacy), '180.51', '185.18.08' (beta).
-mm_NVIDIA_VERSION         ?= 275.21
+#mm_NVIDIA_VERSION         ?= 275.21
+mm_NVIDIA_VERSION         ?= 302.17
+
 # The version of xorg to use.
 # Valid values are '7.4' and '7.5'.
 mm_XORG_VERSION           ?=7.6
