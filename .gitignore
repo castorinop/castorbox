@@ -1,0 +1,10 @@
+.*
+*~
+**/*~
+**/authorized_keys*
+source/
+images/
+script/**/**/cookies
+script/**/**/download
+script/**/**/tmp
+script/**/**/work
