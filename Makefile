@@ -1,8 +1,7 @@
 include script/gar.conf.mk
 
 build:
-	@echo "error: 'make build' must be run in directory 'script/meta/minimyth'."
-	@exit 1
+	@make -C script/meta/castorbox
 
 clean:
 	@rm -rf images/*
