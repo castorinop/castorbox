@@ -1,5 +1,5 @@
 GARNAME = freetype
-GARVERSION = 2.4.5
+GARVERSION = 2.4.11
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)2/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.bz2

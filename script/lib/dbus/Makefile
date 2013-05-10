@@ -1,5 +1,5 @@
 GARNAME = dbus
-GARVERSION = 1.4.12
+GARVERSION = 1.6.8
 CATEGORIES = lib
 MASTER_SITES = http://dbus.freedesktop.org/releases/dbus/
 DISTFILES = $(DISTNAME).tar.gz
@@ -9,7 +9,7 @@ DESCRIPTION =
 define BLURB
 endef
 
-DEPENDS = lang/c lib/libxml2 xorg-$(mm_XORG_VERSION)/libX11 xorg-$(mm_XORG_VERSION)/libXt
+DEPENDS = lang/c lib/expat xorg/libX11 xorg/libXt
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
@@ -22,10 +22,14 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-silent-rules \
 	--enable-shared \
 	--disable-static \
+	--enable-verbose-mode \
+	--enable-asserts \
+	--enable-checks \
 	--disable-xml-docs \
 	--disable-doxygen-docs \
+	--enable-abstract-sockets \
 	--disable-selinux \
-	--with-xml=libxml \
+	--with-xml=expat \
 	--with-gnu-ld \
 	--with-x
 
@@ -35,8 +39,7 @@ pre-configure:
 	@$(call RUN_AUTOTOOLS)
 	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
 	@rm -f $(WORKSRC)/config.cache
-	@echo "ac_cv_have_abstract_sockets=yes" >> $(WORKSRC)/config.cache
-	@echo "dbus_cv_va_val_copy=no"          >> $(WORKSRC)/config.cache
+	@echo "dbus_cv_va_val_copy=no" >> $(WORKSRC)/config.cache
 	@$(MAKECOOKIE)
 
 post-install:

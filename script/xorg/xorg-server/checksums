@@ -1,0 +1,4 @@
+553fd7902e1156115f15cc1656f46a6f  download/xorg-server-1.13.2.tar.bz2
+026ed1583ec1ca7ef76a94e90c2fe421  download/xorg-server-1.13.2-perl.patch.gar
+8aa97414e13d66d0e8988884ca24f696  download/xorg-server-1.13.2-pkg_config.patch
+a12418eb7e575ecc2e6f35ac0b0da7fa  download/xorg-server-1.13.2-detect_radeon.patch

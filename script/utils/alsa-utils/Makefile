@@ -1,17 +1,18 @@
 GARNAME = alsa-utils
-GARVERSION = 1.0.24.2
+GARVERSION = 1.0.26
 CATEGORIES = utils
 MASTER_SITES  = ftp://ftp.alsa-project.org/pub/utils/
 MASTER_SITES += ftp://ftp.alsa-project.org/pub/testing/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES =
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = GPL2
 
 DESCRIPTION = 
 define BLURB
 endef
 
-DEPENDS = lang/c lib/alsa-lib lib/ncursesw
+DEPENDS = lang/c lib/alsa-lib lib/ncursesw system/udev
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
@@ -26,6 +27,7 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-xmlto \
 	--enable-largefile \
 	--with-gnu-ld \
+	--with-udev-rules-dir="$(libdir)/udev/rules.d" \
 	--with-curses=ncursesw
 
 include ../../gar.mk

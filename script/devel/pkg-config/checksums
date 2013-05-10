@@ -1,3 +1,2 @@
-a3270bab3f4b69b7dc6dbdacbcae9745  download/pkg-config-0.25.tar.gz
-5cfcf5cc9de63fe1f250b52ffc1c4d59  download/pkg-config-0.25-autoconf_2.66.patch
-a8b85a53dc5507cacd878332b9d44151  download/pkg-config-0.25-m4_pattern_allow.patch
+aa3c86e67551adc3ac865160e34a2a0d  download/pkg-config-0.28.tar.gz
+3b4b51734eea8790c98f0e4befa7d1f3  download/pkg-config-0.28-automake_1.13.patch

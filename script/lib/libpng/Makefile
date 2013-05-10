@@ -31,7 +31,7 @@ extract-config.cache.$(GARCH_FAMILY):
 	@$(MAKECOOKIE)
 
 pre-configure:
-	@$(call RUN_AUTOTOOLS)
+	@#$(call RUN_AUTOTOOLS)
 	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
 	@$(MAKECOOKIE)
 

@@ -1,15 +1,15 @@
 GARNAME = cairo
-GARVERSION = 1.10.2
+GARVERSION = 1.12.12
 CATEGORIES = gtk
 MASTER_SITES = http://www.cairographics.org/releases/
-DISTFILES = $(DISTNAME).tar.gz
+DISTFILES = $(DISTNAME).tar.xz
 LICENSE = LGPL2_1
 
 DESCRIPTION =
 define BLURB
 endef
 
-DEPENDS = lang/c lib/fontconfig lib/freetype lib/libpng xorg/xorg
+DEPENDS = lang/c gtk/glib lib/fontconfig lib/freetype lib/libpng xorg/xorg
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
@@ -46,6 +46,8 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-xcb-drm \
 	--enable-png \
 	--enable-gl \
+	--disable-glesv2 \
+	--disable-cogl \
 	--disable-directfb \
 	--disable-vg \
 	--disable-egl \

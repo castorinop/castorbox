@@ -1,10 +1,11 @@
-GARNAME = js
-GARVERSION = 1.7.0
+GARNAME = mozjs
+GARVERSION = 17.0.0
 MAJOR = 1
 CATEGORIES = net
-MASTER_SITES = ftp://ftp.mozilla.org/pub/mozilla.org/$(GARNAME)/
+MASTER_SITES = ftp://ftp.mozilla.org/pub/mozilla.org/js/
+DISTNAME=$(GARNAME)$(GARVERSION)
 DISTFILES = $(DISTNAME).tar.gz libjs.pc
-PATCHFILES = $(DISTNAME)-make.patch $(DISTNAME)-threadsafe.patch $(DISTNAME)-fix_strings.patch $(DISTNAME)-shlib.patch $(DISTNAME)-editline.patch
+#PATCHFILES = $(DISTNAME)-make.patch $(DISTNAME)-threadsafe.patch $(DISTNAME)-fix_strings.patch $(DISTNAME)-shlib.patch $(DISTNAME)-editline.patch
 #LICENSE = MPL
 
 DESCRIPTION = 
@@ -13,10 +14,13 @@ endef
 
 DEPENDS = lang/c lib/nspr lib/readline
 
-BUILD_SCRIPTS     = custom
-INSTALL_SCRIPTS   = custom
 
-WORKSRC = $(WORKDIR)/js
+CONFIGURE_SCRIPTS = $(WORKSRC)/js/src/configure
+BUILD_SCRIPTS     = $(WORKSRC)/js/src/Makefile
+INSTALL_SCRIPTS   = $(WORKSRC)/js/src/Makefile 
+
+CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+		 --enable-threadsafe  
 
 include ../../gar.mk
 
@@ -37,8 +41,10 @@ build-custom:
 	JS_READLINE="1" \
 	LD=$(LD) \
 	CC=$(CC) \
-	XCFLAGS="$(CFLAGS)" \
-	LDFLAGS="$(LDFLAGS)"
+	CFLAGS="$(CFLAGS) -DXP_UNIX" \
+	LDFLAGS="$(LDFLAGS)" \
+	OBJDIR=$(WORKSRC)_build \
+	jscpucfg jsautocfg.h all
 	@$(MAKECOOKIE)
 
 install-custom:

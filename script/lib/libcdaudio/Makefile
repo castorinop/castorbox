@@ -3,7 +3,10 @@ GARVERSION = 0.99.12p2
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-DESTDIR.patch.gar
+PATCHFILES = \
+	$(DISTNAME)-automake_1.12.patch \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-DESTDIR.patch.gar
 LICENSE = GPL2
 
 DESCRIPTION =

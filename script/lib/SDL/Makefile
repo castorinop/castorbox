@@ -1,18 +1,17 @@
 GARNAME = SDL
-GARVERSION = 1.2.14
+GARVERSION = 1.2.15
 CATEGORIES = lib
 MASTER_SITES = http://www.libsdl.org/release/
 DISTFILES = $(DISTNAME).tar.gz
 PATCHFILES = $(DISTNAME)-configure.patch $(DISTNAME).patch.gar
-#PATCHFILES = $(DISTNAME).patch.gar
 LICENSE = LGPL2_1
 
 DESCRIPTION =
 define BLURB
 endef
 
-DEPENDS    = lang/c lib/alsa-lib xorg/xorg
-BUILDDEPS  = devel/autoconf-2.64 devel/yasm
+DEPENDS   = lang/c lib/alsa-lib xorg/xorg
+BUILDDEPS = devel/nasm
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
@@ -106,8 +105,8 @@ include ../../gar.mk
 
 pre-configure:
 	@cd $(WORKSRC) ; rm -f acinclude/alsa.m4
-	@# Skip autoheader because there is a problem with AC_DEFINE's in the configure.in of SDL 1.2.14.
-	@# Added include directory 'acinclude' because SDL 1.2.14 has no Makefile.am in which to specify it.
+	@# Skip autoheader because there is a problem with AC_DEFINE's in the configure.in of SDL 1.2.15.
+	@# Add include directory 'acinclude' because SDL 1.2.15 has no Makefile.am in which to specify it.
 	@$(call RUN_AUTOTOOLS, \
 		cd $(WORKSRC) ; \
 		AUTOHEADER="true" autoreconf --verbose --install --force -I $(DESTDIR)$(datadir)/aclocal -I acinclude)
@@ -115,7 +114,7 @@ pre-configure:
 	@$(MAKECOOKIE)
 
 post-install:
-	@rm -f $(DESTDIR)$(libdir)/libSDLmain.a
+	@rm -f $(DESTDIR)$(libdir)/libSDLmain.la
 	@rm -f $(DESTDIR)$(libdir)/libSDL.la
 	@rm -f $(DESTDIR)$(bindir)-config/sdl-config
 	@rm -f $(DESTDIR)$(bindir)-config/$(compiler_prefix)sdl-config

@@ -5,8 +5,7 @@ MASTER_SITES  = http://ftp.gnu.org/gnu/$(GARNAME)/
 MASTER_SITES += ftp://ftp.kernel.org/pub/linux/devel/$(GARNAME)/
 MASTER_SITES += ftp://sourceware.org/pub/$(GARNAME)/snapshots/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES  = $(DISTNAME)-visibility.patch
-PATCHFILES += $(DISTNAME)-multi_os_directory.patch
+PATCHFILES  = $(DISTNAME)-multi_os_directory.patch
 ifneq ("$(DESTIMG)+$(CROSSIMG)","build+build")
 PATCHFILES += $(DISTNAME)-perl.patch.gar
 endif
@@ -19,24 +18,29 @@ endef
 CROSSIMG ?= $(DESTIMG)
 GARTARGET = $($(CROSSIMG)_GARHOST)
 
-DEPENDS  = lang/c devel/cloog-ppl devel/gmp devel/libelf devel/mpc devel/mpfr devel/ppl
+DEPENDS  = lang/c devel/cloog devel/gmp devel/libelf devel/mpc devel/mpfr devel/ppl
 BUILDDEPS = devel-tainted/devel-tainted devel/make
 
 WORKDIR   = $(WORKROOTDIR)/$(DESTIMG)_$(CROSSIMG).d
 COOKIEDIR = $(COOKIEROOTDIR)/$(DESTIMG)_$(CROSSIMG).d
 
+WORKSRC = $(WORKDIR)/$(patsubst %a,%,$(DISTNAME))
+
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
+# Disable PPL version check as the PPL major version number has been bumped so the check fails.
 CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) --target=$(GARTARGET) \
 	--enable-plugins \
-	--enable-gold \
-	--enable-ld=default \
+	--disable-gold \
+	--enable-ld \
 	--disable-libada \
 	--disable-libssp \
+	--disable-ppl-version-check \
+	--enable-cloog-backend=isl \
 	--enable-lto \
-	--enable-werror \
+	--disable-werror \
 	--disable-multilib \
 	--enable-nls \
 	--enable-version-specific-runtime-libs \
@@ -82,15 +86,5 @@ post-install:
 	@$(if $(filter $(GARHOST), $(GARTARGET)) , \
 		rm -f $(DESTDIR)$(libdir)/libopcodes.la , \
 		rm -f $(DESTDIR)$(prefix)/$(GARHOST)/$(GARTARGET)/lib/libopcodes.la \
-	)
-	@# Native compile.
-	@$(if $(filter     $(DESTIMG),$(CROSSIMG)), \
-		cp $(DESTDIR)$(bindir)/ld.gold                  $(DESTDIR)$(bindir)/gold ; \
-		cp $(DESTDIR)$(prefix)/$(GARTARGET)/bin/ld.gold $(DESTDIR)$(prefix)/$(GARTARGET)/bin/gold ; \
-	)
-	@# Cross compile.
-	@$(if $(filter-out $(DESTIMG),$(CROSSIMG)), \
-		cp $(DESTDIR)$(bindir)/$(GARTARGET)-ld.gold     $(DESTDIR)$(bindir)/$(GARTARGET)-gold ; \
-		cp $(DESTDIR)$(prefix)/$(GARTARGET)/bin/ld.gold $(DESTDIR)$(prefix)/$(GARTARGET)/bin/gold ; \
 	)
 	@$(MAKECOOKIE)

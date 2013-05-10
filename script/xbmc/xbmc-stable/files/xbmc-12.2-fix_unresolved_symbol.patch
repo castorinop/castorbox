@@ -1,0 +1,174 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/cximage-6.0/Makefile.in work/main.d/xbmc-11.0/lib/cximage-6.0/Makefile.in
+--- tmp/xbmc-11.0/lib/cximage-6.0/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/cximage-6.0/Makefile.in	2012-06-12 13:54:23.270667414 -0300
+@@ -22,7 +22,7 @@
+ 	@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o CxImage/*.o jasper/*/*.o jbig/*.o raw/*.o
+ else
+ 	$(CXX) $(CFLAGS) $(LDFLAGS) -shared -o $(SLIB) -Wl,--whole-archive $(SLIBS) \
+-		-Wl,--no-whole-archive -lpng -ljasper -ljpeg -ltiff -lz -Wl,--unresolved-symbols=ignore-all \
++		-Wl,--no-whole-archive -lpng -ljasper -ljpeg -ltiff -lz -Wl,--warn-unresolved-symbols \
+ 		`cat ../../xbmc/cores/DllLoader/exports/wrapper.def` \
+ 		../../xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/libdvd/Makefile.in work/main.d/xbmc-11.0/lib/libdvd/Makefile.in
+--- tmp/xbmc-11.0/lib/libdvd/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/libdvd/Makefile.in	2012-06-12 13:54:23.380666713 -0300
+@@ -56,12 +56,12 @@
+ 
+ $(SYSDIR)/libdvdcss-$(ARCH).so: $(WRAPPER) libdvdcss/src/.libs/libdvdcss.a
+ 	$(CC) -o $@ $(LDFLAGS) -Wl,--soname,$@ \
+-		libdvdcss/src/*.o -Wl,--unresolved-symbols=ignore-all \
++		libdvdcss/src/*.o -Wl,--warn-unresolved-symbols \
+ 		`cat $(WRAPPER:.o=.def)` $(WRAPPER)
+ 
+ $(SYSDIR)/libdvdnav-$(ARCH).so: $(WRAPPER) $(DVDCSS_A) libdvdread/obj/libdvdread.a libdvdnav/obj/libdvdnav.a
+ 	$(CC) -o $@ $(LDFLAGS) -Wl,--soname,$@ $(DVDCSS_O) libdvdread/obj/*.o libdvdnav/obj/*.o \
+-		-Wl,--unresolved-symbols=ignore-all \
++		-Wl,--warn-unresolved-symbols \
+ 		`cat $(WRAPPER:.o=.def)` $(WRAPPER)
+ 
+ endif
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/libexif/Makefile.in work/main.d/xbmc-11.0/lib/libexif/Makefile.in
+--- tmp/xbmc-11.0/lib/libexif/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/libexif/Makefile.in	2012-06-12 13:54:23.700666998 -0300
+@@ -14,7 +14,7 @@
+ 		-bundle -undefined dynamic_lookup -read_only_relocs suppress -o $@ \
+ 		@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS)
+ else
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--unresolved-symbols=ignore-all \
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+ 
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/libhdhomerun/Makefile.in work/main.d/xbmc-11.0/lib/libhdhomerun/Makefile.in
+--- tmp/xbmc-11.0/lib/libhdhomerun/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/libhdhomerun/Makefile.in	2012-06-12 13:54:23.270667414 -0300
+@@ -24,7 +24,7 @@
+ 		-bundle -undefined dynamic_lookup -read_only_relocs suppress -o $@ \
+ 		@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS)
+ else
+-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -shared -o $@ -Wl,--unresolved-symbols=ignore-all \
++	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -shared -o $@ -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` \
+ 		@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/libid3tag/Makefile.in work/main.d/xbmc-11.0/lib/libid3tag/Makefile.in
+--- tmp/xbmc-11.0/lib/libid3tag/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/libid3tag/Makefile.in	2012-06-12 13:54:23.690666997 -0300
+@@ -16,7 +16,7 @@
+ 	chmod +x $@
+ else
+ $(SLIB): libid3tag/.libs/libid3tag.so
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -fPIC -Wl,--unresolved-symbols=ignore-all -o $@ libid3tag/.libs/*.o \
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -fPIC -Wl,--warn-unresolved-symbols -o $@ libid3tag/.libs/*.o \
+ 		`cat ../../xbmc/cores/DllLoader/exports/wrapper.def` \
+ 		../../xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/libsidplay2/Makefile.in work/main.d/xbmc-11.0/lib/libsidplay2/Makefile.in
+--- tmp/xbmc-11.0/lib/libsidplay2/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/libsidplay2/Makefile.in	2012-06-12 13:54:23.580666999 -0300
+@@ -57,7 +57,7 @@
+ 		-bundle -undefined dynamic_lookup -read_only_relocs suppress -o $@ \
+ 		@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS) $(BUNDLE1_O)
+ else
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--unresolved-symbols=ignore-all \
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+ 
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/nosefart/Makefile.in work/main.d/xbmc-11.0/lib/nosefart/Makefile.in
+--- tmp/xbmc-11.0/lib/nosefart/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/nosefart/Makefile.in	2012-06-12 13:54:23.860666999 -0300
+@@ -31,7 +31,7 @@
+ 	-bundle -undefined dynamic_lookup -read_only_relocs suppress -o $@ \
+ 	@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS) $(BUNDLE1_O)
+ else
+-	$(CC) $(CFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--unresolved-symbols=ignore-all \
++	$(CC) $(CFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+ 
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/snesapu/SNES/SNESAPU/Makefile.in work/main.d/xbmc-11.0/lib/snesapu/SNES/SNESAPU/Makefile.in
+--- tmp/xbmc-11.0/lib/snesapu/SNES/SNESAPU/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/snesapu/SNES/SNESAPU/Makefile.in	2012-06-12 13:54:23.270667414 -0300
+@@ -21,7 +21,7 @@
+ 		-bundle -undefined dynamic_lookup -read_only_relocs suppress -o $@ \
+ 		@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS)
+ else
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--unresolved-symbols=ignore-all \
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+ 
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/stsound/StSoundLibrary/Makefile.in work/main.d/xbmc-11.0/lib/stsound/StSoundLibrary/Makefile.in
+--- tmp/xbmc-11.0/lib/stsound/StSoundLibrary/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/stsound/StSoundLibrary/Makefile.in	2012-06-12 13:54:23.850666998 -0300
+@@ -24,7 +24,7 @@
+ 	-bundle -undefined dynamic_lookup -read_only_relocs suppress -o $@ \
+ 	@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS) $(BUNDLE1_O)
+ else
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--unresolved-symbols=ignore-all \
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+ 
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/timidity/Makefile.in work/main.d/xbmc-11.0/lib/timidity/Makefile.in
+--- tmp/xbmc-11.0/lib/timidity/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/timidity/Makefile.in	2012-06-12 13:54:23.740666999 -0300
+@@ -56,7 +56,7 @@
+ 	$(CXX) $(LDFLAGS) -Wl,-alias_list,@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper_mach_alias -bundle \
+ 	-undefined dynamic_lookup -read_only_relocs suppress -o $@ @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS) $(BUNDLE1_O)
+ else
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--unresolved-symbols=ignore-all `cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` \
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--warn-unresolved-symbols `cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` \
+ 		@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o -Wl,--version-script=exports.def
+ endif
+  
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/vgmstream/Makefile.in work/main.d/xbmc-11.0/lib/vgmstream/Makefile.in
+--- tmp/xbmc-11.0/lib/vgmstream/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/vgmstream/Makefile.in	2012-06-12 13:54:23.700666998 -0300
+@@ -199,7 +199,7 @@
+ 	-bundle -undefined dynamic_lookup -read_only_relocs suppress  -o $@ \
+ 	@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o $(OBJS) $(BUNDLE1_O)
+ else
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--unresolved-symbols=ignore-all \
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ $(OBJS) -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ 
+ endif
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/lib/xbadpcm/Makefile.in work/main.d/xbmc-11.0/lib/xbadpcm/Makefile.in
+--- tmp/xbmc-11.0/lib/xbadpcm/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/lib/xbadpcm/Makefile.in	2012-06-12 13:54:23.850666998 -0300
+@@ -12,7 +12,7 @@
+ 	@abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o *.o $(BUNDLE1_O)
+ 	chmod +x $@
+ else
+-	$(CC) $(CFLAGS) $(LDFLAGS) -shared -o $@ *.o -Wl,--unresolved-symbols=ignore-all \
++	$(CC) $(CFLAGS) $(LDFLAGS) -shared -o $@ *.o -Wl,--warn-unresolved-symbols \
+ 		`cat @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.def` @abs_top_srcdir@/xbmc/cores/DllLoader/exports/wrapper.o
+ endif
+ 
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/xbmc/visualizations/OpenGLSpectrum/Makefile.in work/main.d/xbmc-11.0/xbmc/visualizations/OpenGLSpectrum/Makefile.in
+--- tmp/xbmc-11.0/xbmc/visualizations/OpenGLSpectrum/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/xbmc/visualizations/OpenGLSpectrum/Makefile.in	2012-06-12 13:54:23.140655103 -0300
+@@ -26,7 +26,7 @@
+ ifeq ($(findstring osx,$(ARCH)), osx)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -bundle -undefined dynamic_lookup -read_only_relocs suppress -o $(SLIB) $(OBJS)
+ else
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -g -o $(SLIB) -Wl,--unresolved-symbols=ignore-all $(OBJS)
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared -g -o $(SLIB) -Wl,--warn-unresolved-symbols $(OBJS)
+ endif
+ 
+ include @abs_top_srcdir@/Makefile.include
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/xbmc-11.0/xbmc/visualizations/WaveForm/Makefile.in work/main.d/xbmc-11.0/xbmc/visualizations/WaveForm/Makefile.in
+--- tmp/xbmc-11.0/xbmc/visualizations/WaveForm/Makefile.in	2012-03-21 19:07:50.000000000 -0300
++++ new-xbmc-11.0/xbmc/visualizations/WaveForm/Makefile.in	2012-06-12 13:54:23.140655103 -0300
+@@ -26,7 +26,7 @@
+ ifeq ($(findstring osx,$(ARCH)), osx)
+ 	$(CXX) $(CFLAGS) $(LDFLAGS) -bundle -undefined dynamic_lookup -read_only_relocs suppress -o $@ $(OBJS)
+ else
+-	$(CXX) $(CFLAGS) $(LDFLAGS) -shared -g -o $(SLIB) -Wl,--unresolved-symbols=ignore-all $(OBJS)
++	$(CXX) $(CFLAGS) $(LDFLAGS) -shared -g -o $(SLIB) -Wl,--warn-unresolved-symbols $(OBJS)
+ endif
+ 
+ include @abs_top_srcdir@/Makefile.include

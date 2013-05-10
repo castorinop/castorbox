@@ -1,0 +1,60 @@
+diff -Naur bison-2.6.2-old/tests/testsuite bison-2.6.2-new/tests/testsuite
+--- bison-2.6.2-old/tests/testsuite	2012-08-03 00:44:33.000000000 -0700
++++ bison-2.6.2-new/tests/testsuite	2012-08-03 05:29:14.000000000 -0700
+@@ -121720,7 +121720,7 @@
+ # it gets killed too.  Of course the parser is to be cleaned.
+ 
+ cat >gengram.pl <<'_ATEOF'
+-#! /usr/bin/perl -w
++#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ use strict;
+ my $max = $ARGV[0] || 10;
+@@ -121914,7 +121914,7 @@
+ #
+ 
+ cat >gengram.pl <<'_ATEOF'
+-#! /usr/bin/perl -w
++#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ use strict;
+ my $max = $ARGV[0] || 10;
+@@ -122098,7 +122098,7 @@
+ 
+ 
+ cat >gengram.pl <<'_ATEOF'
+-#! /usr/bin/perl -w
++#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ use strict;
+ use Text::Wrap;
+diff -Naur bison-2.6.2-old/tests/torture.at bison-2.6.2-new/tests/torture.at
+--- bison-2.6.2-old/tests/torture.at	2012-07-26 06:43:49.000000000 -0700
++++ bison-2.6.2-new/tests/torture.at	2012-08-03 05:29:14.000000000 -0700
+@@ -44,7 +44,7 @@
+ m4_define([AT_DATA_TRIANGULAR_GRAMMAR],
+ [AT_BISON_OPTION_PUSHDEFS
+ AT_DATA([[gengram.pl]],
+-[[#! /usr/bin/perl -w
++[[#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ use strict;
+ my $max = $ARGV[0] || 10;
+@@ -156,7 +156,7 @@
+ m4_define([AT_DATA_HORIZONTAL_GRAMMAR],
+ [AT_BISON_OPTION_PUSHDEFS
+ AT_DATA([[gengram.pl]],
+-[[#! /usr/bin/perl -w
++[[#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ use strict;
+ my $max = $ARGV[0] || 10;
+@@ -259,7 +259,7 @@
+ m4_define([AT_DATA_LOOKAHEAD_TOKENS_GRAMMAR],
+ [AT_BISON_OPTION_PUSHDEFS
+ AT_DATA([[gengram.pl]],
+-[[#! /usr/bin/perl -w
++[[#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ use strict;
+ use Text::Wrap;

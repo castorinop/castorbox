@@ -1,5 +1,5 @@
 GARNAME = nspr
-GARVERSION = 4.8.8
+GARVERSION = 4.9.4
 CATEGORIES = lib
 MASTER_SITES = http://ftp.mozilla.org/pub/mozilla.org/$(GARNAME)/releases/v$(GARVERSION)/src/
 DISTFILES = $(DISTNAME).tar.gz
@@ -30,6 +30,9 @@ CONFIGURE_ENV = \
 	ac_cv_path_STRIP="$(STRIP)"
 
 include ../../gar.mk
+
+CFLAGS  := $(CFLAGS)  -fPIC
+LDFLAGS := $(LDFLAGS) -fPIC
 
 install-nsinstall:
 	@cp -f $(WORKSRC)/mozilla/nsprpub/config/nsinstall $(DESTDIR)$(bindir)/nsinstall

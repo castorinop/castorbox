@@ -3,7 +3,10 @@ GARVERSION = 1.5.0
 CATEGORIES = lib
 MASTER_SITES = ftp://ftp.gnupg.org/gcrypt/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES = $(DISTNAME)-gpg_error_libs.patch $(DISTNAME).patch.gar
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-gpg_error_libs.patch \
+	$(DISTNAME).patch.gar
 LICENSE = GPL2/LGPL2_1
 
 DESCRIPTION = 

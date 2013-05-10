@@ -1,9 +1,9 @@
 GARNAME = gettext
-GARVERSION = 0.18.1.1
+GARVERSION = 0.18.2
 CATEGORIES = devel
 MASTER_SITES = http://ftp.gnu.org/gnu/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-non_interactive.patch $(DISTNAME)-perl.patch.gar $(DISTNAME)-withoutman.patch
+PATCHFILES = $(DISTNAME)-non_interactive.patch $(DISTNAME)-perl.patch.gar
 LICENSE = GPL3
 
 DESCRIPTION = 
@@ -18,6 +18,7 @@ INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
 CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--enable-shared \
+	--disable-static \
 	--disable-rpath \
 	--with-gnu-ld
 

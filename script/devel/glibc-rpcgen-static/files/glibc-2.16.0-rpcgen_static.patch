@@ -1,0 +1,12 @@
+diff -Naur glibc-2.16.0-old/sunrpc/Makefile glibc-2.16.0-new/sunrpc/Makefile
+--- glibc-2.16.0-old/sunrpc/Makefile	2012-07-03 12:52:01.000000000 -0700
++++ glibc-2.16.0-new/sunrpc/Makefile	2012-07-03 12:54:45.000000000 -0700
+@@ -92,7 +92,7 @@
+ 	      rpc_scan.o rpc_util.o rpc_svcout.o rpc_clntout.o \
+ 	      rpc_tblout.o rpc_sample.o
+ extra-objs = $(rpcgen-objs) $(addprefix cross-,$(rpcgen-objs))
+-others += rpcgen
++others-static += rpcgen
+ 
+ all: # Make this the default target; it will be defined in Rules.
+ 

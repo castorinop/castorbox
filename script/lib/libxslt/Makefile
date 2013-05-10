@@ -1,9 +1,8 @@
 GARNAME = libxslt
-GARVERSION = 1.1.26
+GARVERSION = 1.1.28
 CATEGORIES = lib
 MASTER_SITES = ftp://xmlsoft.org/libxml2/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-dash.patch
 LICENSE = MIT_Modified
 
 DESCRIPTION = 
@@ -17,6 +16,7 @@ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
 CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--disable-silent-rules \
 	--enable-shared \
 	--disable-static \
 	--with-gnu-ld \

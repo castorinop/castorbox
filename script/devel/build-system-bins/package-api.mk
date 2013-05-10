@@ -1,4 +1,5 @@
 build_system_bins = $(strip $(sort \
+	bash \
 	binutils \
 	bison \
 	bzip2 \
@@ -23,7 +24,12 @@ build_system_bins = $(strip $(sort \
 	tar \
 	texinfo \
 	wget \
+	xz \
 ))
+
+# Overridden by binaries from package utils/bash.
+build_system_bins_bash = \
+	sh
 
 # Overridden by binaries from package devel/binutils.
 build_system_bins_binutils = \
@@ -77,6 +83,7 @@ build_system_bins_coreutils = \
 	true \
 	uname \
 	uniq \
+	pwd \
 	wc
 # This is included because of 'chown' problem described in 'utils/coreutils/Makefile'.
 # Once the described problem is fixed, it can be removed.
@@ -152,8 +159,7 @@ build_system_bins_sed = \
 	sed
 
 build_system_bins_subversion = \
-	svn \
-	svnversion
+	svn
 
 # Overridden by binaries from package utils/tar.
 build_system_bins_tar = \
@@ -165,3 +171,7 @@ build_system_bins_texinfo = \
 
 build_system_bins_wget = \
 	wget
+
+# Overridden by binaries from package utils/xz.
+build_system_bins_xz = \
+	xz

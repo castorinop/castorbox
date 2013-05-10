@@ -1,4 +1,4 @@
-fce7999953a67243d00d75cc86dbcaa6  download/coreutils-8.12.tar.gz
-183026e6e97aac6f114650b0e5a7dac3  download/coreutils-8.12-perl.patch.gar
-15fe083280c610a03b64e1c815d97cb7  download/coreutils-8.12-sysinfo.patch
-e6f751bcd953b354b31f7375027ff1c8  download/coreutils-8.12-disable_man.patch
+1a01231a2f3ed37c0efc073ccdda9375  download/coreutils-8.19.tar.xz
+2e203aa111ebff4d797cab38fa982927  download/coreutils-8.19-perl.patch.gar
+fedd522a1a29be316a4011e3287857ac  download/coreutils-8.19-sysinfo.patch
+a9fdcd7b6065860e3ecd1d836eaf7f1a  download/coreutils-8.19-disable_man.patch

@@ -1,17 +1,20 @@
 GARNAME = lirc
 GARVERSION = 0.9.0
-#GARVERSION = 77c9429
 CATEGORIES = system
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/LIRC/$(GARVERSION)/
 #MASTER_SITES = http://www.lirc.org/software/snapshots/
 #MASTER_SITES = git://lirc.git.sourceforge.net/gitroot/lirc/lirc/
 DISTFILES = $(DISTNAME).tar.bz2
 PATCHFILES = \
+	$(DISTNAME)-git_e0ab92be.patch \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-kernel_err.patch \
+	$(DISTNAME)-remove_asm_sytem_h.patch \
 	$(DISTNAME)-lirc_xbox.patch \
 	$(DISTNAME)-disable_lirc_i2c.patch \
+	$(DISTNAME)-ati_remote.patch \
 	$(DISTNAME)-remove_smp_lock_h.patch \
 	$(DISTNAME)-bit_le_fix.patch \
-	$(DISTNAME)-kfifo_fix.patch \
 	$(DISTNAME)-uinput_key_fix.patch \
 	$(DISTNAME)-input_map.patch.gar
 LICENSE = GPL2
@@ -19,7 +22,6 @@ LICENSE = GPL2
 DESCRIPTION =
 define BLURB
 endef
-
 DEPENDS = lang/c kernel/kernel lib/alsa-lib lib/libftdi lib/libirman lib/libusb-compat xorg/xorg
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
@@ -52,7 +54,7 @@ include ../../gar.mk
 PARALLELMFLAGS := -j1
 
 git//%$(DISTNAME).tar.bz2:
-	@$(call FETCH_GIT, $*, $(GARVERSION), $(DISTNAME))
+	@$(call FETCH_GIT, $*, $(word 2,$(subst -, ,$(GARVERSION))), $(DISTNAME))
 	@$(MAKECOOKIE)
 
 x-checksum-$(DISTNAME).tar.bz2:

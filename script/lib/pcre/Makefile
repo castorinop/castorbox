@@ -1,5 +1,5 @@
 GARNAME = pcre
-GARVERSION = 8.12
+GARVERSION = 8.32
 CATEGORIES = lib
 MASTER_SITES = ftp://ftp.csx.cam.ac.uk/pub/software/programming/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.bz2
@@ -26,6 +26,7 @@ INSTALL_SCRIPTS   += cross
 endif
 
 CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--disable-silent-rules \
 	--enable-shared \
 	--disable-static \
 	--enable-utf8 \

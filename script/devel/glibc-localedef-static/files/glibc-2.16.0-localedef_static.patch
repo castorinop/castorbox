@@ -1,0 +1,14 @@
+diff -Naur glibc-2.16.0-old/locale/Makefile glibc-2.16.0-new/locale/Makefile
+--- glibc-2.16.0-old/locale/Makefile	2012-06-30 12:12:34.000000000 -0700
++++ glibc-2.16.0-new/locale/Makefile	2012-07-01 17:52:11.000000000 -0700
+@@ -30,8 +30,8 @@
+ 		  address telephone measurement identification collate
+ aux		= $(categories:%=lc-%) $(categories:%=C-%) SYS_libc C_name \
+ 		  xlocale localename global-locale coll-lookup
+-others		= localedef locale
+-#others-static	= localedef locale
++others		= locale
++others-static	= localedef
+ install-bin	= localedef locale
+ extra-objs	= $(localedef-modules:=.o) $(localedef-aux:=.o) \
+ 		  $(locale-modules:=.o) $(lib-modules:=.o)

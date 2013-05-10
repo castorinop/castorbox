@@ -1,5 +1,5 @@
 GARNAME = libexif
-GARVERSION = 0.6.20
+GARVERSION = 0.6.21
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.bz2

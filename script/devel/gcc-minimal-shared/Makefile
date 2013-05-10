@@ -2,7 +2,7 @@ GARNAME = gcc-minimal-shared
 GARVERSION = $(GCC_VERSION)
 CATEGORIES = devel
 SOURCEPKG = devel/gcc
-LICENSE = GPL2/LGPL2_1
+LICENSE = GPL2/GPL3/LGPL2_1/LGPL3
 
 DESCRIPTION = 
 define BLURB
@@ -18,7 +18,7 @@ DEPENDS  = lang/c devel/binutils
 else
 DEPENDS  =
 endif
-DEPENDS += devel/cloog-ppl devel/gmp devel/libelf devel/mpc devel/mpfr devel/ppl
+DEPENDS += devel/cloog devel/gmp devel/libelf devel/mpc devel/mpfr devel/ppl
 
 WORKDIR   = $(WORKROOTDIR)/$(DESTIMG)_$(CROSSIMG).d
 COOKIEDIR = $(COOKIEROOTDIR)/$(DESTIMG)_$(CROSSIMG).d
@@ -41,10 +41,14 @@ CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) --target=$(G
 	--enable-languages=c \
 	--disable-libgomp \
 	--disable-libmudflap \
-	--enable-gold=both/ld \
+	--enable-gold \
+	--enable-ld \
+	--disable-libquadmath \
+	--disable-libquadmath-support \
 	--disable-libada \
 	--disable-libssp \
 	--disable-ppl-version-check \
+	--enable-cloog-backend=isl \
 	--enable-lto \
 	--disable-multilib \
 	--disable-nls \
@@ -76,7 +80,9 @@ LDFLAGS  :=
 
 # Do not link to libc.so, because it is not available yet.
 pre-configure:
-	@sed -i '/^SHLIB_LC = /s%-lc%%' $(WORKSRC)/gcc/config/t-slibgcc-elf-ver
+	@$(foreach file,$(wildcard $(WORKSRC)/libgcc/config/t-libunwind-elf  ), sed -i '/^SHLIB_LC = /s%-lc%%' $(file) ; )
+	@$(foreach file,$(wildcard $(WORKSRC)/libgcc/config/t-slibgcc        ), sed -i '/^SHLIB_LC = /s%-lc%%' $(file) ; )
+	@$(foreach file,$(wildcard $(WORKSRC)/libgcc/config/t-slibgcc-elf-ver), sed -i '/^SHLIB_LC = /s%-lc%%' $(file) ; )
 	@$(MAKECOOKIE)
 
 configure-custom:

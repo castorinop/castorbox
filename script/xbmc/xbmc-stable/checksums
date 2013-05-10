@@ -1,4 +1,2 @@
-9e8a26ee25173c7268abea7f1d82d428  download/xbmc-11.0.tar.gz
-7db57b5b5bd8819060a6d1b20dab8b73  download/xbmc-11.0-fix_XB_FIND_SONAME.patch
-afd286fa0b55d08e01eea7c79e5995dc  download/xbmc-11.0-fix_unresolved_symbol.patch
-e151f225991f64feae7ed816015158fe  download/xbmc-11.0-fix_ctime.patch
+489f3877decae4e265ece54f9eaef0ba  download/xbmc-12.2.tar.gz
+e151f225991f64feae7ed816015158fe  download/xbmc-12.2-fix_ctime.patch

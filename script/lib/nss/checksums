@@ -1,4 +1,4 @@
-027954e894f02732f4e66cd854261145  download/nss-3.12.10.tar.gz
-39380ff7fc58e8091753589852315e2a  download/nss-3.12.10-freebl_no_depend.patch
-b724eadb670d0488a68c32a331e0c625  download/nss-3.12.10.patch.gar
-024ea316c6947dcb68f7414c3cad3718  download/nss-3.12.10-cross.patch
+49e6661758deb0c469f0b4edd4e727d5  download/nss-3.14.1.with.ckbi.1.93.tar.gz
+1e282e17a87c842e380f241d5d1ba67c  download/nss-3.14.1.with.ckbi.1.93-freebl_no_depend.patch
+4a9b5aa06f1b127d7f6df2d12bdff511  download/nss-3.14.1.with.ckbi.1.93.patch.gar
+045617c4cda34c9acf1e248c2da8df35  download/nss-3.14.1.with.ckbi.1.93-cross.patch

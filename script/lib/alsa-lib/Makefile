@@ -1,9 +1,12 @@
 GARNAME = alsa-lib
-GARVERSION = 1.0.24.1
+GARVERSION = 1.0.26
 CATEGORIES = lib
 MASTER_SITES  = ftp://ftp.alsa-project.org/pub/lib/
 MASTER_SITES += ftp://ftp.alsa-project.org/pub/testing/
 DISTFILES = $(DISTNAME).tar.bz2
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-sys_types_h.patch
 LICENSE = LGPL2_1
 
 DESCRIPTION = 
@@ -40,6 +43,10 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--with-aload-devdir="$(rootdir)/dev"
 
 include ../../gar.mk
+
+# alsa-lib 1.0.26 fails to compile with gcc 4.7.2's link time optimization enabled.
+CFLAGS  := $(filter-out -flto, $(CFLAGS))
+LDFLAGS := $(filter-out -flto, $(LDFLAGS))
 
 pre-configure:
 	@$(call RUN_AUTOTOOLS)

@@ -1,7 +1,7 @@
 GARNAME = flex
-GARVERSION = 2.5.35
+GARVERSION = 2.5.37
 CATEGORIES = devel
-MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)/$(DISTNAME)/
+MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.bz2
 PATCHFILES = $(DISTNAME)-perl.patch.gar
 LICENSE = $(GARNAME)

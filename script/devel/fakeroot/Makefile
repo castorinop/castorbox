@@ -1,9 +1,9 @@
 GARNAME = fakeroot
-GARVERSION = 1.16
+GARVERSION = 1.18.4
 CATEGORIES = devel
 MASTER_SITES = http://ftp.debian.org/debian/pool/main/f/$(GARNAME)/
 DISTFILES = $(GARNAME)_$(GARVERSION).orig.tar.bz2
-LICENSE = GPL2
+LICENSE = GPL3
 
 DESCRIPTION = 
 define BLURB

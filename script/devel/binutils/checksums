@@ -1,4 +1,3 @@
-a22801a9cad45c85e9ff6afc10537d72  download/binutils-2.21.1.tar.bz2
-889bdf1add447006478e3f3a8dcabfc7  download/binutils-2.21.1-visibility.patch
-80ad0e151a403bdf6f7382066d9257fd  download/binutils-2.21.1-multi_os_directory.patch
-deab23ebe0e1fd676975f578c93b9082  download/binutils-2.21.1-perl.patch.gar
+33adb18c3048d057ac58d07a3f1adb38  download/binutils-2.23.1.tar.bz2
+593375a45a3164e718b80367e716bd2e  download/binutils-2.23.1-multi_os_directory.patch
+8103285b3b1cb466c99fa6bcfc4a25f9  download/binutils-2.23.1-perl.patch.gar

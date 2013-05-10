@@ -1,5 +1,5 @@
 GARNAME = file
-GARVERSION = 5.07
+GARVERSION = 5.12
 CATEGORIES = utils
 MASTER_SITES  = ftp://ftp.astron.com/pub/$(GARNAME)/
 MASTER_SITES += ftp://ftp.gw.com/mirrors/pub/unix/$(GARNAME)/
@@ -21,6 +21,7 @@ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
 CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--disable-silent-rules \
 	--enable-shared \
 	--disable-static \
 	--with-gnu-ld

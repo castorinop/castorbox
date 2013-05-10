@@ -1,3 +1,2 @@
-2c711f452f3209d18cddec26ef3aaefe  download/glibc-2.12.2-localedef_static.patch
-
-678ea888fcd9b87d5fadc1f06999e3cc  download/glibc-2.14-localedef_static.patch
+8935e183ac387429075c7fe85813f722  download/glibc-2.17-localedef_static.patch
+1bdd08c1482091f0bc20f7d7ef2c5e6e  download/glibc-2.17-kernel_2.6.18.patch

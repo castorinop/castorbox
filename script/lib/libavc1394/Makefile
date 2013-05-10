@@ -3,6 +3,8 @@ GARVERSION = 0.5.4
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = LGPL2_1
 
 DESCRIPTION = 

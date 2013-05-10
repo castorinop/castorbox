@@ -1,9 +1,9 @@
 GARNAME = splashutils
-GARVERSION = 1.5.4.3
+GARVERSION = 1.5.4.4
 CATEGORIES = system
 MASTER_SITES = http://download.berlios.de/fbsplash/
 DISTFILES = $(GARNAME)-lite-$(GARVERSION).tar.bz2
-PATCHFILES = $(DISTNAME)-dash.patch $(DISTNAME)-autotools_fixes.patch $(DISTNAME)-remove_no_static.patch $(DISTNAME)-no_klibc.patch
+PATCHFILES = $(DISTNAME)-dash.patch
 LICENSE = GPL2
 
 DESCRIPTION =
@@ -20,6 +20,7 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--enable-shared \
 	--disable-static \
 	--disable-debug \
+	--disable-static-binaries \
 	--disable-deprecated \
 	--enable-fbcondecor \
 	--enable-helper \
@@ -34,7 +35,8 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--with-essential-bindir="$(ebindir)" \
 	--with-essential-sbindir="$(esbindir)" \
 	--with-essential-libdir="$(elibdir)" \
-	--with-themedir="$(sysconfdir)/splash"
+	--with-themedir="$(sysconfdir)/splash" \
+	--without-klibc
 
 BUILD_ENV = \
 	QUIET=false

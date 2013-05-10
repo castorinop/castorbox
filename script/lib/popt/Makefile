@@ -3,6 +3,9 @@ GARVERSION = 1.16
 CATEGORIES = lib
 MASTER_SITES = http://rpm5.org/files/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
+PATCHFILES = \
+	$(DISTNAME)-automake_1.12.patch \
+	$(DISTNAME)-disable_tests.patch
 LICENSE = MIT
 
 DESCRIPTION = 

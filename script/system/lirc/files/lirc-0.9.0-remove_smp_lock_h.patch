@@ -1,6 +1,6 @@
 diff -Naur lirc-0.9.0-old/drivers/lirc_atiusb/lirc_atiusb.c lirc-0.9.0-new/drivers/lirc_atiusb/lirc_atiusb.c
---- lirc-0.9.0-old/drivers/lirc_atiusb/lirc_atiusb.c	2011-03-25 15:28:18.000000000 -0700
-+++ lirc-0.9.0-new/drivers/lirc_atiusb/lirc_atiusb.c	2011-06-09 18:57:24.000000000 -0700
+--- lirc-0.9.0-old/drivers/lirc_atiusb/lirc_atiusb.c	2011-07-27 20:45:01.000000000 -0700
++++ lirc-0.9.0-new/drivers/lirc_atiusb/lirc_atiusb.c	2011-07-27 20:45:53.000000000 -0700
 @@ -48,7 +48,6 @@
  #include <linux/slab.h>
  #include <linux/module.h>

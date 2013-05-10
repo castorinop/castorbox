@@ -1,5 +1,2 @@
-206da4493c4c511ddda507e20217369b  download/splashutils-lite-1.5.4.3.tar.bz2
-8ef802728ff84e539c59beaaac449307  download/splashutils-1.5.4.3-dash.patch
-d4ddb22aef245a7b93ba3fd41e30f580  download/splashutils-1.5.4.3-autotools_fixes.patch
-ca5fc3da2e874bb15a2b9470a6fd46d3  download/splashutils-1.5.4.3-remove_no_static.patch
-983f5d2b1da58b7800f92bc60dd3b931  download/splashutils-1.5.4.3-no_klibc.patch
+29bbb355919a2f27c40dbfc8075c4a8d  download/splashutils-lite-1.5.4.4.tar.bz2
+694dc48c303a5d8ee1cb1cc89f1938c5  download/splashutils-1.5.4.4-dash.patch

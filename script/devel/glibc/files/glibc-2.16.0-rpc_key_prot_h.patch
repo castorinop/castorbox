@@ -1,0 +1,12 @@
+diff -Naur glibc-2.16.0-old/sunrpc/Makefile glibc-2.16.0-new/sunrpc/Makefile
+--- glibc-2.16.0-old/sunrpc/Makefile	2012-06-30 12:12:34.000000000 -0700
++++ glibc-2.16.0-new/sunrpc/Makefile	2012-07-01 17:30:31.000000000 -0700
+@@ -52,7 +52,7 @@
+ 				    des_crypt.h)
+ headers-not-in-tirpc = $(addprefix rpc/,key_prot.h rpc_des.h) \
+ 		       $(rpcsvc:%=rpcsvc/%) rpcsvc/bootparam.h
+-headers = rpc/netdb.h
++headers = rpc/key_prot.h rpc/netdb.h
+ install-others = $(inst_sysconfdir)/rpc
+ generated = $(rpcsvc:%.x=rpcsvc/%.h) $(rpcsvc:%.x=x%.c) $(rpcsvc:%.x=x%.stmp) \
+ 	    $(rpcsvc:%.x=rpcsvc/%.stmp) rpcgen

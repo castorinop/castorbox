@@ -28,14 +28,16 @@ BUILD_SCRIPTS     = $(WORKBLD)/Makefile
 INSTALL_SCRIPTS   = custom
 
 CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--cache-file=config.cache \
 	--enable-bind-now \
-	--enable-kernel=3.0.0 \
+	--enable-kernel=3.6.0 \
+	--disable-build-nscd \
+	--disable-nscd \
 	--with-binutils=$(build_DESTDIR)$(build_bindir) \
 	--without-gd \
 	--without-cvs \
 	--with-elf \
-	--with-headers=$(DESTDIR)$(includedir) \
-	--cache-file=config.cache
+	--with-headers=$(DESTDIR)$(includedir)
 ifeq ($(use_linuxthreads),yes)
 CONFIGURE_ARGS += \
 	--enable-add-ons=linuxthreads \
@@ -52,6 +54,22 @@ BUILD_ARGS      = \
 INSTALL_ARGS    = \
 	install_root=$(DESTDIR)
 
+CONFIGURE_ENV = \
+	BUILD_CC="$(build_CC)" \
+	BUILD_CPPFLAGS="$(build_CPPFLAGS)" \
+	BUILD_CFLAGS="$(build_CFLAGS)" \
+	BUILD_LDFLAGS="$(build_LDFLAGS)"
+BUILD_ENV     = \
+	BUILD_CC="$(build_CC)" \
+	BUILD_CPPFLAGS="$(build_CPPFLAGS)" \
+	BUILD_CFLAGS="$(build_CFLAGS)" \
+	BUILD_LDFLAGS="$(build_LDFLAGS)"
+INSTALL_ENV   = \
+	BUILD_CC="$(build_CC)" \
+	BUILD_CPPFLAGS="$(build_CPPFLAGS)" \
+	BUILD_CFLAGS="$(build_CFLAGS)" \
+	BUILD_LDFLAGS="$(build_LDFLAGS)"
+
 GAR_EXTRA_CONF += devel/glibc/package-api.mk
 include ../../gar.mk
 
@@ -59,24 +77,23 @@ include ../../gar.mk
 CFLAGS  := $(filter-out -fuse-linker-plugin, $(CFLAGS))
 LDFLAGS := $(filter-out -fuse-linker-plugin, $(LDFLAGS))
 
-# Fails to compile using the gold linker.
-CFLAGS  := $(filter-out -fuse-ld=gold -fuse-linker-plugin, $(CFLAGS))
-LDFLAGS := $(filter-out -fuse-ld=gold -fuse-linker-plugin, $(LDFLAGS))
-
-# Fails to compile with GCC's link time optimization.
-CFLAGS  := $(filter-out -flto -fuse-linker-plugin, $(CFLAGS))
-LDFLAGS := $(filter-out -flto -fuse-linker-plugin, $(LDFLAGS))
+# glibc 2.17 fails to compile with gcc 4.7.2's link time optimization enabled.
+CFLAGS  := $(filter-out -flto, $(CFLAGS))
+LDFLAGS := $(filter-out -flto, $(LDFLAGS))
 
 CFLAGS := $(filter-out -ffast-math, $(CFLAGS))
 CFLAGS := $(filter-out -O%, $(CFLAGS)) -O3
 
 pre-configure:
+	@cd $(WORKSRC) ; aclocal       --force --verbose
+	@cd $(WORKSRC) ; autoconf-2.68 --force --verbose
 	@mkdir -p $(WORKBLD)
 	@rm -rf $(WORKBLD)/configparms
 	@echo "slibdir=$(elibdir)" >> $(WORKBLD)/configparms
 	@rm -rf $(WORKBLD)/config.cache
 	@echo "libc_cv_forced_unwind=yes" >> $(WORKBLD)/config.cache
 	@echo "libc_cv_c_cleanup=yes"     >> $(WORKBLD)/config.cache
+	@echo "libc_cv_ctors_header=yes"  >> $(WORKBLD)/config.cache
 	@$(MAKECOOKIE)
 
 configure-custom:

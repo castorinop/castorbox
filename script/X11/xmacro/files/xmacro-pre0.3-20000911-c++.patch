@@ -1,6 +1,6 @@
 diff -Naur xmacro-pre0.3-20000911-old/chartbl.h xmacro-pre0.3-20000911-new/chartbl.h
 --- xmacro-pre0.3-20000911-old/chartbl.h	2000-09-05 13:21:23.000000000 -0700
-+++ xmacro-pre0.3-20000911-new/chartbl.h	2009-04-19 20:30:01.000000000 -0700
++++ xmacro-pre0.3-20000911-new/chartbl.h	2012-03-24 07:14:39.000000000 -0700
 @@ -22,7 +22,7 @@
  
  /* Version 0.1 (20000817) probably still incomplete... */
@@ -27,8 +27,8 @@ diff -Naur xmacro-pre0.3-20000911-old/chartbl.h xmacro-pre0.3-20000911-new/chart
 +const char **chartbl[]={ chartbl_lat1, chartbl_lat2 };
 diff -Naur xmacro-pre0.3-20000911-old/xmacroplay.cpp xmacro-pre0.3-20000911-new/xmacroplay.cpp
 --- xmacro-pre0.3-20000911-old/xmacroplay.cpp	2000-09-11 11:25:11.000000000 -0700
-+++ xmacro-pre0.3-20000911-new/xmacroplay.cpp	2009-04-19 20:32:59.000000000 -0700
-@@ -34,11 +34,13 @@
++++ xmacro-pre0.3-20000911-new/xmacroplay.cpp	2012-03-24 07:14:57.000000000 -0700
+@@ -34,11 +34,14 @@
  /***************************************************************************** 
   * Includes
   ****************************************************************************/
@@ -39,14 +39,14 @@ diff -Naur xmacro-pre0.3-20000911-old/xmacroplay.cpp xmacro-pre0.3-20000911-new/
 +using namespace std;
 +
  #include <stdlib.h>
--#include <unistd.h>
+ #include <unistd.h>
 -#include <ctype.h>
 -#include <X11/Xlibint.h>
 +
  #include <X11/Xlib.h>
  #include <X11/Xutil.h>
  #include <X11/cursorfont.h>
-@@ -47,19 +49,10 @@
+@@ -47,19 +50,10 @@
  #include <X11/extensions/XTest.h>
  
  #include "chartbl.h"
@@ -69,7 +69,7 @@ diff -Naur xmacro-pre0.3-20000911-old/xmacroplay.cpp xmacro-pre0.3-20000911-new/
   ****************************************************************************/
 diff -Naur xmacro-pre0.3-20000911-old/xmacrorec2.cpp xmacro-pre0.3-20000911-new/xmacrorec2.cpp
 --- xmacro-pre0.3-20000911-old/xmacrorec2.cpp	2000-09-05 16:46:15.000000000 -0700
-+++ xmacro-pre0.3-20000911-new/xmacrorec2.cpp	2009-04-19 20:34:00.000000000 -0700
++++ xmacro-pre0.3-20000911-new/xmacrorec2.cpp	2012-03-24 07:14:39.000000000 -0700
 @@ -38,9 +38,13 @@
  /***************************************************************************** 
   * Includes
@@ -106,7 +106,7 @@ diff -Naur xmacro-pre0.3-20000911-old/xmacrorec2.cpp xmacro-pre0.3-20000911-new/
  /***************************************************************************** 
 diff -Naur xmacro-pre0.3-20000911-old/xmacrorec.cpp xmacro-pre0.3-20000911-new/xmacrorec.cpp
 --- xmacro-pre0.3-20000911-old/xmacrorec.cpp	2000-09-05 13:21:23.000000000 -0700
-+++ xmacro-pre0.3-20000911-new/xmacrorec.cpp	2009-04-19 20:33:32.000000000 -0700
++++ xmacro-pre0.3-20000911-new/xmacrorec.cpp	2012-03-24 07:14:39.000000000 -0700
 @@ -36,9 +36,13 @@
  /***************************************************************************** 
   * Includes

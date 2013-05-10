@@ -1,29 +1,26 @@
 GARNAME = ffmpeg
-GARVERSION = 0.7-rc1
-#GARVERSION = 5d1b39f
+GARVERSION = 1.1.1
 CATEGORIES = lib
 MASTER_SITES = http://ffmpeg.org/releases/
-#MASTER_SITES = git://git.videolan.org/$(GARNAME).git/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES = $(GARNAME)-pkg_config.patch $(GARNAME)-uint64_c.patch $(GARNAME)-libswscale_symbol_export.patch
+PATCHFILES = $(DISTNAME)-pkg_config.patch $(DISTNAME)-uint64_c.patch
 LICENSE = GPL2/LGPL2_1
 
 DESCRIPTION = 
 define BLURB
 endef
 
-DEPENDS   = lang/c lib/SDL lib/zlib net/librtmp utils/bzip2 X11/libva X11/libvdpau
+DEPENDS   = lang/c lib/fontconfig lib/libbluray lib/SDL lib/zlib net/librtmp utils/bzip2 X11/libva X11/libvdpau
 BUILDDEPS = devel/yasm
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
-# The headers files are put in a sub-directory so that the libav*/*.h files
-# do not conflict with the libav*/.h files in MythTV 0.20.
 # --enable-devices is not supported (only --disable-devices).
 CONFIGURE_ARGS = \
 	--enable-logging \
+	--fatal-warnings \
 	--prefix=$(prefix) \
 	--bindir=$(bindir) \
 	--datadir=$(datadir)/ffmpeg \
@@ -31,48 +28,55 @@ CONFIGURE_ARGS = \
 	--shlibdir=$(libdir) \
 	--incdir=$(includedir) \
 	--mandir=$(mandir) \
-	--disable-static \
-	--enable-shared \
 	--enable-gpl \
 	--disable-version3 \
 	--disable-nonfree \
-	--enable-doc \
+	--disable-static \
+	--enable-shared \
+	$(if $(filter -Os,$(CFLAGS)),--enable-small) \
+	--enable-runtime-cpudetect \
+	--disable-gray \
+	--enable-swscale-alpha \
+	--disable-all \
+	--disable-programs \
 	--enable-ffmpeg \
 	--disable-ffplay \
 	--disable-ffprobe \
 	--disable-ffserver \
+	--enable-doc \
+	--enable-htmlpages \
+	--enable-manpages \
+	--enable-podpages \
+	--enable-txtpages \
 	--enable-avdevice \
 	--enable-avcodec \
 	--enable-avformat \
+	--enable-avutil \
+	--enable-swresample \
 	--enable-swscale \
 	--enable-postproc \
 	--enable-avfilter \
+	--disable-avresample \
 	--enable-pthreads \
 	--disable-w32threads \
+	--disable-os2threads \
 	--enable-x11grab \
 	--enable-network \
-	--disable-gray \
-	--enable-swscale-alpha \
-	--enable-fastdiv \
-	$(if $(filter -Os,$(CFLAGS)),--enable-small) \
-	--enable-aandct \
 	--enable-dct \
-	--enable-fft \
-	--enable-golomb \
-	--enable-huffman \
-	--enable-lpc \
+	--disable-dwt \
+	--disable-lsp \
+	--enable-lzo \
 	--enable-mdct \
 	--enable-rdft \
+	--enable-fft \
+	--disable-dxva2 \
 	--enable-vaapi \
 	--enable-vdpau \
-	--disable-dxva2 \
-	--enable-runtime-cpudetect \
-	--disable-hardcoded-tables \
-	--disable-memalign-hack \
+	--disable-everything \
 	--disable-encoders \
 	--enable-decoders \
 	--enable-hwaccels \
-	--enable-muxers \
+	--disable-muxers \
 	--enable-demuxers \
 	--enable-parsers \
 	--enable-bsfs \
@@ -82,23 +86,41 @@ CONFIGURE_ARGS = \
 	--enable-filters \
 	--disable-avisynth \
 	--enable-bzlib \
-	--disable-libcelt \
+	--enable-fontconfig \
 	--disable-frei0r \
+	--disable-gnutls \
+	--disable-libaacplus \
+	--disable-libass \
+	--enable-libbluray \
+	--disable-libcaca \
+	--disable-libcelt \
+	--disable-libcdio \
+	--disable-libdc1394 \
+	--disable-libfaac \
+	--disable-libfdk-aac \
+	--disable-libflite \
+	--disable-libfreetype \
+	--disable-libgsm \
+	--disable-libiec61883 \
+	--disable-libilbc \
+	--disable-libmodplug \
+	--disable-libmp3lame \
+	--disable-libnut \
 	--disable-libopencore-amrnb \
 	--disable-libopencore-amrwb \
 	--disable-libopencv \
-	--disable-libdc1394 \
-	--disable-libdirac \
-	--disable-libfaac \
-	--disable-libfreetype \
-	--disable-libgsm \
-	--disable-libmp3lame \
-	--disable-libnut \
 	--disable-libopenjpeg \
+	--disable-libopus \
+	--disable-libpulse \
 	--enable-librtmp \
 	--disable-libschroedinger \
+	--disable-libsoxr \
 	--disable-libspeex \
+	--disable-libstagefright-h264 \
 	--disable-libtheora \
+	--disable-libtwolame \
+	--disable-libutvideo \
+	--disable-libv4l2 \
 	--disable-libvo-aacenc \
 	--disable-libvo-amrwbenc \
 	--disable-libvorbis \
@@ -106,7 +128,8 @@ CONFIGURE_ARGS = \
 	--disable-libx264 \
 	--disable-libxavs \
 	--disable-libxvid \
-	--disable-mlib \
+	--disable-openal \
+	--disable-openssl \
 	--enable-zlib \
 	--cross-prefix=$(compiler_prefix) \
 	--enable-cross-compile \
@@ -116,39 +139,61 @@ CONFIGURE_ARGS = \
 	--nm="$(NM)" \
 	--ar="$(AR)" \
 	--as="$(CC)" \
+	--yasmexe="yasm" \
 	--cc="$(CC)" \
+	--cxx="$(CXX)" \
 	--ld="$(CC)" \
 	--host-cc="$(build_CC)" \
 	--host-cflags="$(build_CFLAGS)" \
+	--host-ld="$(build_CC)" \
 	--host-ldflags="$(build_LDFLAGS)" \
 	--host-libs="" \
+	--host-os="linux" \
 	--extra-cflags="$(CFLAGS)" \
+	--extra-cxxflags="$(CXXFLAGS)" \
 	--extra-ldflags="$(LDFLAGS)" \
 	--extra-libs="" \
 	--extra-version="" \
 	--build-suffix="" \
+	--progs-suffix="" \
 	--arch=$(GARCH_FAMILY) \
 	--cpu=$(GARCH) \
+	--enable-pic \
+	--disable-sram \
+	--disable-thumb \
+	--disable-symver \
+	--disable-hardcoded-tables \
+	--enable-safe-bitstream-reader \
+	--disable-memalign-hack \
+	--disable-lto \
 	--enable-asm \
 	--disable-altivec \
 	--enable-amd3dnow \
 	--enable-amd3dnowext \
 	--enable-mmx \
-	--enable-mmx2 \
+	--enable-mmxext \
 	--enable-sse \
+	--enable-sse2 \
+	--enable-sse3 \
 	--enable-ssse3 \
+	--disable-sse4 \
+	--disable-sse42 \
 	--disable-avx \
+	--disable-fma4  \
 	--disable-armv5te \
 	--disable-armv6 \
 	--disable-armv6t2 \
-	--disable-armvfp \
-	--disable-iwmmxt \
-	--disable-mmi \
+	--disable-vfp \
 	--disable-neon \
 	--disable-vis \
+	--enable-inline-asm \
 	--enable-yasm \
-	--disable-sram \
-	--disable-symver \
+	--disable-mips32r2 \
+	--disable-mipsdspr1 \
+	--disable-mipsdspr2 \
+	--disable-mipsfpu \
+	--enable-fast-unaligned \
+	--disable-coverage \
 	--disable-debug \
 	--enable-optimizations \
 	--disable-extra-warnings \
@@ -161,20 +206,9 @@ INSTALL_ARGS   = \
 GAR_EXTRA_CONF += mediaplayers/mplayer-svn/package-api.mk
 include ../../gar.mk
 
-# Fails to compile with GCC's link time optimization.
-CFLAGS  := $(filter-out -flto -fuse-linker-plugin, $(CFLAGS))
-LDFLAGS := $(filter-out -flto -fuse-linker-plugin, $(LDFLAGS))
-
-git//%/$(DISTNAME).tar.bz2:
-	@$(call FETCH_GIT, $*, $(GARVERSION), $(DISTNAME))
-	@$(MAKECOOKIE)
-
-checksum-$(DISTNAME).tar.bz2:
-	@$(MAKECOOKIE)
-
-post-install:
-	@cp -f $(WORKSRC)/libavcodec/vaapi.h $(DESTDIR)`pkg-config --variable=includedir libavcodec`/libavcodec/vaapi.h
-	@$(MAKECOOKIE)
+# ffmpeg 1.1 fails to compile with GCC 4.7.2's link time optimization enabled.
+CFLAGS  := $(filter-out -flto, $(CFLAGS))
+LDFLAGS := $(filter-out -flto, $(LDFLAGS))
 
 clean-all:
 	@$(MAKE) clean
@@ -194,35 +228,3 @@ clean-all:
 	@rm -rf $(DESTDIR)$(libdir)/libswscale.*
 	@rm -rf $(DESTDIR)$(datadir)/ffmpeg
 	@rm -rf $(DESTDIR)$(bin)/ffmpeg
-
-source-update:
-	@$(MAKE) source-update-source
-	@$(MAKE) source-update-patches
-	
-source-update-source:
-	@$(MAKE) clean
-	@$(MAKE) fetch
-	@$(MAKE) $(GARCHIVEDIR)/$(DISTNAME).tar.bz2
-	@$(MAKE) clean
-
-source-update-patches:
-	@$(MAKE) clean
-	@$(MAKE) extract
-	@$(foreach PATCHFILE, $(PATCHFILES), \
-		cd $(WORKDIR) || exit 1 ; \
-		mv $(DISTNAME) $(DISTNAME)-old || exit 1 ; \
-		cp -r $(DISTNAME)-old $(DISTNAME)-new || exit 1 ; \
-		cd $(DISTNAME)-new || exit 1 ; \
-		SIMPLE_BACKUP_SUFFIX=.gar-source-update-patches patch -p1 < ../../../files/$(PATCHFILE) || exit 1 ; \
-		cd ../ || exit 1 ; \
-		find $(DISTNAME)-new -name *.gar-source-update-patches -exec rm {} \; || exit 1 ; \
-		( diff -Naur $(DISTNAME)-old $(DISTNAME)-new > ../../files/$(PATCHFILE) ; test $$? -lt 2 ) || exit 1 ; \
-		rm -fr $(DISTNAME)-old || exit 1 ; \
-		mv $(DISTNAME)-new $(DISTNAME) || exit 1 ; \
-		cd ../../ || exit 1 ; \
-		rm -f checksums~ || exit 1 ; \
-		cat checksums | grep -v $(DOWNLOADDIR)/$(PATCHFILE) > checksums~ ; \
-		md5sum $(DOWNLOADDIR)/$(PATCHFILE) >> checksums~ || exit 1 ; \
-		rm -f checksums || exit 1 ; \
-		mv -f checksums~ checksums || exit 1 ; )
-	@$(MAKE) clean

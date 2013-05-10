@@ -3,7 +3,9 @@ GARVERSION = 2.7
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/faac/$(GARNAME)-src/$(DISTNAME)/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-mp4ff_shared.patch
+PATCHFILES = \
+	$(DISTNAME)-mp4ff_shared.patch \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = GPL2
 
 DESCRIPTION =

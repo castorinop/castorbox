@@ -1,7 +1,8 @@
 GARNAME = libdvdread
-GARVERSION = 1228
+GARVERSION = 4.2.0
 CATEGORIES = lib
-MASTER_SITES = svn://svn.mplayerhq.hu/dvdnav/trunk/$(GARNAME)/
+MASTER_SITES = http://dvdnav.mplayerhq.hu/releases/
+#MASTER_SITES = svn://svn.mplayerhq.hu/dvdnav/trunk/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.bz2
 PATCHFILES = $(DISTNAME)-destdir.patch
 LICENSE = GPL2
@@ -25,7 +26,7 @@ svn//%/$(DISTNAME).tar.bz2:
 	@$(call FETCH_SVN, svn://$*, $(GARVERSION), $(DISTNAME))
 	@$(MAKECOOKIE)
 
-checksum-$(DISTNAME).tar.bz2:
+x-checksum-$(DISTNAME).tar.bz2:
 	@$(MAKECOOKIE)
 
 pre-configure:

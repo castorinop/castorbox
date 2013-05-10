@@ -3,6 +3,7 @@ GARVERSION = $(LIBMNG_VERSION)
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)-devel/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.gz
+PATCHFILES = $(DISTNAME)-automake_1.12.patch
 LICENSE = libmng
 libmng_LICENSE_TEXT = $(WORKSRC)/LICENSE
 

@@ -1,0 +1,18 @@
+diff -Naur xf86-video-nouveau-1.0.6-old/src/nouveau_dri2.c xf86-video-nouveau-1.0.6-new/src/nouveau_dri2.c
+--- xf86-video-nouveau-1.0.6-old/src/nouveau_dri2.c	2012-11-01 16:05:35.000000000 -0700
++++ xf86-video-nouveau-1.0.6-new/src/nouveau_dri2.c	2013-01-07 19:09:01.000000000 -0800
+@@ -164,9 +164,14 @@
+ 	}
+ 
+ 	if (translate && pDraw->type == DRAWABLE_WINDOW) {
++#ifdef COMPOSITE
+ 		PixmapPtr pPix = get_drawable_pixmap(pDraw);
+ 		off_x = pDraw->x - pPix->screen_x;
+ 		off_y = pDraw->y - pPix->screen_y;
++#else
++		off_x = 0;
++		off_y = 0;
++#endif
+ 	}
+ 
+ 	pGC = GetScratchGC(pDraw->depth, pScreen);

@@ -1,9 +1,9 @@
 GARNAME = splashutils
-GARVERSION = 1.5.4.3
+GARVERSION = 1.5.4.4
 CATEGORIES = system
 MASTER_SITES = http://download.berlios.de/fbsplash/
 DISTFILES = $(GARNAME)-lite-$(GARVERSION).tar.bz2
-PATCHFILES += $(DISTNAME)-autotools_fixes.patch $(DISTNAME)-daemon_opts.patch
+##PATCHFILES += $(DISTNAME)-autotools_fixes.patch $(DISTNAME)-daemon_opts.patch
 LICENSE = GPL2
 
 DESCRIPTION =

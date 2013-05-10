@@ -6,7 +6,19 @@ MASTER_SITES += http://www.busybox.net/downloads/fixes-$(GARVERSION)/
 CONFIGFILE = $(DISTNAME).config
 DISTFILES = $(DISTNAME).tar.bz2 $(CONFIGFILE)
 PATCHFILES  =
-PATCHFILES += $(DISTNAME)-check_cc.patch $(DISTNAME)-dhcp_log_server.patch $(DISTNAME)-dhcp_tcode.patch $(DISTNAME)-tftp_timeout.patch
+PATCHFILES  = \
+	       $(DISTNAME)-kernel_ver.patch \
+	       $(DISTNAME)-ntpd.patch \
+	       $(DISTNAME)-pkg-config-selinux.patch \
+	       $(DISTNAME)-sys-resource.patch
+PATCHFILES += \
+	       $(DISTNAME)-sys_resource_h.patch
+PATCHFILES += \
+	       $(DISTNAME)-check_cc.patch \
+	       $(DISTNAME)-dhcp_log_server.patch \
+	       $(DISTNAME)-dhcp_tcode.patch \
+	       $(DISTNAME)-tftp_timeout.patch
+
 LICENSE = GPL2
 
 DESCRIPTION =

@@ -3,7 +3,10 @@ GARVERSION = 2.3.1
 CATEGORIES = net
 MASTER_SITES = http://download.sourceforge.net/sourceforge/amule/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES = $(DISTNAME)-cross_compiling.patch
+PATCHFILES = $(DISTNAME)-cross_compiling.patch \
+	     $(DISTNAME)-handle_empty_statistics_file.patch \
+	     $(DISTNAME)-gcc_4.7.patch
+
 LICENSE = GPL2
 
 DESCRIPTION =

@@ -1,5 +1,5 @@
 GARNAME = wxWidgets
-GARVERSION = 2.9.1
+GARVERSION = 2.9.3
 CATEGORIES = lib
 MASTER_SITES =  http://downloads.sourceforge.net/sourceforge/wxwindows/
 DISTFILES = $(DISTNAME).tar.bz2

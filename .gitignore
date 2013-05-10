@@ -8,3 +8,4 @@ script/**/**/cookies
 script/**/**/download
 script/**/**/tmp
 script/**/**/work
+script/**/**/merge.diff

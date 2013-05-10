@@ -1,3 +1,2 @@
-00b1f57246d8fb96b3b74440377ac34a  download/glibc-2.12.2-rpcgen_static.patch
-
-45fca487ceee94909a49e5949828c1a2  download/glibc-2.14-rpcgen_static.patch
+8df927dbf6fd1a30881a79c8f2379e52  download/glibc-2.16.0-rpcgen_static.patch
+ebccb834280d071a4fc0a89759e3af65  download/glibc-2.16.0-kernel_2.6.18.patch

@@ -1,0 +1,12 @@
+diff -Naur xf86-video-openchrome-20121211-0db1c3c-old/configure.ac xf86-video-openchrome-20121211-0db1c3c-new/configure.ac
+--- xf86-video-openchrome-20121211-0db1c3c-old/configure.ac	2012-12-15 10:08:04.000000000 -0800
++++ xf86-video-openchrome-20121211-0db1c3c-new/configure.ac	2012-12-30 08:26:39.000000000 -0800
+@@ -38,7 +38,7 @@
+                    [Patch version])
+ 
+ AC_CONFIG_SRCDIR([Makefile.am])
+-AM_CONFIG_HEADER([config.h])
++AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_AUX_DIR(.)
+ 
+ AM_INIT_AUTOMAKE([foreign dist-bzip2])

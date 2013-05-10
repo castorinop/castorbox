@@ -17,8 +17,11 @@ CONFIGURE_SCRIPTS = custom
 INSTALL_SCRIPTS   = custom
 
 CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--cache-file=config.cache \
 	--disable-sanity-checks \
-	--enable-kernel=3.0.0 \
+	--enable-kernel=3.6.0 \
+	--disable-build-nscd \
+	--disable-nscd \
 	--with-binutils=$(build_DESTDIR)$(build_bindir) \
 	--without-cvs \
 	--with-headers=$(DESTDIR)$(includedir) \
@@ -28,6 +31,22 @@ CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 INSTALL_ARGS    = \
 	cross-compiling=yes \
 	install_root=$(DESTDIR)
+
+CONFIGURE_ENV = \
+	BUILD_CC="$(build_CC)" \
+	BUILD_CPPFLAGS="$(build_CPPFLAGS)" \
+	BUILD_CFLAGS="$(build_CFLAGS)" \
+	BUILD_LDFLAGS="$(build_LDFLAGS)"
+BUILD_ENV     = \
+	BUILD_CC="$(build_CC)" \
+	BUILD_CPPFLAGS="$(build_CPPFLAGS)" \
+	BUILD_CFLAGS="$(build_CFLAGS)" \
+	BUILD_LDFLAGS="$(build_LDFLAGS)"
+INSTALL_ENV   = \
+	BUILD_CC="$(build_CC)" \
+	BUILD_CPPFLAGS="$(build_CPPFLAGS)" \
+	BUILD_CFLAGS="$(build_CFLAGS)" \
+	BUILD_LDFLAGS="$(build_LDFLAGS)"
 
 GAR_EXTRA_CONF += devel/glibc/package-api.mk
 include ../../gar.mk
@@ -40,15 +59,20 @@ DEFAULT_ENV   := \
 	AR="$(build_AR)" \
 	AS="$(build_AS)" \
 	OBJDUMP="$(build_OBJDUMP)" \
-	RANLIB="$(build_RANLIB)"
+	RANLIB="$(build_RANLIB)" \
+	libc_cv_386_tls="yes"
 CONFIGURE_ENV := $(DEFAULT_ENV)
 BUILD_ENV     := $(DEFAULT_ENV)
 INSTALL_ENV   := $(DEFAULT_ENV)
 
 pre-configure:
+	@cd $(WORKSRC) ; aclocal       --force --verbose
+	@cd $(WORKSRC) ; autoconf-2.68 --force --verbose
 	@mkdir -p $(WORKBLD)
 	@rm -rf $(WORKBLD)/configparms
 	@echo "slibdir=$(elibdir)" >> $(WORKBLD)/configparms
+	@rm -rf $(WORKBLD)/config.cache
+	@echo "libc_cv_386_tls=yes" >> $(WORKBLD)/config.cache
 	@$(MAKECOOKIE)
 
 configure-custom:
@@ -66,5 +90,5 @@ post-install:
 	@touch $(DESTDIR)$(includedir)/gnu/stubs.h
 	@cp $(WORKBLD)/bits/stdio_lim.h $(DESTDIR)$(includedir)/bits
 	@cp $(WORKSRC)/nptl/sysdeps/pthread/pthread.h $(DESTDIR)$(includedir)
-	@cp $(WORKSRC)/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h $(DESTDIR)$(includedir)/bits
+	@cp $(WORKSRC)/nptl/sysdeps/unix/sysv/linux/x86/bits/pthreadtypes.h $(DESTDIR)$(includedir)/bits
 	@$(MAKECOOKIE)

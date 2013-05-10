@@ -1,8 +1,11 @@
 GARNAME = libbluray
-GARVERSION = 3477b65
+GARVERSION = 0.2.3
 CATEGORIES = lib
-MASTER_SITES = git://git.videolan.org/libbluray.git/
+MASTER_SITES  = ftp://ftp.videolan.org/pub/videolan/$(GARNAME)/$(GARVERSION)/
+MASTER_SITES += git://git.videolan.org/libbluray.git/
 DISTFILES = $(DISTNAME).tar.bz2
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = LGPL2_1
 
 DESCRIPTION = 
@@ -35,16 +38,16 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-doxygen-html \
 	--disable-doxygen-ps \
 	--disable-doxygen-pdf \
-	--with-dlopen-crypto-libs \
+	--without-jdk \
 	--with-gnu-ld
 
 include ../../gar.mk
 
 git//%$(DISTNAME).tar.bz2:
-	@$(call FETCH_GIT, $*, $(GARVERSION), $(DISTNAME))
+	@$(call FETCH_GIT, $*, $(word 2,$(subst -, ,$(GARVERSION))), $(DISTNAME))
 	@$(MAKECOOKIE)
 
-checksum-$(DISTNAME).tar.bz2:
+x-checksum-$(DISTNAME).tar.bz2:
 	@$(MAKECOOKIE) 
 
 pre-configure:

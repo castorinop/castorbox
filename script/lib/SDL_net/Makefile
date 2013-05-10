@@ -1,10 +1,11 @@
 GARNAME = SDL_net
-GARVERSION = 1.2.7
+GARVERSION = 1.2.8
 CATEGORIES = lib
 MASTER_SITES = http://www.libsdl.org/projects/$(GARNAME)/release/
 DISTFILES = $(DISTNAME).tar.gz
 PATCHFILES = $(DISTNAME)-configure.patch
-LICENSE = LGPL2_1
+LICENSE = $(GARNAME)
+$(GARNAME)_LICENSE_TEXT = $(WORKSRC)/COPYING
 
 DESCRIPTION =
 define BLURB
@@ -35,7 +36,7 @@ pre-configure:
 	@cd $(WORKSRC) ; touch ChangeLog
 	@$(call RUN_AUTOTOOLS)
 	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
-	@#$(MAKECOOKIE)
+	@$(MAKECOOKIE)
 
 post-install:
 	@rm -rf $(DESTDIR)$(libdir)/libSDL_net.la

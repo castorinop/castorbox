@@ -29,7 +29,7 @@ include ../../gar.mk
 CPPFLAGS += -DVA_SDS_VERSION=1
 
 pre-configure:
-	@$(call RUN_AUTOTOOLS)
+	@#$(call RUN_AUTOTOOLS)
 	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
 	@$(MAKECOOKIE)
 

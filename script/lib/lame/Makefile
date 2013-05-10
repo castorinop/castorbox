@@ -1,10 +1,12 @@
 GARNAME = lame
-GARVERSION = 3.98.4
+GARVERSION = 3.99.5
 CATEGORIES = lib
-MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)/$(GARVERSION)/
+MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)/3.99/
 DISTFILES  = $(DISTNAME).tar.gz
 DISTFILES += config.cache.$(GARCH_FAMILY)
-PATCHFILES = $(DISTNAME)-am_path_gtk.patch
+PATCHFILES = \
+	$(DISTNAME)-automake_1.12.patch \
+	$(DISTNAME)-am_path_gtk.patch
 LICENSE = LGPL2
 
 DESCRIPTION = 
@@ -23,18 +25,16 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--enable-shared \
 	--disable-static \
 	--enable-nasm \
+	--disable-rpath \
 	--disable-cpml \
 	--disable-gtktest \
 	--disable-efence \
 	--disable-analyzer-hooks \
 	--enable-decoder \
-	--enable-decode-layer1 \
-	--enable-decode-layer2 \
 	--disable-frontend \
 	--disable-mp3x \
 	--disable-mp3rtp \
-	--disable-brhist \
-	--disable-all-float \
+	--disable-dynamic-frontends \
 	--enable-expopt=no \
 	--enable-debug=no \
 	--with-gnu-ld \

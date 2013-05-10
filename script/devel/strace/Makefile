@@ -1,8 +1,10 @@
 GARNAME = strace
-GARVERSION = 4.5.20
+GARVERSION = 4.7
 CATEGORIES = devel
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)/$(GARVERSION)/
-DISTFILES = $(DISTNAME).tar.bz2
+DISTFILES = $(DISTNAME).tar.xz
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = BSD_3_Clause
 
 DESCRIPTION =
@@ -15,6 +17,12 @@ CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
-CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST)
+CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--disable-silent-rules
 
 include ../../gar.mk
+
+pre-configure:
+	@$(call RUN_AUTOTOOLS)
+	@$(call FIX_LIBTOOL,$(WORKSRC)/configure)
+	@$(MAKECOOKIE)

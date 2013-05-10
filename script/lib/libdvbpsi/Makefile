@@ -1,8 +1,10 @@
 GARNAME = libdvbpsi
-GARVERSION = 0.2.0
+GARVERSION = 0.2.2
 CATEGORIES = lib
 MASTER_SITES = http://download.videolan.org/pub/libdvbpsi/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.bz2
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = LGPL2_1
 
 DESCRIPTION = 

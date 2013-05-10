@@ -1,12 +1,12 @@
 GARNAME = xbmc
-GARVERSION = 11.0
+GARVERSION = 12.2
 CATEGORIES = gui
 MASTER_SITES = http://mirrors.xbmc.org/releases/source/
 DISTFILES = $(DISTNAME).tar.gz
 #PATCHFILES = $(DISTNAME)-crosscompiling.patch.gar
-PATCHFILES = $(DISTNAME)-fix_XB_FIND_SONAME.patch \
-	     $(DISTNAME)-fix_unresolved_symbol.patch \
-	     $(DISTNAME)-fix_ctime.patch
+#PATCHFILES = $(DISTNAME)-fix_XB_FIND_SONAME.patch 
+#PATCHFILES = $(DISTNAME)-fix_unresolved_symbol.patch 
+PATCHFILES =  $(DISTNAME)-fix_ctime.patch
 
 LICENSE = GPL2
 
@@ -15,7 +15,6 @@ define BLURB
 endef
 
 DEPENDS = lang/cxx \
-	  db/mysql \
 	  lib/boost \
 	  xbmc/enca \
 	  xbmc/fribidi \
@@ -31,6 +30,7 @@ DEPENDS = lang/cxx \
 	  lib/libmpeg2 \
 	  lib/libsamplerate \
 	  xbmc/libsmbclient \
+	  lib/taglib \
 	  lib/lzo \
 	  lib/SDL \
 	  games/SDL_image \
@@ -38,10 +38,16 @@ DEPENDS = lang/cxx \
 	  lib/libtiff \
 	  xbmc/wavpack \
 	  xbmc/yajl \
+	  xbmc/curl \
+	  xbmc/tinyxml \
+	  xbmc/libssh \
 	  python/python \
 	  python-python-Imaging
 
-BUILDDEPS = xbmc/cmake utils/zip
+
+BUILDDEPS = xbmc/cmake \
+	    utils/zip \
+	    xbmc/swig
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
@@ -54,13 +60,15 @@ PYTHON_ARGS = PYTHON=$(DESTDIR)$(bindir)/python \
 
 PACKAGE_ARGS = PACKAGE_NAME=CastorBOX PACKAGE_VERSION=HD PACKAGE_STRING="CastorBOX HD" VERSION="HD" NAME=CastorBOX
 #	      PYTHON_SITE_PKG="$(DESTDIR)$(libdir)/python2.6/site-packages"
+CONFIGURE_ENV += $(PACKAGE_ARGS)
 
-CONFIGURE_ARGS = $(PYTHON_ARGS) $(PACKAGE_ARGS) $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+CONFIGURE_ARGS = $(PYTHON_ARGS) $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	-C \
 	--enable-external-libraries \
 	--enable-ffmpeg-libvorbis \
 	--disable-optimizations \
 	--disable-texturepacker \
+	--disable-mysql \
 	--disable-non-free
 #no
 #	--disable-debug \

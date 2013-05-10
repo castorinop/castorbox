@@ -1,8 +1,10 @@
 GARNAME = libraw1394
-GARVERSION = 2.0.7
+GARVERSION = 2.1.0
 CATEGORIES = lib
 MASTER_SITES = http://www.kernel.org/pub/linux/libs/ieee1394/
 DISTFILES = $(DISTNAME).tar.bz2
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = LGPL2_1
 
 DESCRIPTION = 

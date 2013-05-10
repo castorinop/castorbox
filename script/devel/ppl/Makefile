@@ -1,7 +1,7 @@
 GARNAME = ppl
-GARVERSION = 0.11.2
+GARVERSION = 1.0
 CATEGORIES = devel
-MASTER_SITES = http://www.cs.unipr.it/ppl/Download/ftp/releases/$(GARVERSION)/
+MASTER_SITES = http://bugseng.com/products/ppl/download/ftp/releases/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.bz2
 LICENSE = GPL3
 
@@ -18,7 +18,6 @@ INSTALL_SCRIPTS    = $(WORKSRC)/Makefile
 
 CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-silent-rules \
-	--disable-rpath \
 	--enable-interfaces="c,cxx" \
 	--enable-shared \
 	--disable-static \
@@ -28,6 +27,7 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--with-cxxflags="$(CXXFLAGS)" \
 	--with-gnu-ld \
   	--with-gmp-prefix=$(DESTDIR)$(prefix)
+
 
 include ../../gar.mk
 

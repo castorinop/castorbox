@@ -1,6 +1,11 @@
-7360b7138b899ee7fc885791c740c3c3  download/busybox-1.17.2.tar.bz2
-a4b751e94582b6f49a96f78d1fb62cbb  download/busybox-1.17.2.config
-9ed57a327d68af952c17cdf5b4ee6973  download/busybox-1.17.2-check_cc.patch
-c852da2e5c6615fc89ca6c9ee02f2c67  download/busybox-1.17.2-dhcp_log_server.patch
-1144ea152fde236700008baeea71b9e1  download/busybox-1.17.2-dhcp_tcode.patch
-1bc4ce8a8f80eba6f5e01daeaa3cb8ff  download/busybox-1.17.2-tftp_timeout.patch
+e025414bc6cd79579cc7a32a45d3ae1c  download/busybox-1.20.2.tar.bz2
+9e01aa9eaf46c7458de27356b35e930b  download/busybox-1.20.2.config
+3386a2bf992f2284b86608498f4cb822  download/busybox-1.20.2-kernel_ver.patch
+87538be04a4f313d5a99fa543f64ffee  download/busybox-1.20.2-ntpd.patch
+64347fb74588c0169f3d857b0d2975fd  download/busybox-1.20.2-pkg-config-selinux.patch
+51d5693b667bd07cd00200aa0b602b84  download/busybox-1.20.2-sys-resource.patch
+69115668b43bd3a15558a7c2b4640913  download/busybox-1.20.2-sys_resource_h.patch
+41d6adb89bd7d0a0ad87274b9349ee05  download/busybox-1.20.2-check_cc.patch
+abe5aae96d1ec5f7dd107664f4331e39  download/busybox-1.20.2-dhcp_log_server.patch
+e66c1a8b7fbcb0691c6d583ad8205b4c  download/busybox-1.20.2-dhcp_tcode.patch
+50f0f80654f1e964a865ee58aaef177f  download/busybox-1.20.2-tftp_timeout.patch

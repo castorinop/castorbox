@@ -1,0 +1,22 @@
+diff -Naur linux-3.7.5-old/scripts/Makefile.headersinst linux-3.7.5-new/scripts/Makefile.headersinst
+--- linux-3.7.5-old/scripts/Makefile.headersinst	2013-02-02 05:24:36.000000000 -0800
++++ linux-3.7.5-new/scripts/Makefile.headersinst	2013-02-02 05:25:22.000000000 -0800
+@@ -71,7 +71,7 @@
+ quiet_cmd_install = INSTALL $(printdir) ($(words $(all-files))\
+                             file$(if $(word 2, $(all-files)),s))
+       cmd_install = \
+-        $(PERL) $< $(installdir) $(SRCARCH) $(input-files); \
++        xargs $(PERL) $< $(installdir) $(SRCARCH) < $(INSTALL_HDR_PATH)/.input-files; \
+         for F in $(wrapper-files); do                                   \
+                 echo "\#include <asm-generic/$$F>" > $(installdir)/$$F;    \
+         done;                                                           \
+@@ -100,7 +100,9 @@
+ $(install-file): scripts/headers_install.pl $(input-files) FORCE
+ 	$(if $(unwanted),$(call cmd,remove),)
+ 	$(if $(wildcard $(dir $@)),,$(shell mkdir -p $(dir $@)))
++	@echo $(input-files) > $(INSTALL_HDR_PATH)/.input-files
+ 	$(call if_changed,install)
++	@rm $(INSTALL_HDR_PATH)/.input-files
+ 
+ else
+ __headerscheck: $(subdirs) $(check-file)

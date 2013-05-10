@@ -1,15 +1,18 @@
 GARNAME = glib
-GARVERSION = 2.28.8
+GARVERSION = 2.34.3
 CATEGORIES = gtk
-MASTER_SITES = http://ftp.gnome.org/pub/gnome/sources/glib/2.28/
-DISTFILES = $(DISTNAME).tar.bz2
+MASTER_SITES = http://ftp.gnome.org/pub/gnome/sources/glib/2.34/
+DISTFILES = $(DISTNAME).tar.xz
+PATCHFILES = \
+	$(DISTNAME)-ac_header_stdc.patch \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = LGPL2
 
 DESCRIPTION =
 define BLURB
 endef
 
-DEPENDS    = lang/c lib/pcre lib/zlib
+DEPENDS    = lang/c lib/libffi lib/pcre lib/zlib
 BUILDDEPS  = gtk/gtk-doc
 ifneq ($(DESTIMG),build)
 BUILDDEPS += gtk/glib
@@ -28,7 +31,7 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-selinux \
 	--disable-fam \
 	--enable-xattr \
-	--enable-regex \
+	--disable-libelf \
 	--disable-gtk-doc \
 	--disable-man \
 	--disable-dtrace \
@@ -54,11 +57,6 @@ CONFIGURE_ENV += \
 endif
 
 include ../../gar.mk
-
-# Fails to compile with GCC 4.5.2's link time optimization enabled, outputing the error:
-# "mem-overflow.c:137:1: sorry, unimplemented: gimple bytecode streams do not support the optimization attribute".
-CFLAGS  := $(filter-out -flto -fuse-linker-plugin, $(CFLAGS))
-LDFLAGS := $(filter-out -flto -fuse-linker-plugin, $(LDFLAGS))
 
 pre-configure:
 	@$(call RUN_AUTOTOOLS)

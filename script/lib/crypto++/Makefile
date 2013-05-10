@@ -1,5 +1,5 @@
 GARNAME = cryptopp
-GARVERSION = 5.5.2
+GARVERSION = 5.6.2
 CATEGORIES = utils
 MASTER_SITES = http://www.cryptopp.com/ 
 DISTFILES = $(GARNAME)$(subst .,,$(GARVERSION)).zip

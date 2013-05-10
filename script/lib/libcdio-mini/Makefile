@@ -17,6 +17,7 @@ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
 CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--disable-silent-rules \
 	--enable-cxx \
 	--disable-cpp-progs \
 	--enable-shared \
@@ -28,7 +29,6 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-vcd-info \
 	--without-cd-drive \
 	--without-cd-info \
-	--with-cd-paranoia \
 	--without-cdda-player \
 	--without-cd-read \
 	--without-iso-info \
@@ -46,8 +46,6 @@ pre-configure:
 post-install:
 	@rm -f $(DESTDIR)$(libdir)/libcdio.la
 	@rm -f $(DESTDIR)$(libdir)/libcdio++.la
-	@rm -f $(DESTDIR)$(libdir)/libcdio_cdda.la
-	@rm -f $(DESTDIR)$(libdir)/libcdio_paranoia.la
 	@rm -f $(DESTDIR)$(libdir)/libiso9660.la
 	@rm -f $(DESTDIR)$(libdir)/libiso9660++.la
 	@rm -f $(DESTDIR)$(libdir)/libudf.la

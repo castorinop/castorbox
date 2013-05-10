@@ -1,5 +1,5 @@
 GARNAME = attr
-GARVERSION = 2.4.44
+GARVERSION = 2.4.46
 CATEGORIES = lib
 MASTER_SITES = http://download.savannah.gnu.org/releases-noredirect/attr/
 DISTFILES = $(DISTNAME).src.tar.gz

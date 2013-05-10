@@ -1,8 +1,7 @@
 GARNAME = fftw
-GARVERSION = 3.2.2
+GARVERSION = $(FFTW_VERSION)
 CATEGORIES = lib
-MASTER_SITES = http://www.fftw.org/
-DISTFILES = $(DISTNAME).tar.gz
+SOURCEPKG = lib/fftw3
 LICENSE = LGPL2
 
 DESCRIPTION = 
@@ -24,6 +23,7 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--with-gnu-ld \
 	--with-gcc-arch=$(GARCH)
 
+GAR_EXTRA_CONF += lib/fftw3/package-api.mk
 include ../../gar.mk
 
 pre-configure:

@@ -19,6 +19,7 @@ INSTALL_SCRIPTS   = $(WORKSRC)/source3/Makefile
 
 CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 		 -C \
+		 --without-ldap \
 		 --with-ld
 
 BUILD_ARGS = libsmbclient

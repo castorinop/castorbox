@@ -3,7 +3,11 @@ GARVERSION = 1.2.1
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/$(GARNAME)/$(GARNAME)-src/$(DISTNAME)-src/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-configure.patch $(DISTNAME)-cxxflags.patch $(DISTNAME)-gcc_4.3.patch
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-configure.patch \
+	$(DISTNAME)-cxxflags.patch \
+	$(DISTNAME)-gcc_4.3.patch
 LICENSE = GPL2/LGPL2_1/FDL1_2/xiph
 xiph_LICENSE_TEXT = $(WORKSRC)/COPYING.Xiph
 
@@ -31,11 +35,6 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--with-ogg-libraries=$(DESTDIR)$(libdir)
 
 include ../../gar.mk
-
-# Fails to compile with GCC 4.5.2's link time optimization linker plugin enabled.
-CFLAGS   := $(filter-out -fuse-linker-plugin, $(CFLAGS))
-CXXFLAGS := $(filter-out -fuse-linker-plugin, $(CXXFLAGS))
-LDFLAGS  := $(filter-out -fuse-linker-plugin, $(LDFLAGS))
 
 pre-configure:
 	@cd $(WORKSRC) ; rm -f m4/ogg.m4

@@ -1,5 +1,5 @@
 GARNAME = libxml2
-GARVERSION = 2.7.8
+GARVERSION = 2.9.0
 CATEGORIES = lib
 MASTER_SITES = ftp://xmlsoft.org/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
@@ -19,9 +19,12 @@ BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 
 CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
+	--disable-silent-rules \
 	--enable-shared \
 	--disable-static \
-	--with-gnu-ld
+	--with-gnu-ld \
+	--with-zlib \
+	--without-lzma
 ifeq ($(DESTIMG),build)
 CONFIGURE_ARGS += \
 	--with-python

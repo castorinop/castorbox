@@ -3,7 +3,7 @@ GARVERSION = 1.11.4
 CATEGORIES = net
 MASTER_SITES = ftp://ftp.gnu.org/gnu/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-libproxy.patch
+#PATCHFILES = $(DISTNAME)-libproxy.patch
 LICENSE = GPL2
 
 DESCRIPTION = 
@@ -11,7 +11,7 @@ define BLURB
 endef
 
 DEPENDS = lang/c 
-LIBDEPS = lib/openssl lib/libproxy
+LIBDEPS = lib/openssl
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile

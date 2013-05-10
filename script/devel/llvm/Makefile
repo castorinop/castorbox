@@ -1,8 +1,8 @@
 GARNAME = llvm
-GARVERSION = 2.9
+GARVERSION = 3.0
 CATEGORIES = devel
 MASTER_SITES = http://www.llvm.org/releases/$(GARVERSION)/
-DISTFILES = $(DISTNAME).tgz
+DISTFILES = $(DISTNAME).tar.gz
 PATCHFILES = $(DISTNAME)-cross.patch
 LICENSE = $(GARNAME)
 $(GARNAME)_LICENSE_TEXT = $(WORKSRC)/LICENSE.TXT
@@ -17,6 +17,8 @@ ifneq ($(DESTIMG),build)
 BUILDDEPS += devel/llvm
 endif
 
+WORKSRC = $(WORKDIR)/$(DISTNAME).src
+
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
 INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
@@ -27,8 +29,8 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-profiling \
 	--disable-assertions \
 	--disable-expensive-checks \
-	--enable-debug-runtime \
-	--enable-debug-symbols \
+	--disable-debug-runtime \
+	--disable-debug-symbols \
 	--enable-jit \
 	--disable-docs \
 	--disable-doxygen \
@@ -36,7 +38,7 @@ CONFIGURE_ARGS = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--enable-pthreads \
 	--enable-pic \
 	--enable-shared \
-	--enable-embed-stdcxx \
+	--disable-embed-stdcxx \
 	--enable-timestamps \
 	$(if $(filter i386,$(GARCH_FAMILY)),--enable-targets=x86) \
 	$(if $(filter x86_64,$(GARCH_FAMILY)),--enable-targets=x86_64)
@@ -44,9 +46,9 @@ BUILD_ARGS     =
 INSTALL_ARGS   =
 ifneq ($(DESTIMG),build)
 BUILD_ARGS    += \
-	TBLGEN="$(build_DESTDIR)$(build_bindir)/tblgen"
+	LLVM_TBLGEN="$(build_DESTDIR)$(build_bindir)/llvm-tblgen"
 INSTALL_ARGS  += \
-	TBLGEN="$(build_DESTDIR)$(build_bindir)/tblgen"
+	LLVM_TBLGEN="$(build_DESTDIR)$(build_bindir)/llvm-tblgen"
 endif
 
 CONFIGURE_ENV = \
@@ -59,10 +61,10 @@ CONFIGURE_ENV = \
 
 include ../../gar.mk
 
-# Fails to compile with GCC's link time optimization.
-CFLAGS   := $(filter-out -flto -fuse-linker-plugin, $(CFLAGS))
-CXXFLAGS := $(filter-out -flto -fuse-linker-plugin, $(CXXFLAGS))
-LDFLAGS  := $(filter-out -flto -fuse-linker-plugin, $(LDFLAGS))
+# llvm 3.0 fails to compile with gcc 4.7.1's link time optimization enabled.
+CFLAGS   := $(filter-out -flto, $(CFLAGS))
+CXXFLAGS := $(filter-out -flto, $(CXXFLAGS))
+LDFLAGS  := $(filter-out -flto, $(LDFLAGS))
 
 pre-configure:
 	@cd $(WORKSRC)/autoconf ; aclocal  --force --verbose -I m4

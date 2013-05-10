@@ -6,8 +6,7 @@ MASTER_SITES += ftp://gcc.gnu.org/pub/$(GARNAME)/releases/$(DISTNAME)/
 MASTER_SITES += ftp://gcc.gnu.org/pub/$(GARNAME)/prerelease-$(GCC_VERSION)/
 MASTER_SITES += ftp://gcc.gnu.org/pub/$(GARNAME)/snapshots/$(GCC_VERSION)/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES  = $(DISTNAME)-bfd_and_gold.patch
-PATCHFILES += $(DISTNAME)-disable_multilib_i386_linux64.patch
+PATCHFILES  = $(DISTNAME)-disable_multilib_i386_linux64.patch
 ifneq ("$(DESTIMG)+$(CROSSIMG)","build+build")
 PATCHFILES += $(DISTNAME)-perl.patch.gar
 PATCHFILES += $(DISTNAME)-dynamic_linker.patch
@@ -24,7 +23,7 @@ GARTARGET = $($(CROSSIMG)_GARHOST)
 
 IMGDEPS += $(CROSSIMG)
 $(CROSSIMG)_DEPENDS = devel/glibc
-DEPENDS   = lang/c devel/cloog-ppl devel/gmp devel/libelf devel/mpc devel/mpfr devel/ppl
+DEPENDS   = lang/c devel/cloog devel/gmp devel/libelf devel/mpc devel/mpfr devel/ppl
 BUILDDEPS = devel/make devel/binutils
 
 WORKDIR   = $(WORKROOTDIR)/$(DESTIMG)_$(CROSSIMG).d
@@ -46,10 +45,14 @@ CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) --target=$(G
 	--enable-languages=c,c++ \
 	--enable-libgomp \
 	--disable-libmudflap \
-	--enable-gold=both/ld \
+	--enable-gold \
+	--enable-ld \
+	--disable-libquadmath \
+	--disable-libquadmath-support \
 	--disable-libada \
 	--disable-libssp \
 	--disable-ppl-version-check \
+	--enable-cloog-backend=isl \
 	--enable-lto \
 	--disable-multilib \
 	--enable-nls \
@@ -79,11 +82,6 @@ CFLAGS   :=
 CXXFLAGS :=
 LDFLAGS  :=
 
-autoconf:
-	@# Used to recreate configure files for the bfd_and_gold patch.
-	cd $(WORKSRC)     ; AUTOM4TE='autom4te-2.64' autoconf-2.64 -I config --verbose
-	cd $(WORKSRC)/gcc ; AUTOM4TE='autom4te-2.64' autoconf-2.64 -I config --verbose
-
 configure-custom:
 	@mkdir -p $(WORKBLD)
 	@cd $(WORKBLD) && $(CONFIGURE_ENV) ./$(call DIRSTODOTS,$(WORKBLD))/$(WORKSRC)/configure $(CONFIGURE_ARGS)
@@ -91,6 +89,7 @@ configure-custom:
 
 post-install:
 	@rm -f $(CROSS_GCC_LIBDIR)/libgomp.la
+	@rm -f $(CROSS_GCC_LIBDIR)/libitm.la
 	@rm -f $(CROSS_GCC_LIBDIR)/libssp.la
 	@rm -f $(CROSS_GCC_LIBDIR)/libssp_nonshared.la
 	@rm -f $(CROSS_GCC_LIBDIR)/libstdc++.la
@@ -110,26 +109,20 @@ post-install:
 	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgcc.a        ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgcc_s.so     ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgcc_s.so.*   ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
-	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgomp.so.*   ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgcc.a     ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgcc_s.so  ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgcc_s.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
-	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgomp.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgcc.a     ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgcc_s.so  ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgcc_s.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
-	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgomp.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_elibdir) ; )
 	@mkdir -p $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir)
 	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libstdc++.a      ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libstdc++.so     ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libstdc++.so.*   ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
-	$(foreach file,$(wildcard $(CROSS_GCC_LIBDIR)/libgomp.so.*   ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libstdc++.a   ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libstdc++.so  ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libstdc++.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
-	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib32/libgomp.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libstdc++.a   ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libstdc++.so  ),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libstdc++.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
-	@$(foreach file,$(wildcard $(CROSS_GCC_DIR)/lib64/libgomp.so.*),cp -af $(file) $($(CROSSIMG)_DESTDIR)$($(CROSSIMG)_libdir) ; )
 	@$(MAKECOOKIE)

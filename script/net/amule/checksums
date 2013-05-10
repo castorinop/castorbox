@@ -1,2 +1,4 @@
 31724290a440943f5b05d4dca413fe02  download/aMule-2.3.1.tar.bz2
-0c3be88cdfb1f83685e56ea5102c2bb4  download/aMule-2.3.1-cross_compiling.patch
+c045749efaaab063ecea6a240f16d3c8  download/aMule-2.3.1-cross_compiling.patch
+bcb9345f83b43d560d193b036a501c04  download/aMule-2.3.1-handle_empty_statistics_file.patch
+011fdeebf846b6072ea5f51c7aef4b9b  download/aMule-2.3.1-gcc_4.7.patch

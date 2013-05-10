@@ -3,7 +3,10 @@ GARVERSION = 1.4.5
 CATEGORIES = X11
 MASTER_SITES = http://savannah.nongnu.org/download/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-getline.patch $(DISTNAME)-staticgravity.patch
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-getline.patch \
+	$(DISTNAME)-staticgravity.patch
 LICENSE = GPL2
 
 DESCRIPTION =

@@ -1,1 +1,1 @@
-NSS_VERSION = 3.12.10
+NSS_VERSION = 3.14.1.with.ckbi.1.93

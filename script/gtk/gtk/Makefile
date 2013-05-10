@@ -1,9 +1,11 @@
 GARNAME = gtk+
-GARVERSION = 2.24.4
+GARVERSION = 2.24.14
 CATEGORIES = gtk
 MASTER_SITES = http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/
-DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES = $(DISTNAME)-nm.patch
+DISTFILES = $(DISTNAME).tar.xz
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-nm.patch
 LICENSE = LGPL2
 
 DESCRIPTION =
@@ -57,11 +59,6 @@ CONFIGURE_ENV += \
 endif
 
 include ../../gar.mk
-
-# Fails to compile with GCC 4.5.2's link time optimization linker plugin enabled.
-CFLAGS   := $(filter-out -fuse-linker-plugin, $(CFLAGS))
-CXXFLAGS := $(filter-out -fuse-linker-plugin, $(CXXFLAGS))
-LDFLAGS  := $(filter-out -fuse-linker-plugin, $(LDFLAGS))
 
 pre-configure:
 	@$(call RUN_AUTOTOOLS)

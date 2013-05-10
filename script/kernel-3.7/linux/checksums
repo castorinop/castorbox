@@ -1,0 +1,10 @@
+361d9d6ac73b79f4e7676b2b94237ac1  download/linux-3.7.5.tar.bz2
+519010598636519ab41ce07fb13a54ba  download/linux-3.7.5-i386-pentium-mmx.config
+62c5e867f48db368d6df788f0e5d2c64  download/linux-3.7.5.patch.gar
+e6674d820c1615fdae4a6559e2a30a0a  download/linux-3.7.5-perl.patch.gar
+560556a235423f04f8191f4b4043452c  download/linux-3.7.5-install_headers.patch
+200f1f5a7d095f83ef6978e6c6a300d0  download/linux-3.7.5-r8168_8.035.00.patch
+91bd0fdbe569a763dc474b6f14a95eec  download/linux-3.7.5-via_rhine_avoid_d3.patch
+60038add03306051969f85811d1be604  download/linux-3.7.5-overlayfs_v15_3d5a648.patch
+47a33d22b42277552882b01de10f8582  download/linux-3.7.5-disable_dma_for_cfa.patch
+1f1e6320b9d59f70196937c1b9c24570  download/linux-3.7.5-defaults.patch

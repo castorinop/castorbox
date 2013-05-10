@@ -1,9 +1,12 @@
 GARNAME = vcdimager
-GARVERSION = 0.7.23
+GARVERSION = 0.7.24
 CATEGORIES = lib
 MASTER_SITES = http://ftp.gnu.org/gnu/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-nm.patch $(DISTNAME)-cross.patch
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-nm.patch \
+	$(DISTNAME)-cross.patch
 LICENSE = GPL2
 
 DESCRIPTION = 

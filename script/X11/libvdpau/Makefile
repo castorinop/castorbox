@@ -1,5 +1,5 @@
 GARNAME = libvdpau
-GARVERSION = 0.4.1
+GARVERSION = 0.6
 CATEGORIES = $(CATEGORY)
 MASTER_SITES = http://people.freedesktop.org/~aplattner/vdpau/
 DISTFILES = $(DISTNAME).tar.gz
@@ -9,7 +9,7 @@ DESCRIPTION =
 define BLURB
 endef
 
-DEPENDS = lang/c lang/cxx xorg/xorg
+DEPENDS = lang/c lang/cxx xorg/dri2proto
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
 BUILD_SCRIPTS     = $(WORKSRC)/Makefile
@@ -18,7 +18,8 @@ INSTALL_SCRIPTS   = $(WORKSRC)/Makefile
 CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--enable-dri2 \
 	--disable-documentation \
-	--with-gnu-ld
+	--with-gnu-ld \
+	--with-module-dir="$(libdir)/vdpau"
 
 include ../../gar.mk
 

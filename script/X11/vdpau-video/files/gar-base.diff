@@ -1,0 +1,118 @@
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/vdpau-video-0.7.3/configure.ac work/main.d/vdpau-video-0.7.3/configure.ac
+--- tmp/vdpau-video-0.7.3/configure.ac	2011-02-26 00:31:15.000000000 -0300
++++ new-vdpau-video-0.7.3/configure.ac	2013-04-07 15:07:15.990005143 -0300
+@@ -147,28 +147,8 @@
+ PKG_CHECK_MODULES(LIBVA_GLX_DEPS, [libva-glx], [], [USE_GLX=0])
+ 
+ dnl Check for SDS extensions to VA-API
+-AC_CACHE_CHECK([for VA-API],
+-  ac_cv_libva_sds_extensions, [
+-  saved_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS $LIBVA_DEPS_CFLAGS"
+-  AC_TRY_COMPILE([
+-    #include <va/va_version.h>
+-    #if VA_MAJOR_VERSION == 0 && VA_MINOR_VERSION == 29
+-    # if !defined(VA_SDS_VERSION) || (VA_SDS_VERSION < $LIBVA_SDS_VERSION_0_29)
+-    #  error "VA-API version >= 0.29.0-sds$LIBVA_SDS_VERSION_0_29 is required"
+-    # endif
+-    #elif VA_MAJOR_VERSION == 0 && VA_MINOR_VERSION == 30
+-    # if !defined(VA_SDS_VERSION) || (VA_SDS_VERSION < $LIBVA_SDS_VERSION_0_30)
+-    #  error "VA-API version >= 0.30.0-sds$LIBVA_SDS_VERSION_0_30 is required"
+-    # endif
+-    #elif !VA_CHECK_VERSION(0,31,0)
+-    # error "VA-API version >= 0.31 is required"
+-    #endif
+-  ], [],
+-  [ac_cv_libva_sds_extensions="yes"],
+-  [ac_cv_libva_sds_extensions="no"])
+-  CFLAGS="$saved_CFLAGS"
+-])
++ac_cv_libva_sds_extensions="yes"
++
+ VA_VERSION=`$PKG_CONFIG --modversion libva`
+ VA_MAJOR_VERSION=`echo "$VA_VERSION" | cut -d'.' -f1`
+ VA_MINOR_VERSION=`echo "$VA_VERSION" | cut -d'.' -f2`
+@@ -197,31 +177,7 @@
+ fi
+ 
+ dnl Check for OpenGL rendering extensions to VA-API
+-AC_CACHE_CHECK([for VA-API (GLX extensions)],
+-  ac_cv_libva_glx_extensions, [
+-  saved_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS $LIBVA_DEPS_CFLAGS"
+-  AC_TRY_COMPILE([
+-    #include <va/va_version.h>
+-    #if VA_MAJOR_VERSION == 0 && VA_MINOR_VERSION == 30
+-    # if !defined(VA_SDS_VERSION) || (VA_SDS_VERSION < $LIBVA_GLX_SDS_VERSION_0_30)
+-    #  error "VA-API version >= 0.30.0-sds$LIBVA_GLX_SDS_VERSION_0_30 is required"
+-    # endif
+-    #elif VA_MAJOR_VERSION == 0 && VA_MINOR_VERSION == 31
+-    # if VA_MICRO_VERSION < 1
+-    #  if !defined(VA_SDS_VERSION) || (VA_SDS_VERSION < $LIBVA_GLX_SDS_VERSION_0_31)
+-    #   error "VA-API version >= 0.31.0-sds$LIBVA_GLX_SDS_VERSION_0_31 is required"
+-    #  endif
+-    # endif
+-    #elif VA_MAJOR_VERSION ==0 && VA_MINOR_VERSION >= 32
+-    #else
+-    # error "This version of VA-API is not supported for OpenGL rendering"
+-    #endif
+-  ], [],
+-  [ac_cv_libva_glx_extensions="yes"],
+-  [ac_cv_libva_glx_extensions="no" USE_GLX=0])
+-  CFLAGS="$saved_CFLAGS"
+-])
++ac_cv_libva_glx_extensions="yes"
+ 
+ dnl Check for VA-API drivers path
+ AC_MSG_CHECKING([for VA drivers path])
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/vdpau-video-0.7.3/src/Makefile.am work/main.d/vdpau-video-0.7.3/src/Makefile.am
+--- tmp/vdpau-video-0.7.3/src/Makefile.am	2010-10-08 04:09:53.000000000 -0300
++++ new-vdpau-video-0.7.3/src/Makefile.am	2013-04-07 15:07:16.130005143 -0300
+@@ -75,6 +75,7 @@
+ install-data-hook:
+ 	cd $(DESTDIR)$(LIBVA_DRIVERS_PATH) ;			\
+ 	for drv in $(DRIVERS); do				\
++	    rm -f $${drv}_drv_video.so;                         \
+ 	    ln -s vdpau_drv_video.so $${drv}_drv_video.so;	\
+ 	done
+ 
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/vdpau-video-0.7.3/src/Makefile.in work/main.d/vdpau-video-0.7.3/src/Makefile.in
+--- tmp/vdpau-video-0.7.3/src/Makefile.in	2011-02-26 00:31:26.000000000 -0300
++++ new-vdpau-video-0.7.3/src/Makefile.in	2013-04-07 15:07:16.130005143 -0300
+@@ -599,6 +599,7 @@
+ install-data-hook:
+ 	cd $(DESTDIR)$(LIBVA_DRIVERS_PATH) ;			\
+ 	for drv in $(DRIVERS); do				\
++	    rm -f $${drv}_drv_video.so;                         \
+ 	    ln -s vdpau_drv_video.so $${drv}_drv_video.so;	\
+ 	done
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -x '*~' -x '.*' -x '*.orig' -x '*.rej' --speed-large-files --minimal -Nru tmp/vdpau-video-0.7.3/src/utils_glx.h work/main.d/vdpau-video-0.7.3/src/utils_glx.h
+--- tmp/vdpau-video-0.7.3/src/utils_glx.h	2011-01-26 07:15:05.000000000 -0300
++++ new-vdpau-video-0.7.3/src/utils_glx.h	2013-04-07 15:07:56.580007507 -0300
+@@ -32,8 +32,8 @@
+ typedef GLintptr GLvdpauSurfaceNV;
+ typedef void (*PFNGLVDPAUINITNVPROC)(const GLvoid *vdpDevice, const GLvoid *getProcAddress);
+ typedef void (*PFNGLVDPAUFININVPROC)(void);
+-typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTERVIDEOSURFACENVPROC)(const GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
+-typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTEROUTPUTSURFACENVPROC)(const GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
++typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTERVIDEOSURFACENVPROC)(GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
++typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTEROUTPUTSURFACENVPROC)(GLvoid *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames);
+ typedef GLboolean (*PFNGLVDPAUISSURFACENVPROC)(GLvdpauSurfaceNV surface);
+ typedef void (*PFNGLVDPAUUNREGISTERSURFACENVPROC)(GLvdpauSurfaceNV surface);
+ typedef void (*PFNGLVDPAUGETSURFACEIVNVPROC)(GLvdpauSurfaceNV surface, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values);
+@@ -48,6 +48,14 @@
+ typedef void (*PFNGLXRELEASETEXIMAGEEXTPROC)(Display *, GLXDrawable, int);
+ #endif
+ 
++
++#if GL_GLEXT_VERSION >= 85
++/* XXX: PFNGLMULTITEXCOORD2FPROC got out of the GL_VERSION_1_3_DEPRECATED
++       block and is not defined if GL_VERSION_1_3 is defined in <GL/gl.h>
++       Redefine the type here as an interim solution */
++typedef void (*PFNGLMULTITEXCOORD2FPROC) (GLenum target, GLfloat s, GLfloat t);
++#endif
++             
+ #ifndef GL_FRAMEBUFFER_BINDING
+ #define GL_FRAMEBUFFER_BINDING GL_FRAMEBUFFER_BINDING_EXT
+ #endif

@@ -3,7 +3,9 @@ GARVERSION = 0.7.4
 CATEGORIES = lib
 MASTER_SITES = http://liba52.sourceforge.net/files/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-fpic.patch
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-fpic.patch
 LICENSE = LGPL2
 
 DESCRIPTION = 

@@ -3,7 +3,10 @@ GARVERSION = 0.15.1b
 CATEGORIES = lib
 MASTER_SITES = http://downloads.sourceforge.net/project/mad/$(GARNAME)/$(GARVERSION)/
 DISTFILES = $(DISTNAME).tar.gz
-PATCHFILES = $(DISTNAME)-gcc_4.5.0.patch $(DISTNAME)-mad_pc.patch
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-gcc_4.5.0.patch \
+	$(DISTNAME)-mad_pc.patch
 LICENSE = GPL2
 
 DESCRIPTION =

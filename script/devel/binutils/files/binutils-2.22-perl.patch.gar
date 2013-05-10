@@ -1,0 +1,45 @@
+diff -Naur binutils-2.22-old/bfd/mep-relocs.pl binutils-2.22-new/bfd/mep-relocs.pl
+--- binutils-2.22-old/bfd/mep-relocs.pl	2011-11-22 06:35:34.000000000 -0800
++++ binutils-2.22-new/bfd/mep-relocs.pl	2011-11-22 06:37:05.000000000 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ # -*- perl -*-
+ #
+ # Toshiba MeP Media Engine Relocation Generator
+diff -Naur binutils-2.22-old/etc/texi2pod.pl binutils-2.22-new/etc/texi2pod.pl
+--- binutils-2.22-old/etc/texi2pod.pl	2011-11-22 06:35:34.000000000 -0800
++++ binutils-2.22-new/etc/texi2pod.pl	2011-11-22 06:37:05.000000000 -0800
+@@ -1,4 +1,4 @@
+-#! /usr/bin/perl -w
++#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl -w
+ 
+ #   Copyright (C) 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
+ 
+diff -Naur binutils-2.22-old/gprof/bbconv.pl binutils-2.22-new/gprof/bbconv.pl
+--- binutils-2.22-old/gprof/bbconv.pl	2011-11-22 06:35:34.000000000 -0800
++++ binutils-2.22-new/gprof/bbconv.pl	2011-11-22 06:37:05.000000000 -0800
+@@ -1,4 +1,4 @@
+-#! /usr/bin/perl
++#! @GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ 
+ # This script converts a "bb.out" file into a format
+ # suitable for processing by gprof
+diff -Naur binutils-2.22-old/libiberty/gather-docs binutils-2.22-new/libiberty/gather-docs
+--- binutils-2.22-old/libiberty/gather-docs	2011-11-22 06:35:34.000000000 -0800
++++ binutils-2.22-new/libiberty/gather-docs	2011-11-22 06:37:05.000000000 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ # -*- perl -*-
+ 
+ #   Copyright (C) 2001, 2009, 2011
+diff -Naur binutils-2.22-old/libiberty/maint-tool binutils-2.22-new/libiberty/maint-tool
+--- binutils-2.22-old/libiberty/maint-tool	2011-11-22 06:35:34.000000000 -0800
++++ binutils-2.22-new/libiberty/maint-tool	2011-11-22 06:37:05.000000000 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!@GAR_build_DESTDIR@@GAR_build_bindir@/perl
+ # -*- perl -*-
+ 
+ #   Copyright (C) 2001, 2007, 2010

@@ -1,15 +1,17 @@
 GARNAME = bluez
-GARVERSION = 4.95
+GARVERSION = 4.101
 CATEGORIES = lib
-MASTER_SITES = http://www.kernel.org/pub/linux/bluetooth/
+MASTER_SITES = ftp://ftp.kernel.org/pub/linux/bluetooth/
 DISTFILES = $(DISTNAME).tar.gz
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch
 LICENSE = GPL2
 
 DESCRIPTION =
 define BLURB
 endef
 
-DEPENDS  = lang/c gtk/glib lib/alsa-lib lib/dbus
+DEPENDS  = lang/c gtk/glib lib/alsa-lib lib/dbus lib/readline
 ifneq ($(DESTIMG),build)
 DEPENDS += lib/libusb-compat system/udev
 endif
@@ -36,7 +38,6 @@ CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-attrib \
 	--disable-gstreamer \
 	--enable-alsa \
-	--disable-tracer \
 	--enable-tools \
 	--enable-bccmd \
 	--enable-pcmcia \
@@ -51,9 +52,9 @@ CONFIGURE_ARGS  = $(DIRPATHS) --build=$(GARBUILD) --host=$(GARHOST) \
 	--disable-debug \
 	--disable-maemo6 \
 	--disable-dbusoob \
+	--enable-wiimote \
 	--disable-hal \
-	--disable-capng \
-	--disable-netlink \
+	--disable-gatt \
 	--with-gnu-ld
 ifeq ($(DESTIMG),build)
 CONFIGURE_ARGS += \

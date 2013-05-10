@@ -3,14 +3,16 @@ GARVERSION = 0.9.23
 CATEGORIES = utils
 MASTER_SITES = http://alioth.debian.org/frs/download.php/3310/
 DISTFILES = $(DISTNAME).tar.bz2
-PATCHFILES = $(DISTNAME)-install.patch
+PATCHFILES = \
+	$(DISTNAME)-automake_1.13.patch \
+	$(DISTNAME)-install.patch
 LICENSE = GPL3
 
 DESCRIPTION = 
 define BLURB
 endef
 
-DEPENDS   = lang/c lib/sysfsutils utils/util-linux
+DEPENDS   = lang/c utils/util-linux
 BUILDDEPS = perl/perl-XML-Parser
 
 CONFIGURE_SCRIPTS = $(WORKSRC)/configure
