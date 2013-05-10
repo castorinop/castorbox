@@ -139,6 +139,12 @@ tar-bz-extract-%:
 	@bzip2 -dc $(DOWNLOADDIR)/$* | tar -xf - -C $(EXTRACTDIR)
 	@$(MAKECOOKIE)
 
+# rule to extract files with tar and xz
+tar-xz-extract-%:
+	@echo " ==> Extracting $(DOWNLOADDIR)/$*"
+	@xz -dc $(DOWNLOADDIR)/$* | tar -xf - -C $(EXTRACTDIR)
+	@$(MAKECOOKIE)
+
 # rule to extract files with unzip
 zip-extract-%:
 	@echo " ==> Extracting $(DOWNLOADDIR)/$*"
@@ -188,6 +194,9 @@ extract-%.tar.bz2: tar-bz-extract-%.tar.bz2
 extract-%.tbz: tar-bz-extract-%.tbz
 	@$(MAKECOOKIE)
 
+extract-%.tar.xz: tar-xz-extract-%.tar.xz
+	@$(MAKECOOKIE)
+
 extract-%.zip: zip-extract-%.zip
 	@$(MAKECOOKIE)
 
@@ -221,6 +230,12 @@ bz-patch-%:
 gz-patch-%:
 	@echo " ==> Applying patch $(DOWNLOADDIR)/$*"
 	@gzip -dc $(DOWNLOADDIR)/$* |$(GARPATCH)
+	@$(MAKECOOKIE)
+
+# apply xzipped patches
+xz-patch-%:
+	@echo " ==> Applying patch $(DOWNLOADDIR)/$*"
+	@xz -dc $(DOWNLOADDIR)/$* |$(GARPATCH)
 	@$(MAKECOOKIE)
 
 # apply normal patches
